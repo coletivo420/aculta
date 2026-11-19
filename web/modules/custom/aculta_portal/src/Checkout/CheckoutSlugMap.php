@@ -7,9 +7,10 @@ namespace Drupal\aculta_portal\Checkout;
 /**
  * Slugs públicos do checkout (em português) e o mapeamento para as rotas internas do Commerce.
  *
- * As rotas do Commerce continuam em /checkout/{pedido}/{etapa}. O caminho público é /finalizar-compra/{pedido}/{etapa-pt}.
+ * As rotas do Commerce continuam em /checkout/{pedido}/{etapa}. O caminho público é
+ * /finalizar-compra/{pedido}/{etapa-pt}.
  * O processador de caminho (CheckoutFriendlyPathProcessor) gera e reconhece o caminho público; a redireção de
- * /checkout (DomainPurposeRequestSubscriber) leva as URLs antigas (GET) ao caminho público com 301. Os retornos
+ * /checkout (DomainSiteRequestSubscriber) leva as URLs antigas (GET) ao caminho público com 301. Os retornos
  * do Mercado Pago (return e cancel) seguem a mesma regra, porque são rotas /checkout/{pedido}/{etapa}/return|cancel.
  * Ver docs/portal/FRIENDLY-PORTUGUESE-SLUGS.md.
  */

@@ -1,0 +1,83 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Shell da Conta
+status: experimental
+description: Estrutura da área da Conta com menu, acordeão de seções e conteúdo, preservando os atributos de comportamento do Portal.
+group: Conta
+props:
+  type: object
+  additionalProperties: false
+  required: [title]
+  properties:
+    title:
+      title: Título da página da conta
+      type: string
+      description: Título H1 e nome acessível da navegação principal da Conta.
+      minLength: 1
+    section_title:
+      title: Título da seção da conta
+      type: string
+      description: Título da região de conteúdo que recebe o slot content.
+      default: ''
+    menu_items:
+      title: Itens de navegação da conta
+      type: array
+      description: Links da navegação persistente, com active indicando a página atual.
+      default: []
+      items:
+        type: object
+        description: Link de navegação principal para uma seção da Conta.
+        additionalProperties: false
+        required: [label, href]
+        properties:
+          label:
+            type: string
+            description: Texto visível do link de navegação.
+          href:
+            type: string
+            description: Destino do link de navegação.
+          active:
+            type: boolean
+            description: Quando true, marca o link como a página atual com aria-current.
+            default: false
+    accordion_items:
+      title: Seções expansíveis da conta
+      type: array
+      description: Painéis expansíveis que carregam conteúdo do href ao serem abertos.
+      default: []
+      items:
+        type: object
+        description: Painel expansível de uma seção carregada sob demanda na Conta.
+        additionalProperties: false
+        required: [label, href]
+        properties:
+          label:
+            type: string
+            description: Texto do summary que abre ou fecha o painel.
+          href:
+            type: string
+            description: Endereço atribuído ao data-src do painel de conteúdo.
+          open:
+            type: boolean
+            description: Quando true, o elemento details começa aberto.
+            default: false
+    logout:
+      title: Ação para sair da conta
+      type: object
+      description: Link de saída preparado pelo módulo, repetido na navegação desktop e móvel.
+      additionalProperties: false
+      required: [label, href]
+      properties:
+        label:
+          type: string
+          description: Texto visível do link de saída.
+        href:
+          type: string
+          description: Destino de saída fornecido pelo módulo.
+slots:
+  content:
+    title: Conteúdo da seção
+    description: Conteúdo principal fornecido pelo módulo da área da conta.
+assets:
+  css:
+    component:
+      account-shell.css: {}

@@ -8,7 +8,8 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Url;
 use Drupal\user\UserInterface;
 
-/** API para obter o link canônico do perfil público de uma conta. */
+/**
+ * API para obter o link canônico do perfil público de uma conta. */
 interface PublicProfileLinkInterface {
 
   /**

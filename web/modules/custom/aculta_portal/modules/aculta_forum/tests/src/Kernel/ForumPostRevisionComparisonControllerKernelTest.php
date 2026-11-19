@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 use Drupal\aculta_forum\Controller\ForumPostRevisionComparisonController;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\Url;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
@@ -76,8 +77,13 @@ final class ForumPostRevisionComparisonControllerKernelTest extends KernelTestBa
     $display->setComponent('subject', ['type' => 'string']);
     $display->setComponent('body', ['type' => 'text_default']);
     $display->save();
-    Role::load(RoleInterface::ANONYMOUS_ID)->grantPermission('access content')->save();
-    Role::load(RoleInterface::AUTHENTICATED_ID)->grantPermission('access content')->save();
+    $anonRole = Role::load(RoleInterface::ANONYMOUS_ID);
+    self::assertInstanceOf(Role::class, $anonRole);
+    $anonRole->grantPermission('access content')->save();
+
+    $authRole = Role::load(RoleInterface::AUTHENTICATED_ID);
+    self::assertInstanceOf(Role::class, $authRole);
+    $authRole->grantPermission('access content')->save();
     User::create(['name' => 'base', 'status' => 1])->save();
     $author = User::create(['name' => 'autora', 'status' => 1]);
     $author->save();
@@ -108,22 +114,38 @@ final class ForumPostRevisionComparisonControllerKernelTest extends KernelTestBa
       (string) $this->secondRevision,
     );
 
+    $title = $build['#title'] ?? '';
     self::assertSame(
       'Comparando revisão ' . $this->firstRevision . ' com ' . $this->secondRevision,
-      (string) $build['#title'],
+      $title instanceof \Stringable ? (string) $title : '',
     );
-    self::assertSame('table', $build['comparison']['#type']);
-    $rows = $build['comparison']['#rows'];
+    $comparison = $build['comparison'] ?? [];
+    self::assertIsArray($comparison);
+    self::assertSame('table', $comparison['#type'] ?? NULL);
+    $rows = $comparison['#rows'] ?? [];
+    self::assertIsArray($rows);
     $labels = [];
     foreach ($rows as $row) {
-      if (isset($row[0]['data']['#plain_text'])) {
-        $labels[] = (string) $row[0]['data']['#plain_text'];
+      if (is_array($row) && isset($row[0]) && is_array($row[0])) {
+        $data = $row[0]['data'] ?? NULL;
+        $plain = is_array($data) ? ($data['#plain_text'] ?? NULL) : NULL;
+        if (is_scalar($plain) || $plain instanceof \Stringable) {
+          $labels[] = (string) $plain;
+        }
       }
     }
     self::assertContains('Assunto', $labels);
     self::assertNotContains('Texto', $labels);
-    self::assertSame('aculta_forum.post_revision_history', $build['back']['#url']->getRouteName());
-    self::assertContains('domain', $build['#cache']['contexts']);
+    $back = $build['back'] ?? [];
+    self::assertIsArray($back);
+    $url = $back['#url'] ?? NULL;
+    self::assertInstanceOf(Url::class, $url);
+    self::assertSame('aculta_forum.post_revision_history', $url->getRouteName());
+    $cache = $build['#cache'] ?? [];
+    self::assertIsArray($cache);
+    $contexts = $cache['contexts'] ?? [];
+    self::assertIsArray($contexts);
+    self::assertContains('domain', $contexts);
   }
 
   /**

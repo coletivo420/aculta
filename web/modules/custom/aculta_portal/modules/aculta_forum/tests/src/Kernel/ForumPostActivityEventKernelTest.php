@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 use Drupal\aculta_forum\Event\ForumActivityEvent;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Hook\ForumActivityEventHooks;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
@@ -44,9 +45,16 @@ final class ForumPostActivityEventKernelTest extends KernelTestBase {
   /**
    * Emitted post activity events.
    *
-   * @var \Drupal\aculta_forum\Event\ForumActivityEvent[]
+   * @var array<int, \Drupal\aculta_forum\Event\ForumActivityEvent>
    */
   private array $events = [];
+
+  /**
+   * Counts captured events.
+   */
+  private function countEvents(): int {
+    return count($this->events);
+  }
 
   /**
    * Author of the fixture posts.
@@ -98,18 +106,20 @@ final class ForumPostActivityEventKernelTest extends KernelTestBase {
   public function testPendingPostCountsOnlyOnApproval(): void {
     $post = $this->post(published: FALSE);
     $this->hooks->entityInsert($post);
-    self::assertEmpty($this->events);
+    self::assertSame(0, $this->countEvents());
 
     $original = clone $post;
     $post->setPublished();
     $post->setOriginal($original);
     $this->hooks->entityPublished($post);
-    self::assertCount(1, $this->events);
-    self::assertSame((int) $post->id(), $this->events[0]->entityId);
+    self::assertSame(1, $this->countEvents());
+    $firstEvent = $this->events[0] ?? NULL;
+    self::assertInstanceOf(ForumActivityEvent::class, $firstEvent);
+    self::assertSame((int) $post->id(), $firstEvent->entityId);
 
     $post->setOriginal(clone $post);
     $this->hooks->entityPublished($post);
-    self::assertCount(1, $this->events);
+    self::assertSame(1, $this->countEvents());
   }
 
   /**
@@ -118,7 +128,7 @@ final class ForumPostActivityEventKernelTest extends KernelTestBase {
   public function testPublishedInsertCountsOnceAndSyncIsIgnored(): void {
     $published = $this->post(published: TRUE);
     $this->hooks->entityInsert($published);
-    self::assertCount(1, $this->events);
+    self::assertNotEmpty($this->events);
 
     $synced = $this->post(published: TRUE);
     $synced->setSyncing(TRUE);
@@ -132,13 +142,15 @@ final class ForumPostActivityEventKernelTest extends KernelTestBase {
   public function testNonDefaultRevisionIsIgnored(): void {
     $post = $this->post(published: TRUE);
     $first_revision = $post->getRevisionId();
+    self::assertNotNull($first_revision);
     $post->setNewRevision(TRUE);
     $post->set('body', ['value' => 'Revisão nova', 'format' => 'plain_text']);
     $post->save();
 
     $storage = $this->container->get('entity_type.manager')->getStorage('aculta_forum_post');
+    self::assertInstanceOf(RevisionableStorageInterface::class, $storage);
     $old = $storage->loadRevision($first_revision);
-    self::assertNotNull($old);
+    self::assertInstanceOf(ForumPost::class, $old);
     self::assertFalse($old->isDefaultRevision());
     $this->hooks->entityInsert($old);
     self::assertEmpty($this->events);

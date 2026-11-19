@@ -1,0 +1,12 @@
+<div{{ attributes.addClass('views-display') }}>
+  {% if attachment_before %}<div class="views-display__attachment">{{ attachment_before }}</div>{% endif %}
+  {% if title %}<div class="views-display__title">{{ title }}</div>{% endif %}
+  {% if header %}<div class="views-display__header">{{ header }}</div>{% endif %}
+  {% if exposed %}<div class="views-display__exposed">{{ exposed }}</div>{% endif %}
+  {% if rows %}<div class="views-display__rows">{{ rows }}</div>{% endif %}
+  {% if empty %}<div class="views-display__empty">{{ empty }}</div>{% endif %}
+  {% if pager %}<div class="views-display__pager">{{ pager }}</div>{% endif %}
+  {% if more %}<div class="views-display__more">{{ more }}</div>{% endif %}
+  {% if footer %}<div class="views-display__footer">{{ footer }}</div>{% endif %}
+  {% if attachment_after %}<div class="views-display__attachment">{{ attachment_after }}</div>{% endif %}
+</div>

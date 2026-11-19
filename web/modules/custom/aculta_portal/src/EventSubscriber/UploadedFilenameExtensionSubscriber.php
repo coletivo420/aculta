@@ -7,7 +7,8 @@ namespace Drupal\aculta_portal\EventSubscriber;
 use Drupal\Core\File\Event\FileUploadSanitizeNameEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/** Canonicalizes the extension case after Drupal's configured filename cleanup. */
+/**
+ * Canonicalizes the extension case after Drupal's configured filename cleanup. */
 final class UploadedFilenameExtensionSubscriber implements EventSubscriberInterface {
 
   /**
@@ -26,7 +27,8 @@ final class UploadedFilenameExtensionSubscriber implements EventSubscriberInterf
     ];
   }
 
-  /** Lowercases only the final extension; Core still validates it afterwards. */
+  /**
+   * Lowercases only the final extension; Core still validates it afterwards. */
   public function lowercaseExtension(FileUploadSanitizeNameEvent $event): void {
     $filename = $event->getFilename();
     $extension = pathinfo($filename, PATHINFO_EXTENSION);

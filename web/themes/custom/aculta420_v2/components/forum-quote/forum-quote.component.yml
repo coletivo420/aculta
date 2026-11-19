@@ -1,0 +1,48 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Citação (quote)
+description: Citação de uma publicação do fórum, com aspas em destaque, identificação do autor e faixas de acento nas laterais.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    theme:
+      type: string
+      title: Tema
+      enum: [light, dark]
+      default: light
+      description: "dark aplica os tokens de modo escuro somente a este cartão."
+    density:
+      type: string
+      title: Densidade
+      enum: [default, compact]
+      default: default
+      description: "compact: versão para celular (menos espaçamento, estatísticas em grade)."
+    accent_side:
+      type: string
+      title: Lado da faixa de acento
+      enum: [start, end]
+      default: start
+      description: "start: padrão, faixa à esquerda. end: espelhado, faixa do lado oposto."
+    author_name:
+      type: [string, 'null']
+      title: Autor citado
+      description: Nome do autor original mostrado na identificação da citação.
+    timestamp:
+      type: [string, 'null']
+      title: Data da postagem original
+      description: Data já formatada da publicação citada, mostrada ao lado do autor.
+      default: null
+    avatar:
+      type: [string, 'null']
+      title: Mídia do avatar do autor citado (markup da imagem)
+      description: Markup de imagem confiável já renderizado, sem sanitização pelo componente. Null/empty usa o slot avatar_media; sem mídia nos dois contratos, o SDC avatar deixa o quadro vazio e não gera iniciais.
+      default: null
+slots:
+  avatar_media:
+    title: Mídia do avatar do autor citado
+    description: Render array do sistema de avatar do ACULTA (AvatarResolver/Avatar Pool); sem mídia, a forma fica vazia.
+  content:
+    title: Conteúdo
+    description: Texto citado.

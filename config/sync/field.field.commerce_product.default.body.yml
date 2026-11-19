@@ -6,7 +6,7 @@ dependencies:
     - commerce_product.commerce_product_type.default
     - field.storage.commerce_product.body
   module:
-    - text
+    - text_with_summary
 _core:
   default_config_hash: qaw_-7RjuDqZ6ysM0sqX7hyzsbjVlvrLRxklB0lHHy8
 id: commerce_product.default.body

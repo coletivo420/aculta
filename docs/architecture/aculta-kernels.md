@@ -9,7 +9,7 @@ A plataforma ACULTA é monolíngue em português do Brasil (`pt_BR`; código Dru
 ## Camadas e fontes de verdade
 
 1. **Drupal Core e contrib** são as fontes de verdade para Node, Comment, User, Profile, Media, File, Group, Views, Workflows, Message e demais entidades/infraestruturas. Não duplicar storage.
-2. **Kernel ACULTA** é o conjunto de serviços transversais e contratos comuns: `aculta_portal` (integração e política multidomínio), `aculta_user` (identidade, perfis e cartões), `aculta_image` (pipeline, otimização, deduplicação e remoção segura de imagens), `aculta_document_viewer` (leitura de arquivos conforme fases efetivamente implantadas), `aculta_messenger` (experiência de mensagens e avisos, sobre entidades contrib) e `aculta_mail_confirmer`/`aculta_mail_confirmer_user` (confirmação de e-mail/conta). Consultar o Runtime para distinguir migrações planejadas de módulos já habilitados.
+2. **Kernel ACULTA** é o conjunto de serviços transversais e contratos comuns: `aculta_portal` (integração e política multidomínio), `aculta_user` (identidade, perfis e cartões), `aculta_image` (pipeline, otimização, deduplicação e remoção segura de imagens), `aculta_document_viewer` (leitura de arquivos conforme fases efetivamente implantadas), `aculta_messenger` (experiência de mensagens e avisos, sobre entidades contrib) e `aculta_mail_confirmer` (confirmação de e-mail/conta). Consultar o Runtime para distinguir migrações planejadas de módulos já habilitados.
 3. **Subkernels funcionais reutilizáveis**: `aculta_forum` para experiência de discussões e moderação contextual; `aculta_gallery` para álbuns, referências de Media e experiência de galeria. São independentes da Revista e do Studio. Usam serviços do Kernel ACULTA e Core/contrib.
 4. **Consumidores funcionais**: `aculta_magazine` (Revista), Wiki (Node/Taxonomy/Views existentes), `aculta_lms`/Group, Projetos do domínio principal e futuro `aculta_eventos`. Consomem seletivamente kernel e subkernels, mas preservam dados, acesso e regras de seu contexto.
 5. **`aculta_studio` (submódulo existente; contratos multi-experiência em expansão)**: espaço de trabalho frontend por abas para autores, editores, moderadores e educadores. Agrega formulários, Views, operações e filas autorizadas, sem se tornar dono dos conteúdos, permissões, discussões ou galerias.
@@ -48,7 +48,7 @@ Novos serviços transversais e adaptações devem ter um dono único, contrato d
 | Kernel | `aculta_image` | Upload, transformações, compressão, variantes, deduplicação e limpeza de imagens. |
 | Kernel | `aculta_document_viewer` | Leitura autorizada de PDF/DOCX/planilhas conforme implementação real; arquivos pertencem a Media/File. |
 | Kernel | `aculta_messenger` | Experiência de mensagens, avisos e notificações; Private Message/Message continuam fontes de verdade. |
-| Kernel | `aculta_mail_confirmer` e `aculta_mail_confirmer_user` | Confirmação de e-mail e integração com contas; não concedem privilégios de publicação. |
+| Kernel | `aculta_mail_confirmer` | Confirmação de e-mail e integração com contas de usuário (submódulo `aculta_mail_confirmer_user` fundido); não concede privilégios de publicação. |
 | Subkernel | `aculta_forum` | Discussões públicas próprias e contratos reutilizados em comentários/discussões contextuais de outros módulos. |
 | Subkernel | `aculta_gallery` | Álbuns próprios, associação de Media e experiências reutilizáveis de galeria; processamento pertence a Image. |
 | Consumidor | `aculta_magazine` | Publicações, categorias, SEO e fluxo editorial da Revista; Gallery/Forum são fornecedores externos. |
@@ -57,7 +57,7 @@ Novos serviços transversais e adaptações devem ter um dono único, contrato d
 | Consumidor | Projetos (`node.type.project`) | Conteúdo do domínio principal; pode referenciar galerias e publicações. |
 | Consumidor futuro | `aculta_eventos` | Eventos próprios; não criar dados de evento em Magazine. |
 | Ferramenta | `aculta_studio` (planejado) | Painel frontend por abas; opera serviços dos proprietários, não armazena versões paralelas. |
-| Visual | `aculta420` | SDC, UI Patterns, UI Styles, Twig, CSS e tokens. |
+| Visual | `aculta420_v2` | SDC, UI Patterns, UI Styles, Twig, CSS nativo e tokens semânticos (sem Bootstrap). |
 
 ## Matriz de consumo transversal
 

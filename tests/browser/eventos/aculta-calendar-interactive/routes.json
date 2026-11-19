@@ -1,0 +1,10 @@
+{
+  "front": "aculta-calendar-interactive",
+  "purpose": "eventos",
+  "origin_env": "CALENDAR_HOST",
+  "source": "tests/browser/eventos/aculta-calendar-interactive/README.md (rota pública /calendario/interativo)",
+  "public_routes": [
+    { "path": "/calendario/interativo" }
+  ],
+  "notes": "Defina CALENDAR_HOST=https://aculta.toca.net.br (purpose main, servido pelo host principal)."
+}

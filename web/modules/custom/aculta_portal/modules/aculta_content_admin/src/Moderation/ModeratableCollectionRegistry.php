@@ -37,7 +37,7 @@ final class ModeratableCollectionRegistry {
     'aculta_messenger.admin_persistent_notices' => 'Avisos — persistentes',
     'aculta_linkweed.dashboard' => 'ACULTA Links — micropáginas e destinos',
     'aculta_faq.admin' => 'FAQ — perguntas e blocos editoriais',
-    'aculta_ugc.admin_reports' => 'Denúncias de conteúdo (UGC) — moderação unificada',
+    'aculta_cgu.admin_reports' => 'Denúncias de conteúdo (UGC) — moderação unificada',
     'aculta_user.ownership_claims' => 'Pessoas — pedidos de reivindicação de posse',
     'aculta_events.admin_organization_suggestions' => 'Eventos — propostas de organizações',
     'aculta_events.admin_location_contributions' => 'Eventos — propostas de Locais',
@@ -53,7 +53,7 @@ final class ModeratableCollectionRegistry {
   /**
    * Returns only collections whose native route access is allowed.
    *
-   * @return array{collections: list<array{label: string, route: string, parameters: array, access: \Drupal\Core\Access\AccessResultInterface, cache_tags: list<string>}>, cacheability: \Drupal\Core\Cache\CacheableMetadata}
+   * @return array{collections: list<array{label: string, route: string, parameters: array<string, mixed>, access: \Drupal\Core\Access\AccessResultInterface, cache_tags: list<string>}>, cacheability: \Drupal\Core\Cache\CacheableMetadata}
    *   Accessible links and cache metadata, including denied candidates.
    */
   public function forAccount(AccountInterface $account): array {
@@ -92,7 +92,7 @@ final class ModeratableCollectionRegistry {
   /**
    * Adds one native route candidate to the accessible collection list.
    *
-   * @param list<array{label: string, route: string, parameters: array, access: \Drupal\Core\Access\AccessResultInterface, cache_tags: list<string>}> $collections
+   * @param list<array{label: string, route: string, parameters: array<string, mixed>, access: \Drupal\Core\Access\AccessResultInterface, cache_tags: list<string>}> $collections
    *   Collections visible to this account.
    * @param \Drupal\Core\Cache\CacheableMetadata $cacheability
    *   Metadata from every evaluated route, including denials.
@@ -100,7 +100,7 @@ final class ModeratableCollectionRegistry {
    *   Route name to check.
    * @param string $label
    *   Human-readable collection label.
-   * @param array $parameters
+   * @param array<string, mixed> $parameters
    *   Route parameters.
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Account to check.
@@ -133,29 +133,42 @@ final class ModeratableCollectionRegistry {
   private function viewCandidates(CacheableMetadata $cacheability): array {
     $candidates = [];
     foreach ($this->entityTypeManager->getStorage('view')->loadMultiple() as $view) {
-      if (!$view instanceof View || !$view->status()) {
+      if (!$view->status()) {
         continue;
       }
       $base_table = $view->get('base_table');
-      $base = $this->viewsData->get($base_table)['table']['entity type'] ?? NULL;
+      if (!is_string($base_table) || $base_table === '') {
+        continue;
+      }
+      $viewsTableData = $this->viewsData->get($base_table);
+      $tableData = is_array($viewsTableData['table'] ?? NULL) ? $viewsTableData['table'] : [];
+      $base = $tableData['entity type'] ?? NULL;
       if (!is_string($base) || $base === 'user' || !$this->isContentEntityType($base)) {
         continue;
       }
 
-      foreach ($view->get('display') as $display_id => $display) {
-        if (($display['display_plugin'] ?? NULL) !== 'page') {
+      $displays = $view->get('display');
+      if (!is_array($displays)) {
+        continue;
+      }
+      foreach ($displays as $display_id => $display) {
+        if (!is_array($display) || ($display['display_plugin'] ?? NULL) !== 'page') {
           continue;
         }
-        $path = ltrim((string) ($display['display_options']['path'] ?? ''), '/');
+        $dispOptions = is_array($display['display_options'] ?? NULL) ? $display['display_options'] : [];
+        $path = ltrim(is_string($dispOptions['path'] ?? NULL) ? $dispOptions['path'] : '', '/');
         if (!str_starts_with($path, 'painel-administrativo/')) {
           continue;
         }
-        $route = "view.{$view->id()}.{$display_id}";
-        $display_title = trim((string) ($display['display_title'] ?? ''));
-        $label = $display_title === '' ? (string) $view->label() : $view->label() . ' — ' . $display_title;
+        $displayIdStr = (string) $display_id;
+        $route = "view.{$view->id()}.{$displayIdStr}";
+        $display_title = trim(is_string($display['display_title'] ?? NULL) ? $display['display_title'] : '');
+        $viewLabel = (string) $view->label();
+        $label = $display_title === '' ? $viewLabel : $viewLabel . ' — ' . $display_title;
+        /** @var list<string> $tags */
         $tags = $view->getCacheTags();
         $cacheability->addCacheableDependency($view);
-        $candidates[] = ['route' => $route, 'label' => (string) $label, 'cache_tags' => $tags];
+        $candidates[] = ['route' => $route, 'label' => $label, 'cache_tags' => $tags];
       }
     }
     return $candidates;

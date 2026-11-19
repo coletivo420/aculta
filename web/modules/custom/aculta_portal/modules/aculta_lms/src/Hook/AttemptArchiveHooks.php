@@ -23,7 +23,8 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Captures deleted ACULTA answers and renders protected attempt history. */
+/**
+ * Captures deleted ACULTA answers and renders protected attempt history. */
 final class AttemptArchiveHooks {
 
   public function __construct(
@@ -36,6 +37,9 @@ final class AttemptArchiveHooks {
     private readonly TranslationInterface $translation,
   ) {}
 
+  /**
+   * Arquiva a resposta ACULTA antes de ela ser excluída.
+   */
   #[Hook('entity_predelete')]
   public function entityPredelete(EntityInterface $entity): void {
     if ($entity instanceof AnswerEntity) {
@@ -43,6 +47,9 @@ final class AttemptArchiveHooks {
     }
   }
 
+  /**
+   * Remove os registros de tentativa do grupo de curso ou do usuário excluído.
+   */
   #[Hook('entity_delete')]
   public function entityDelete(EntityInterface $entity): void {
     if ($entity instanceof GroupInterface && $entity->bundle() === 'lms_course') {
@@ -54,6 +61,9 @@ final class AttemptArchiveHooks {
     }
   }
 
+  /**
+   * Arquiva a versão anterior da resposta antes de ela ser salva.
+   */
   #[Hook('entity_presave')]
   public function entityPresave(EntityInterface $entity): void {
     if ($entity instanceof AnswerEntity) {
@@ -61,6 +71,19 @@ final class AttemptArchiveHooks {
     }
   }
 
+  /**
+   * Controla o acesso ao histórico de tentativas arquivadas.
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entidade cujo acesso está sendo verificado.
+   * @param string $operation
+   *   Operação de acesso solicitada.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta que solicita o acesso.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Resultado do acesso.
+   */
   #[Hook('entity_access')]
   public function attemptArchiveAccess(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult {
     if (!$entity instanceof AttemptArchive) {
@@ -76,7 +99,11 @@ final class AttemptArchiveHooks {
         }
         return $result;
       }
-      $course = $this->entityTypeManager->getStorage('group')->load($entity->get('group_id')->value);
+      $groupId = self::storageId($entity->get('group_id')->value);
+      if ($groupId === NULL) {
+        return AccessResult::forbidden()->addCacheableDependency($entity);
+      }
+      $course = $this->entityTypeManager->getStorage('group')->load($groupId);
       if (!$course instanceof GroupInterface) {
         return AccessResult::forbidden()->addCacheableDependency($entity);
       }
@@ -87,7 +114,9 @@ final class AttemptArchiveHooks {
           ->addCacheTags(['group_relationship_list:plugin:group_membership:group:' . $course->id()])
           ->cachePerUser();
       }
-      $permissions = (string) $account->id() === (string) $entity->get('uid')->value
+      $accountId = self::entityIdString($account->id());
+      $archiveUserId = self::entityIdString($entity->get('uid')->value);
+      $permissions = $accountId !== '' && $archiveUserId !== '' && $accountId === $archiveUserId
         ? ['take course']
         : ['grade students'];
       return GroupAccessResult::allowedIfHasGroupPermissions($course, $account, $permissions)
@@ -98,6 +127,19 @@ final class AttemptArchiveHooks {
     return AccessResult::forbidden()->addCacheableDependency($entity);
   }
 
+  /**
+   * Nega a criação de registros de tentativa por qualquer pessoa.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta que solicita a criação.
+   * @param array<array-key, mixed> $context
+   *   Contexto da operação de criação.
+   * @param string|null $entityBundle
+   *   Bundle da entidade, quando aplicável.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Resultado do acesso.
+   */
   #[Hook('entity_create_access')]
   public function attemptArchiveCreateAccess(AccountInterface $account, array $context, ?string $entityBundle): AccessResult {
     if (($context['entity_type_id'] ?? NULL) !== 'aculta_lms_attempt_archive') {
@@ -106,6 +148,18 @@ final class AttemptArchiveHooks {
     return AccessResult::forbidden()->cachePerUser();
   }
 
+  /**
+   * Acrescenta o histórico de tentativas à exibição completa da resposta.
+   *
+   * @param array<array-key, mixed> $build
+   *   Render array da resposta, alterado no lugar.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entidade exibida.
+   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+   *   Display de exibição em uso.
+   * @param string $view_mode
+   *   Modo de exibição solicitado.
+   */
   #[Hook('entity_view')]
   public function attemptArchiveView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
     if (!$entity instanceof AnswerEntity || $view_mode !== 'full') {
@@ -131,27 +185,34 @@ final class AttemptArchiveHooks {
         default => $this->translation->translate('Tentativa reiniciada'),
       };
       $rows[] = [
-        ['data' => ['#plain_text' => $this->dateFormatter->format((int) $record->get('answered')->value, 'short')]],
+          ['data' => ['#plain_text' => $this->dateFormatter->format(self::integerValue($record->get('answered')->value), 'short')]],
         ['data' => ['#plain_text' => $event_label]],
         ['data' => ['#plain_text' => $record->get('evaluated')->value
-          ? $this->translation->translate('Avaliada: @score de @maximum pontos', [
-            '@score' => $record->get('score_precise')->value ?? $record->get('score')->value,
-            '@maximum' => $record->get('max_score')->value,
-          ])
-          : $this->translation->translate('Aguardando avaliação do educador')]],
-        ['data' => ['#plain_text' => $this->answerText($record->get('answer_data')->value)]],
+            ? $this->translation->translate('Avaliada: @score de @maximum pontos', [
+              '@score' => self::translationArgument($record->get('score_precise')->value ?? $record->get('score')->value),
+              '@maximum' => self::translationArgument($record->get('max_score')->value),
+            ])
+            : $this->translation->translate('Aguardando avaliação do educador')]],
+        ['data' => ['#plain_text' => $this->answerText(self::stringValue($record->get('answer_data')->value))]],
       ];
-      $comments = Json::decode((string) $record->get('answer_comments')->value) ?: [];
+      $decodedComments = Json::decode(self::stringValue($record->get('answer_comments')->value));
+      $comments = is_array($decodedComments) ? $decodedComments : [];
       foreach ($comments as $comment) {
-        $author_type = ($comment['author_type'] ?? '') === 'student' ? 'estudante' : 'educador';
+        if (!is_array($comment)) {
+          continue;
+        }
+        $author_type = self::stringValue($comment['author_type'] ?? NULL) === 'student' ? 'estudante' : 'educador';
+        $created = self::integerValue($comment['created'] ?? NULL);
+        $author = $comment['author'] ?? $this->translation->translate('educador');
+        $body = self::stringValue($comment['body'] ?? NULL);
         $rows[] = [
-          ['data' => ['#plain_text' => $this->dateFormatter->format((int) ($comment['created'] ?? 0), 'short')]],
+          ['data' => ['#plain_text' => $this->dateFormatter->format($created, 'short')]],
           ['data' => ['#plain_text' => $this->translation->translate('Comentário de @author (@type)', [
-            '@author' => $comment['author'] ?? $this->translation->translate('educador'),
+            '@author' => self::translationArgument($author),
             '@type' => $this->translation->translate($author_type),
           ])]],
           ['data' => ['#plain_text' => '']],
-          ['data' => ['#plain_text' => \strip_tags((string) ($comment['body'] ?? ''))]],
+          ['data' => ['#plain_text' => \strip_tags($body)]],
         ];
       }
     }
@@ -178,14 +239,26 @@ final class AttemptArchiveHooks {
     ];
   }
 
+  /**
+   * Extrai o texto legível dos dados JSON de uma resposta.
+   *
+   * @param string $json
+   *   Dados JSON da resposta arquivada.
+   *
+   * @return string
+   *   Texto sem marcação HTML.
+   */
   private function answerText(string $json): string {
     $data = Json::decode($json);
+    if (!is_array($data)) {
+      return is_scalar($data) ? \strip_tags((string) $data) : '';
+    }
     $answer = $data['answer'] ?? $data;
     if (\is_string($answer)) {
       return \strip_tags($answer);
     }
     if (!\is_array($answer)) {
-      return (string) $answer;
+      return \is_scalar($answer) ? \strip_tags((string) $answer) : '';
     }
 
     $parts = [];
@@ -198,6 +271,55 @@ final class AttemptArchiveHooks {
       }
     }
     return \implode(' / ', $parts);
+  }
+
+  /**
+   * Reads a storage ID only when the value has an accepted scalar shape.
+   */
+  private static function storageId(mixed $value): int|string|null {
+    if (is_int($value)) {
+      return $value > 0 ? $value : NULL;
+    }
+    return is_string($value) && $value !== '' ? $value : NULL;
+  }
+
+  /**
+   * Converts a validated storage ID to its persisted string representation.
+   */
+  private static function entityIdString(mixed $value): string {
+    $id = self::storageId($value);
+    return $id === NULL ? '' : (string) $id;
+  }
+
+  /**
+   * Converts a known scalar value to plain text.
+   */
+  private static function stringValue(mixed $value): string {
+    return is_scalar($value) ? (string) $value : '';
+  }
+
+  /**
+   * Converts an integer value, defaulting malformed data to zero.
+   */
+  private static function integerValue(mixed $value): int {
+    if (is_int($value)) {
+      return $value;
+    }
+    if (is_string($value)) {
+      $integer = filter_var($value, FILTER_VALIDATE_INT);
+      return $integer === FALSE ? 0 : $integer;
+    }
+    return 0;
+  }
+
+  /**
+   * Narrows a translation argument to a supported scalar or stringable value.
+   */
+  private static function translationArgument(mixed $value): bool|float|int|string|\Stringable {
+    if (is_scalar($value)) {
+      return $value;
+    }
+    return $value instanceof \Stringable ? $value : '';
   }
 
 }

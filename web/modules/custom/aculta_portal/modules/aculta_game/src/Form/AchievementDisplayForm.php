@@ -18,8 +18,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class AchievementDisplayForm extends FormBase {
 
   public function __construct(
-    private readonly AchievementPresentation $presentation,
-    private readonly AccountProxyInterface $account,
+    protected readonly AchievementPresentation $presentation,
+    protected readonly AccountProxyInterface $account,
   ) {}
 
   /**
@@ -38,12 +38,22 @@ final class AchievementDisplayForm extends FormBase {
 
   /**
    * Build the current account achievement display preferences.
+   *
+   * @param array<string, mixed> $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   *
+   * @return array<string, mixed>
+   *   The form structure.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     if (!$this->account->isAuthenticated()) {
       throw new AccessDeniedHttpException();
     }
+    /** @var array{hide_all?: bool, email_notifications?: bool, items?: array<string, array{hidden?: bool, highlight?: bool, weight?: int}>} $preferences */
     $preferences = $this->presentation->preferences((int) $this->account->id());
+    /** @var array<string, bool> $earned */
     $earned = $this->presentation->earnedIds((int) $this->account->id());
     $form['intro'] = ['#plain_text' => $this->t('Suas conquistas são públicas por padrão. Escolha quais mostrar e destacar. Um perfil privado mantém todas privadas. Os detalhes de cursos e pedidos continuam privados.')];
     $form['hide_all'] = [
@@ -58,51 +68,55 @@ final class AchievementDisplayForm extends FormBase {
       '#default_value' => !empty($preferences['email_notifications']),
     ];
     $form['items'] = ['#type' => 'container', '#tree' => TRUE];
-    foreach ($this->presentation->definitions() as $id => $definition) {
-      $choice = $preferences['items'][$id] ?? [];
-      $form['items'][$id] = [
+    /** @var array<string, array{label: string|\Drupal\Core\StringTranslation\TranslatableMarkup, description?: string, triggers?: array<int|string, string>, enabled?: bool, image_uuid?: string, image?: string}> $definitions */
+    $definitions = $this->presentation->definitions();
+    foreach ($definitions as $id => $definition) {
+      $idStr = (string) $id;
+      $choice = $preferences['items'][$idStr] ?? [];
+      $form['items'][$idStr] = [
         '#type' => 'details',
         '#title' => (string) $definition['label'],
         '#open' => TRUE,
       ];
-      $form['items'][$id]['image'] = $this->presentation->imageForDefinition($definition, TRUE, (string) $id);
-      $form['items'][$id]['status'] = [
+      $form['items'][$idStr]['image'] = $this->presentation->imageForDefinition($definition, TRUE, $idStr);
+      $form['items'][$idStr]['status'] = [
         '#type' => 'container',
         'text' => [
-          '#plain_text' => isset($earned[$id])
+          '#plain_text' => isset($earned[$idStr])
             ? $this->t('Conquistada')
             : $this->t('Ainda não conquistada'),
         ],
       ];
       if (!empty($definition['description'])) {
-        $form['items'][$id]['description'] = [
+        $form['items'][$idStr]['description'] = [
           '#type' => 'container',
-          'text' => ['#plain_text' => $definition['description']],
+          'text' => ['#plain_text' => (string) $definition['description']],
         ];
       }
-      $criteria = array_map(static fn (string $trigger): string => AchievementDefinitions::TRIGGERS[$trigger] ?? $trigger, $definition['triggers'] ?? []);
-      $form['items'][$id]['criteria'] = [
+      $triggers = is_array($definition['triggers'] ?? NULL) ? $definition['triggers'] : [];
+      $criteria = array_map(static fn (string $trigger): string => AchievementDefinitions::TRIGGERS[$trigger] ?? $trigger, $triggers);
+      $form['items'][$idStr]['criteria'] = [
         '#type' => 'container',
         'label' => ['#plain_text' => $this->t('Como conquistar')],
         'text' => ['#plain_text' => implode(' · ', $criteria)],
       ];
       if (empty($definition['enabled'])) {
-        $form['items'][$id]['unavailable'] = [
+        $form['items'][$idStr]['unavailable'] = [
           '#type' => 'container',
           'text' => ['#plain_text' => $this->t('Indisponível para novas concessões')],
         ];
       }
-      $form['items'][$id]['show'] = [
+      $form['items'][$idStr]['show'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Exibir quando conquistada'),
         '#default_value' => empty($choice['hidden']),
       ];
-      $form['items'][$id]['highlight'] = [
+      $form['items'][$idStr]['highlight'] = [
         '#type' => 'checkbox',
         '#title' => $this->t('Exibir em destaque'),
         '#default_value' => !empty($choice['highlight']),
       ];
-      $form['items'][$id]['weight'] = [
+      $form['items'][$idStr]['weight'] = [
         '#type' => 'number',
         '#title' => $this->t('Ordem de exibição'),
         '#description' => $this->t('Números menores aparecem primeiro. Os destaques vêm antes dos demais.'),
@@ -114,6 +128,9 @@ final class AchievementDisplayForm extends FormBase {
     }
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar exibição das conquistas')];
+    if (!isset($form['#cache']) || !is_array($form['#cache'])) {
+      $form['#cache'] = [];
+    }
     $form['#cache']['contexts'] = ['user'];
     $form['#cache']['max-age'] = 0;
     return $form;
@@ -121,18 +138,27 @@ final class AchievementDisplayForm extends FormBase {
 
   /**
    * Save the current account achievement display preferences.
+   *
+   * @param array<string, mixed> $form
+   *   An associative array containing the structure of the form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     if (!$this->account->isAuthenticated()) {
       throw new AccessDeniedHttpException();
     }
     $items = [];
-    foreach ($this->presentation->definitions() as $id => $definition) {
-      $row = $form_state->getValue(['items', $id], []);
-      $items[$id] = [
+    /** @var array<string, mixed> $definitions */
+    $definitions = $this->presentation->definitions();
+    foreach ($definitions as $id => $definition) {
+      $idStr = (string) $id;
+      $rawValue = $form_state->getValue(['items', $idStr], []);
+      $row = is_array($rawValue) ? $rawValue : [];
+      $items[$idStr] = [
         'hidden' => empty($row['show']),
         'highlight' => !empty($row['highlight']),
-        'weight' => (int) ($row['weight'] ?? 0),
+        'weight' => isset($row['weight']) && is_numeric($row['weight']) ? (int) $row['weight'] : 0,
       ];
     }
     $this->presentation->savePreferences((int) $this->account->id(), [

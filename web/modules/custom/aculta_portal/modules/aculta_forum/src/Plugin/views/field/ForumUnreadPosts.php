@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Plugin\views\field;
 use Drupal\aculta_forum\Service\ForumPostThreadBuilder;
 use Drupal\aculta_forum\Service\ForumPostUnreadManager;
 use Drupal\Core\Link;
+use Drupal\Component\Render\MarkupInterface;
 use Drupal\Core\Url;
 use Drupal\views\Attribute\ViewsField;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
@@ -25,20 +26,36 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
    *
    * @var array<int, array{count: int, post_id: int, page: int}>
    */
-  private array $unreadByTopic = [];
+  protected array $unreadByTopic = [];
 
+  /**
+   * Constructs a ForumUnreadPosts object.
+   *
+   * @param array<string, mixed> $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\aculta_forum\Service\ForumPostUnreadManager $unreadManager
+   *   The forum post unread manager.
+   * @param \Drupal\aculta_forum\Service\ForumPostThreadBuilder $threadBuilder
+   *   The forum post thread builder.
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly ForumPostUnreadManager $unreadManager,
-    private readonly ForumPostThreadBuilder $threadBuilder,
+    protected readonly ForumPostUnreadManager $unreadManager,
+    protected readonly ForumPostThreadBuilder $threadBuilder,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -65,9 +82,22 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
    * {@inheritdoc}
    */
   public function preRender(&$values): void {
+    // The displayed count depends on each visitor's History records.
+    if ($this->view !== NULL) {
+      if (!isset($this->view->element['#cache']) || !is_array($this->view->element['#cache'])) {
+        $this->view->element['#cache'] = [];
+      }
+      if (!isset($this->view->element['#cache']['contexts']) || !is_array($this->view->element['#cache']['contexts'])) {
+        $this->view->element['#cache']['contexts'] = [];
+      }
+      $this->view->element['#cache']['contexts'][] = 'user';
+    }
     $topicIds = [];
     foreach ($values as $row) {
-      $topicIds[] = (int) $this->getValue($row, 'nid');
+      $val = $this->getValue($row, 'nid');
+      if (is_numeric($val)) {
+        $topicIds[] = (int) $val;
+      }
     }
     $this->unreadByTopic = $this->unreadManager->getUnreadByTopics($topicIds);
   }
@@ -75,11 +105,12 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $values): array {
-    $topicId = (int) $this->getValue($values, 'nid');
+  public function render(ResultRow $values): MarkupInterface|string {
+    $val = $this->getValue($values, 'nid');
+    $topicId = is_numeric($val) ? (int) $val : 0;
     $unread = $this->unreadByTopic[$topicId] ?? NULL;
     if ($unread === NULL || $unread['count'] < 1) {
-      return [];
+      return '';
     }
 
     $query = $this->threadBuilder->getTopicPagerQuery($unread['page']);
@@ -88,7 +119,7 @@ final class ForumUnreadPosts extends FieldPluginBase implements ContainerFactory
       'fragment' => 'forum-post-' . $unread['post_id'],
     ]);
     $label = $this->formatPlural($unread['count'], '@count nova publicação', '@count novas publicações');
-    return Link::fromTextAndUrl($label, $url)->toRenderable();
+    return Link::fromTextAndUrl($label, $url)->toString();
   }
 
 }

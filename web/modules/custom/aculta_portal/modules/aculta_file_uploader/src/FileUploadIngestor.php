@@ -33,10 +33,23 @@ final class FileUploadIngestor {
   /**
    * Ingere uma imagem raster no destino resolvido por tokens.
    *
+   * @param \Drupal\file\Upload\UploadedFileInterface $uploadedFile
+   *   Arquivo enviado a ingerir.
+   * @param string $destinationPattern
+   *   Padrão do destino com tokens.
    * @param array<string, mixed> $tokenData
    *   Dados de contexto para os tokens do destino.
    * @param string|null $tokenType
    *   Tipo de token do Core usado pelo destino.
+   * @param int|null $maxBytes
+   *   Tamanho máximo em bytes, ou NULL para o padrão da política.
+   * @param string|null $extensions
+   *   Extensões permitidas separadas por espaço, ou NULL para o padrão.
+   * @param array $allowedMimes
+   *   Tipos MIME aceitos para o conteúdo, quando houver restrição.
+   *
+   * @return \Drupal\file\Upload\FileUploadResult
+   *   Resultado da ingestão do arquivo.
    *
    * @throws \InvalidArgumentException
    *   Quando o arquivo não atende à política, ao conteúdo ou ao destino.

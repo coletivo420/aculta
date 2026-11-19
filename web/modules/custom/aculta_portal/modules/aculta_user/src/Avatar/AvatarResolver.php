@@ -7,6 +7,7 @@ namespace Drupal\aculta_user\Avatar;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\file\FileInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -22,7 +23,7 @@ use Drupal\user\UserInterface;
  * O NULL abaixo é contrato defensivo do teste sem pool: o site não tem estado
  * "sem acervo" e a inicial do nome nunca é usada.
  */
-final class AvatarResolver {
+class AvatarResolver {
 
   public function __construct(
     private readonly ImageRenderer $imageRenderer,
@@ -43,7 +44,7 @@ final class AvatarResolver {
    * @param array<string, string> $attributes
    *   Atributos extras do elemento de avatar (por exemplo, data-portal-ui).
    *
-   * @return array|null
+   * @return array<string, mixed>|null
    *   Imagem cacheável ou NULL quando a fonte não está disponível.
    */
   public function build(?UserInterface $account, string $name, bool $showPhoto, CacheableMetadata $cacheability, array $attributes = []): ?array {
@@ -55,17 +56,17 @@ final class AvatarResolver {
 
     if ($account !== NULL && $account->hasField('user_picture') && !$account->get('user_picture')->isEmpty()) {
       $file = $account->get('user_picture')->entity;
-      if ($file !== NULL) {
+      if ($file instanceof FileInterface) {
         $uri = $file->getFileUri();
         // Avatars from the institutional pool are not personal photos. The
         // member explicitly selected them in the photo editor, so keep that
         // selection consistent in public profiles and author cards even when
         // public-photo opt-in is off. Uploaded personal photos remain private.
-        $isPoolAvatar = str_starts_with($uri, AvatarPool::DIRECTORY . '/');
-        if ($showPhoto || $isPoolAvatar) {
+        $isPoolAvatar = is_string($uri) && str_starts_with($uri, AvatarPool::DIRECTORY . '/');
+        if (is_string($uri) && ($showPhoto || $isPoolAvatar)) {
           $cacheability->addCacheableDependency($file);
           $avatar = $this->imageRenderer->build('avatar', $uri, $name, ['loading' => 'lazy']);
-          if ($avatar !== NULL) {
+          if (is_array($avatar)) {
             // Keep this renderable independently cache-safe. Consumers also
             // receive the metadata through $cacheability, but must not have to
             // remember to bubble it for the canonical picture.
@@ -73,8 +74,10 @@ final class AvatarResolver {
               ->addCacheableDependency($account)
               ->addCacheableDependency($file)
               ->applyTo($avatar);
+            /** @var array<string, mixed> $avatar */
+            return $avatar;
           }
-          return $avatar;
+          return NULL;
         }
       }
     }
@@ -99,6 +102,7 @@ final class AvatarResolver {
     if ($account !== NULL) {
       CacheableMetadata::createFromObject($account)->applyTo($avatar);
     }
+    /** @var array<string, mixed> $avatar */
     return $avatar;
   }
 

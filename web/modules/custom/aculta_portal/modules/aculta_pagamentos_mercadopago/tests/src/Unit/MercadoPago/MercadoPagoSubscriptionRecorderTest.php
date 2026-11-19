@@ -20,6 +20,7 @@ use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\state_machine\Plugin\Field\FieldType\StateItemInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /**
@@ -60,8 +61,9 @@ final class MercadoPagoSubscriptionRecorderTest extends UnitTestCase {
    * @param mixed $criacao_pendente
    *   Marcador de tentativa remota de criação ainda sem conciliação.
    *
-   * @return array{0: MercadoPagoSubscriptionRecorder, 1: MockObject, 2: MockObject, 3: MockObject, 4: LockBackendInterface}
-   *   Gravador, pedido, armazém de pagamentos, estado e lock.
+   * @return array{0: MercadoPagoSubscriptionRecorder, 1: MockObject&OrderInterface, 2: MockObject&EntityStorageInterface, 3: MockObject&StateItemInterface, 4: MockObject&LockBackendInterface, 5: MockObject&MercadoPagoRecurrenceService, 6: MockObject&LoggerChannelInterface, 7: MockObject&EntityStorageInterface}
+   *   Gravador, pedido, armazém de pagamentos, estado, lock, recorrência,
+   *   logger e armazém de pedidos.
    */
   private function contexto(string $tipo, string $estado, array $transicoes, array $existentes, bool $lock_disponivel = TRUE, string $status_assinatura = '', ?int $versao_assinatura = NULL, string $assinatura_id = 'pre-9', mixed $criacao_pendente = NULL): array {
     $item = $this->createMock(StateItemInterface::class);

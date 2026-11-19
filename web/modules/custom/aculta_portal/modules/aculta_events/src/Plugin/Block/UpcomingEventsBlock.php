@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Plugin\Block;
 
 use Drupal\aculta_events\Catalogue\EventCatalogue;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Block\Attribute\Block;
 use Drupal\Core\Block\BlockBase;
@@ -45,9 +46,9 @@ final class UpcomingEventsBlock extends BlockBase implements ContainerFactoryPlu
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly EventCatalogue $catalogue,
-    private readonly DomainPurposeManager $purposes,
-    private readonly TimeInterface $time,
+    protected readonly EventCatalogue $catalogue,
+    protected readonly DomainSiteManager $purposes,
+    protected readonly TimeInterface $time,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
@@ -61,7 +62,7 @@ final class UpcomingEventsBlock extends BlockBase implements ContainerFactoryPlu
       $plugin_id,
       $plugin_definition,
       $container->get('aculta_events.catalogue'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('datetime.time'),
     );
   }
@@ -84,21 +85,23 @@ final class UpcomingEventsBlock extends BlockBase implements ContainerFactoryPlu
       }
       $slug = (string) $evento->get('field_slug')->value;
       $url = $slug !== ''
-        ? $this->purposes->environmentPathUrl('eventos', '/eventos/' . $slug)
+        ? $this->purposes->environmentPathUrl(SiteKey::Eventos, '/eventos/' . $slug)
         : NULL;
       $itens[] = [
-        '#type' => 'link',
-        '#title' => $rotulo,
-        '#url' => $url ?? $evento->toUrl('canonical'),
-        '#attributes' => ['data-portal-ui' => 'events-upcoming-link'],
+        'title' => $rotulo,
+        'url' => ($url ?? $evento->toUrl('canonical'))->toString(),
       ];
     }
 
     return [
-      '#theme' => 'item_list',
-      '#items' => $itens,
-      '#empty' => $this->t('Nenhum evento publicado no momento.'),
-      '#attributes' => ['data-portal-ui' => 'events-upcoming-block'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:events-upcoming-block',
+      '#props' => [
+        // O block label visível fornece o heading para esta instância.
+        'title' => '',
+        'items' => $itens,
+        'empty_text' => (string) $this->t('Nenhum evento publicado no momento.'),
+      ],
       '#cache' => [
         // A visibilidade de eventos de turma do LMS depende da conta.
         'contexts' => ['user', 'url.site'],

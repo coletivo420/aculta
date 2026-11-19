@@ -1,0 +1,19 @@
+{% set title_level = title_level|default('h2') %}
+{% if title_level not in ['h1', 'h2'] %}
+  {% set title_level = 'h2' %}
+{% endif %}
+<section class="revista-listing">
+  <header class="revista-listing__header">
+    {% if eyebrow %}<p class="revista-listing__eyebrow">{{ eyebrow }}</p>{% endif %}
+    {{ include('aculta420_v2:heading', {
+      text: title,
+      level: title_level == 'h1' ? 1 : 2,
+      style: 'stripe'
+    }, with_context = false) }}
+  </header>
+  {% if has_items %}
+    <div class="revista-listing__items">
+      {% block items %}{% endblock %}
+    </div>
+  {% endif %}
+</section>

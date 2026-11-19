@@ -87,9 +87,16 @@ final class SecretsRevealTest extends UnitTestCase {
     $build = $controller->show('BREVO_API_KEY');
     $this->assertSame(['max-age' => 0, 'contexts' => ['user']], $build['#cache']);
     $html = (string) Markup::create(htmlspecialchars(self::FAKE, ENT_QUOTES));
-    $this->assertSame($html, (string) $build['value']['text']['#value']);
-    $this->assertStringContainsString('&lt;ficticio&gt;', (string) $build['value']['text']['#value']);
-    $this->assertStringNotContainsString('<ficticio>', (string) $build['value']['text']['#value']);
+    $slots = is_array($build['#slots'] ?? NULL) ? $build['#slots'] : [];
+    $content = is_array($slots['content'] ?? NULL) ? $slots['content'] : [];
+    $valueContainer = is_array($content['value'] ?? NULL) ? $content['value'] : [];
+    $text = is_array($valueContainer['text'] ?? NULL) ? $valueContainer['text'] : [];
+    $value = $text['#value'] ?? NULL;
+    $this->assertNotNull($value);
+    $valueStr = is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
+    $this->assertSame($html, $valueStr);
+    $this->assertStringContainsString('&lt;ficticio&gt;', $valueStr);
+    $this->assertStringNotContainsString('<ficticio>', $valueStr);
   }
 
 }

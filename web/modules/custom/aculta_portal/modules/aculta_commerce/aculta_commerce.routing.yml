@@ -6,7 +6,7 @@ aculta_commerce.green_stash:
   requirements:
     _permission: 'access aculta green stash'
   options:
-    _aculta_domain_purpose: shop
+    _aculta_site_key: shop
 
 aculta_commerce.green_stash_area:
   path: '/green-stash/{secao}'
@@ -17,7 +17,7 @@ aculta_commerce.green_stash_area:
     _permission: 'access aculta green stash'
     secao: 'visao-geral|produtos|envios'
   options:
-    _aculta_domain_purpose: shop
+    _aculta_site_key: shop
 
 aculta_commerce.green_stash_shipment_transition:
   path: '/green-stash/envios/{aculta_shipment}/transicao/{transition}'
@@ -29,7 +29,7 @@ aculta_commerce.green_stash_shipment_transition:
     aculta_shipment: '[1-9][0-9]*'
     transition: '[a-z_]+'
   options:
-    _aculta_domain_purpose: shop
+    _aculta_site_key: shop
 
 aculta_commerce.green_stash_product_detail:
   path: '/green-stash/produtos/{produto}'
@@ -40,7 +40,7 @@ aculta_commerce.green_stash_product_detail:
     _permission: 'access aculta green stash'
     produto: '[1-9][0-9]*'
   options:
-    _aculta_domain_purpose: shop
+    _aculta_site_key: shop
 
 aculta_commerce.green_stash_product_create:
   path: '/green-stash/produtos/novo'
@@ -50,4 +50,4 @@ aculta_commerce.green_stash_product_create:
   requirements:
     _permission: 'access aculta green stash'
   options:
-    _aculta_domain_purpose: shop
+    _aculta_site_key: shop

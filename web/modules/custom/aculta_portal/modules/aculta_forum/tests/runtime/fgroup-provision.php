@@ -22,11 +22,14 @@ declare(strict_types=1);
 
 use Drupal\aculta_forum\Hook\RestrictedForumAccessHooks;
 use Drupal\group\Entity\Group;
+use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
+use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\group\PermissionScopeInterface;
 use Drupal\node\Entity\Node;
 use Drupal\node\NodeAccessRebuild;
+use Drupal\node\NodeInterface;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 
@@ -39,7 +42,8 @@ const FGROUP_PREFIX = 'fgroup_teste_';
 const FGROUP_TOPIC_TITLE = '[TESTE F-GROUP] Tópico restrito';
 const FGROUP_PUBLIC_TOPIC_TITLE = '[TESTE F-GROUP] Tópico público';
 
-$mode = $extra[0] ?? 'provision';
+$extra_args = isset($extra) && is_array($extra) ? $extra : [];
+$mode = $extra_args[0] ?? 'provision';
 $entity_type_manager = \Drupal::entityTypeManager();
 $config_factory = \Drupal::configFactory();
 
@@ -144,10 +148,9 @@ $relationship_types = $relationship_type_storage->loadByProperties([
   'group_type' => FGROUP_TYPE,
   'plugin_id' => 'group_node:aculta_forum_topic',
 ]);
-if ($relationship_types === []) {
-  $relationship_type_storage->save(
-    $relationship_type_storage->createFromPlugin($group_type, 'group_node:aculta_forum_topic'),
-  );
+if ($relationship_types === [] && $relationship_type_storage instanceof GroupRelationshipTypeStorageInterface) {
+  $created = $relationship_type_storage->createFromPlugin($group_type, 'group_node:aculta_forum_topic');
+  $relationship_type_storage->save($created);
 }
 
 $role = GroupRole::load(FGROUP_ROLE) ?? GroupRole::create([
@@ -166,7 +169,8 @@ $groups = $entity_type_manager->getStorage('group')->loadByProperties([
   'type' => FGROUP_TYPE,
   'label' => '[TESTE F-GROUP] Associados',
 ]);
-$group = reset($groups) ?: Group::create([
+$first_group = reset($groups);
+$group = $first_group instanceof GroupInterface ? $first_group : Group::create([
   'type' => FGROUP_TYPE,
   'label' => '[TESTE F-GROUP] Associados',
   'uid' => 1,
@@ -183,7 +187,8 @@ $ids = [];
 foreach ($accounts as $suffix => $data) {
   $name = FGROUP_PREFIX . $suffix;
   $matches = \Drupal::entityTypeManager()->getStorage('user')->loadByProperties(['name' => $name]);
-  $user = $matches ? reset($matches) : User::create([
+  $first_user = $matches ? reset($matches) : NULL;
+  $user = $first_user instanceof User ? $first_user : User::create([
     'name' => $name,
     'mail' => $name . '@example.invalid',
     'status' => 1,
@@ -205,15 +210,15 @@ $topic_ids = $topic_storage->getQuery()
   ->condition('type', 'aculta_forum_topic')
   ->condition('title', FGROUP_TOPIC_TITLE)
   ->execute();
-$topic = $topic_ids === []
-  ? Node::create([
-    'type' => 'aculta_forum_topic',
-    'title' => FGROUP_TOPIC_TITLE,
-    'status' => 1,
-    'uid' => 1,
-    'field_domain_source' => ['target_id' => 'forum_aculta_org'],
-  ])
-  : $topic_storage->load(reset($topic_ids));
+$first_topic_id = reset($topic_ids);
+$loaded_topic = $first_topic_id !== FALSE ? $topic_storage->load($first_topic_id) : NULL;
+$topic = $loaded_topic instanceof NodeInterface ? $loaded_topic : Node::create([
+  'type' => 'aculta_forum_topic',
+  'title' => FGROUP_TOPIC_TITLE,
+  'status' => 1,
+  'uid' => 1,
+  'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+]);
 $topic->save();
 $ids['topic'] = (int) $topic->id();
 
@@ -222,15 +227,15 @@ $public_ids = $topic_storage->getQuery()
   ->condition('type', 'aculta_forum_topic')
   ->condition('title', FGROUP_PUBLIC_TOPIC_TITLE)
   ->execute();
-$public_topic = $public_ids === []
-  ? Node::create([
-    'type' => 'aculta_forum_topic',
-    'title' => FGROUP_PUBLIC_TOPIC_TITLE,
-    'status' => 1,
-    'uid' => 1,
-    'field_domain_source' => ['target_id' => 'forum_aculta_org'],
-  ])
-  : $topic_storage->load(reset($public_ids));
+$first_public_id = reset($public_ids);
+$loaded_public = $first_public_id !== FALSE ? $topic_storage->load($first_public_id) : NULL;
+$public_topic = $loaded_public instanceof NodeInterface ? $loaded_public : Node::create([
+  'type' => 'aculta_forum_topic',
+  'title' => FGROUP_PUBLIC_TOPIC_TITLE,
+  'status' => 1,
+  'uid' => 1,
+  'field_domain_source' => ['target_id' => 'forum_aculta_org'],
+]);
 $public_topic->save();
 $ids['public_topic'] = (int) $public_topic->id();
 

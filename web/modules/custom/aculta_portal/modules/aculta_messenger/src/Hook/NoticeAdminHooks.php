@@ -14,6 +14,9 @@ final class NoticeAdminHooks {
 
   /**
    * Implements hook_menu_links_discovered_alter().
+   *
+   * @param array<mixed> $links
+   *   Dados de entrada (links).
    */
   #[Hook('menu_links_discovered_alter', order: Order::Last)]
   public function moveSiteAlertMenuLink(array &$links): void {
@@ -36,6 +39,9 @@ final class NoticeAdminHooks {
 
   /**
    * Implements hook_toolbar_alter().
+   *
+   * @param array<mixed> $items
+   *   Dados de entrada (items).
    */
   #[Hook('toolbar_alter')]
   public function removeCommunityAnnouncementsTab(array &$items): void {

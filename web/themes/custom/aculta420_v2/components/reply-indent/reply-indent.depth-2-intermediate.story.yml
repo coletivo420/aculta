@@ -1,0 +1,9 @@
+name: Resposta intermediária nível 2
+description: Resposta aninhada que mantém o recuo do nível sem repetir a seta de início.
+component: aculta420_v2:reply-indent
+props:
+  depth: 2
+  first: false
+slots:
+  content:
+    '#markup': '<p>Exemplo de resposta intermediária dentro do nível 2.</p>'

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_index\Provider;
 
+use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 
 /**
@@ -112,6 +113,17 @@ final class ContentIndexProviderRegistry {
       throw new \InvalidArgumentException(sprintf('Unknown ACULTA Content Index provider: %s.', $providerId));
     }
     return $this->providers[$providerId];
+  }
+
+  /**
+   * Gets a provider that exposes the access-site contract.
+   */
+  public function access(string $providerId): ContentIndexAccessContextProviderInterface {
+    $provider = $this->get($providerId);
+    if (!$provider instanceof ContentIndexAccessContextProviderInterface) {
+      throw new \InvalidArgumentException(sprintf('Provider %s does not expose the access-site contract.', $providerId));
+    }
+    return $provider;
   }
 
   /**

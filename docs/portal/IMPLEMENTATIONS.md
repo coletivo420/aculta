@@ -21,7 +21,7 @@ Ao adicionar um serviço helper ou uma integração aplicada pelo Portal:
 3. Registre ID, rótulo, efeito/resumo e documento em `PortalHelperRegistry` e/ou `PortalImplementationRegistry`.
 4. Documente fonte de verdade, limite Core/contrib/Portal/tema, acesso/cache/Domain e configuração/testes pertinentes no documento específico.
 5. Atualize README e changelog do Portal e mantenha este índice e os guardrails coerentes.
-6. Execute `php scripts/validate-aculta-portal-drupal11.php` e as verificações específicas da mudança.
+6. Execute `php scripts/validate-aculta-portal-drupal12.php` e as verificações específicas da mudança.
 
 O gate deve falhar quando tags e metadados divergirem, quando a documentação registrada não existir ou quando o painel deixar de renderizar os dois inventários.
 

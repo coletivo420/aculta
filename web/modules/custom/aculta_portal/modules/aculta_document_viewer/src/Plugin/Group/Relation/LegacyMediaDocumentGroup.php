@@ -26,6 +26,9 @@ final class LegacyMediaDocumentGroup extends GroupRelationBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function defaultConfiguration(): array {
     $configuration = parent::defaultConfiguration();
@@ -35,6 +38,9 @@ final class LegacyMediaDocumentGroup extends GroupRelationBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function calculateDependencies(): array {
     return [

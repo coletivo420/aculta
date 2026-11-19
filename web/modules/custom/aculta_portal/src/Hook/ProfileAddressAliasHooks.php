@@ -10,7 +10,9 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Hook\Attribute\Hook;
 
 /**
- * Expõe o endereço do perfil também como `address`, para o contrib do Mercado Pago (campo computado, sem armazenamento).
+ * Expõe o endereço do perfil também como `address`.
+ *
+ * Usado pelo contrib do Mercado Pago. É campo computado, sem armazenamento.
  */
 final class ProfileAddressAliasHooks {
 
@@ -21,8 +23,8 @@ final class ProfileAddressAliasHooks {
    *   The entity type.
    * @param string $bundle
    *   The bundle.
-   * @param array $base_field_definitions
-   *   The base field definitions of the entity type.
+   * @param array<mixed> $base_field_definitions
+   *   Dados de entrada (base_field_definitions).
    *
    * @return array<string, \Drupal\Core\Field\FieldDefinitionInterface>
    *   The extra field definitions for the bundle.

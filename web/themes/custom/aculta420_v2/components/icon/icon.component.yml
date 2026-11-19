@@ -1,0 +1,71 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Ícone Phosphor / ACULTA
+variants:
+  thin:
+    title: Fino
+  light:
+    title: Leve
+  regular:
+    title: Regular
+  bold:
+    title: Negrito
+  fill:
+    title: Preenchido
+  duotone:
+    title: Duotone
+description: Ícone vetorial Phosphor (regular e duotone) ou ACULTA Brócolis (seis pesos).
+status: stable
+group: Elementos básicos
+props:
+  type: object
+  additionalProperties: false
+  anyOf:
+    - required: [name]
+    - required: [icon]
+  properties:
+    name:
+      type: string
+      title: Nome do ícone
+      description: Nome do arquivo local Phosphor ou aculta-brocolis. Use icon para selecionar uma definição UI Icons em UI Patterns.
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+    icon:
+      type: object
+      title: Ícone UI Icons
+      description: Ícone escolhido por UI Patterns; quando presente, substitui o nome de arquivo local.
+      additionalProperties: false
+      properties:
+        pack_id:
+          type: string
+          title: Pacote de ícones
+          enum: [aculta_phosphor_regular, aculta_phosphor_duotone, aculta_brocolis]
+        icon_id:
+          type: string
+          title: Ícone
+          minLength: 1
+        settings:
+          type: object
+          title: Configurações do pacote
+      required: [pack_id, icon_id]
+    variant:
+      type: string
+      title: Peso visual
+      description: Peso do ícone; para Phosphor o template reduz as opções a regular ou duotone, enquanto o ícone ACULTA oferece os seis pesos.
+      enum: [thin, light, regular, bold, fill, duotone]
+      default: duotone
+    size:
+      type: string
+      title: Tamanho
+      description: Classe de tamanho aplicada ao ícone.
+      enum: [sm, md, lg, xl, bar]
+      default: md
+    color:
+      type: string
+      title: Token CSS ou cor hexadecimal
+      description: Valor CSS permitido para a cor primária, como var(--token), hexadecimal ou currentColor.
+      pattern: '^(var\(--[a-z][a-z0-9-]*\)|#[0-9A-Fa-f]{3,8}|currentColor)$'
+    label:
+      type: string
+      title: Nome acessível
+      description: Quando informado, o ícone é informativo e recebe role img e este nome. Sem label, permanece decorativo e oculto de tecnologia assistiva.
+      minLength: 1
+      maxLength: 128

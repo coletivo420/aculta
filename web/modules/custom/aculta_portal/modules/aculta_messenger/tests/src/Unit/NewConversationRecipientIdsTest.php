@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Unit;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Access\AccessResult;
 use Drupal\aculta_messenger\Form\NewConversationForm;
 use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
@@ -17,19 +18,20 @@ use Drupal\Core\Form\FormState;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
-use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageBanManagerInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageServiceInterface;
+use Drupal\aculta_messenger\Mapper\PrivateMessageMapperInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\user\UserInterface;
 use Drupal\user\UserDataInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
-use Psr\Container\ContainerInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -322,7 +324,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     $sender = $this->user(42);
     $recipient = $this->user(84);
     $candidateThread = $this->createMock(PrivateMessageThreadInterface::class);
-    $candidateThread->method('getMembersId')->willReturn([42, 84]);
+    $candidateThread->method('getMemberIds')->willReturn([42, 84]);
     $state = (object) ['privacy' => NULL];
     $userData = $this->createMock(UserDataInterface::class);
     $userData->expects(self::exactly(2))->method('get')
@@ -359,7 +361,6 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     );
     $formState = new FormState();
     $anyErrors = new \ReflectionProperty(FormState::class, 'anyErrors');
-    $anyErrors->setAccessible(TRUE);
     $anyErrors->setValue(NULL, FALSE);
     $formState->set('pmt_entity', $candidateThread);
     $initialForm = [];
@@ -394,7 +395,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
     $identity = $this->createMock(PublicMemberIdentityInterface::class);
     $identity->method('publicDisplayName')->willReturn('membro');
     $candidateThread = $this->createMock(PrivateMessageThreadInterface::class);
-    $candidateThread->method('getMembersId')->willReturn([42, 84]);
+    $candidateThread->method('getMemberIds')->willReturn([42, 84]);
     $state = (object) ['blocked' => FALSE];
     $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
     $banManager->method('isBanned')->willReturn(FALSE);
@@ -445,7 +446,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
 
     self::assertSame(
       'Não foi possível iniciar uma conversa com este destinatário.',
-      (string) $formState->getErrors()['members'],
+      $formState->getErrors()['members'] instanceof TranslatableMarkup ? $formState->getErrors()['members']->getUntranslatedString() : $formState->getErrors()['members'],
     );
   }
 
@@ -508,7 +509,6 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
    */
   private function formStateWithoutErrors(): FormState {
     $anyErrors = new \ReflectionProperty(FormState::class, 'anyErrors');
-    $anyErrors->setAccessible(TRUE);
     $anyErrors->setValue(NULL, FALSE);
     return new FormState();
   }
@@ -516,7 +516,7 @@ final class NewConversationRecipientIdsTest extends UnitTestCase {
   /**
    * Creates a member account stub.
    */
-  private function user(int $uid): UserInterface {
+  private function user(int $uid): UserInterface&MockObject {
     $user = $this->createMock(UserInterface::class);
     $user->method('id')->willReturn((string) $uid);
     return $user;

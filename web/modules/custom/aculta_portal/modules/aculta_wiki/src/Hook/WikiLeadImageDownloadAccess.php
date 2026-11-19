@@ -78,7 +78,6 @@ final class WikiLeadImageDownloadAccess {
     }
   }
 
-
   /**
    * Libera a prévia só a quem pode editar um verbete (qualquer status) que usa o arquivo.
    */
@@ -104,4 +103,5 @@ final class WikiLeadImageDownloadAccess {
     }
     return -1;
   }
+
 }

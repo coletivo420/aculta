@@ -58,11 +58,13 @@ class ShippingCalculatorHooks {
   }
 
   /**
-   * Adds shipping details to the AJAX cart panel variables.
+   * Refreshes the stored quote after the cart has been rebuilt and saved.
+   *
+   * The cart summary recalculates against current cart lines when a postal
+   * code is known. Keep this domain action independent from SDC rendering.
    */
-  #[Hook('preprocess_aculta_portal_cart_panel')]
-  public function preprocessCartPanel(array &$variables): void {
-    $variables['shipping'] = $this->summary();
+  public function refreshAfterCartUpdate(): void {
+    $this->summary();
   }
 
   /**

@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Form;
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 
 /**
@@ -30,10 +33,10 @@ final class AccountBioForm extends FormBase {
   public const MAX_LENGTH = 500;
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
-    private readonly AccountProxyInterface $currentUserService,
-    private readonly CsrfTokenGenerator $csrfToken,
-    private readonly ?RouteMatchInterface $currentRouteMatch = NULL,
+    protected readonly EntityTypeManagerInterface $entityTypeManagerService,
+    protected readonly AccountProxyInterface $currentUserService,
+    protected readonly CsrfTokenGenerator $csrfToken,
+    protected readonly ?RouteMatchInterface $currentRouteMatch = NULL,
   ) {}
 
   /**
@@ -57,26 +60,54 @@ final class AccountBioForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
+   *
+   * @return array<array-key, mixed>
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $profile = $this->profile();
     $studio = $this->isStudioEditor();
+    $actionUrl = Url::fromRoute($studio ? 'aculta_studio.profile_bio' : 'aculta_user.bio_form');
     // Studio has a full-page Form API fallback. Existing Minha Conta modals
     // retain their owner AJAX/JSON behavior and unchanged submission route.
-    $form['#action'] = Url::fromRoute($studio ? 'aculta_studio.profile_bio' : 'aculta_user.bio_form')->toString();
-    $form['#attributes']['data-portal-ui'] = $studio ? 'studio-bio-form' : 'account-bio-dialog';
-    if (!$studio) {
-      $form['#attributes']['data-aculta-bio-form'] = '';
-      $form['#attached']['library'][] = 'aculta_user/account-bio-form';
-      $form['#attached']['drupalSettings']['acultaUser']['bioSave'] = [
+    $form['#action'] = $actionUrl->toString();
+    // Atributos e anexos são lidos e gravados de volta como arrays, sem escrita aninhada em valores não tipados.
+    if ($studio) {
+      $form['#attributes'] = array_merge(is_array($form['#attributes'] ?? NULL) ? $form['#attributes'] : [], ['data-portal-ui' => 'studio-bio-form']);
+    }
+    if ($this->isHtmxRequest()) {
+      (new Htmx())
+        ->post($actionUrl)
+        ->select('#' . Html::getId($this->getFormId()))
+        ->swap('outerHTML')
+        ->onlyMainContent()
+        ->applyTo($form);
+    }
+    elseif (!$studio) {
+      $attributes = is_array($form['#attributes'] ?? NULL) ? $form['#attributes'] : [];
+      $attributes['data-aculta-bio-form'] = '';
+      $form['#attributes'] = $attributes;
+      $attached = is_array($form['#attached'] ?? NULL) ? $form['#attached'] : [];
+      $libraries = is_array($attached['library'] ?? NULL) ? $attached['library'] : [];
+      $libraries[] = 'aculta_user/account-bio-form';
+      $attached['library'] = $libraries;
+      $settings = is_array($attached['drupalSettings'] ?? NULL) ? $attached['drupalSettings'] : [];
+      $acultaUser = is_array($settings['acultaUser'] ?? NULL) ? $settings['acultaUser'] : [];
+      $acultaUser['bioSave'] = [
         'url' => Url::fromRoute('aculta_user.bio_save', [], ['query' => ['token' => $this->csrfToken->get('bio/salvar')]])->toString(),
       ];
+      $settings['acultaUser'] = $acultaUser;
+      $attached['drupalSettings'] = $settings;
+      $form['#attached'] = $attached;
     }
     $form['bio'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Bio'),
       '#description' => $this->t('Até @max caracteres. Aparece no seu perfil público quando você escolher exibi-la.', ['@max' => self::MAX_LENGTH]),
-      '#default_value' => $profile->hasField('field_bio') ? (string) $profile->get('field_bio')->value : '',
+      '#default_value' => $profile->hasField('field_bio') ? $this->textValue($profile->get('field_bio')->value) : '',
       '#rows' => 4,
     ];
     // Container comum, não "actions": o Drupal move os botões de form-actions para a barra do diálogo (proxies)
@@ -85,9 +116,13 @@ final class AccountBioForm extends FormBase {
     // Limpar antes de Salvar bio. É do tipo botão: o JS só esvazia o campo, sem enviar.
     if (!$studio) {
       $form['actions']['clear'] = [
-        '#type' => 'button',
-        '#value' => $this->t('Limpar'),
-        '#attributes' => ['data-aculta-bio-clear' => '', 'data-portal-ui' => 'button-secondary'],
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Limpar'),
+          'variant' => 'secondary',
+          'is_submit' => TRUE,
+        ],
+        '#attributes' => ['data-aculta-bio-clear' => ''],
         '#weight' => -1,
       ];
     }
@@ -100,25 +135,40 @@ final class AccountBioForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    if (mb_strlen(trim((string) $form_state->getValue('bio'))) > self::MAX_LENGTH) {
+    if (mb_strlen(trim($this->textValue($form_state->getValue('bio')))) > self::MAX_LENGTH) {
       $form_state->setErrorByName('bio', $this->t('A bio aceita até @max caracteres.', ['@max' => self::MAX_LENGTH]));
     }
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $profile = $this->profile();
     // Texto vazio grava vazio: a visão geral volta a mostrar o aviso padrão.
-    $profile->set('field_bio', trim((string) $form_state->getValue('bio')));
+    $profile->set('field_bio', trim($this->textValue($form_state->getValue('bio'))));
     $profile->save();
     $this->messenger()->addStatus($this->t('Bio salva.'));
-    $form_state->setRedirect($this->isStudioEditor()
+
+    $targetRoute = $this->isStudioEditor()
       ? 'aculta_studio.profile'
-      : 'aculta_portal.dashboard');
+      : 'aculta_portal.dashboard';
+
+    if ($this->isHtmxRequest()) {
+      $redirectUrl = Url::fromRoute($targetRoute)->toString();
+      $form_state->setResponse(new Response('', Response::HTTP_OK, ['HX-Redirect' => $redirectUrl]));
+      return;
+    }
+
+    $form_state->setRedirect($targetRoute);
   }
 
   /**
@@ -135,6 +185,13 @@ final class AccountBioForm extends FormBase {
     $storage = $this->entityTypeManagerService->getStorage('profile');
     $account = $this->currentUserService->getAccount();
     return PerfilDoPapel::obter($storage, $account);
+  }
+
+  /**
+   * Texto de um valor de formulário ou de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

@@ -3,6 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   module:
+    - aculta_editor
     - aculta_forum
     - editor
     - entity_embed
@@ -49,6 +50,12 @@ filters:
     provider: filter
     status: true
     weight: 15
+    settings: {  }
+  fluent_emoji:
+    id: fluent_emoji
+    provider: aculta_editor
+    status: true
+    weight: 25
     settings: {  }
   media_embed:
     id: media_embed

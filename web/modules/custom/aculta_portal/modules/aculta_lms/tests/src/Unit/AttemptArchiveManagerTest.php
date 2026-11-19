@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -15,15 +16,25 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_lms\AttemptArchiveManager;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
+use Drupal\Core\Field\FieldItemInterface;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
-/** Tests that ACULTA grading changes preserve prior attempts. */
+/**
+ * Tests that ACULTA grading changes preserve prior attempts. */
 #[Group('aculta_lms')]
 final class AttemptArchiveManagerTest extends UnitTestCase {
 
-  /** @var array<string, mixed> */
+  /**
+   * Valores capturados na criação da entidade de arquivo.
+   *
+   * @var array<array-key, mixed>
+   */
   private array $createdValues = [];
 
+  /**
+   * Confirma que a reavaliação arquiva a resposta anterior e a nota exata.
+   */
   public function testReevaluationArchivesPreviousAnswerAndExactScore(): void {
     $original = $this->buildAnswer(['answer' => 'Resposta original'], '80.25', 'graded');
     $updated = $this->buildAnswer(['answer' => 'Resposta original'], '90', 'graded');
@@ -35,12 +46,16 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     self::assertSame(80, $this->createdValues['score']);
     self::assertSame(80.25, $this->createdValues['score_precise']);
     self::assertSame(100, $this->createdValues['max_score']);
+    self::assertIsString($this->createdValues['answer_data']);
     self::assertSame(['answer' => 'Resposta original'], json_decode($this->createdValues['answer_data'], TRUE));
     self::assertSame('', $this->createdValues['course_status_id']);
     self::assertSame('', $this->createdValues['lesson_status_id']);
     $archive_entity->expects(self::never())->method('delete');
   }
 
+  /**
+   * Confirma que excluir uma tentativa arquiva o payload imutável e o contexto.
+   */
   public function testDeletingAttemptArchivesItsImmutablePayloadAndContext(): void {
     $answer = $this->buildAnswer(['answer' => 'Resposta da tentativa'], NULL, 'submitted');
     [$manager] = $this->managerForArchive();
@@ -61,6 +76,9 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     self::assertSame(0, $this->createdValues['max_score']);
   }
 
+  /**
+   * Confirma que uma nota inalterada não cria arquivo duplicado.
+   */
   public function testUnchangedGradeDoesNotCreateDuplicateArchive(): void {
     $answer = $this->buildAnswer(['answer' => 'Sem alterações'], '80', 'graded');
     $answer_storage = $this->createMock(EntityStorageInterface::class);
@@ -72,6 +90,9 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     $manager->archivePreviousAnswer($answer);
   }
 
+  /**
+   * Confirma que uma referência de atividade ausente ignora o arquivo e o histórico.
+   */
   public function testMissingActivityReferenceSkipsArchiveAndHistoryQuery(): void {
     $answer = $this->buildAnswer(['answer' => 'Sem atividade'], NULL, 'submitted');
     $activity_storage = $this->createMock(EntityStorageInterface::class);
@@ -83,13 +104,14 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     $manager = new AttemptArchiveManager($entity_type_manager, $this->createMock(AccountInterface::class), $this->buildTime());
 
     $manager->archiveAnswer($answer);
-    self::assertSame([], $manager->loadPreviousAttempts($answer, new \Drupal\Core\Cache\CacheableMetadata()));
+    self::assertSame([], $manager->loadPreviousAttempts($answer, new CacheableMetadata()));
   }
 
   /**
    * Creates the manager and captures the archive entity values.
    *
-   * @return array{0: AttemptArchiveManager, 1: EntityInterface}
+   * @return array{AttemptArchiveManager, EntityInterface&MockObject}
+   *   Gerenciador criado e entidade de arquivo simulada.
    */
   private function managerForArchive(?ContentEntityInterface $original = NULL): array {
     $archive_entity = $this->createMock(EntityInterface::class);
@@ -122,6 +144,17 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     ];
   }
 
+  /**
+   * Cria o gerenciador com storages simulados de resposta e arquivo.
+   *
+   * @param \Drupal\Core\Entity\EntityStorageInterface $answer_storage
+   *   Storage simulado das respostas.
+   * @param \Drupal\Core\Entity\EntityStorageInterface $archive_storage
+   *   Storage simulado dos arquivos.
+   *
+   * @return \Drupal\aculta_lms\AttemptArchiveManager
+   *   Gerenciador de arquivamento de tentativas.
+   */
   private function manager(EntityStorageInterface $answer_storage, EntityStorageInterface $archive_storage): AttemptArchiveManager {
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->method('getStorage')->willReturnMap([
@@ -131,12 +164,36 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     return new AttemptArchiveManager($entity_type_manager, $this->createMock(AccountInterface::class), $this->buildTime());
   }
 
+  /**
+   * Cria um storage de entidade que devolve a entidade para o ID informado.
+   *
+   * @param string $id
+   *   Identificador esperado na carga.
+   * @param \Drupal\Core\Entity\ContentEntityInterface $entity
+   *   Entidade devolvida pela carga.
+   *
+   * @return \Drupal\Core\Entity\EntityStorageInterface
+   *   Storage simulado.
+   */
   private function entityStorage(string $id, ContentEntityInterface $entity): EntityStorageInterface {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('load')->with($id)->willReturn($entity);
     return $storage;
   }
 
+  /**
+   * Monta uma entidade de resposta simulada.
+   *
+   * @param array<string, mixed> $data
+   *   Dados da resposta.
+   * @param string|null $score
+   *   Nota da resposta, ou NULL se não avaliada.
+   * @param string $state
+   *   Estado da resposta.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   Entidade de resposta simulada.
+   */
   private function buildAnswer(array $data, ?string $score, string $state): ContentEntityInterface {
     return $this->contentEntity('aculta_lms_answer', '21', [
       'activity_id' => '5',
@@ -148,6 +205,12 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     ], 'answer-uuid-21', FALSE);
   }
 
+  /**
+   * Monta uma entidade de atividade simulada.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   Entidade de atividade simulada.
+   */
   private function activity(): ContentEntityInterface {
     return $this->contentEntity('aculta_lms_activity', '5', [
       'lesson_id' => '3',
@@ -155,6 +218,12 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     ]);
   }
 
+  /**
+   * Monta uma entidade de aula simulada.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityInterface
+   *   Entidade de aula simulada.
+   */
   private function lesson(): ContentEntityInterface {
     return $this->contentEntity('aculta_lms_lesson', '3', [
       'course_id' => '7',
@@ -162,6 +231,12 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     ]);
   }
 
+  /**
+   * Monta um grupo de curso simulado.
+   *
+   * @return \Drupal\group\Entity\GroupInterface
+   *   Grupo de curso simulado.
+   */
   private function course(): GroupInterface {
     $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn('7');
@@ -169,7 +244,12 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     return $course;
   }
 
-  /** Creates a content entity double backed by simple scalar field lists. */
+  /**
+   * Creates a content entity double backed by simple scalar field lists.
+   *
+   * @param array<string, mixed> $values
+   *   Scalar entity field values.
+   */
   private function contentEntity(string $type, string $id, array $values, string $uuid = 'entity-uuid', bool $new = FALSE): ContentEntityInterface {
     $fields = [];
     foreach ($values as $name => $value) {
@@ -185,16 +265,40 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     return $entity;
   }
 
+  /**
+   * Cria um item de campo simulado com o valor informado.
+   *
+   * @param mixed $value
+   *   Valor armazenado no campo.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface<FieldItemInterface>
+   *   Item de campo simulado.
+   */
   private function valueField(mixed $value): FieldItemListInterface {
     return new class($value) extends FieldItemList {
 
-      public function __construct(private readonly mixed $fieldValue) {}
+      public function __construct(protected readonly mixed $fieldValue) {}
 
+      /**
+       * Informa se o valor do campo está vazio.
+       *
+       * @return bool
+       *   TRUE se o valor for NULL.
+       */
       public function isEmpty(): bool {
         return $this->fieldValue === NULL;
       }
 
-      public function __get($property_name) {
+      /**
+       * Devolve o valor do campo para a propriedade solicitada.
+       *
+       * @param string $property_name
+       *   Nome da propriedade solicitada.
+       *
+       * @return mixed
+       *   Valor da propriedade.
+       */
+      public function __get(mixed $property_name): mixed {
         if ($property_name === 'value') {
           return $this->fieldValue;
         }
@@ -204,6 +308,12 @@ final class AttemptArchiveManagerTest extends UnitTestCase {
     };
   }
 
+  /**
+   * Cria um serviço de tempo simulado com tempo fixo.
+   *
+   * @return \Drupal\Component\Datetime\TimeInterface
+   *   Serviço de tempo simulado.
+   */
   private function buildTime(): TimeInterface {
     $time = $this->createMock(TimeInterface::class);
     $time->method('getRequestTime')->willReturn(2000);

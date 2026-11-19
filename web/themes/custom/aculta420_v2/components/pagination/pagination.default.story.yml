@@ -1,0 +1,17 @@
+name: Paginação de resultados
+description: Paginação renderizada pelo SDC com página atual, links e estados acessíveis.
+props:
+  current_page: 2
+  total_pages: 5
+  links:
+    - label: Anterior
+      url: /painel-administrativo/aparencia/ui/components?page=1
+    - label: '1'
+      url: /painel-administrativo/aparencia/ui/components?page=1
+    - label: '2'
+      url: /painel-administrativo/aparencia/ui/components?page=2
+      is_current: true
+    - label: '3'
+      url: /painel-administrativo/aparencia/ui/components?page=3
+    - label: Próxima
+      url: /painel-administrativo/aparencia/ui/components?page=3

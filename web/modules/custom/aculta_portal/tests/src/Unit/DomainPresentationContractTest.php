@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_portal\Unit;
 
 use Drupal\aculta_portal\Presentation\DomainPresentation;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Template\Attribute;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -21,7 +22,7 @@ final class DomainPresentationContractTest extends UnitTestCase {
   private function presentation(): DomainPresentation {
     return new DomainPresentation(
       [
-        'purpose' => 'wiki',
+        'site_key' => 'wiki',
         'title' => 'Wiki420',
         'short_title' => 'Wiki',
         'home_url' => 'https://wiki420.example.invalid/',
@@ -31,7 +32,13 @@ final class DomainPresentationContractTest extends UnitTestCase {
         'brand_media' => NULL,
         'navigation' => NULL,
         'actions' => NULL,
-        'wiki_search' => NULL,
+        'wiki_search' => [
+          'preview' => [
+            '#props' => [
+              'attributes' => new Attribute(),
+            ],
+          ],
+        ],
         'showcase' => NULL,
       ],
       (new CacheableMetadata())
@@ -42,15 +49,34 @@ final class DomainPresentationContractTest extends UnitTestCase {
         'show_utility_bar' => TRUE,
         'links_page' => FALSE,
         'show_site_header' => TRUE,
+        'show_site_menu' => FALSE,
+      ],
+      [
+        [
+          'site_key' => 'main',
+          'title' => 'Portal ACULTA',
+          'url' => 'https://aculta.example.invalid/',
+          'current' => FALSE,
+        ],
       ],
     );
   }
 
   /**
-   * Ensures the neutral contract exposes only its three top-level sections.
+   * Ensures the neutral contract exposes only its four top-level sections.
    */
   public function testThemeArrayContainsOnlyIdentityRegionsAndLayout(): void {
-    $this->assertSame(['identity', 'regions', 'layout'], array_keys($this->presentation()->toThemeArray()));
+    $this->assertSame(['identity', 'regions', 'layout', 'domain_sites'], array_keys($this->presentation()->toThemeArray()));
+  }
+
+  /**
+   * Ensures the functional identity crosses the boundary under the new name.
+   */
+  public function testIdentityUsesSiteKeyWithoutPurposeAlias(): void {
+    $identity = $this->presentation()->toThemeArray()['identity'];
+    $this->assertIsArray($identity);
+    $this->assertSame('wiki', $identity['site_key']);
+    $this->assertArrayNotHasKey('purpose', $identity);
   }
 
   /**
@@ -58,8 +84,9 @@ final class DomainPresentationContractTest extends UnitTestCase {
    */
   public function testLayoutFlagsAreBooleanVisibilityOnly(): void {
     $layout = $this->presentation()->toThemeArray()['layout'];
+    $this->assertIsArray($layout);
     $this->assertSame(
-      ['institution_bar_account', 'show_utility_bar', 'links_page', 'show_site_header'],
+      ['institution_bar_account', 'show_utility_bar', 'links_page', 'show_site_header', 'show_site_menu'],
       array_keys($layout),
     );
     foreach ($layout as $flag) {
@@ -68,10 +95,13 @@ final class DomainPresentationContractTest extends UnitTestCase {
   }
 
   /**
-   * Ensures Portal objects never cross into the theme contract.
+   * Ensures only the Core Form API render helper crosses this contract.
    */
-  public function testThemeArrayHasNoObjects(): void {
-    $this->assertFalse($this->containsObject($this->presentation()->toThemeArray()));
+  public function testThemeArrayAllowsOnlyTheCoreAttributeRenderHelper(): void {
+    $this->assertSame(
+      ['regions.wiki_search.preview.#props.attributes' => Attribute::class],
+      $this->objectPaths($this->presentation()->toThemeArray()),
+    );
   }
 
   /**
@@ -90,18 +120,25 @@ final class DomainPresentationContractTest extends UnitTestCase {
   }
 
   /**
-   * Recursively detects objects in the serialized presentation array.
+   * Recursively collects objects and their paths in the presentation array.
+   *
+   * @param array<array-key, mixed> $data
+   *   Presentation values to inspect.
+   * @return array<string, class-string>
+   *   Object paths and their PHP classes.
    */
-  private function containsObject(array $data): bool {
-    foreach ($data as $value) {
+  private function objectPaths(array $data, string $path = ''): array {
+    $objects = [];
+    foreach ($data as $key => $value) {
+      $childPath = $path === '' ? (string) $key : $path . '.' . (string) $key;
       if (is_object($value)) {
-        return TRUE;
+        $objects[$childPath] = get_class($value);
       }
-      if (is_array($value) && $this->containsObject($value)) {
-        return TRUE;
+      elseif (is_array($value)) {
+        $objects += $this->objectPaths($value, $childPath);
       }
     }
-    return FALSE;
+    return $objects;
   }
 
 }

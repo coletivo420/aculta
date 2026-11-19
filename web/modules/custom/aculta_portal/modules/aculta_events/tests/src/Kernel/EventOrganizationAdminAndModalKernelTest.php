@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_events\Kernel;
 
-use Drupal\aculta_contributions\Service\ContributionStateMachine;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
-use Drupal\aculta_contributions\Adapter\ContributionAdapterRegistry;
+use Drupal\aculta_cgu\Service\ContributionStateMachine;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Adapter\ContributionAdapterRegistry;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_events\Service\OrganizationContributionEventQueue;
 use Drupal\aculta_events\Adapter\OrganizationContributionAdapter;
 use Drupal\aculta_events\Controller\EventAdminOverviewController;
@@ -18,8 +19,8 @@ use Drupal\aculta_events\Form\EventOrganizationModalForm;
 use Drupal\aculta_events\Form\EventOrganizationRecoveryForm;
 use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_ugc\Entity\UgcReport;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_user\Controller\OwnershipClaimAdminController;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -70,9 +71,8 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     'aculta_calendar',
     'aculta_maps',
     'aculta_user',
-    'aculta_ugc',
+    'aculta_cgu',
     'aculta_index',
-    'aculta_contributions',
     'aculta_events',
   ];
 
@@ -102,12 +102,11 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $loader->addPsr4('Drupal\\aculta_portal\\', $customRoot . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_image\\', $customRoot . '/modules/aculta_image/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_user\\', $customRoot . '/modules/aculta_user/src', TRUE);
-    $loader->addPsr4('Drupal\\aculta_ugc\\', $customRoot . '/modules/aculta_ugc/src', TRUE);
+    $loader->addPsr4('Drupal\\aculta_cgu\\', $customRoot . '/modules/aculta_cgu/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_index\\', $customRoot . '/modules/aculta_index/src', TRUE);
-    $loader->addPsr4('Drupal\\aculta_contributions\\', $customRoot . '/modules/aculta_contributions/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_events\\', $customRoot . '/modules/aculta_events/src', TRUE);
 
-    $container->register('aculta_portal.domain_purpose', DomainPurposeManager::class)
+    $container->register('aculta_portal.domain_site', DomainSiteManager::class)
       ->addArgument($this->createMock(EntityTypeManagerInterface::class))
       ->addArgument($this->createMock(DomainNegotiatorInterface::class))
       ->addArgument($this->createMock(ConfigFactoryInterface::class))
@@ -142,7 +141,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('aculta_org_member');
     $this->installEntitySchema('aculta_ownership_claim');
-    $this->installEntitySchema('aculta_ugc_report');
+    $this->installEntitySchema('aculta_cgu_report');
     $this->installSchema('aculta_index', [
       'aculta_index_generation',
       'aculta_index_state',
@@ -155,7 +154,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $this->installEntitySchema('aculta_event_location');
     $this->installEntitySchema('aculta_event_organization');
     $this->installEntitySchema('aculta_contribution');
-    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_contributions']);
+    $this->installConfig(['system', 'user', 'taxonomy', 'domain', 'aculta_cgu']);
 
     FieldStorageConfig::create([
       'entity_type' => 'profile',
@@ -177,7 +176,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     ]);
     $roleAdmin->grantPermission('administer aculta events');
     $roleAdmin->grantPermission('administer aculta claims');
-    $roleAdmin->grantPermission('moderar denuncias ugc');
+    $roleAdmin->grantPermission('moderar denuncias cgu');
     $roleAdmin->save();
 
     $this->adminUser = User::create([
@@ -211,7 +210,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $eventsDomain->method('id')->willReturn('eventos_aculta_org');
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturnCallback(fn() => (int) $this->container->get('current_user')->id() === (int) $this->editorUser->id() ? $eventsDomain : $mainDomain);
-    $this->container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $this->container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -329,7 +328,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     ])->save();
 
     // Adiciona denúncia UGC em org3.
-    UgcReport::create([
+    CguReport::create([
       'target_type' => 'aculta_event_organization',
       'target_id' => (int) $org3->id(),
       'uid' => (int) $this->commonUser->id(),
@@ -488,6 +487,8 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
       $this->container->get('aculta_events.permission_policy'),
       $this->container->get('aculta_user.organization_access_service'),
       $this->container->get('aculta_user.organization_membership_manager'),
+      $this->container->get('renderer'),
+      $this->container->get('aculta_events.route_context'),
     );
 
     // Passo 1: Busca por 'Esperança'.
@@ -557,8 +558,9 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $this->assertFalse($formState->hasAnyErrors());
 
     $modalForm->submitCreateOrganization($formBuild, $formState);
-    $ajaxResponse = $modalForm->ajaxCreateOrganization($formBuild, $formState);
-    $this->assertIsArray($ajaxResponse, 'A proposta mantém o modal aberto para mostrar o status.');
+    // A proposta mantém o modal aberto para mostrar o status: o envio marca
+    // rebuild e não define resposta HTMX.
+    $this->assertNull($formState->getResponse());
     $this->assertTrue($formState->get('proposal_submitted'));
     $this->assertNull($formState->get('selected_org_id'));
 
@@ -570,6 +572,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
       ->loadByProperties(['intent' => 'organization_create']);
     $this->assertCount(1, $proposals);
     $proposal = reset($proposals);
+    self::assertInstanceOf(Contribution::class, $proposal);
     $this->assertSame('submitted', $proposal->get('state')->value);
     $this->assertSame('Este coletivo precisa de um perfil para ser encontrado.', $proposal->get('rationale')->value);
     $this->assertSame('https://autonomo.org', $proposal->getPayload()['links']);
@@ -702,6 +705,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
     $proposals = $proposalStorage->loadByProperties(['intent' => 'organization_create']);
     $this->assertCount(1, $proposals);
     $proposal = reset($proposals);
+    self::assertInstanceOf(Contribution::class, $proposal);
     $this->assertSame('submitted', $proposal->get('state')->value);
     $this->assertSame('O coletivo precisa de um perfil público.', $proposal->get('rationale')->value);
 
@@ -715,7 +719,7 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
   private function createContributionModalForm(): EventOrganizationModalForm {
     $adapter = new OrganizationContributionAdapter(
       $this->container->get('entity_type.manager'),
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
       $this->container->get('aculta_events.permission_policy'),
       $this->container->get('lock'),
       $this->container->get('database'),
@@ -732,12 +736,15 @@ final class EventOrganizationAdminAndModalKernelTest extends KernelTestBase {
       $this->container->get('lock'),
       $this->container->get('database'),
       $this->container->get('config.factory'),
+      $this->container->get('logger.factory')->get('aculta_contributions'),
     );
     return new EventOrganizationModalForm(
       $this->container->get('entity_type.manager'),
       $this->container->get('aculta_events.permission_policy'),
       $this->container->get('aculta_user.organization_access_service'),
       $this->container->get('aculta_user.organization_membership_manager'),
+      $this->container->get('renderer'),
+      $this->container->get('aculta_events.route_context'),
       $this->container->get('aculta_user.ownership_claim_service'),
       $lifecycle,
       $adapter,

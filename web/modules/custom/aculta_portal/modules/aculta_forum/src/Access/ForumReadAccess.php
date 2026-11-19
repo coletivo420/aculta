@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Access;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -14,7 +14,7 @@ use Drupal\Core\Session\AccountInterface;
 final class ForumReadAccess {
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -22,7 +22,7 @@ final class ForumReadAccess {
    */
   public function access(AccountInterface $account): AccessResultInterface {
     $allowed = $account->isAuthenticated()
-      && $this->domainPurposeManager->getCurrentPurpose() === 'forum';
+      && $this->siteManager->getCurrentSiteKey()?->value === 'forum';
     return ($allowed ? AccessResult::allowed() : AccessResult::forbidden())
       ->addCacheContexts(['user', 'domain']);
   }

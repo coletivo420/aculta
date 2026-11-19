@@ -1,0 +1,47 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página de Conexões do Studio
+description: Página com duas caixas independentes para gerenciar conexões existentes e buscar novas conexões.
+group: Studio
+status: experimental
+props:
+  type: object
+  additionalProperties: false
+  required: [connections_title, search_title, search_input_placeholder, search_hint]
+  properties:
+    connections_title:
+      title: Título da lista de conexões
+      type: string
+      default: Suas conexões
+      description: Cabeçalho da seção que contém o filtro local e o slot connections_list.
+    search_title:
+      title: Título da busca de conexões
+      type: string
+      default: Buscar novas conexões
+      description: Cabeçalho da seção para pesquisar novas conexões.
+    filter_placeholder:
+      title: Texto de exemplo do filtro
+      type: string
+      default: Filtrar suas conexões...
+      description: Placeholder e nome acessível do campo que filtra a lista connections_list.
+    search_input_placeholder:
+      title: Texto de exemplo da busca
+      type: string
+      default: Digite o nome ou apelido...
+      description: Placeholder e nome acessível do campo para pesquisar novas conexões.
+    search_hint:
+      title: Orientação da busca
+      type: string
+      default: Digite pelo menos 3 caracteres para buscar.
+      description: Instrução apresentada quando não há conteúdo no slot search_results.
+    empty_connections_message:
+      title: Mensagem sem conexões
+      type: string
+      default: Você ainda não tem conexões.
+      description: Mensagem apresentada quando não há conteúdo no slot connections_list.
+slots:
+  connections_list:
+    title: Lista de conexões aceitas
+    description: Lista de conexões já aceitas pelo usuário.
+  search_results:
+    title: Resultados da busca de conexões
+    description: Resultados da pesquisa de novas conexões.

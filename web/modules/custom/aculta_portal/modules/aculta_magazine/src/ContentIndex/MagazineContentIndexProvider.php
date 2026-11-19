@@ -50,7 +50,7 @@ final class MagazineContentIndexProvider implements ContentIndexProviderInterfac
   /**
    * {@inheritdoc}
    */
-  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string {
     return $entity instanceof NodeInterface && $entity->bundle() === 'revista'
       ? 'magazine'
       : NULL;

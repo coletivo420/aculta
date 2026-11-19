@@ -11,7 +11,8 @@ use Drupal\Core\StringTranslation\TranslationInterface;
  * Confirmação de e-mail do cadastro simplificado (conta criada ao concluir uma compra).
  *
  * Diferente do pedido de confirmação de troca de e-mail: o texto diz que a confirmação leva à criação da senha.
- * `confirm_url` é o link de resposta com o hash da confirmação: é segredo, por isso não entra em logs (ver aculta_mailer).
+ * `confirm_url` é o link de resposta com o hash da confirmação: é segredo,
+ * por isso não entra em logs (ver aculta_mailer).
  */
 final class SimplifiedAccountConfirmationMailType implements MailTypeInterface {
 

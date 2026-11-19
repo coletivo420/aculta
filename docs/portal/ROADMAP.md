@@ -6,6 +6,22 @@
 
 # Roadmap do aculta_portal
 
+## UI Patterns 2 - otimização do catálogo universal (2026-11-10)
+
+[Plano consolidado UP-00 a UP-07](../architecture/ACULTA-UI-PATTERNS-OTIMIZACAO-UNIVERSAL.md).
+**Decisão obrigatória:** manter 100% dos SDCs internos, reutilizáveis e editoriais registrados no UI Patterns; otimizar descoberta, cache, execução de stories e prévias sob demanda, sem ocultar componentes. Auditoria estática detectou invalidação de cache de descoberta em preprocess, renderização antecipada de stories e verificação incorreta de AccessResult em prévias reais (SEC-01/P0). **Estado: planejamento, sem correção de código ou benchmark de Runtime nesta atualização.** A segurança da prévia é bloqueante antes de ampliar endpoints.
+
+
+## Domain Config e Layout de Blocos por domínio (2026-11-09)
+
+Habilitado no Runtime de desenvolvimento: `domain_config_ui`,
+`domain_config_entity_ui` (cobertura restrita a `block`), `domain_config_switcher`
+e a ponte `aculta_domain_config`. O posicionamento de blocos por domínio é
+editado no MAIN com o seletor `config_domain`; ver
+`docs/portal/domain-config/`. Pendências: importação de configuração em staging
+(TESTES.md, Teste G), desativação de bloco por domínio e criação de entidade de
+bloco exclusiva de domínio (não suportada).
+
 ## ADR-038 — mudança de caminhos das Suites (2026-10-30)
 
 Os caminhos públicos `/studio*` foram removidos; as rotas owner agora estão
@@ -46,7 +62,7 @@ P0–P10 e a lista antiga de prioridades de produto.
 Dívidas e pendências, com evidência, estão em [`docs/operations/DEBT-REGISTER.md`](../operations/DEBT-REGISTER.md).
 Este roadmap planeja as fases a partir desse registro. Não planeja lançamento 1.0.
 
-Referências: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md) (norma),
+Referências: [DRUPAL-12-STANDARDS.md](DRUPAL-12-STANDARDS.md) (norma),
 [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md) (fontes de verdade) e
 [RELEASES.md](../operations/RELEASES.md) (gates de release).
 
@@ -64,10 +80,10 @@ manifests, roadmaps dos módulos e atualizações posteriores para o estado vige
 - Tema: `aculta420` 0.6.1-dev.4 (manifest conferido). Gate Foundation segue obrigatório; modais do Fórum aguardam inspeção visual pré-RC.
 - Estado detalhado, com o que funciona, o que está DEFERRED e o que falta: [RELATORIO-ESTADO-APOS-PR-238-239.md](RELATORIO-ESTADO-APOS-PR-238-239.md). O relatório [de 2026-10-12](historico/RELATORIO-ESTADO-2026-10-12.md) é um snapshot anterior às PRs #238 e #239.
 - Modernização Drupal 11+ (P0–P10) e auditoria P10-R concluídas e mescladas (PRs #90 e #91).
-- Migração do envio de e-mail para camada de envio E-Mails ACULTA (M0 a M2) concluída no código e validada no runtime de teste. Entrega em produção: decisão do responsável no fim do projeto.
+- Migração do envio de e-mail para camada de envio E-Mails ACULTA (M0 a M2) concluída no código e validada no runtime de desenvolvimento. Entrega em produção: decisão do responsável no fim do projeto.
 - Verificações desta mudança (2026-10-13): Drupal 11+ PASS (659 checks), domínio do Associado ID PASS (248 checks), Unit do Associado ID PASS (47 testes/107 asserções), Unit do Portal PASS (63 testes/118 asserções) e lint PHP PASS. Evidência anterior de fronteira módulo/tema e endereços permanece registrada na revisão anterior. Foundation PASS em 2026-10-15 (341 checks, via Drush; DT-T19 resolvida).
 - Pendências abertas: ver DEBT-REGISTER (estado vivo; este roadmap não repete a contagem).
-- Integração de Termos/aceites no `aculta_user`: Agreement contrib desinstalado no Runtime de testes e removido de Composer/Config Sync; ledger, auditoria read-only e migrações estão documentados no CHANGELOG do componente. Revisão autenticada e gates antes de RC permanecem pendentes.
+- Integração de Termos/aceites no `aculta_user`: Agreement contrib desinstalado no Runtime de desenvolvimentos e removido de Composer/Config Sync; ledger, auditoria read-only e migrações estão documentados no CHANGELOG do componente. Revisão autenticada e gates antes de RC permanecem pendentes.
 
 ### Conteúdo transversal e Activity — atualização 2026-10-23
 
@@ -109,7 +125,7 @@ manifests, roadmaps dos módulos e atualizações posteriores para o estado vige
   inventário e adapters de posts/revisões por dono, relatório agregado de
   dependências e executor com confirmação explícita, backup homologado e trilha
   auditável; não há exclusão de conteúdo pelo cron.
-- A limpeza pontual autorizada dos 12 Nodes `revista` no Runtime de teste foi
+- A limpeza pontual autorizada dos 12 Nodes `revista` no Runtime de desenvolvimento foi
   executada em 2026-10-22; relatório em
   [MAGAZINE-TEST-CLEANUP-2026-10-22.md](MAGAZINE-TEST-CLEANUP-2026-10-22.md).
   Essa operação não substitui a homologação do serviço comum nem autoriza
@@ -170,7 +186,7 @@ já decididas acima; não reordenam saneamento, F1–F4 nem a política de uploa
 | I-20 | Comando `doctor` para patches | `aculta_patcher` | — |
 
 Critério de aceite comum: cada item tem teste automatizado (Unit ou Kernel), gates do projeto verdes,
-revisão visual com Firefox ESR no servidor de testes (quando houver interface) e versões ACULTA420 e Olivero.
+revisão visual com Firefox ESR no servidor de desenvolvimento (quando houver interface) no tema ACULTA ativo.
 
 ## Segunda leva inspirada no OpenCulturas — visual, blocos e views (2026-10-28)
 
@@ -223,7 +239,7 @@ Resultados abaixo têm datas próprias no registro de dívidas. Itens resolvidos
 - **DT-P08 (login com CAPTCHA por HTTP): parcial.** O formulário de login em `/entrar` renderiza o widget Turnstile. A resolução do desafio depende de um humano ou de uma exceção de teste aprovada pelo responsável (ver DT-P11). Adiado.
 - **DT-P11 (`validate-final-contact`): adiado com decisão.** O script é local por desenho (recusa qualquer host que não seja localhost) e sai com código 2 (pendente) porque o Turnstile recusa envio por script. Permanece pendente até a decisão de exceção de teste.
 - **DT-P04 (PHP 8.5): adiado por ambiente.** O host tem PHP 8.4 e não tem PHP 8.5. A instalação exige privilégio de root neste host.
-- **DT-O07 (drift de `smtp.settings` e `system.mail`): resolvida na M2.** O módulo SMTP e sua configuração foram removidos; `system.mail` usa camada de envio E-Mails ACULTA. **DT-P05 (entrega em produção):** decisão do responsável para o fim do projeto; não é bloqueio de fase. O envio no Runtime de teste está validado.
+- **DT-O07 (drift de `smtp.settings` e `system.mail`): resolvida na M2.** O módulo SMTP e sua configuração foram removidos; `system.mail` usa camada de envio E-Mails ACULTA. **DT-P05 (entrega em produção):** decisão do responsável para o fim do projeto; não é bloqueio de fase. O envio no Runtime de desenvolvimento está validado.
 - **DT-P07 (Mercado Pago com credencial de sandbox): adiado.** Decisão do responsável, a pedido.
 
 ### S4 — Decisões do responsável (DT-P10; decisões tomadas em DT-P06, DT-P09 e DT-G01)
@@ -270,7 +286,7 @@ Estas fases dependem de S0–S4. Nenhuma tem versão alvo de 1.0.
 
 O roadmap específico aprovado em 2026-10-19 reconstrói o ACULTA Forum com Nodes,
 Taxonomy, Views e posts revisionáveis; Comments do Fórum coexistem durante a
-migração aprovada. `drupal/forum` foi retirado do Composer e do Runtime de teste
+migração aprovada. `drupal/forum` foi retirado do Composer e do Runtime de desenvolvimento
 na limpeza registrada pelo componente. A fase ativa e seus gates estão em
 [`aculta_forum/docs/ROADMAP.md`](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/ROADMAP.md);
 esta linha não substitui nem duplica a sequência do Portal.
@@ -333,11 +349,11 @@ em produção. Ver também o
 
 - **P-CART A (concluída em código, 2026-10-22):** baseline do carrinho da barra multidomínio, seleção atual, rotas/config, testes de caracterização Unit. Homologação em Browser/homelab segue em P-CART T.
 - **P-CART B (concluída em código, 2026-10-22):** `aculta_portal/src/Checkout`: `CheckoutContextProviderInterface`, `CheckoutMode`, `CheckoutContextConfiguration`, `CheckoutContextRegistry` (tag `aculta_portal.checkout_provider`), `CheckoutConfigurationResolver` e `CheckoutPolicyManager`. Somente leitura; nenhum provider registrado e nenhum efeito no site até a P-CART C.
-- **P-CART C (concluída em código, 2026-10-22):** `ShopCheckoutProvider` (`aculta_commerce`, agora habilitado em `config/sync` e no runtime de testes), `LmsCheckoutProvider` (`aculta_lms`) e `DonationCheckoutProvider` (`aculta_donation`), com `OrderTypeCheckoutFlows` no Portal. Somente leitura; fluxos próprios mantidos.
+- **P-CART C (concluída em código, 2026-10-22):** `ShopCheckoutProvider` (`aculta_commerce`, agora habilitado em `config/sync` e no runtime de desenvolvimentos), `LmsCheckoutProvider` (`aculta_lms`) e `DonationCheckoutProvider` (`aculta_donation`), com `OrderTypeCheckoutFlows` no Portal. Somente leitura; fluxos próprios mantidos.
 - **P-CART D (concluída em código, 2026-10-22):** `CommerceCheckoutRouteSubscriber` no Portal substitui o subscriber do Donation (removido); rollback por `git revert`; comparação no homelab pendente (P-CART T). Escopo original: port/migração progressiva da coordenação de `CartCheckoutRouteSubscriber` do Donation ao Portal, conservando `donate|cart|both` e configurações exportadas, com rollback.
 - **P-CART E (concluída em código, 2026-10-22):** config, chave global, tipo de pedido do LMS configurável, regra de estorno centralizada e as abas Comum, Loja, LMS e Doações (esta no `aculta_donation`). Pendente: apresentação SDC/UI Suite no ACULTA420 e verificação em navegador. **Pendência de documentação jurídica:** registrar nas políticas do site e nos termos de uso que curso e doações não têm estorno. Escopo original: interface de **administração** com abas Comum, Loja, LMS e Doações, Form API, ACL e SDC/UI Suite.
 - **P-CART F (parcial, 2026-10-22):** log de auditoria das alterações, flow efetivo com fallback do Commerce, ACL por aba e cache de formulários administrativos revisados; sem novas métricas. Pendente: integração com Statistics (nenhuma métrica necessária identificada). Escopo original: auditoria de políticas, conflitos, segurança, Statistics e documentação.
-- **P-CART T (NÃO executada):** exige homelab, navegador e Mercado Pago sandbox. Pendências: comparar rotas compiladas e DOM do carrinho do cabeçalho antes/depois; `donate|cart|both` e a chave global em HTTP real; checkout de Loja, LMS e Doações (anônimo e autenticado); webhooks repetidos e assinaturas; abas em mobile/desktop, claro/escuro e sem JavaScript; apresentação SDC/UI Suite das abas; Olivero sem o ACULTA420. Escopo original: regressão real do cabeçalho e dos três checkouts no homelab, sem alterações visuais ao comprador.
+- **P-CART T (NÃO executada):** exige homelab, navegador e Mercado Pago sandbox. Pendências: comparar rotas compiladas e DOM do carrinho do cabeçalho antes/depois; `donate|cart|both` e a chave global em HTTP real; checkout de Loja, LMS e Doações (anônimo e autenticado); webhooks repetidos e assinaturas; abas em mobile/desktop, claro/escuro e sem JavaScript; apresentação SDC/UI Suite das abas. Escopo original: regressão real do cabeçalho e dos três checkouts no homelab, sem alterações visuais ao comprador.
 
 **As seções P-CART anteriores, quando conflitantes, ficam supersedidas por este plano e pelo [ADR-032](../decisions/ADR-032-portal-multi-cart-checkout.md).**
 
@@ -348,7 +364,7 @@ Decisão de 2026-10-23: cancelar a substituição de `aculta_id_cpf` por `aculta
 Plano completo, inventário e gates: [CPF-CONSOLIDACAO-E-CHECKOUT.md](CPF-CONSOLIDACAO-E-CHECKOUT.md).
 
 - **CPF-R0 a R2 (consolidação):** concluídas. `aculta_portal` usa só `aculta_id_cpf.account_document`.
-- **CPF-R3 (remoção do associado):** BLOQUEADA até verificar Runtime de teste e produção. Local: não habilitado, não instalado.
+- **CPF-R3 (remoção do associado):** BLOQUEADA até verificar Runtime de desenvolvimento e produção. Local: não habilitado, não instalado.
 - **CPF-CHECKOUT-0.2-I (identidade fiscal compartilhada Loja e LMS):** política implementada no Portal; Loja e cursos pagos exigem CPF/CNPJ, cursos gratuitos e Doações permanecem dispensados. Unit 13/30 e Kernel do pane 12/343 PASS; regressão Functional/Browser e homologação por propósito pendentes.
 - **D-51 (login por CPF):** implementação em 0.3.0-dev.8/0.4.1-dev.46 para `/entrar` e popup; integra o CPF salvo ao login nativo e preserva os controles existentes. Runner, Unit/Kernel do CPF e Unit/Kernel do Portal, gate Drupal 11+ e PHPCS passaram. Revisão visual Firefox aguarda o candidato servido.
 - **Pendências transversais:** gate de status do índice (falta `aculta_commerce`) e gate Drupal 11 (falta `WikiController.php`), ambos anteriores a esta frente.

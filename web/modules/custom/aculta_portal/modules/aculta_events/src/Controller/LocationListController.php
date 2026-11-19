@@ -94,10 +94,12 @@ final class LocationListController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-location-actions-bar'],
         'add_btn' => [
-          '#type' => 'link',
-          '#title' => $this->t('+ Cadastrar local'),
-          '#url' => Url::fromRoute('aculta_events.location_add'),
-          '#attributes' => ['data-portal-ui' => 'event-location-button-primary-action'],
+          '#type' => 'aculta_portal_button',
+          '#props' => [
+            'text' => (string) $this->t('+ Cadastrar local'),
+            'url' => Url::fromRoute('aculta_events.location_add')->toString(),
+            'variant' => 'primary',
+          ],
         ],
       ];
     }
@@ -107,6 +109,8 @@ final class LocationListController extends ControllerBase {
       '#items' => $itens,
       '#empty' => $this->t('Nenhum local encontrado.'),
     ];
+
+    $build['#attached']['library'][] = 'aculta_events/events-portal-ui';
 
     $build['pager'] = [
       '#type' => 'pager',

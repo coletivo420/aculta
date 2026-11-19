@@ -15,6 +15,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\aculta_user\Hook\ParticipationHooks;
 use Drupal\aculta_user\ParticipationRules;
+use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -307,7 +308,7 @@ final class PublicDiscussionModerationKernelTest extends KernelTestBase {
   /**
    * Creates and saves a regular account without exempt roles.
    */
-  private function createAccount() {
+  private function createAccount(): UserInterface {
     $account = $this->container->get('entity_type.manager')->getStorage('user')->create([
       'name' => $this->randomMachineName(),
       'status' => 1,

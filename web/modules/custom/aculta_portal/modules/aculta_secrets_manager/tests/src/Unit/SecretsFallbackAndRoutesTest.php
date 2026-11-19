@@ -85,11 +85,16 @@ final class SecretsFallbackAndRoutesTest extends UnitTestCase {
    * Requires permission on every panel route.
    */
   public function testEveryPanelRouteRequiresPermissionAndIsNotAnonymous(): void {
-    $routes = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_secrets_manager.routing.yml');
+    $parsed = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_secrets_manager.routing.yml');
+    $this->assertIsArray($parsed);
+    /** @var array<string, mixed> $routes */
+    $routes = $parsed;
     $this->assertCount(4, $routes);
     foreach ($routes as $name => $route) {
-      $this->assertSame('administer aculta secrets', $route['requirements']['_permission'] ?? NULL, $name);
-      $this->assertArrayNotHasKey('_access', $route['requirements'] ?? [], $name);
+      $routeArray = is_array($route) ? $route : [];
+      $requirements = is_array($routeArray['requirements'] ?? NULL) ? $routeArray['requirements'] : [];
+      $this->assertSame('administer aculta secrets', $requirements['_permission'] ?? NULL, (string) $name);
+      $this->assertArrayNotHasKey('_access', $requirements, (string) $name);
     }
   }
 
@@ -97,9 +102,14 @@ final class SecretsFallbackAndRoutesTest extends UnitTestCase {
    * Requires CSRF tokens for reveal and write routes.
    */
   public function testRevealAndWriteRoutesRequireCsrfToken(): void {
-    $routes = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_secrets_manager.routing.yml');
+    $parsed = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_secrets_manager.routing.yml');
+    $this->assertIsArray($parsed);
+    /** @var array<string, mixed> $routes */
+    $routes = $parsed;
     foreach (['aculta_portal.secrets_show', 'aculta_portal.secrets_edit', 'aculta_portal.secrets_clear'] as $name) {
-      $this->assertSame('TRUE', $routes[$name]['requirements']['_csrf_token'] ?? NULL, $name);
+      $route = is_array($routes[$name] ?? NULL) ? $routes[$name] : [];
+      $requirements = is_array($route['requirements'] ?? NULL) ? $route['requirements'] : [];
+      $this->assertSame('TRUE', $requirements['_csrf_token'] ?? NULL, $name);
     }
   }
 

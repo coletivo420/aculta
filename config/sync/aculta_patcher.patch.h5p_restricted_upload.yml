@@ -100,3 +100,5 @@ patch: |
      }
    
      /**
+source_url: patches/aculta_patcher/h5p_restricted_upload.patch
+source_hash: 656137ed2c0ab27992305adc3785328c2f7e20646638f84da14efc8bb01c5e95

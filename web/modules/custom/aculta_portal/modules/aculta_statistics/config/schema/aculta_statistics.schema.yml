@@ -22,3 +22,10 @@ aculta_statistics.settings:
         enabled:
           type: boolean
           label: 'Exibir o banner e aplicar o Consent Mode v2 padrão negado'
+    forum_discovery:
+      type: mapping
+      label: 'Coleta de busca e descoberta do Fórum'
+      mapping:
+        enabled:
+          type: boolean
+          label: 'Habilitar a coleta; exige política de privacidade e consentimento aprovados'

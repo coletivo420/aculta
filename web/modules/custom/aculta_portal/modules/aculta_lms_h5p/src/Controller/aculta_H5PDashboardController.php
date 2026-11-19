@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms_h5p\Controller;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -24,7 +26,7 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly TranslationInterface $translation,
   ) {}
 
@@ -35,7 +37,7 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
     return new static(
       $container->get('entity_type.manager'),
       $container->get('current_user'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('string_translation'),
     );
   }
@@ -82,7 +84,7 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
       }
       $access = $educator
         ? $entity->access('update', $this->currentUser, TRUE)
-        : \Drupal\Core\Access\AccessResult::allowedIf($entity->hasPermission('take course', $this->currentUser))
+        : AccessResult::allowedIf($entity->hasPermission('take course', $this->currentUser))
           ->cachePerUser()
           ->addCacheContexts(['user.permissions', 'user.group_permissions']);
       $cacheability->addCacheableDependency($entity)->addCacheableDependency($access);
@@ -94,7 +96,7 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
         continue;
       }
 
-      $courseUrl = $this->domainPurposeManager->routeUrl('courses', 'entity.group.canonical', ['group' => $entity->id()]);
+      $courseUrl = $this->siteManager->routeUrl(SiteKey::Courses, 'entity.group.canonical', ['group' => $entity->id()]);
       if ($courseUrl === NULL) {
         continue;
       }
@@ -105,21 +107,24 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
       }
 
       $courseBuild = [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'h5p-dashboard-course'],
-        'title' => [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:lms-h5p-course',
+        '#props' => [],
+        '#slots' => [
+          'title' => [
           '#type' => 'html_tag',
           '#tag' => 'h2',
           '#value' => (string) $entity->label(),
         ],
-        'course_link' => Link::fromTextAndUrl(
+          'course_link' => Link::fromTextAndUrl(
           $educator ? $this->translation->translate('Abrir sala do curso') : $this->translation->translate('Acessar curso'),
           $courseUrl,
         )->toRenderable(),
+        ],
       ];
 
       if (!$educator) {
-        $courseBuild['activities'] = $entity->get('field_h5p_activities')->view(['label' => 'hidden']);
+        $courseBuild['#slots']['activities'] = $entity->get('field_h5p_activities')->view(['label' => 'hidden']);
       }
 
       $items[] = $courseBuild;

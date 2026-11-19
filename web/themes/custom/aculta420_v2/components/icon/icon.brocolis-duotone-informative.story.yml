@@ -1,0 +1,9 @@
+name: ACULTA Brócolis duotone informativo
+description: Ícone Brócolis selecionado pelo pack UI Icons com nome acessível e tratamento duotone do tema.
+props:
+  icon:
+    pack_id: aculta_brocolis
+    icon_id: aculta-brocolis-duotone
+    settings: {}
+  size: xl
+  label: Marca ACULTA Brócolis em duotone

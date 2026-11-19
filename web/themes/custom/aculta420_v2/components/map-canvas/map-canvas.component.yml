@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Superfície de mapa
+description: Casca visual para render arrays interativos produzidos pelo módulo de mapas.
+group: Mapas
+status: experimental
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Mapa
+    description: Render array do mapa com biblioteca Leaflet, templates e cache preservados.
+assets:
+  css:
+    component:
+      map-canvas.css: {}

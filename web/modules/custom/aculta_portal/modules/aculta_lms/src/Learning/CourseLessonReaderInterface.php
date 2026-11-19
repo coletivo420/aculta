@@ -16,6 +16,7 @@ interface CourseLessonReaderInterface {
    * Devolve as aulas do curso em ordem de posição.
    *
    * @return \Drupal\aculta_lms\Learning\CourseLesson[]
+   *   Aulas do curso em ordem de posição.
    */
   public function forCourse(int $courseId): array;
 

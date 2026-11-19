@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Service;
 
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 
 /**
  * Whether bilateral blocking prevents a reply in an existing conversation.
@@ -69,7 +68,7 @@ final class ConversationMessagingState {
   private function otherMembers(PrivateMessageThreadInterface $thread): array {
     $currentId = (int) $this->currentUser->id();
     return array_values(array_unique(array_filter(
-      array_map('intval', $thread->getMembersId()),
+      array_map('intval', $thread->getMemberIds()),
       static fn(int $id): bool => $id > 0 && $id !== $currentId,
     )));
   }

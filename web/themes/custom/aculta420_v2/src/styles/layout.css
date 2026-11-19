@@ -1,0 +1,64 @@
+/* Shell de página único: cinco regiões declaradas pelo tema. */
+.page {
+  display: grid;
+  grid-template-areas:
+    "institution"
+    "header"
+    "showcase"
+    "contextual"
+    "main"
+    "footer";
+  grid-template-rows: auto auto auto auto 1fr auto;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  min-block-size: 100vh;
+  min-block-size: 100dvh;
+  min-inline-size: 0;
+}
+
+.page__institution { grid-area: institution; min-inline-size: 0; }
+.page__header { grid-area: header; min-inline-size: 0; }
+.page__showcase { grid-area: showcase; min-inline-size: 0; padding-block: var(--spacing-lg); }
+.page__contextual {
+  display: grid;
+  grid-area: contextual;
+  gap: var(--spacing-sm);
+  min-inline-size: 0;
+}
+.page__contextual > * { min-inline-size: 0; }
+.page > .layout-page { grid-area: main; min-inline-size: 0; }
+.page__footer { grid-area: footer; min-inline-size: 0; }
+
+.page__help,
+.page__breadcrumb {
+  inline-size: min(100%, var(--page-content-max));
+  margin-inline: auto;
+  min-inline-size: 0;
+  padding-inline: var(--page-gutter);
+}
+
+/* A trilha inserida no título do layout já compartilha sua coluna e padding. */
+.page .layout-page__title .page__breadcrumb {
+  inline-size: 100%;
+  margin-inline: 0;
+  padding-inline: 0;
+}
+
+@media (min-width: 60rem) {
+  :is(.page__institution, .page__header, .page__showcase, .page__contextual):not(.layout-page--studio-dashboard) {
+    inline-size: min(100%, var(--page-content-max));
+    margin-inline: auto;
+  }
+
+  .layout-page:not(.layout-page--studio-dashboard) {
+    max-inline-size: var(--page-content-max);
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 59.9375rem) {
+  :is(.layout-page, .page__contextual, .page__help, .page__breadcrumb) {
+    inline-size: 100% !important;
+    max-inline-size: 100% !important;
+  }
+}

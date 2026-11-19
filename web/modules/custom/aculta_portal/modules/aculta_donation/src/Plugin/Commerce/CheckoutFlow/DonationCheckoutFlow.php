@@ -1,18 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\aculta_donation\Plugin\Commerce\CheckoutFlow;
 
+use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\commerce\Response\NeedsRedirectException;
 use Drupal\commerce_checkout\Attribute\CommerceCheckoutFlow;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowWithPanesBase;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowWithPanesInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\Entity\OrderItemInterface;
+use Drupal\commerce_price\Plugin\Field\FieldType\PriceItem;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * A custom checkout flow for donations.
@@ -24,64 +32,65 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements CheckoutFlowWithPanesInterface {
 
   /**
-   * Injected service.
-   *
-   * @var \Drupal\Core\Session\AccountProxy
+   * Current user session proxy.
    */
-  protected $user;
+  protected AccountProxyInterface $user;
 
   /**
-   * Drupal\Core\Routing\CurrentRouteMatch definition.
-   *
-   * @var \Symfony\Component\HttpFoundation\RequestStack
+   * Request stack.
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * Current default currency code.
-   *
-   * @var string
    */
-  protected $currency;
+  protected string $currency = 'BRL';
 
   /**
-   * Injected service.
-   *
-   * @var \CommerceGuys\Intl\Formatter\CurrencyFormatterInterface
+   * Currency formatter.
    */
-  protected $currencyFormatter;
+  protected CurrencyFormatterInterface $currencyFormatter;
 
   /**
    * The current route match.
-   *
-   * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $pane_id
+   * @param mixed $pane_definition
    */
   public static function create(
     ContainerInterface $container,
     array $configuration,
     $pane_id,
     $pane_definition,
-  ) {
+  ): static {
     $instance = parent::create(
       $container,
       $configuration,
       $pane_id,
       $pane_definition
     );
-    $instance->user = $container->get('current_user');
-    $instance->requestStack = $container->get('request_stack');
-    $instance->currencyFormatter = $container->get(
-      'commerce_price.currency_formatter'
-    );
-    $instance->routeMatch = $container->get('current_route_match');
-    if ($instance->order instanceof OrderInterface) {
-      $instance->currency = $instance->order->getStore()
-        ->getDefaultCurrencyCode();
+    /** @var \Drupal\Core\Session\AccountProxyInterface $currentUser */
+    $currentUser = $container->get('current_user');
+    $instance->user = $currentUser;
+    /** @var \Symfony\Component\HttpFoundation\RequestStack $requestStack */
+    $requestStack = $container->get('request_stack');
+    $instance->requestStack = $requestStack;
+    /** @var \CommerceGuys\Intl\Formatter\CurrencyFormatterInterface $currencyFormatter */
+    $currencyFormatter = $container->get('commerce_price.currency_formatter');
+    $instance->currencyFormatter = $currencyFormatter;
+    /** @var \Drupal\Core\Routing\RouteMatchInterface $routeMatch */
+    $routeMatch = $container->get('current_route_match');
+    $instance->routeMatch = $routeMatch;
+
+    $store = $instance->order->getStore();
+    if ($store !== NULL) {
+      $instance->currency = $store->getDefaultCurrencyCode();
     }
 
     return $instance;
@@ -89,35 +98,44 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
-  public function defaultConfiguration() {
-    $config = parent::defaultConfiguration();
-    $config['offline_link_title'] = '';
-    $config['offline_link_url'] = '';
+  public function defaultConfiguration(): array {
+    /** @var array<string, mixed> $parentConfig */
+    $parentConfig = parent::defaultConfiguration();
+    $parentConfig['offline_link_title'] = '';
+    $parentConfig['offline_link_url'] = '';
 
-    return $config;
+    return $parentConfig;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   *
+   * @return array<mixed>
    */
   public function buildConfigurationForm(
     array $form,
     FormStateInterface $form_state,
-  ) {
+  ): array {
     $form = parent::buildConfigurationForm($form, $form_state);
-    $link_title = $this->configuration['offline_link_title'];
-    $link_url = $this->configuration['offline_link_url'];
+    $rawTitle = $this->configuration['offline_link_title'] ?? '';
+    $link_title = is_scalar($rawTitle) ? (string) $rawTitle : '';
+    $rawUrl = $this->configuration['offline_link_url'] ?? '';
+    $link_url = is_scalar($rawUrl) ? (string) $rawUrl : '';
     $form['offline_link_title'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Offline donation link title'),
-      '#default_value' => empty($link_title) ? '' : $link_title,
+      '#default_value' => $link_title,
     ];
 
     $form['offline_link_url'] = [
       '#type' => 'url',
       '#title' => $this->t('Offline donation link URL'),
-      '#default_value' => empty($link_url) ? '' : $link_url,
+      '#default_value' => $link_url,
       '#description' => 'You may provide a link to a PDF or other file type that your users may download and use to send donations by mail.',
     ];
 
@@ -126,23 +144,35 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
    */
   public function submitConfigurationForm(
     array &$form,
     FormStateInterface $form_state,
-  ) {
+  ): void {
     parent::submitConfigurationForm($form, $form_state);
     if (!$form_state->getErrors()) {
-      $values = $form_state->getValue($form['#parents']);
-      $this->configuration['offline_link_title'] = $values['offline_link_title'];
-      $this->configuration['offline_link_url'] = $values['offline_link_url'];
+      /** @var array<array-key, string> $parents */
+      $parents = is_array($form['#parents'] ?? NULL) ? $form['#parents'] : [];
+      $values = $form_state->getValue($parents);
+      $title = is_array($values) && isset($values['offline_link_title']) && is_scalar($values['offline_link_title'])
+        ? (string) $values['offline_link_title']
+        : '';
+      $url = is_array($values) && isset($values['offline_link_url']) && is_scalar($values['offline_link_url'])
+        ? (string) $values['offline_link_url']
+        : '';
+      $this->configuration['offline_link_title'] = $title;
+      $this->configuration['offline_link_url'] = $url;
     }
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param string $step_id
    */
-  public function redirectToStep($step_id) {
+  public function redirectToStep($step_id): void {
     // May throw a redirect exception with settings to commerce checkout.
     try {
       parent::redirectToStep($step_id);
@@ -163,8 +193,10 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
-  public function getSteps() {
+  public function getSteps(): array {
     // Note that previous_label and next_label are not the labels
     // shown on the step itself. Instead, they are the labels shown
     // when going back to the step, or proceeding to the step.
@@ -185,49 +217,60 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
       ]
       + parent::getSteps();
     // Adjust names to match our use case:
-    $steps['payment']['next_label'] = $this->t('Donate');
+    if (isset($steps['payment']) && is_array($steps['payment'])) {
+      $steps['payment']['next_label'] = $this->t('Donate');
+    }
 
-    if ($this->order instanceof OrderInterface && $this->order->hasItems()) {
+    if ($this->order->hasItems()) {
       $items = $this->order->getItems();
       // Only one donation OrderItem supported.
       $donations = array_filter(
         $items,
         function ($item) {
-          return $item->bundle() == 'donation';
+          return $item->bundle() === 'donation';
         }
       );
       $donation = reset($donations);
-      if ($donation instanceof OrderItemInterface
-          && $donation->hasField(
-          'field_donation_amount'
-        ) && !$donation->field_donation_amount->isEmpty()) {
-        // Append the amount on the payment button text.
-        $amountFormatOptions = [
-          'currency_display' => 'symbol',
-          'minimum_fraction_digits' => 0,
-        ];
-        $donationAmount = $donation->field_donation_amount->first()->toPrice();
-        $displayAmount = $this->currencyFormatter->format(
-          $donationAmount->getNumber(),
-          $this->currency,
-          $amountFormatOptions
-        );
-        // Check for monthly.
-        if (
-          $donation->hasField('field_gift_type')
-          && !$donation->field_gift_type->isEmpty()
-          && $donation->field_gift_type->first()->value == 'recurring') {
-          $displayAmount .= '/mo';
+      if ($donation !== FALSE
+          && $donation->hasField('field_donation_amount')
+          && !$donation->get('field_donation_amount')->isEmpty()) {
+        $firstAmount = $donation->get('field_donation_amount')->first();
+        if ($firstAmount instanceof PriceItem) {
+          // Append the amount on the payment button text.
+          $amountFormatOptions = [
+            'currency_display' => 'symbol',
+            'minimum_fraction_digits' => 0,
+          ];
+          $donationAmount = $firstAmount->toPrice();
+          $displayAmount = $this->currencyFormatter->format(
+            $donationAmount->getNumber(),
+            $this->currency,
+            $amountFormatOptions
+          );
+          // Check for monthly.
+          if ($donation->hasField('field_gift_type') && !$donation->get('field_gift_type')->isEmpty()) {
+            $giftItem = $donation->get('field_gift_type')->first();
+            $giftValue = $giftItem !== NULL && isset($giftItem->value) && is_scalar($giftItem->value)
+              ? (string) $giftItem->value
+              : '';
+            if ($giftValue === 'recurring') {
+              $displayAmount .= '/mo';
+            }
+          }
+          if (isset($steps['payment']) && is_array($steps['payment'])) {
+            $steps['payment']['next_label'] = $this->t(
+              'Donate @amount',
+              ['@amount' => $displayAmount]
+            );
+          }
         }
-        $steps['payment']['next_label'] = $this->t(
-          'Donate @amount',
-          ['@amount' => $displayAmount]
-        );
       }
     }
     // All steps in the donation flow have no sidebar.
     foreach ($steps as &$step) {
-      $step['has_sidebar'] = FALSE;
+      if (is_array($step)) {
+        $step['has_sidebar'] = FALSE;
+      }
     }
 
     return $steps;
@@ -235,31 +278,58 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param string|null $step_id
+   *
+   * @return array<mixed>
    */
   public function buildForm(
     array $form,
     FormStateInterface $form_state,
     $step_id = NULL,
-  ) {
+  ): array {
     $this->order->recalculateTotalPrice();
     // Get the basic form.
     $form = parent::buildForm($form, $form_state, $step_id);
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
     $form['#attributes']['autocomplete'] = 'off';
+    $currentStep = isset($form['#step_id']) && is_scalar($form['#step_id']) ? (string) $form['#step_id'] : '';
     // Now build the summaries, if there are any.
-    if ($form['#step_id'] != 'complete') {
-      $summarySteps = $this->panesToSummarize($form['#step_id'], $form_state);
+    if ($currentStep !== 'complete' && $currentStep !== '') {
+      $summarySteps = $this->panesToSummarize($currentStep, $form_state);
       $this->buildSummaries($form, $summarySteps);
     }
     // Identify the step in a class for analytics.
-    $form['actions']['next']['#attributes']['class'][] = Html::cleanCssIdentifier(
-      "donation-flow-step--$step_id"
-    );
-    $form['#attributes']['class'][] = Html::cleanCssIdentifier(
-      "donation-flow-step--$step_id"
-    );
-    $link_url = $this->configuration['offline_link_url'] ?? NULL;
-    if ($link_url && $step_id == 'donation') {
-      $link_title = $this->configuration['offline_link_title'];
+    $stepClass = Html::cleanCssIdentifier('donation-flow-step--' . (is_string($step_id) ? $step_id : ''));
+    if (!isset($form['actions']) || !is_array($form['actions'])) {
+      $form['actions'] = [];
+    }
+    if (!isset($form['actions']['next']) || !is_array($form['actions']['next'])) {
+      $form['actions']['next'] = [];
+    }
+    if (!isset($form['actions']['next']['#attributes']) || !is_array($form['actions']['next']['#attributes'])) {
+      $form['actions']['next']['#attributes'] = [];
+    }
+    if (!isset($form['actions']['next']['#attributes']['class']) || !is_array($form['actions']['next']['#attributes']['class'])) {
+      $form['actions']['next']['#attributes']['class'] = [];
+    }
+    $form['actions']['next']['#attributes']['class'][] = $stepClass;
+
+    /** @var array<string, mixed> $formAttributes */
+    $formAttributes = isset($form['#attributes']) && is_array($form['#attributes']) ? $form['#attributes'] : [];
+    $classAttr = isset($formAttributes['class']) && is_array($formAttributes['class']) ? $formAttributes['class'] : [];
+    $classAttr[] = $stepClass;
+    $formAttributes['class'] = $classAttr;
+    $form['#attributes'] = $formAttributes;
+
+    $rawUrl = $this->configuration['offline_link_url'] ?? NULL;
+    $link_url = is_scalar($rawUrl) ? (string) $rawUrl : '';
+    if ($link_url !== '' && $step_id === 'donation') {
+      $rawTitle = $this->configuration['offline_link_title'] ?? '';
+      $link_title = is_scalar($rawTitle) ? (string) $rawTitle : '';
       $form['pdf_link'] = [
         '#title' => $link_title,
         '#type' => 'link',
@@ -268,7 +338,7 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
         '#attributes' => [
           'target' => '_blank',
           'rel' => 'noopener noreferrer',
-          'data-portal-ui' => 'donation-document-link',
+          'class' => ['donation-presentation__document-link'],
         ],
         '#theme_wrappers' => ['container'],
       ];
@@ -290,11 +360,11 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    *
    * @see \Drupal\aculta_donation\Plugin\Commerce\CheckoutPane\DonationItemPaneBase::doSummaryBuild
    */
-  public function getStepUrl($step) {
+  public function getStepUrl($step): Url {
     $options = [];
-    $query = $this->requestStack->getCurrentRequest()->query;
-    if ($query->has('donate_return')) {
-      $returnPath = ['donate_return' => $query->get('donate_return')];
+    $request = $this->requestStack->getCurrentRequest();
+    if ($request !== NULL && $request->query->has('donate_return')) {
+      $returnPath = ['donate_return' => (string) $request->query->get('donate_return')];
       $options = ['query' => $returnPath];
     }
 
@@ -310,14 +380,19 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Steps are dynamic based on the submission, so clear to recalculate.
-    unset($this->visibleSteps);
+    $this->visibleSteps = [];
     parent::submitForm($form, $form_state);
     // Override the parent redirect data.
-    $nextStepId = $this->getNextStepId($form['#step_id']);
-    $form_state->setRedirectUrl($this->getStepUrl($nextStepId));
+    $stepId = isset($form['#step_id']) && is_scalar($form['#step_id']) ? (string) $form['#step_id'] : '';
+    $nextStepId = $this->getNextStepId($stepId);
+    if ($nextStepId !== NULL && $nextStepId !== '') {
+      $form_state->setRedirectUrl($this->getStepUrl($nextStepId));
+    }
   }
 
   /**
@@ -336,21 +411,22 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
   protected function panesToSummarize(
     $current_step,
     FormStateInterface $formState,
-  ) {
+  ): array {
     /** @var \Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\CheckoutPaneInterface[] $possiblePanes */
     $possiblePanes = array_filter(
       $this->getPanes(),
       function ($pane) {
-        return !in_array($pane->getStepId(), ['_sidebar', '_disabled']);
+        return !in_array($pane->getStepId(), ['_sidebar', '_disabled'], TRUE);
       }
     );
+    /** @var array<string, mixed> $visible */
     $visible = $this->getVisibleSteps();
     $stepIds = array_keys($visible);
-    $currentIndex = array_search($current_step, $stepIds);
+    $currentIndex = array_search($current_step, $stepIds, TRUE);
     $indices = array_flip($stepIds);
     $stepsCompleted = [];
     foreach ($indices as $step => $index) {
-      if ($index < $currentIndex) {
+      if ($currentIndex !== FALSE && $index < $currentIndex) {
         $stepsCompleted[$step] = TRUE;
       }
     }
@@ -368,10 +444,13 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
             return $pane->getStepId() === $step;
           }
         );
+        $stepData = $visible[$step] ?? [];
+        $rawLabel = is_array($stepData) && isset($stepData['label']) ? $stepData['label'] : $step;
+        $label = is_scalar($rawLabel) || $rawLabel instanceof \Stringable ? (string) $rawLabel : (string) $step;
         $summaries[$step] = new PaneSummaryData(
           $step_number,
-          $visible[$step]['label'],
-          $this->getStepUrl($step),
+          $label,
+          $this->getStepUrl((string) $step),
           $panes
         );
       }
@@ -384,45 +463,54 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
   /**
    * Helper method to build the full summary display and complete overview.
    *
-   * @param array $form
+   * @param array<mixed> $form
    *   The form array being built.
    * @param \Drupal\aculta_donation\Plugin\Commerce\CheckoutFlow\PaneSummaryData[] $summarySteps
    *   Array with summary data.
    */
-  protected function buildSummaries(array &$form, array $summarySteps) {
-    $form['summaries'] = [
-      '#theme' => 'aculta_donation_summary_container',
+  protected function buildSummaries(array &$form, array $summarySteps): void {
+    $summariesComponent = [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:donation-presentation',
+      '#props' => ['variant' => 'summaries'],
+      '#slots' => ['content' => []],
       '#weight' => -80,
-      '#attributes' => [
-        'data-portal-ui' => 'donation-summaries',
-      ],
-      '#content' => [],
     ];
     // Adapted from Review::buildPaneForm.
+    /** @var array<string, mixed> $contentSlots */
+    $contentSlots = [];
     foreach ($summarySteps as $summaryStep => $data) {
-      $form['summaries']['#content'][$summaryStep] = [
-        'summary' => [],
-        'edit_link' => [
-          '#title' => $this->t('Edit'),
-          '#type' => 'link',
-          '#url' => $data->url,
-          '#attributes' => [
-            'data-portal-ui' => 'donation-summary-edit',
-            'data-donation-step' => $summaryStep,
-          ],
-        ],
-        '#type' => 'container',
-        '#attributes' => [
-          'data-portal-ui' => 'donation-summary',
-          'data-donation-step' => $summaryStep,
-        ],
-      ];
+      $summaryItems = [];
       if ($data->hasPanes()) {
         foreach ($data->panes as $pane) {
-          $form['summaries']['#content'][$summaryStep]['summary'][] = $pane->buildPaneSummary();
+          $summaryItems[] = $pane->buildPaneSummary();
         }
       }
+      $contentSlots[$summaryStep] = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:donation-presentation',
+        '#props' => [
+          'variant' => 'summary',
+          'attributes' => new Attribute(['data-donation-step' => $summaryStep]),
+        ],
+        '#slots' => [
+          'content' => [
+            'summary' => $summaryItems,
+            'edit_link' => [
+              '#title' => $this->t('Edit'),
+              '#type' => 'link',
+              '#url' => $data->url,
+              '#attributes' => [
+                'data-portal-ui' => 'donation-summary-edit',
+                'data-donation-step' => $summaryStep,
+              ],
+            ],
+          ],
+        ],
+      ];
     }
+    $summariesComponent['#slots']['content'] = $contentSlots;
+    $form['summaries'] = $summariesComponent;
   }
 
   /**
@@ -431,10 +519,8 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    * @param \Drupal\commerce_order\Entity\OrderInterface $order
    *   The order.
    */
-  public function conditionalOrderValue(OrderInterface $order) {
-    if (!$this->order instanceof OrderInterface) {
-      $this->order = $order;
-    }
+  public function conditionalOrderValue(OrderInterface $order): void {
+    $this->order = $order;
   }
 
 }

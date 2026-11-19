@@ -1,0 +1,11 @@
+name: Cartão de experiência
+description: Experiência com ação em cartão.
+component: aculta420_v2:account-experience-card
+props:
+  id: cursos
+  kind: card
+  icon: books
+  title: Meus cursos
+  description: Continue seu percurso de aprendizagem.
+  url: /ganjalab
+  action_label: Acessar

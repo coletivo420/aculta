@@ -1,0 +1,17 @@
+name: Chips de filtro
+description: Faixa de opções de filtros selecionáveis.
+component: aculta420_v2:filter-chips
+props:
+  items:
+    - label: Todos
+      url: /eventos
+      is_active: true
+      count: 12
+    - label: Oficinas
+      url: /eventos?tipo=oficina
+      is_active: false
+      count: 4
+    - label: Debates
+      url: /eventos?tipo=debate
+      is_active: false
+      count: 8

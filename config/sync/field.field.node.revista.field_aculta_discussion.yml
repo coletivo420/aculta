@@ -11,7 +11,7 @@ id: node.revista.field_aculta_discussion
 field_name: field_aculta_discussion
 entity_type: node
 bundle: revista
-label: Comentários e discussão
+label: 'Comentários e discussão'
 description: 'Comentários vinculados diretamente a esta publicação.'
 required: true
 translatable: true

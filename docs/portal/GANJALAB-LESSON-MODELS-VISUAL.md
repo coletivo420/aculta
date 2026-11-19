@@ -1,5 +1,5 @@
 # ACULTA Studio Ganjalab — Modelos de aula: leitura, vídeo e H5P
-**Versão:** G420-UX 0.4.1-dev.1 · **Data:** 2026-10-22 · **Estado:** contrato visual; sem implementação.
+**Versão:** G420-UX 0.4.1-dev.1 · **Data:** 2026-10-22 · **Estado:** contrato visual; leitura inicial de corpo textual implementada em `aculta_lms`; composição visual completa segue pendente.
 **Ver:** [Sala de Aprendizagem](GANJALAB-LEARNING-ROOM-VISUAL.md) · [Roadmap LMS](../modules/ACULTA-LMS-ROADMAP.md).
 
 ## Decisão de família de modelos
@@ -87,3 +87,11 @@ Player central responsivo (16:9 somente quando combinar com a mídia), sem autop
 Uma aula com pergunta e alternativas exemplifica a **região de player H5P**, não um formulário próprio da Sala. O iframe/container deve dimensionar-se conforme a biblioteca e a tela, sem cortar controles ou criar scroll horizontal/duplo. As alternativas, validações, tentativas, pontuação e feedback são renderizados/controlados pelo H5P e a integração LMS autorizada, não pelo shell da Sala. Questões não acessíveis via teclado/leitor de tela exigem avaliação específica e alternativa pedagógica equivalente antes de se tornarem obrigatórias.
 
 **Contrato comum:** curso/módulo/posição, leitor, materiais, discussão, anterior/próxima e estado real de conclusão compõem um shell único. Preservar as variantes light/dark, com geometria e hierarquia idênticas. Este refinamento é documentação, não novas funcionalidades.
+
+### Implementação inicial da leitura (2026-11-04)
+
+O LMS agora armazena o corpo de aula como texto longo `plain_text` e apresenta o
+conteúdo processado pelo Drupal na rota da sala. A autoria de texto simples foi
+incluída no formulário de aula; rich text/CKEditor, composição do reader, índice,
+recursos e validação visual ainda não foram implementados. Ver
+[CHANGELOG do aculta_lms](../../web/modules/custom/aculta_portal/modules/aculta_lms/CHANGELOG.md).

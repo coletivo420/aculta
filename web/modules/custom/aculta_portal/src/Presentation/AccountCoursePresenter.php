@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Presentation;
 
-use Drupal\aculta_learning_contracts\Learning\AccountCourseSummary;
+use Drupal\aculta_portal\Learning\AccountCourseSummary;
 use Drupal\aculta_portal\AccountCoursesManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -39,14 +39,15 @@ final class AccountCoursePresenter {
    *     message: string,
    *     action: array{label: string, url: \Drupal\Core\Url, kind: string}|null
    *   }
-   * }
+   *   }
    */
   public function present(AccountInterface $account): array {
     $items = [];
 
     foreach ($this->courses->getCourses($account) as $course) {
       $statusCode = (string) ($course['status'] ?? AccountCourseSummary::STATUS_NOT_STARTED);
-      $score = $course['score'];
+      $rawScore = $course['score'];
+      $score = is_int($rawScore) || is_float($rawScore) ? $rawScore : NULL;
       $url = $course['url'];
 
       $items[] = [
@@ -87,6 +88,7 @@ final class AccountCoursePresenter {
    * Maps the shared learning status vocabulary to account presentation.
    *
    * @return array{code: string, label: string, tone: string}
+   *   Código, rótulo e tom visual do status.
    */
   private function statusPresentation(string $status): array {
     return match ($status) {

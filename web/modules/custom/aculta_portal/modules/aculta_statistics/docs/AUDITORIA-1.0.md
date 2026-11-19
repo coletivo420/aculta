@@ -11,7 +11,7 @@ para centralizar estatísticas (ADR-0004). Não é auditoria externa.
 | Kernel do módulo (banco `aculta_simpletest`) | 27 casos, 91 asserções: OK |
 | Gate de aceite único (`validate-single-acceptance.php`) | PASS |
 | Gate de status do índice (`validate-project-status-index.php`) | PASS |
-| Gate Drupal 11+ (`validate-aculta-portal-drupal11.php`) | PASS (1007 verificações) |
+| Gate Drupal 11+ (`validate-aculta-portal-drupal12.php`) | PASS (1007 verificações) |
 | Gate de fundação do tema (`validate-aculta420-foundation.php`) | PASS (368 verificações) |
 | Painel de envios e painel de áreas no navegador (servidor de testes) | Verificado por captura: filtros, período, gráfico, tabela e comparação. Rótulo do último dia corrigido no gráfico (mailer 0.1.0-dev.60) |
 | Funcional do painel (`StatisticsDashboardFunctionalTest`) | 2 casos, 18 asserções: OK, executados num servidor PHP em `127.0.0.1` (simula o servidor de testes, não é o Runtime). Acesso anônimo negado, administrador com período e CSV, área inexistente 404 |

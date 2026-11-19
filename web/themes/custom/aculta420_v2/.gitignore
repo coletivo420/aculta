@@ -1,0 +1,13 @@
+# IDE
+.vscode/
+.idea/
+
+# Local tooling installations, if any.
+/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local settings
+settings.php

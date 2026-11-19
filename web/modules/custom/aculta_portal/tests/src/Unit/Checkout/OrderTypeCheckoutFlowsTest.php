@@ -17,6 +17,19 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_portal')]
 final class OrderTypeCheckoutFlowsTest extends UnitTestCase {
 
+  /**
+   * Cria o serviço com storages simulados.
+   *
+   * @param bool $hasDefinition
+   *   Se o tipo de entidade de pedido está definido.
+   * @param mixed $setting
+   *   Valor do checkout flow no tipo de pedido.
+   * @param bool $typeExists
+   *   Se o tipo de pedido existe.
+   *
+   * @return \Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows
+   *   Serviço de leitura de flows.
+   */
   private function flows(bool $hasDefinition, mixed $setting, bool $typeExists = TRUE): OrderTypeCheckoutFlows {
     $type = NULL;
     if ($typeExists) {
@@ -31,15 +44,24 @@ final class OrderTypeCheckoutFlowsTest extends UnitTestCase {
     return new OrderTypeCheckoutFlows($manager);
   }
 
+  /**
+   * Confirma que devolve o fluxo associado ao tipo de pedido.
+   */
   public function testDevolveOFluxoAssociadoAoTipo(): void {
     $this->assertSame('curso', $this->flows(TRUE, 'curso')->flowId('curso'));
   }
 
+  /**
+   * Confirma que o tipo sem fluxo usa o fallback nativo do Commerce.
+   */
   public function testTipoSemFluxoUsaOFallbackNativoDoCommerce(): void {
     $this->assertSame('default', $this->flows(TRUE, NULL)->flowId('x'));
     $this->assertSame('default', $this->flows(TRUE, '')->flowId('x'));
   }
 
+  /**
+   * Confirma que devolve NULL quando não há tipo ou Commerce.
+   */
   public function testNullQuandoNaoHaTipoOuCommerce(): void {
     $this->assertNull($this->flows(TRUE, 'curso', FALSE)->flowId('x'));
     $this->assertNull($this->flows(FALSE, 'curso')->flowId('x'));

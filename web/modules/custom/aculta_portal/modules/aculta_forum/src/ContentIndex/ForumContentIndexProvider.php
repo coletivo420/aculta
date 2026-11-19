@@ -49,7 +49,7 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
 
   /**
    * {@inheritdoc} */
-  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string {
     return match (TRUE) {
       $entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic' => 'forum',
       $entity instanceof ForumPost => 'forum',
@@ -63,7 +63,7 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
    */
   public function isIndexable(ContentEntityInterface $entity): bool {
     if ($entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic') {
-      return !($entity instanceof RevisionableInterface) || $entity->isDefaultRevision();
+      return $entity->isDefaultRevision();
     }
     if ($entity instanceof ForumPost) {
       return $entity->isDefaultRevision();
@@ -98,18 +98,28 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
     if ($entity instanceof ForumPost) {
       $relations = [];
       $topic = $entity->get('topic')->entity;
-      if ($topic instanceof NodeInterface && $topic->bundle() === 'aculta_forum_topic') {
-        $relations[] = new ContentIndexRelation('forum_topic', 'node', (string) $topic->id());
+      $topicNode = $topic instanceof NodeInterface && $topic->bundle() === 'aculta_forum_topic'
+        ? $topic
+        : NULL;
+      if ($topicNode instanceof NodeInterface) {
+        $relations[] = new ContentIndexRelation('forum_topic', 'node', (string) $topicNode->id());
       }
       $parent = $entity->get('parent')->entity;
       if ($parent instanceof ForumPost) {
         $relations[] = new ContentIndexRelation('forum_parent_post', 'aculta_forum_post', (string) $parent->id());
       }
-      return $this->projection($entity, (string) $entity->get('subject')->value, $entity->isPublished(), $this->domainId($topic), $relations, (int) ($entity->get('first_published')->value ?? 0));
+      $subjectVal = $entity->get('subject')->value;
+      $subject = is_scalar($subjectVal) ? (string) $subjectVal : '';
+      $firstPubVal = $entity->get('first_published')->value;
+      $firstPub = is_numeric($firstPubVal) ? (int) $firstPubVal : 0;
+      return $this->projection($entity, $subject, $entity->isPublished(), $this->domainId($topicNode), $relations, $firstPub);
     }
 
     if ($entity instanceof CommentInterface && $entity->bundle() === 'aculta_discussion_post') {
       $topic = $entity->getCommentedEntity();
+      if (!$topic instanceof NodeInterface || $topic->bundle() !== 'aculta_forum_topic') {
+        return NULL;
+      }
       $relations = [new ContentIndexRelation('forum_topic', 'node', (string) $topic->id())];
       $parent = $entity->getParentComment();
       if ($parent instanceof CommentInterface && $parent->bundle() === 'aculta_discussion_post') {
@@ -145,10 +155,16 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
     array $relations = [],
     ?int $publishedAt = NULL,
   ): ContentIndexProjection {
-    $created = $entity instanceof CommentInterface
-      ? (int) $entity->getCreatedTime()
-      : (int) ($entity->get('created')->value ?? 0);
-    $changed = (int) ($entity->get('changed')->value ?? $created);
+    if ($entity instanceof CommentInterface) {
+      $created = (int) $entity->getCreatedTime();
+      $changed = $created;
+    }
+    else {
+      $createdVal = $entity->hasField('created') ? $entity->get('created')->value : 0;
+      $created = is_numeric($createdVal) ? (int) $createdVal : 0;
+      $changedVal = $entity->hasField('changed') ? $entity->get('changed')->value : $created;
+      $changed = is_numeric($changedVal) ? (int) $changedVal : $created;
+    }
     return new ContentIndexProjection(
       $entity->getEntityTypeId(),
       (string) $entity->id(),
@@ -182,7 +198,9 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
    */
   private function publishedAt(CommentInterface $comment): ?int {
     if ($comment->hasField('field_aculta_published_at') && !$comment->get('field_aculta_published_at')->isEmpty()) {
-      return max(0, (int) $comment->get('field_aculta_published_at')->value);
+      $pubVal = $comment->get('field_aculta_published_at')->value;
+      $pubInt = is_numeric($pubVal) ? (int) $pubVal : 0;
+      return max(0, $pubInt);
     }
     return NULL;
   }

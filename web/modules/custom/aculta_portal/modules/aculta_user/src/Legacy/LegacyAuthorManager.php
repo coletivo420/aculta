@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Legacy;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
@@ -15,7 +16,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
  */
 final class LegacyAuthorManager {
 
-  /** Limite do nome histórico. */
+  /**
+   * Limite do nome histórico. */
   private const NAME_MAX = 255;
 
   public function __construct(
@@ -32,7 +34,11 @@ final class LegacyAuthorManager {
   /**
    * Cria ou atualiza a autoria. Retorna o id da entidade e se foi criada agora.
    *
-   * @throws \InvalidArgumentException Origem fora do formato ou nome vazio, longo demais ou com caracteres de controle.
+   * @throws \InvalidArgumentException
+   *   Origem fora do formato ou nome vazio, longo demais ou com caracteres de controle.
+   */
+  /**
+   * @return array<array-key, mixed>
    */
   public function upsert(string $sourceId, string $displayName): array {
     if (!self::isValidSourceId($sourceId)) {
@@ -47,16 +53,30 @@ final class LegacyAuthorManager {
     $ids = $storage->getQuery()->accessCheck(FALSE)->condition('origem_id', $sourceId)->range(0, 1)->execute();
     if ($ids) {
       $autoria = $storage->load(reset($ids));
-      if ((string) $autoria->get('nome')->value !== $nome) {
+      if ($autoria instanceof ContentEntityInterface && $this->textValue($autoria->get('nome')->value) !== $nome) {
         $autoria->set('nome', $nome);
         $autoria->save();
       }
-      return ['id' => (int) $autoria->id(), 'created' => FALSE];
+      return ['id' => $this->intValue($autoria?->id()), 'created' => FALSE];
     }
 
     $autoria = $storage->create(['origem_id' => $sourceId, 'nome' => $nome]);
     $autoria->save();
     return ['id' => (int) $autoria->id(), 'created' => TRUE];
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
+  }
+
+  /**
+   * Inteiro de um valor; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

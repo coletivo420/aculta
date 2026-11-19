@@ -5,12 +5,15 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_lms\Kernel;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Url;
 use Drupal\aculta_lms\Access\ClassActivityDeadlineAccessCheck;
 use Drupal\aculta_lms\Access\ClassDashboardAccessCheck;
 use Drupal\aculta_lms\Certificate\CourseCertificateManager;
 use Drupal\aculta_lms\Controller\LearningDashboardController;
 use Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager;
 use Drupal\aculta_lms\LearningDashboardManager;
+use Drupal\aculta_lms\Learning\ClassStatusHistory;
+use Drupal\aculta_statistics\Storage\AggregateStorageInterface;
 use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
@@ -18,6 +21,8 @@ use Drupal\aculta_lms\Entity\ProgressEntity;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\KernelTests\KernelTestBase;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\group\PermissionScopeInterface;
 use Drupal\user\UserInterface;
 use Drupal\Tests\user\Traits\UserCreationTrait;
@@ -39,11 +44,12 @@ final class ClassDashboardKernelTest extends KernelTestBase {
    * {@inheritdoc} */
   protected static $modules = [
     'key',
-    'system', 'domain',
+    'system', 'domain', 'node', 'comment', 'gnode',
     'user',
     'file',
     'image',
     'media',
+    'media_gallery', 'media_library', 'photoswipe',
     'entity_usage',
     'aculta_image', 'aculta_file_uploader',
     'field',
@@ -51,11 +57,10 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     'flexible_permissions',
     'group',
     'views',
+    'editor',
+    'ckeditor5',
     'options',
     'text',
-    'lms',
-    'lms_classes',
-    'aculta_lms',
   ];
 
   /**
@@ -77,13 +82,17 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $portal_root = dirname($lms_root, 2);
     $this->classLoader->addPsr4('Drupal\\aculta_lms\\', $lms_root . '/src');
     $this->classLoader->addPsr4('Drupal\\aculta_studio\\', $portal_root . '/modules/aculta_studio/src');
-    $this->installConfig(['group', 'lms', 'lms_classes']);
+    $this->prepareAcultaLmsGroupTypes(deferTypesToModuleInstall: TRUE);
+    $this->installEntitySchema('node');
+    $this->prepareAcultaLmsPartialConfigDependencies();
+    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->prepareAcultaLmsClassRelationship();
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
+    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installEntitySchema('group');
-    $this->installEntitySchema('group_relationship');
     $this->installEntitySchema('group_config_wrapper');
     $this->installEntitySchema('aculta_lms_lesson');
     $this->installEntitySchema('aculta_lms_activity');
@@ -94,7 +103,7 @@ final class ClassDashboardKernelTest extends KernelTestBase {
    * Checks contextual educator access and student denial for class metrics.
    */
   public function testEducatorDashboardAggregatesOnlyCurrentClassMembers(): void {
-    $owner = $this->createUser(['administer lms']);
+    $owner = $this->createUser();
     $educator = $this->createUser();
     $memberPending = $this->createUser();
     $memberPassed = $this->createUser();
@@ -190,6 +199,19 @@ final class ClassDashboardKernelTest extends KernelTestBase {
     $dateFormatter = $this->container->get('date.formatter');
     $translation = $this->container->get('string_translation');
     $deadlineAccess = new ClassActivityDeadlineAccessCheck($entityTypeManager, $currentUser);
+    $statisticsStorage = $this->createMock(AggregateStorageInterface::class);
+    $statisticsStorage->method('currentDay')->willReturn(200);
+    $statisticsStorage->expects(self::once())
+      ->method('dailyDimensionTotalsForDimensions')
+      ->with(
+        ClassStatusHistory::METRIC,
+        187,
+        200,
+        array_map(static fn(string $situation): string => $course->id() . '/' . $class->id() . '|' . $situation, ClassStatusHistory::SITUATIONS),
+      )
+      ->willReturn([200 => [$course->id() . '/' . $class->id() . '|students' => 2]]);
+    $requestStack = new RequestStack();
+    $requestStack->push(Request::create('/painel?dias=14'));
     $controller = new LearningDashboardController(
       $manager,
       new ClassActivityDeadlineManager($entityTypeManager, $deadlineAccess),
@@ -197,11 +219,60 @@ final class ClassDashboardKernelTest extends KernelTestBase {
       $currentUser,
       $dateFormatter,
       $translation,
+      new ClassStatusHistory($statisticsStorage),
+      $requestStack,
     );
     $build = $controller->class($class, $course);
-    self::assertSame(0, $build['#cache']['max-age']);
-    self::assertContains('user', $build['#cache']['contexts']);
-    self::assertContains('group_relationship_list:plugin:group_membership:group:' . $class->id(), $build['#cache']['tags']);
+    $statusHistory = $build['status_history'] ?? NULL;
+    self::assertIsArray($statusHistory);
+    $table = $statusHistory['table'] ?? NULL;
+    self::assertIsArray($table);
+    $rows = $table['#rows'] ?? NULL;
+    self::assertIsArray($rows);
+    self::assertCount(14, $rows);
+    $lastRow = $rows[13] ?? NULL;
+    self::assertIsArray($lastRow);
+    self::assertSame(2, $lastRow[1] ?? NULL);
+    self::assertSame(0, $lastRow[2] ?? NULL);
+    $period = $statusHistory['period'] ?? NULL;
+    self::assertIsArray($period);
+    $slots = $period['#slots'] ?? NULL;
+    self::assertIsArray($slots);
+    $items = $slots['items'] ?? NULL;
+    self::assertIsArray($items);
+    $periodLinkItems = $items['#items'] ?? NULL;
+    self::assertIsArray($periodLinkItems);
+    $periodLinks = [];
+    $periodDays = [];
+    foreach ($periodLinkItems as $periodLink) {
+      self::assertIsArray($periodLink);
+      $url = $periodLink['#url'] ?? NULL;
+      self::assertInstanceOf(Url::class, $url);
+      $query = $url->getOption('query');
+      self::assertIsArray($query);
+      $days = $query['dias'] ?? NULL;
+      self::assertIsNumeric($days);
+      $periodDays[] = (int) $days;
+      $periodLinks[] = $periodLink;
+    }
+    self::assertCount(3, $periodLinks);
+    self::assertSame([7, 14, 30], $periodDays);
+    $activePeriodLink = $periodLinks[1];
+    $activeAttributes = $activePeriodLink['#attributes'] ?? NULL;
+    self::assertIsArray($activeAttributes);
+    self::assertSame('page', $activeAttributes['aria-current'] ?? NULL);
+    $activeUrl = $activePeriodLink['#url'] ?? NULL;
+    self::assertInstanceOf(Url::class, $activeUrl);
+    self::assertSame('aculta_lms.class_dashboard', $activeUrl->getRouteName());
+    $cacheBuild = $build['#cache'] ?? NULL;
+    self::assertIsArray($cacheBuild);
+    self::assertSame(0, $cacheBuild['max-age'] ?? NULL);
+    $cacheContexts = $cacheBuild['contexts'] ?? NULL;
+    self::assertIsArray($cacheContexts);
+    self::assertContains('user', $cacheContexts);
+    $cacheTags = $cacheBuild['tags'] ?? NULL;
+    self::assertIsArray($cacheTags);
+    self::assertContains('group_relationship_list:plugin:group_membership:group:' . $class->id(), $cacheTags);
 
     $classCourseRelationships = $entityTypeManager->getStorage('group_relationship')->loadByProperties([
       'entity_id' => $class->id(),

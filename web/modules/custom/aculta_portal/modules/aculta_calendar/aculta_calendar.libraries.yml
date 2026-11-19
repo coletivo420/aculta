@@ -5,6 +5,11 @@ agenda:
   dependencies:
     - core/drupal
 
+embed-hosts:
+  css:
+    theme:
+      css/embed-hosts.css: {}
+
 dhtmlx:
   js:
     js/dhtmlx/dhtmlxscheduler.js: { preprocess: false }

@@ -118,6 +118,9 @@ final class WikiProposal extends RevisionableContentEntityBase implements Entity
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
     $fields += static::ownerBaseFieldDefinitions($entity_type);
+    if (!$fields['uid'] instanceof BaseFieldDefinition) {
+      throw new \LogicException('The Wiki proposal owner field must be a base field definition.');
+    }
     $fields['uid']->setRequired(TRUE)->setRevisionable(TRUE);
 
     $fields['subject'] = BaseFieldDefinition::create('string')

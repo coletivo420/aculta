@@ -12,6 +12,7 @@ use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventDateOverride;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
+use Drupal\Core\Url;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -30,7 +31,8 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'user', 'key', 'address', 'geofield', 'options', 'link', 'text',
-    'filter', 'taxonomy', 'datetime', 'datetime_range', 'aculta_calendar',
+    'filter', 'taxonomy', 'datetime', 'datetime_range', 'ui_patterns',
+    'ui_patterns_views', 'aculta_calendar',
     'aculta_events',
   ];
 
@@ -125,27 +127,55 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     ])->save();
 
     $controller = EventPageController::create($this->container);
-    $publicPage = $controller->page('evento-hibrido-publico');
-    $publicMarkup = (string) $publicPage['#datas'][0]['#markup'];
-    $publicJson = $this->extractJsonLd($publicPage['#attached']['html_head'], 'aculta_events_event_jsonld');
-    $publicLocation = $publicJson['@graph'][0]['location'] ?? NULL;
+    $publicPage = $this->expectArray($controller->page('evento-hibrido-publico'));
+    $publicSlots = $this->expectArray($publicPage['#slots'] ?? NULL);
+    $publicEssentials = $this->expectArray($publicSlots['essentials'] ?? NULL);
+    $publicDates = $this->expectArray($publicEssentials['dates'] ?? NULL);
+    $publicItems = $this->expectArray($publicDates['items'] ?? NULL);
+    $publicDate = $this->expectArray($publicItems['date_0'] ?? NULL);
+    $publicMarkup = $this->expectString($publicDate['#markup'] ?? NULL);
+    $publicAttached = $this->expectArray($publicPage['#attached'] ?? NULL);
+    $publicHtmlHead = $this->expectArray($publicAttached['html_head'] ?? NULL);
+    $publicJson = $this->extractJsonLd($publicHtmlHead, 'aculta_events_event_jsonld');
+    $this->assertNotNull($publicJson);
+    $publicGraph = $this->expectArray($publicJson['@graph'] ?? NULL);
+    $publicFirstGraphItem = $this->expectArray($publicGraph[0] ?? NULL);
+    $publicLocation = $this->expectArray($publicFirstGraphItem['location'] ?? NULL);
 
     $this->assertStringNotContainsString('Local de endereço reservado', $publicMarkup);
-    $this->assertStringNotContainsString('Rua Reservada', json_encode($publicJson));
-    $this->assertStringNotContainsString('80000-987', json_encode($publicJson));
+    $encodedPublicJson = $this->expectString(json_encode($publicJson));
+    $this->assertStringNotContainsString('Rua Reservada', $encodedPublicJson);
+    $this->assertStringNotContainsString('80000-987', $encodedPublicJson);
     $this->assertSame('VirtualLocation', $publicLocation['@type'] ?? NULL);
-    $this->assertContains('user', $publicPage['#cache']['contexts']);
+    $publicCache = $this->expectArray($publicPage['#cache'] ?? NULL);
+    $publicContexts = $this->expectArray($publicCache['contexts'] ?? NULL);
+    $this->assertContains('user', $publicContexts);
 
     $this->container->get('current_user')->setAccount($owner);
-    $ownerPage = $controller->page('evento-hibrido-publico');
-    $ownerJson = $this->extractJsonLd($ownerPage['#attached']['html_head'], 'aculta_events_event_jsonld');
-    $ownerLocations = $ownerJson['@graph'][0]['location'] ?? [];
+    $ownerPage = $this->expectArray($controller->page('evento-hibrido-publico'));
+    $ownerAttached = $this->expectArray($ownerPage['#attached'] ?? NULL);
+    $ownerHtmlHead = $this->expectArray($ownerAttached['html_head'] ?? NULL);
+    $ownerJson = $this->extractJsonLd($ownerHtmlHead, 'aculta_events_event_jsonld');
+    $this->assertNotNull($ownerJson);
+    $ownerGraph = $this->expectArray($ownerJson['@graph'] ?? NULL);
+    $ownerFirstGraphItem = $this->expectArray($ownerGraph[0] ?? NULL);
+    $ownerLocations = $this->expectArray($ownerFirstGraphItem['location'] ?? []);
 
-    $this->assertStringContainsString('Local de endereço reservado', (string) $ownerPage['#datas'][0]['#markup']);
+    $ownerSlots = $this->expectArray($ownerPage['#slots'] ?? NULL);
+    $ownerEssentials = $this->expectArray($ownerSlots['essentials'] ?? NULL);
+    $ownerDates = $this->expectArray($ownerEssentials['dates'] ?? NULL);
+    $ownerItems = $this->expectArray($ownerDates['items'] ?? NULL);
+    $ownerDate = $this->expectArray($ownerItems['date_0'] ?? NULL);
+    $ownerMarkup = $this->expectString($ownerDate['#markup'] ?? NULL);
+    $this->assertStringContainsString('Local de endereço reservado', $ownerMarkup);
     $this->assertCount(2, $ownerLocations);
-    $this->assertSame('Rua Reservada, 987', $ownerLocations[1]['address']['streetAddress'] ?? NULL);
-    $this->assertSame('80000-987', $ownerLocations[1]['address']['postalCode'] ?? NULL);
-    $this->assertContains('user', $ownerPage['#cache']['contexts']);
+    $ownerLocation = $this->expectArray($ownerLocations[1] ?? NULL);
+    $ownerAddress = $this->expectArray($ownerLocation['address'] ?? NULL);
+    $this->assertSame('Rua Reservada, 987', $ownerAddress['streetAddress'] ?? NULL);
+    $this->assertSame('80000-987', $ownerAddress['postalCode'] ?? NULL);
+    $ownerCache = $this->expectArray($ownerPage['#cache'] ?? NULL);
+    $ownerContexts = $this->expectArray($ownerCache['contexts'] ?? NULL);
+    $this->assertContains('user', $ownerContexts);
   }
 
   /**
@@ -216,18 +246,26 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     ])->save();
 
     $this->container->get('current_user')->setAccount($owner);
-    $build = LocationPageController::create($this->container)->page($location);
-    $days = $build['agenda']['days'];
-    $this->assertSame('aculta_events.location_ics', $build['agenda']['ics']['#url']->getRouteName());
-    $this->assertSame((string) $location->id(), (string) $build['agenda']['ics']['#url']->getRouteParameters()['aculta_event_location']);
+    $build = $this->expectArray(LocationPageController::create($this->container)->page($location));
+    $agenda = $this->expectArray($build['agenda'] ?? NULL);
+    $days = $this->expectArray($agenda['days'] ?? NULL);
+    $ics = $this->expectArray($agenda['ics'] ?? NULL);
+    $url = $this->expectUrl($ics['#url'] ?? NULL);
+    $this->assertSame('aculta_events.location_ics', $url->getRouteName());
+    $routeParameters = $url->getRouteParameters();
+    $this->assertSame((string) $location->id(), $this->expectString($routeParameters['aculta_event_location'] ?? NULL));
     $firstDay = $first->format('Y-m-d');
     $cancelledDay = $second->format('Y-m-d');
     $originalThirdDay = $third->format('Y-m-d');
     $rescheduledDay = $rescheduled->format('Y-m-d');
     $markup = '';
     foreach ($days as $day) {
-      foreach ($day['items']['#items'] as $item) {
-        $markup .= (string) $item['#markup'];
+      $dayBuild = $this->expectArray($day);
+      $dayItems = $this->expectArray($dayBuild['items'] ?? NULL);
+      $items = $this->expectArray($dayItems['#items'] ?? NULL);
+      foreach ($items as $item) {
+        $itemBuild = $this->expectArray($item);
+        $markup .= $this->expectString($itemBuild['#markup'] ?? NULL);
       }
     }
 
@@ -236,8 +274,9 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     $this->assertStringContainsString('/eventos/evento-da-agenda', $markup);
     $this->assertStringContainsString('cancelado', $markup);
     $this->assertStringNotContainsString('Evento de outro local', $markup);
-    $this->assertContains('aculta_event_date_list', $build['agenda']['#cache']['tags']);
-    $this->assertContains('user', $build['agenda']['#cache']['contexts']);
+    $agendaCache = $this->expectArray($agenda['#cache'] ?? NULL);
+    $this->assertContains('aculta_event_date_list', $this->expectArray($agendaCache['tags'] ?? NULL));
+    $this->assertContains('user', $this->expectArray($agendaCache['contexts'] ?? NULL));
 
     $outsider = User::create(['name' => 'unrelated-viewer', 'status' => 1]);
     $outsider->save();
@@ -258,9 +297,9 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
   public function testUpdate10005Idempotence(): void {
     \Drupal::moduleHandler()->loadInclude('aculta_events', 'install');
     $resultado = aculta_events_update_10005();
-    $this->assertIsString($resultado);
     // Em execução subsequente, informa que já existiam sem lançar exceção.
     $resultado2 = aculta_events_update_10005();
+    $this->assertSame($resultado, $resultado2);
     $this->assertSame('Campos estruturados de ARQ-04 já existiam.', $resultado2);
   }
 
@@ -309,13 +348,14 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
     ]);
     $evento->save();
 
+    $now = $this->container->get('datetime.time')->getCurrentTime();
     $data = EventDate::create([
       'title' => 'Sessão de Abertura',
       'field_evento' => (int) $evento->id(),
       'field_local' => (int) $local->id(),
       'field_quando' => [
-        'value' => '2026-11-15T19:00:00',
-        'end_value' => '2026-11-15T21:30:00',
+        'value' => gmdate('Y-m-d\\TH:i:s', $now + 86400),
+        'end_value' => gmdate('Y-m-d\\TH:i:s', $now + 95400),
       ],
       'field_modo' => 'hibrido',
       'field_link_virtual' => 'https://aovivo.example.invalid/cinema',
@@ -325,72 +365,134 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
 
     // Validação da página do Evento:
     $eventController = EventPageController::create($this->container);
-    $eventBuild = $eventController->page('mostra-cinema-independente');
+    $eventBuild = $this->expectArray($eventController->page('mostra-cinema-independente'));
     $this->assertArrayHasKey('#attached', $eventBuild);
-    $this->assertNotEmpty($eventBuild['#attached']['html_head']);
+    $eventAttached = $this->expectArray($eventBuild['#attached']);
+    $eventHtmlHead = $this->expectArray($eventAttached['html_head'] ?? NULL);
+    $this->assertNotEmpty($eventHtmlHead);
 
-    $eventJson = $this->extractJsonLd($eventBuild['#attached']['html_head'], 'aculta_events_event_jsonld');
+    $eventJson = $this->extractJsonLd($eventHtmlHead, 'aculta_events_event_jsonld');
     $this->assertNotNull($eventJson);
-    $this->assertSame('https://schema.org', $eventJson['@context'] ?? NULL);
-    $this->assertNotEmpty($eventJson['@graph']);
-    $eventGraphItem = $eventJson['@graph'][0];
-    $this->assertSame('Event', $eventGraphItem['@type']);
-    $this->assertSame('Mostra de Cinema Independente', $eventGraphItem['name']);
-    $this->assertSame('https://schema.org/MixedEventAttendanceMode', $eventGraphItem['eventAttendanceMode']);
-    $this->assertSame('https://schema.org/EventScheduled', $eventGraphItem['eventStatus']);
+    $eventData = $this->expectArray($eventJson);
+    $this->assertSame('https://schema.org', $eventData['@context'] ?? NULL);
+    $eventGraph = $this->expectArray($eventData['@graph'] ?? NULL);
+    $this->assertNotEmpty($eventGraph);
+    $eventGraphItem = $this->expectArray($eventGraph[0] ?? NULL);
+    $this->assertSame('Event', $eventGraphItem['@type'] ?? NULL);
+    $this->assertSame('Mostra de Cinema Independente', $eventGraphItem['name'] ?? NULL);
+    $this->assertSame('https://schema.org/MixedEventAttendanceMode', $eventGraphItem['eventAttendanceMode'] ?? NULL);
+    $this->assertSame('https://schema.org/EventScheduled', $eventGraphItem['eventStatus'] ?? NULL);
 
     // Valida location composto (VirtualLocation + Place):
-    $this->assertIsArray($eventGraphItem['location']);
-    $this->assertCount(2, $eventGraphItem['location']);
-    $this->assertSame('VirtualLocation', $eventGraphItem['location'][0]['@type']);
-    $this->assertSame('https://aovivo.example.invalid/cinema', $eventGraphItem['location'][0]['url']);
-    $this->assertSame('Place', $eventGraphItem['location'][1]['@type']);
-    $this->assertSame('Espaço Cultural das Flores', $eventGraphItem['location'][1]['name']);
-    $this->assertSame('Curitiba', $eventGraphItem['location'][1]['address']['addressLocality']);
+    $eventLocations = $this->expectArray($eventGraphItem['location'] ?? NULL);
+    $this->assertCount(2, $eventLocations);
+    $virtualLocation = $this->expectArray($eventLocations[0] ?? NULL);
+    $placeLocation = $this->expectArray($eventLocations[1] ?? NULL);
+    $this->assertSame('VirtualLocation', $virtualLocation['@type'] ?? NULL);
+    $this->assertSame('https://aovivo.example.invalid/cinema', $virtualLocation['url'] ?? NULL);
+    $this->assertSame('Place', $placeLocation['@type'] ?? NULL);
+    $this->assertSame('Espaço Cultural das Flores', $placeLocation['name'] ?? NULL);
+    $placeAddress = $this->expectArray($placeLocation['address'] ?? NULL);
+    $this->assertSame('Curitiba', $placeAddress['addressLocality'] ?? NULL);
 
     // Valida organizer:
-    $this->assertSame('Organization', $eventGraphItem['organizer']['@type']);
-    $this->assertSame('Instituto Cultural ACULTA', $eventGraphItem['organizer']['name']);
+    $eventOrganizer = $this->expectArray($eventGraphItem['organizer'] ?? NULL);
+    $this->assertSame('Organization', $eventOrganizer['@type'] ?? NULL);
+    $this->assertSame('Instituto Cultural ACULTA', $eventOrganizer['name'] ?? NULL);
 
     // Valida offers:
-    $this->assertSame('Offer', $eventGraphItem['offers']['@type']);
-    $this->assertSame('0', $eventGraphItem['offers']['price']);
-    $this->assertSame('BRL', $eventGraphItem['offers']['priceCurrency']);
+    $eventOffer = $this->expectArray($eventGraphItem['offers'] ?? NULL);
+    $this->assertSame('Offer', $eventOffer['@type'] ?? NULL);
+    $this->assertSame('0', $eventOffer['price'] ?? NULL);
+    $this->assertSame('BRL', $eventOffer['priceCurrency'] ?? NULL);
 
     // Validação da página do Local:
     $locationController = LocationPageController::create($this->container);
-    $locationBuild = $locationController->page($local);
-    $locationJson = $this->extractJsonLd($locationBuild['#attached']['html_head'], 'aculta_events_location_jsonld');
+    $locationBuild = $this->expectArray($locationController->page($local));
+    $locationAttached = $this->expectArray($locationBuild['#attached'] ?? NULL);
+    $locationHtmlHead = $this->expectArray($locationAttached['html_head'] ?? NULL);
+    $locationJson = $this->extractJsonLd($locationHtmlHead, 'aculta_events_location_jsonld');
     $this->assertNotNull($locationJson);
-    $this->assertSame('https://schema.org', $locationJson['@context']);
-    $this->assertSame('Place', $locationJson['@type']);
-    $this->assertSame('Espaço Cultural das Flores', $locationJson['name']);
-    $this->assertSame('(41) 3333-4444', $locationJson['telephone']);
-    $this->assertSame('https://espacodasflores.art.br', $locationJson['sameAs']);
-    $this->assertSame('BR', $locationJson['address']['addressCountry']);
-    $this->assertSame('Curitiba', $locationJson['address']['addressLocality']);
-    $this->assertSame('PR', $locationJson['address']['addressRegion']);
-    $this->assertSame('Rua das Flores, 100', $locationJson['address']['streetAddress']);
+    $locationData = $this->expectArray($locationJson);
+    $this->assertSame('https://schema.org', $locationData['@context'] ?? NULL);
+    $this->assertSame('Place', $locationData['@type'] ?? NULL);
+    $this->assertSame('Espaço Cultural das Flores', $locationData['name'] ?? NULL);
+    $this->assertSame('(41) 3333-4444', $locationData['telephone'] ?? NULL);
+    $this->assertSame('https://espacodasflores.art.br', $locationData['sameAs'] ?? NULL);
+    $locationAddress = $this->expectArray($locationData['address'] ?? NULL);
+    $this->assertSame('BR', $locationAddress['addressCountry'] ?? NULL);
+    $this->assertSame('Curitiba', $locationAddress['addressLocality'] ?? NULL);
+    $this->assertSame('PR', $locationAddress['addressRegion'] ?? NULL);
+    $this->assertSame('Rua das Flores, 100', $locationAddress['streetAddress'] ?? NULL);
 
     // Validação da página da Organização:
     $orgController = EventOrganizationPageController::create($this->container);
-    $orgBuild = $orgController->page('instituto-cultural-aculta');
-    $orgJson = $this->extractJsonLd($orgBuild['#attached']['html_head'], 'aculta_events_organization_jsonld');
+    $orgBuild = $this->expectArray($orgController->page('instituto-cultural-aculta'));
+    $orgAttached = $this->expectArray($orgBuild['#attached'] ?? NULL);
+    $orgHtmlHead = $this->expectArray($orgAttached['html_head'] ?? NULL);
+    $orgJson = $this->extractJsonLd($orgHtmlHead, 'aculta_events_organization_jsonld');
     $this->assertNotNull($orgJson);
-    $this->assertSame('https://schema.org', $orgJson['@context']);
-    $this->assertSame('Organization', $orgJson['@type']);
-    $this->assertSame('Instituto Cultural ACULTA', $orgJson['name']);
-    $this->assertSame('BR', $orgJson['address']['addressCountry']);
-    $this->assertSame('Curitiba', $orgJson['address']['addressLocality']);
-    $this->assertSame('PR', $orgJson['address']['addressRegion']);
-    $this->assertContains('https://aculta.example.invalid', $orgJson['sameAs']);
-    $this->assertContains('https://instagram.com/aculta', $orgJson['sameAs']);
+    $orgData = $this->expectArray($orgJson);
+    $this->assertSame('https://schema.org', $orgData['@context'] ?? NULL);
+    $this->assertSame('Organization', $orgData['@type'] ?? NULL);
+    $this->assertSame('Instituto Cultural ACULTA', $orgData['name'] ?? NULL);
+    $orgAddress = $this->expectArray($orgData['address'] ?? NULL);
+    $this->assertSame('BR', $orgAddress['addressCountry'] ?? NULL);
+    $this->assertSame('Curitiba', $orgAddress['addressLocality'] ?? NULL);
+    $this->assertSame('PR', $orgAddress['addressRegion'] ?? NULL);
+    $orgSameAs = $this->expectArray($orgData['sameAs'] ?? NULL);
+    $this->assertContains('https://aculta.example.invalid', $orgSameAs);
+    $this->assertContains('https://instagram.com/aculta', $orgSameAs);
+  }
+
+  /**
+   * Does not expose an organizer account without a public identity.
+   */
+  public function testPrivateOrganizerIdentityIsOmittedFromEventPresentation(): void {
+    $owner = User::create([
+      'name' => 'nome-cadastral-privado',
+      'status' => 1,
+    ]);
+    $owner->save();
+    $event = Event::create([
+      'title' => 'Evento sem organização pública',
+      'field_slug' => 'evento-sem-organizacao-publica',
+      'field_status' => 'publicado',
+      'field_organizador' => $owner->id(),
+    ]);
+    $event->save();
+    $now = $this->container->get('datetime.time')->getCurrentTime();
+    EventDate::create([
+      'title' => 'Sessão pública',
+      'field_evento' => $event->id(),
+      'field_quando' => [
+        'value' => gmdate('Y-m-d\\TH:i:s', $now + 86400),
+        'end_value' => gmdate('Y-m-d\\TH:i:s', $now + 93600),
+      ],
+    ])->save();
+
+    $page = $this->expectArray(EventPageController::create($this->container)->page('evento-sem-organizacao-publica'));
+    $attached = $this->expectArray($page['#attached'] ?? NULL);
+    $htmlHead = $this->expectArray($attached['html_head'] ?? NULL);
+    $json = $this->extractJsonLd($htmlHead, 'aculta_events_event_jsonld');
+    $this->assertNotNull($json);
+    $jsonData = $this->expectArray($json);
+    $encoded = $this->expectString(json_encode($jsonData, JSON_UNESCAPED_UNICODE));
+
+    $slots = $this->expectArray($page['#slots'] ?? NULL);
+    $this->assertArrayNotHasKey('sidebar', $slots);
+    $this->assertStringNotContainsString('nome-cadastral-privado', $encoded);
+    $graph = $this->expectArray($jsonData['@graph'] ?? NULL);
+    $graphItem = $this->expectArray($graph[0] ?? NULL);
+    $this->assertArrayNotHasKey('organizer', $graphItem);
+    $cache = $this->expectArray($page['#cache'] ?? NULL);
+    $this->assertContains('user:1', $this->expectArray($cache['tags'] ?? NULL));
   }
 
   /**
    * Extrai e decodifica o JSON-LD dos anexos html_head.
    *
-   * @param array<int, array<int, mixed>> $htmlHead
+   * @param array<array-key, mixed> $htmlHead
    *   Anexos html_head do render array.
    * @param string $key
    *   Chave identificadora do script.
@@ -400,14 +502,74 @@ final class EventStructuredDataKernelTest extends KernelTestBase {
    */
   private function extractJsonLd(array $htmlHead, string $key): ?array {
     foreach ($htmlHead as $item) {
+      if (!is_array($item)) {
+        continue;
+      }
       if (isset($item[1]) && $item[1] === $key) {
-        $raw = (string) ($item[0]['#value'] ?? '');
-        if ($raw !== '') {
-          return json_decode($raw, TRUE);
+        $script = $item[0] ?? NULL;
+        if (!is_array($script)) {
+          return NULL;
+        }
+        $raw = $script['#value'] ?? NULL;
+        if (is_string($raw) && $raw !== '') {
+          $decoded = json_decode($raw, TRUE);
+          if (!is_array($decoded)) {
+            return NULL;
+          }
+          $result = [];
+          foreach ($decoded as $field => $value) {
+            if (!is_string($field)) {
+              return NULL;
+            }
+            $result[$field] = $value;
+          }
+          return $result;
         }
       }
     }
     return NULL;
+  }
+
+  /**
+   * Asserts an array shape at a render or decoded JSON boundary.
+   *
+   * @param mixed $value
+   *   The value to validate.
+   *
+   * @return array<array-key, mixed>
+   *   The validated array.
+   */
+  private function expectArray(mixed $value): array {
+    if (!is_array($value)) {
+      throw new \UnexpectedValueException('Expected an array.');
+    }
+    return $value;
+  }
+
+  /**
+   * Asserts a string at a render or encoding boundary.
+   *
+   * @param mixed $value
+   *   The value to validate.
+   */
+  private function expectString(mixed $value): string {
+    if (!is_string($value)) {
+      throw new \UnexpectedValueException('Expected a string.');
+    }
+    return $value;
+  }
+
+  /**
+   * Asserts that a render element contains a route URL.
+   *
+   * @param mixed $value
+   *   The value to validate.
+   */
+  private function expectUrl(mixed $value): Url {
+    if (!$value instanceof Url) {
+      throw new \UnexpectedValueException('Expected a route URL.');
+    }
+    return $value;
   }
 
 }

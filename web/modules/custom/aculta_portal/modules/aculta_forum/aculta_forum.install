@@ -5,14 +5,244 @@
  * Install and update hooks for ACULTA Forum.
  */
 
+use Drupal\Core\Database\StatementInterface;
+use Drupal\Core\Database\Statement\FetchAs;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\user\Entity\Role;
+
+/**
+ * Implements hook_schema().
+ *
+ * @phpstan-return array<string, array<string, mixed>>
+ *   The module's database table definitions.
+ */
+function aculta_forum_schema(): array {
+  $schema['aculta_discussion_reaction'] = [
+    'description' => 'Stores individual user emoji reactions on discussion comments and forum posts.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique reaction entry ID.',
+      ],
+      'entity_type' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Target entity type (node, comment, or aculta_forum_post).',
+      ],
+      'entity_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Target entity ID.',
+      ],
+      'host_entity_type' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Host entity type (e.g. node).',
+      ],
+      'host_entity_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Host entity ID.',
+      ],
+      'context_id' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Context identifier (e.g. public_forum, publication, lms, wiki).',
+      ],
+      'is_public_context' => [
+        'type' => 'int',
+        'size' => 'tiny',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 1,
+        'description' => 'Whether the reaction occurred in a public context (1) or restricted/LMS (0).',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'User ID who reacted.',
+      ],
+      'author_uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Target content author User ID who received the reaction.',
+      ],
+      'reaction' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Reaction machine identifier (e.g. heart, seedling, fire).',
+      ],
+      'created' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Timestamp when created.',
+      ],
+      'changed' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Timestamp when last updated.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'user_entity_reaction' => ['entity_type', 'entity_id', 'uid'],
+    ],
+    'indexes' => [
+      'entity_lookup' => ['entity_type', 'entity_id', 'reaction'],
+      'user_given' => ['uid', 'is_public_context'],
+      'author_received' => ['author_uid', 'is_public_context'],
+    ],
+  ];
+
+  $schema['aculta_discussion_reaction_user_stats'] = [
+    'description' => 'Aggregated O(1) user reaction statistics.',
+    'fields' => [
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: User ID.',
+      ],
+      'reactions_received' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Total public reactions received by this user.',
+      ],
+      'reactions_given' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Total public reactions given by this user.',
+      ],
+      'updated' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Timestamp of last update.',
+      ],
+    ],
+    'primary key' => ['uid'],
+  ];
+
+  $schema['aculta_forum_topic_deletion'] = [
+    'description' => 'Stores topic deletion requests awaiting moderation or resolution.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: Request ID.',
+      ],
+      'nid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Topic node ID.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'User ID who requested deletion.',
+      ],
+      'status' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => 'pending',
+        'description' => 'Status: pending, approved, or rejected.',
+      ],
+      'created' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Timestamp when deletion was requested.',
+      ],
+      'reviewed_by' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'User ID of moderator who reviewed the request.',
+      ],
+      'reviewed_at' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Timestamp when reviewed.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'nid' => ['nid'],
+      'status' => ['status'],
+      'uid' => ['uid'],
+      'created' => ['created'],
+    ],
+  ];
+
+  // Idempotência da atividade analítica: uma publicação lógica, um evento.
+  // Sem autor, texto, e-mail ou IP; a chave única é a própria garantia.
+  $schema['aculta_forum_analytics_ledger'] = [
+    'description' => 'Chaves de idempotência da atividade emitida pelo Fórum.',
+    'fields' => [
+      'fingerprint' => [
+        'type' => 'varchar',
+        'length' => 64,
+        'not null' => TRUE,
+        'description' => 'SHA-256 de tipo de entidade, ID e nome do evento.',
+      ],
+      'created' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Timestamp da primeira emissão.',
+      ],
+    ],
+    'primary key' => ['fingerprint'],
+    'indexes' => [
+      'created' => ['created'],
+    ],
+  ];
+
+  return $schema;
+}
 
 /**
  * Adds first-publication timestamps to shared discussion comments.
+ *
+ * @param array<string, mixed> $sandbox
+ *   Batch state persisted between update runs.
  */
 function aculta_forum_update_9001(array &$sandbox): string {
-  if (!isset($sandbox['initialized'])) {
+  $initialized = $sandbox['initialized'] ?? FALSE;
+  if (!is_bool($initialized)) {
+    throw new RuntimeException('The first-publication update sandbox has an invalid initialized flag.');
+  }
+  if (!$initialized) {
     if (!FieldStorageConfig::loadByName('comment', 'field_aculta_published_at')) {
       FieldStorageConfig::create([
         'entity_type' => 'comment',
@@ -36,43 +266,66 @@ function aculta_forum_update_9001(array &$sandbox): string {
     $sandbox['last_cid'] = 0;
     $sandbox['scanned'] = 0;
     $sandbox['processed'] = 0;
-    $sandbox['total'] = (int) \Drupal::entityQuery('comment')
+    $total = \Drupal::entityQuery('comment')
       ->accessCheck(FALSE)
       ->condition('comment_type', 'aculta_discussion_post')
       ->condition('field_name', 'field_aculta_discussion')
       ->condition('status', 1)
       ->count()
       ->execute();
+    $sandbox['total'] = $total;
+  }
+
+  $lastCid = $sandbox['last_cid'] ?? NULL;
+  $scanned = $sandbox['scanned'] ?? NULL;
+  $processed = $sandbox['processed'] ?? NULL;
+  $total = $sandbox['total'] ?? NULL;
+  if (!is_int($lastCid) || !is_int($scanned) || !is_int($processed) || !is_int($total)) {
+    throw new RuntimeException('The first-publication update sandbox has invalid counters.');
   }
 
   // Writes only the missing marker rows. Saving each comment would run comment
   // presave and update hooks and bump its changed time, which reorders topics
   // by last activity and invalidates caches for a data-only backfill.
   $database = \Drupal::database();
-  $batch = $database->select('comment_field_data', 'c')
+  $batchStatement = $database->select('comment_field_data', 'c')
     ->fields('c', ['cid', 'langcode', 'created'])
     ->condition('c.comment_type', 'aculta_discussion_post')
     ->condition('c.field_name', 'field_aculta_discussion')
     ->condition('c.status', 1)
-    ->condition('c.cid', $sandbox['last_cid'], '>')
+    ->condition('c.cid', $lastCid, '>')
     ->orderBy('c.cid')
     ->range(0, 100)
-    ->execute()
-    ->fetchAll();
+    ->execute();
+  if (!$batchStatement instanceof StatementInterface) {
+    throw new RuntimeException('The first-publication update query did not return a statement.');
+  }
+  $batch = array_map('aculta_forum_update_9001_normalize_comment_row', $batchStatement->fetchAll(FetchAs::Object));
   if ($batch !== []) {
-    $cids = array_map(static fn($row): int => (int) $row->cid, $batch);
-    $marked = array_flip($database->select('comment__field_aculta_published_at', 'm')
+    $cids = array_column($batch, 'cid');
+    $markedStatement = $database->select('comment__field_aculta_published_at', 'm')
       ->fields('m', ['entity_id'])
       ->condition('m.deleted', 0)
       ->condition('m.entity_id', $cids, 'IN')
-      ->execute()
-      ->fetchCol());
+      ->execute();
+    if (!$markedStatement instanceof StatementInterface) {
+      throw new RuntimeException('The existing-marker query did not return a statement.');
+    }
+    $markedIds = [];
+    foreach ($markedStatement->fetchCol() as $markedId) {
+      $parsedId = filter_var($markedId, FILTER_VALIDATE_INT);
+      if (!is_int($parsedId)) {
+        throw new RuntimeException('The existing-marker query returned an invalid comment ID.');
+      }
+      $markedIds[] = $parsedId;
+    }
+    $marked = array_fill_keys($markedIds, TRUE);
 
     $insert = $database->insert('comment__field_aculta_published_at')
       ->fields(['bundle', 'deleted', 'entity_id', 'revision_id', 'langcode', 'delta', 'field_aculta_published_at_value']);
     $missing = 0;
     foreach ($batch as $row) {
-      if (!isset($marked[(int) $row->cid])) {
+      if (!isset($marked[$row['cid']])) {
         // Existing content has no recoverable first-published event. The
         // creation time is the conservative bound: it never grants an author
         // more time than the policy allows. Non-revisionable comments store
@@ -80,11 +333,11 @@ function aculta_forum_update_9001(array &$sandbox): string {
         $insert->values([
           'bundle' => 'aculta_discussion_post',
           'deleted' => 0,
-          'entity_id' => (int) $row->cid,
-          'revision_id' => (int) $row->cid,
-          'langcode' => $row->langcode,
+          'entity_id' => $row['cid'],
+          'revision_id' => $row['cid'],
+          'langcode' => $row['langcode'],
           'delta' => 0,
-          'field_aculta_published_at_value' => (int) $row->created,
+          'field_aculta_published_at_value' => $row['created'],
         ]);
         $missing++;
       }
@@ -93,17 +346,42 @@ function aculta_forum_update_9001(array &$sandbox): string {
       $insert->execute();
     }
     $sandbox['last_cid'] = end($cids);
-    $sandbox['scanned'] += count($batch);
-    $sandbox['processed'] += $missing;
+    $scanned += count($batch);
+    $processed += $missing;
+    $sandbox['scanned'] = $scanned;
+    $sandbox['processed'] = $processed;
   }
 
-  $sandbox['#finished'] = $sandbox['total'] === 0 || count($batch) < 100
+  $sandbox['#finished'] = $total === 0 || count($batch) < 100
     ? 1
-    : min(1, $sandbox['scanned'] / $sandbox['total']);
+    : min(1, $scanned / $total);
 
   return (string) t('Added first-publication markers to @count existing discussion comments.', [
-    '@count' => $sandbox['processed'],
+    '@count' => $processed,
   ]);
+}
+
+/**
+ * Validates a row read by the first-publication update hook.
+ *
+ * @param mixed $row
+ *   The database row returned by the query.
+ *
+ * @return array{cid: int, langcode: string, created: int}
+ *   The required comment row values.
+ */
+function aculta_forum_update_9001_normalize_comment_row(mixed $row): array {
+  if (!is_object($row)) {
+    throw new RuntimeException('The first-publication update query returned an invalid row.');
+  }
+  $values = get_object_vars($row);
+  $cid = filter_var($values['cid'] ?? NULL, FILTER_VALIDATE_INT);
+  $created = filter_var($values['created'] ?? NULL, FILTER_VALIDATE_INT);
+  $langcode = $values['langcode'] ?? NULL;
+  if (!is_int($cid) || !is_int($created) || !is_string($langcode)) {
+    throw new RuntimeException('The first-publication update query returned incomplete comment data.');
+  }
+  return ['cid' => $cid, 'langcode' => $langcode, 'created' => $created];
 }
 
 /**
@@ -132,7 +410,7 @@ function aculta_forum_update_9003(): void {
   }
 
   $fields = $view->get('display.default.display_options.fields');
-  if (!is_array($fields) || !isset($fields['parent_name'])) {
+  if (!is_array($fields) || !isset($fields['parent_name']) || !is_array($fields['parent_name'])) {
     throw new RuntimeException('The parent category field is missing from the ACULTA Forum categories View.');
   }
 
@@ -155,15 +433,23 @@ function aculta_forum_update_9003(): void {
     'type' => 'default',
     'options' => [],
   ];
-  $style['options']['grouping'] = [
+  if (!is_array($style)) {
+    throw new RuntimeException('The category View style configuration is invalid.');
+  }
+  $styleOptions = $style['options'] ?? [];
+  if (!is_array($styleOptions)) {
+    throw new RuntimeException('The category View style options are invalid.');
+  }
+  $styleOptions['grouping'] = [
     [
       'field' => 'parent_name',
       'rendered' => FALSE,
       'rendered_strip' => FALSE,
     ],
   ];
+  $style['options'] = $styleOptions;
   $view->set($page_path . '.style', $style);
-  $view->save(TRUE);
+  $view->save();
 }
 
 /**
@@ -185,7 +471,7 @@ function aculta_forum_update_9004(): void {
   }
 
   $view->set($field_path, 'h3');
-  $view->save(TRUE);
+  $view->save();
 }
 
 /**
@@ -199,5 +485,77 @@ function aculta_forum_update_9005(): void {
   }
 
   $view->set('display.default.display_options.cache.type', 'aculta_forum_post_tag');
-  $view->save(TRUE);
+  $view->save();
+}
+
+/**
+ * Installs discussion reaction tables and default configuration.
+ */
+function aculta_forum_update_9006(): void {
+  $schema = \Drupal::database()->schema();
+  $tables = aculta_forum_schema();
+
+  if (!$schema->tableExists('aculta_discussion_reaction')) {
+    $schema->createTable('aculta_discussion_reaction', $tables['aculta_discussion_reaction']);
+  }
+
+  if (!$schema->tableExists('aculta_discussion_reaction_user_stats')) {
+    $schema->createTable('aculta_discussion_reaction_user_stats', $tables['aculta_discussion_reaction_user_stats']);
+  }
+
+  $config = \Drupal::configFactory()->getEditable('aculta_forum.settings');
+  if ($config->get('reactions_enabled') === NULL) {
+    $config->set('reactions_enabled', TRUE);
+    $config->set('default_reaction', 'heart');
+    $config->set('allowed_reactions', [
+      ['id' => 'heart', 'icon' => 'heart', 'label' => 'Curtir', 'enabled' => TRUE],
+      ['id' => 'thumbs_up', 'icon' => 'thumbs-up', 'label' => 'Apoiar', 'enabled' => TRUE],
+      ['id' => 'seedling', 'icon' => 'seedling', 'label' => 'Cultivo', 'enabled' => TRUE],
+      ['id' => 'herb', 'icon' => 'herb', 'label' => 'Botânica', 'enabled' => TRUE],
+      ['id' => 'fire', 'icon' => 'fire', 'label' => 'Excelente', 'enabled' => TRUE],
+      ['id' => 'clap', 'icon' => 'clapping-hands', 'label' => 'Aplausos', 'enabled' => TRUE],
+      ['id' => 'laugh', 'icon' => 'grinning-squinting-face', 'label' => 'Engraçado', 'enabled' => TRUE],
+      ['id' => 'pray', 'icon' => 'folded-hands', 'label' => 'Gratidão', 'enabled' => TRUE],
+    ]);
+    $config->save();
+  }
+
+  $role = Role::load('email_confirmed');
+  if ($role !== NULL && !$role->hasPermission('react to aculta discussions')) {
+    $role->grantPermission('react to aculta discussions');
+    $role->save();
+  }
+}
+
+/**
+ * Installs topic deletion moderation storage and default reply settings.
+ */
+function aculta_forum_update_9007(): void {
+  $schema = \Drupal::database()->schema();
+  $tables = aculta_forum_schema();
+
+  if (!$schema->tableExists('aculta_forum_topic_deletion')) {
+    $schema->createTable('aculta_forum_topic_deletion', $tables['aculta_forum_topic_deletion']);
+  }
+
+  $config = \Drupal::configFactory()->getEditable('aculta_forum.settings');
+  if ($config->get('reply_max_depth') === NULL) {
+    $config->set('reply_max_depth', 2);
+  }
+  if ($config->get('topic_author_delete_policy') === NULL) {
+    $config->set('topic_author_delete_policy', 'moderation_queue');
+  }
+  $config->save();
+}
+
+/**
+ * Installs the analytics idempotency ledger.
+ */
+function aculta_forum_update_9008(): void {
+  $schema = \Drupal::database()->schema();
+  $tables = aculta_forum_schema();
+
+  if (!$schema->tableExists('aculta_forum_analytics_ledger')) {
+    $schema->createTable('aculta_forum_analytics_ledger', $tables['aculta_forum_analytics_ledger']);
+  }
 }

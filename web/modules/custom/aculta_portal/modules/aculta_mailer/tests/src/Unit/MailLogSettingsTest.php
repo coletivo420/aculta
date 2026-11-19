@@ -21,6 +21,9 @@ final class MailLogSettingsTest extends UnitTestCase {
 
   /**
    * Configuração com os valores informados.
+   *
+   * @param array<mixed> $values
+   *   Valores de configuração.
    */
   private function settings(array $values): MailLogSettings {
     $config = $this->createMock(ImmutableConfig::class);

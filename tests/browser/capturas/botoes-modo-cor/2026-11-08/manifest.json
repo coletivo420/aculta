@@ -1,0 +1,97 @@
+{
+  "checks": {
+    "seletor_radios": 2,
+    "barra_institucional": 0,
+    "previews": 89,
+    "previews_light": 89,
+    "previews_dark": 89
+  },
+  "captures": [
+    {
+      "file": "light-320.png",
+      "mode": "light",
+      "width": 320,
+      "overflow_px": 0
+    },
+    {
+      "file": "light-1440.png",
+      "mode": "light",
+      "width": 1440,
+      "overflow_px": 0
+    },
+    {
+      "file": "dark-320.png",
+      "mode": "dark",
+      "width": 320,
+      "overflow_px": 0
+    },
+    {
+      "file": "dark-1440.png",
+      "mode": "dark",
+      "width": 1440,
+      "overflow_px": 0
+    }
+  ],
+  "apos_uli": {
+    "url": "https://conta.aculta.toca.net.br/?check_logged_in=1",
+    "titulo": "Studio Dashboard | Conta ACULTA"
+  },
+  "sessao": true,
+  "url": "https://aculta.toca.net.br/painel-administrativo/aparencia/ui/components",
+  "titulo": "Components library | Associação Cultural Antiproibicionista",
+  "auditoria_escuro": [
+    {
+      "componente": "",
+      "cor": "rgb(107, 114, 128)",
+      "fundo": "rgb(23,21,19)",
+      "razao": 3.77,
+      "texto": "No RFC data available."
+    }
+  ],
+  "origem_cor": {
+    "corComputada": "rgb(107, 114, 128)",
+    "elemento": "P.",
+    "modoDaPagina": "dark",
+    "regras": [
+      {
+        "cor": "rgb(107, 114, 128)",
+        "elemento": "DIV.empty-message",
+        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
+        "nivel": 1,
+        "sel": ".empty-message"
+      },
+      {
+        "cor": "var(--color-text-primary)",
+        "elemento": "DIV.ui_patterns_story__preview",
+        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
+        "nivel": 3,
+        "sel": ".ui_patterns_story__preview[data-theme], .ui_patterns_story__story[data-theme]"
+      },
+      {
+        "cor": "var(--color-text-primary)",
+        "elemento": "DIV.ui_patterns_story__preview",
+        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
+        "nivel": 3,
+        "sel": ".layout-page__content[data-theme], .ui_patterns_story__preview[data-theme], .ui_patterns_story__story[data-theme]"
+      },
+      {
+        "cor": "var(--color-text-primary)",
+        "elemento": "DIV.layout-page__content",
+        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
+        "nivel": 9,
+        "sel": ".layout-page__content[data-theme], .ui_patterns_story__preview[data-theme], .ui_patterns_story__story[data-theme]"
+      },
+      {
+        "cor": "var(--color-text-primary)",
+        "elemento": "BODY.aculta-radius--button-lg aculta-radius--card-lg ac",
+        "folha": "apPNGow-Q5dBnRI-guNEyJ1ZrRA3AavD17qweeH9ICZuVMUMr76v_QOxCHgA",
+        "nivel": 13,
+        "sel": "body"
+      }
+    ],
+    "texto": "No RFC data available.",
+    "tokenTextoNaPagina": "#f4efe8",
+    "tokenTextoNoElemento": "#f4efe8"
+  },
+  "ok": true
+}

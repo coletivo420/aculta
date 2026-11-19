@@ -6,7 +6,11 @@ Revisado em 2026-10-19. A implementação segue fases independentes, com autoriz
 
 > **Atualização 2026-11-01:** a extensão `aculta_lms_messenger` foi removida. A elegibilidade educacional vive em `aculta_lms\\Notice\\LearningEligibility`; os produtores publicam `MessengerNoticeEvent` pelo contrato público e o Messenger mantém persistência, leitura, contadores, preferências e digest. Registro em `docs/architecture/MESSENGER-CONSOLIDATION-2026-11.md`.
 
-> **Independência do Drupal LMS contrib — B1/B2/B3-A (2026-11-01):** os contratos de jornada, resumo do estudante, cursos da Conta e conclusão educacional vivem em `aculta_learning_contracts`; `aculta_portal` não declara `lms:lms` nem injeta `lms.training_manager`; e o Studio compõe as experiências do estudante e do Educador. O provider `aculta_lms` continua lendo/escrevendo dados do Drupal LMS, que permanece a fonte de verdade. O Runtime foi validado no commit [`e60abcb62`](https://github.com/coletivo420/aculta/commit/e60abcb624a1bf3e73a46631915663cca39fddcb): smoke responsivo 74/74 em 320–1440 px, smoke final a 390 px, rotas do estudante/Educador respondendo e testes Unit/Kernels focais aprovados. Não houve migração de dados. Restam a instalação limpa sem contrib e a migração gradual de ownership, conteúdo, tentativas e progresso.
+> **Consolidação e Independência Arquitetural (2026-11-08):**
+> 1. Os contratos neutros de jornada, resumo do estudante, cursos da Conta e conclusão educacional foram incorporados diretamente no namespace `Drupal\aculta_lms\Learning` e `Drupal\aculta_lms\Event\CourseCompletedEvent`; a extensão intermediária `aculta_learning_contracts` foi descontinuada e incorporada ao `aculta_lms`.
+> 2. As funcionalidades de materiais de curso (`aculta_lms_resources`) foram unificadas nativamente dentro de `aculta_lms\Resources`.
+> 3. As funcionalidades de agenda, prazos e eventos de turma (`aculta_lms_agenda`) foram incorporadas dentro de `aculta_lms\Agenda`, consumindo diretamente o provedor central `aculta_calendar`.
+> 4. O Studio (`aculta_studio`) compõe as experiências do estudante e do Educador consumindo os contratos desacoplados do `aculta_lms`. O Runtime foi validado com rotas respondendo HTTP 200 OK e testes Unit/Kernels focais aprovados.
 
 ## Princípios e estado inicial
 
@@ -49,7 +53,7 @@ Bloqueios técnicos: PDFPreview 1.2 e ImageMagick 5.0 não resolvem juntos via C
 | F12 — Dashboards | SDC ACULTA420 sobre LMS services/Views | dados próprios para estudante; aggregate limitado à turma para educador; sem cache cruzado | Reverter presenters/Views e manter rotas LMS |
 | F13 — Notificações educacionais | Contrato público `aculta_messenger` + elegibilidade em `aculta_lms` | avisos sempre no site; matrícula/certificado com e-mail transacional; demais eventos em resumo diário opt-in; dedupe, access atual, fila, privacidade e UI testados | Desabilitar subscriber/producer; Message permanece fonte e não apagar comunicações existentes |
 | F14 — Conexões | `FriendshipManagerInterface` e Messenger existentes | ações e notificações usam amizade atual sem duplicar estado/permissão | Reverter adapter; amizade continua em `aculta_user` |
-| F15 — Integrações de conteúdo | `aculta_lms` e `aculta_lms_h5p` integrados a `aculta_image`, ao leitor PDF existente `aculta_pdf_viewer` (solicitado como `aculta_pdf_reader`) e `aculta_forum`; Gallery, Magazine, Wiki e Content Index | Imagens de curso, atividade, entrega e discussão passam pela política `aculta_image`; PDFs usam Media `course_document`, Group e viewer compartilhado, com vínculo opcional por atividade H5P; tópicos e respostas preservam Forum/Node/Comment como fonte e revalidam membership, access, cache e purpose; discussão ligada à atividade usa referência LMS e Group do curso/turma | `aculta_forum_lms` exibe discussões autorizadas dentro da atividade; H5P referencia documentos privados existentes do mesmo Group e usa o builder do viewer compartilhado. `aculta_lms_resources` registra `Group:lms_course` no Content Index e relações explicitamente permitidas para leituras, galerias e `course_document` quando o plugin PDF Group está disponível. `aculta_portal` é owner do Media compartilhado `remote_video` e fornece sua projeção mínima; por decisão do responsável, relações de vídeo aguardam fechamento dos formatos editoriais e contratos de acesso. Ainda é necessário identificar a fonte pedagógica Media antes de definir qualquer aresta, sem presumir referência direta da turma. Kernel MariaDB percorre rebuild e consulta outgoing pelo Index: estudante por `takeAccess()` e educador por `grade students` contextual recebem recursos autorizados; terceiro e leitura em rascunho são negados. O Kernel LMS/Index cobre leituras, galerias e documento (4 testes / 208 assertions; 53 depreciações Core/contrib) com Group real e plugin fixture para a relação PDF; a opcionalidade/projeção tem Unit 5/31. Providers são compilados dos YAMLs owner; boot completo da cadeia dos módulos ainda não foi provado. Runtime, instalação dos campos, smoke autenticado e revisão visual seguem pendentes. O Index não substitui dashboard/progresso LMS. Não duplicar storage, reader PDF ou entidade de discussão |
+| F15 — Integrações de conteúdo | `aculta_lms` e `aculta_lms_h5p` integrados a `aculta_image`, `aculta_pdf_viewer`, `aculta_forum`, Gallery, Magazine, Wiki e Content Index | Imagens mantêm a policy `aculta_image`; PDFs usam Media `course_document`, Group e viewer compartilhado; tópicos e respostas preservam Forum/Node/Comment e revalidam membership, access, cache e purpose; discussões de atividade usam referências LMS e Group do curso/turma | `aculta_lms_resources` implementa leituras, galerias, `course_document` e `course_video` explícito; `aculta_portal` mantém Media `remote_video`. Wiki/Revista/galeria/vídeo e upload PDF passaram smoke funcional autenticado no Runtime com fixtures removidas. O Content Index tem cobertura Kernel para providers owner, acesso LMS e relações de curso. Discussões Fórum/H5P ligadas à atividade ainda não passaram smoke HTTP; a tentativa H5P parou antes de criar fixture porque `private://h5p` está indisponível. `embedded_video` da Wiki/Fórum aguarda decisão editorial. F15 segue Dev até gates PHPCS H5P e integrações Fórum/H5P restantes. Revisão visual fora do escopo atual. Não duplicar storage, reader PDF ou entidade de discussão |
 | F16 — Hardening | performance, segurança, privacidade, acessibilidade, cache e tamanho/timeout PDF | zero Critical/High; matriz completa e gates PASS | rollback por componente/flag/config, sem downgrade destrutivo de entidades |
 | RC — Candidato integrado pronto para deploy | Testes automatizados, config sync estática, navegador pré-deploy, acessibilidade, segurança, documentação, versão e rollback | Todo requisito funcional e visual aplicável passa antes de RC; evidências e limites registrados. Alpha valida o Runtime após deploy | Não implantar automaticamente; se Alpha encontrar divergência, voltar a Dev, corrigir e gerar novo RC |
 | F17 — Google Classroom (opcional e última) | Após RC aprovado e nova decisão; publicar somente link para atividade ACULTA | OAuth/scopes, consentimento e link para fonte LMS aprovados | Nenhum pacote/token/rota/storage nesta linha; desabilitar integração sem afetar LMS |
@@ -74,20 +78,20 @@ respostas pendentes somente com `grade students` atual. Avisos não incluem resp
 comentário, e revalidam a fonte ao exibir. O prazo é salvo por atividade na turma em relação Group, usa o fuso da
 conta e não modifica o conteúdo LMS compartilhado entre turmas. O educador registra a data por atividade em cada turma; o campo fica na relação Group da turma com a atividade. O lembrete é enfileirado quando a data entra na janela de 24 horas. Unit LMS/adapter: 47 testes / 210 assertions PASS; Kernels de Group/Message: 6 testes / 85 assertions PASS, incluindo persistência real da mesma atividade em duas turmas, permissão `take course` no curso pai e persistência/deduplicação do aviso em Message.
 Esses Kernels registraram depreciações upstream (3 em instalação/certificado e 42 nos Kernels recentes de Group/Message).
-No Runtime de teste o adapter está habilitado, as cinco configurações Group de prazo foram importadas isoladamente e manager/worker instanciam. Smoke temporário com turma, membership e prazo confirmou aviso em Message, integração do aviso pessoal, enqueue pelo hook de Cron e persistência do lembrete pelo worker; limpeza removeu os dados e filas temporários. Não foi enviado e-mail. Cron roda a cada 3h, mas o hook e o worker foram invocados diretamente, sem aguardar execução agendada. A tentativa de Firefox headless em 2026-10-21 chegou ao antigo acordo geral `/agreement`; Agreement contrib foi posteriormente desinstalado e o fluxo foi substituído por `aculta_user_agreement`. Nenhum aceite foi submetido nessa tentativa. A gaveta autenticada ainda não foi revisada. Próximo: executar revisão visual/acessível em sessão de teste autenticada após concluir o aceite no fluxo atual; depois gates e revisão pré-RC.
+No Runtime de desenvolvimento o adapter está habilitado, as cinco configurações Group de prazo foram importadas isoladamente e manager/worker instanciam. Smoke temporário com turma, membership e prazo confirmou aviso em Message, integração do aviso pessoal, enqueue pelo hook de Cron e persistência do lembrete pelo worker; limpeza removeu os dados e filas temporários. Não foi enviado e-mail. Cron roda a cada 3h, mas o hook e o worker foram invocados diretamente, sem aguardar execução agendada. A tentativa de Firefox headless em 2026-10-21 chegou ao antigo acordo geral `/agreement`; Agreement contrib foi posteriormente desinstalado e o fluxo foi substituído por `aculta_user_agreement`. Nenhum aceite foi submetido nessa tentativa. A gaveta autenticada ainda não foi revisada. Próximo: executar revisão visual/acessível em sessão de teste autenticada após concluir o aceite no fluxo atual; depois gates e revisão pré-RC.
 
 **F1 — Fundação `aculta_lms`: implementada e integrada no Runtime de desenvolvimento.** Os contratos neutros estão habilitados; o provider LMS publica a conclusão aprovada e os consumidores Game/Messenger usam o evento compartilhado. Em 2026-11-01, `config:status` ficou limpo após habilitar `aculta_learning_contracts`; container, rotas de estudante e Educador e smoke final foram validados no commit `e60abcb62`. A independência do provider e instalação sem o contrib continuam fora deste gate.
 
 O viewer compartilhado e a relação Media↔Group para documentos privados de turma foram desenvolvidos nos
 submódulos `aculta_pdf_viewer` e `aculta_pdf_viewer_group`. O Kernel cobre membro, não membro, remoção da
-relação e revogação de membership. **PV5 foi homologada no Runtime de teste em 2026-10-17**: membro leu o
+relação e revogação de membership. **PV5 foi homologada no Runtime de desenvolvimento em 2026-10-17**: membro leu o
 PDF; anônimo e não membro receberam 403; a mesma URL conhecida voltou a receber 403 após remover a relação
 ou a membership. A rota Core `/system/files?file=...` foi usada porque `/system/files/{filepath}` retornava
 404 nesse ambiente. Evidências e limite de escopo estão no
 [changelog do viewer](../../web/modules/custom/aculta_portal/modules/aculta_pdf_viewer/CHANGELOG.md).
 
 O PDF privado de turma está validado no Runtime, mas isso não homologa o restante do LMS. **F4 — consolidação
-do Drupal LMS — concluída no Runtime de teste em 2026-10-17.** O responsável escolheu
+do Drupal LMS — concluída no Runtime de desenvolvimento em 2026-10-17.** O responsável escolheu
 `scripts/content/courses/introducao-antiproibicionismo.json` como fonte editorial canônica; o caminho histórico
 `scripts/institution/provision-lms-pilot.php` delega ao loader. Composer audit passou sem advisories e o dry-run
 isolado previu somente a atualização LMS 1.2.3 → 1.2.4. O update 12002 foi aplicado; `updatedb:status` ficou
@@ -104,11 +108,11 @@ FunctionalJavascript upstream não foi executada porque este ambiente não forne
 update adicionou `activity_page_title`; schema config validado sem erros e `updatedb:status` está NONE. O
 provider Core `mysql` também foi ativado após o requisito de status apontar que estava ausente e foi registrado
 no Config Sync. Não houve importação global de Config Sync por causa das divergências pré-existentes do site.
-O Runtime Drush usa PHP 8.4.26; PHP 8.5 continua aberto como DT-P04 e não foi inferido. F6 — Página de
+O Runtime Drush usa PHP 8.5.12. F6 — Página de
 curso e sala — é a próxima fase e exige decisão/autorização próprias. PV6, CSP, matriz ampliada de
 navegadores, produção Hostinger e o fluxo editorial mantêm gates separados.
 
-**F5 — Catálogo — implementada e validada no servidor de testes em 2026-10-17.** A View `courses_catalog`
+**F5 — Catálogo — implementada e validada no servidor de desenvolvimento em 2026-10-17.** A View `courses_catalog`
 continua como fonte, com filtros de curso publicados e o row plugin nativo do LMS. O tema negocia
 `lms:course_card` para `aculta420:course_card` por substituição SDC compatível; o LMS mantém URL,
 ação de entrada, access e cacheability. A execução da View produziu o curso publicado para anônimo
@@ -119,16 +123,21 @@ Tab, o rail manteve nome acessível e foco nativo, e não houve JavaScript neces
 Somente um curso publicado existe no Runtime; não há curso não publicado no acervo para um caso
 negativo da listagem. PHP no Runtime continua em 8.4.26.
 
-**F6 — Página de curso e sala — implementação inicial nesta branch.** O campo
+**F6 — Página de curso e sala — smoke integrado no Runtime em 2026-11-04.** O campo
 extra configurável `aculta_lms_course_room` integra um índice na visualização
 canônica do curso. A seção consulta `take course` no curso pai e lista somente
 lições referenciadas publicadas, com links para a rota nativa LMS (com slugs
 portugueses do Portal); não cria progresso, matrícula ou status. `view`
 genérico da entidade Lesson não é a autorização contextual da rota. RUNTIME
-STATUS: DEFERRED até smoke test de membro, não membro e visitante; a fase não
-está homologada.
+smoke somente leitura: membro matriculado UID 262 recebeu a página da aula com
+título e atividade; outsider UID 265 e visitante receberam acesso negado sem
+título da aula. O primeiro smoke encontrou HTTP 500 porque células da tabela
+entregavam render arrays como atributos; corrigido com a chave `data` do Render
+API. Kernel confirma a renderização do enunciado e do link. Nenhum conteúdo,
+resposta ou membership foi alterado. Resultado funcional F6 validado no Runtime
+de desenvolvimento; a revisão visual permanece pendente.
 
-**F7 — integração de pedido concluído validada parcialmente no Runtime de teste.** Config Sync habilita `lms_classes`
+**F7 — integração de pedido concluído validada parcialmente no Runtime de desenvolvimento.** Config Sync habilita `lms_classes`
 1.2.4, inclui configuração opcional, exige criação explícita de turmas e concede
 ao educador permissões de criação/gestão; o hook de papel global reconhece
 matrículas em turma. A página do curso oferece produto Commerce próprio, escolha
@@ -166,6 +175,16 @@ Runtime `cursos`: sem updates, rebuild e resolução do manager/hook passaram;
 houve warning preexistente de cópia dos assets H5P.
 RUNTIME STATUS: parcial; checkout HTTP, pedido pago, reembolso, confirmação da
 interface de remoção e isolamento A/B continuam DEFERRED.
+Unit `CourseEnrollmentPurchaseFormTest` em 2026-11-04 acrescenta 2 cenários / 20
+assertions para estados sem turma publicada e sem produto, verificando que não
+há ação de checkout. O Runtime contém apenas um curso sintético sem produto ou
+turma; a compra paga ainda depende de uma fixture de integração e de sandbox.
+Na cobertura Kernel adicional do `aculta_lms`, Commerce exercita o hook real de pedido: compra
+gratuita em rascunho não cria matrícula; a transição para concluído cria a
+membership e a referência de origem. Turma fechada ou pertencente a outro curso
+é rejeitada mesmo em submit forjado e não cria carrinho. `CourseEnrollmentPurchaseKernelTest`
+passou com 4 testes / 173 assertions no banco dedicado; 67 depreciações são de
+Core/contrib. Checkout pago, sandbox e smoke HTTP permanecem pendentes.
 Backup privado em
 `/home/aculta/private/aculta/config-reconcile-20261018/aculta_runtime-before-f7.sql.gz`.
 Detalhes em
@@ -196,7 +215,7 @@ APLICADO; homologação visual DEFERRED. A F9 (Webform Score e entregas) está c
 
 **F9 — implementação e critérios automatizados concluídos nesta branch, autorizada pelo responsável em 2026-10-18.** `webform_score` 2.4.0,
 `lms_file_upload` 1.0.2 e `fraction` 3.1.0 foram adicionados via Composer; o dry-run indicou somente
-três pacotes novos e zero atualizações/remoções. Os módulos estão habilitados no Runtime de teste e em
+três pacotes novos e zero atualizações/remoções. Os módulos estão habilitados no Runtime de desenvolvimento e em
 `core.extension`. Revisão do código upstream encontrou que o dono de uma resposta LMS mantém acesso a
 `see_details` sem revalidar matrícula. `aculta_lms` agora adiciona `take course` atual à rota de download
 de anexos do LMS File Upload, preservando a autorização LMS para educadores. Kernel usa arquivo no
@@ -207,9 +226,11 @@ leitura ampla e bloqueio de edição de score Webform. Auditoria somente leitura
 nenhum papel atualmente tem as permissões `view any submission score` ou `view own submission score`.
 Kernel também passou com uma submissão Webform persistida e autoria real: o dono com a permissão de leitura
 própria pode ver a nota, outra conta é negada e edição direta permanece proibida (1 teste, 11 assertions;
-42 deprecações de Core/contrib). O Runtime não tem atividade de upload, resposta de arquivo, atividade de quiz
-ou formulário com score; por isso, smoke HTTP/browser no Runtime fica `DEFERRED` e não foram criadas fixtures
-persistentes nele. A suíte automatizada cobre transmissão de arquivo privado, membership revogada, acesso
+42 deprecações de Core/contrib). Em 2026-10-22, smoke funcional HTTP no Runtime usou atividade File Upload
+temporária: `.exe` foi recusado, PNG permitido foi enviado à resposta e gravado em storage privado; cenário,
+arquivo, resposta e membership de teste foram removidos. O download da resposta validou a conta dona, outsider
+e bloqueio de conta no ciclo dev.81. O Runtime segue sem atividade de quiz ou formulário com score, então esses
+caminhos permanecem DEFERRED. A suíte automatizada cobre transmissão privada, membership revogada, acesso
 preservado de educador e autoria/controle de nota Webform com entidade persistida. Não há integração de nota
 Webform para LMS, conforme fronteira definida.
 Webform Score continua restrito às submissões Webform; não há integração que promova resultado
@@ -231,7 +252,7 @@ RUNTIME STATUS: HOMOLOGAÇÃO DE TESTE CONCLUÍDA; produção não foi alterada.
 As etapas depois da F10 continuam na ordem definida acima: F11 certificados, F12
 dashboards, F13 notificações educacionais, F14 conexões, F15 integrações de conteúdo, F16 hardening e RC
 integrado. F17 Google Classroom permanece opcional, por último e dependente de nova decisão. F10 está
-homologada no Runtime de teste; os objetivos de integração de envio de imagem e discussão passam para F15,
+homologada no Runtime de desenvolvimento; os objetivos de integração de envio de imagem e discussão passam para F15,
 com discussão condicionada à implementação executável do `aculta_forum`. As homologações Runtime pendentes
 de F6–F9 (funcional, testes, gates e visual aplicável) continuam antes da RC; a
 validação do ambiente Runtime ocorre no Alpha após deploy.
@@ -242,7 +263,7 @@ pública e PDF escapado foram adicionados. Kernel dedicado cobre elegibilidade,
 autorização, cadeia de emissão, revogação, retenção após exclusão de conta e
 headers do PDF. Unit e gates passam. O QR integra `aculta_qrcode` por URL
 absoluta do `DomainPurposeManager`; o SVG é servido sem persistir arquivo e o
-PNG é incorporado ao PDF. No Runtime de teste, a rota pública para código
+PNG é incorporado ao PDF. No Runtime de desenvolvimento, a rota pública para código
 inexistente e as rotas de QR e PDF com código inexistente retornam 404. No
 Runtime há zero certificados e zero status aprovado atual. Em 2026-10-21,
 `field_course_hours` não existia na configuração ativa; após revisar o diff
@@ -325,7 +346,7 @@ e a ausência de e-mail/motivo interno: 3 testes / 102 assertions. Suítes
 combinadas atuais: Unit LMS + Messenger 84/445; Kernel MariaDB 23/719 assertions
 PASS. As 95 depreciações continuam upstream.
 
-**F13 — implementação funcional e integração de teste concluídas; revisão visual pendente.** Os eventos contratados, incluindo avisos por conteúdo publicado, retorno do educador, prazos por atividade/turma e lembrete em janela de 24h, são produzidos pelo `aculta_lms` e entregues via Message/`aculta_messenger`. Runtime de teste confirmou persistência do aviso e lembrete, integração com aviso pessoal e worker, além da limpeza das fixtures. Unit: 47 testes / 210 assertions; Kernels Group/Message: 6 testes / 85 assertions. O teste não aguardou Cron agendado nem revisou visualmente a gaveta. F13 permanece Dev até revisão visual/acessível e gates/revisão pré-RC.
+**F13 — implementação funcional e integração de teste concluídas; revisão visual pendente.** Os eventos contratados, incluindo avisos por conteúdo publicado, retorno do educador, prazos por atividade/turma e lembrete em janela de 24h, são produzidos pelo `aculta_lms` e entregues via Message/`aculta_messenger`. Runtime de desenvolvimento confirmou persistência do aviso e lembrete, integração com aviso pessoal e worker, além da limpeza das fixtures. Unit: 47 testes / 210 assertions; Kernels Group/Message: 6 testes / 85 assertions. O teste não aguardou Cron agendado nem revisou visualmente a gaveta. F13 permanece Dev até revisão visual/acessível e gates/revisão pré-RC.
 
 Em `0.1.0-dev.63`, `CourseContentEventHooksTest` prova que uma edição editorial
 de atividade já publicada, sem transição de publicação ou novo conteúdo
@@ -394,7 +415,7 @@ estudante vê somente nomes de colegas ativos da própria turma, sem progresso,
 notas ou respostas. O formulário exige acesso contextual e confere a relação
 entre curso e turma. Kernel: `ClassRosterVisibilityTest`, 1 teste / 28
 assertions PASS (36 depreciações upstream); `AcultaLmsInstallTest` valida a rota.
-Runtime de teste recebeu somente as duas configurações do campo por importação
+Runtime de desenvolvimento recebeu somente as duas configurações do campo por importação
 parcial revisada e cache rebuild; smoke autenticado e revisão visual continuam
 pendentes antes de RC. A administração do LMS começa pelo curso e inclui aulas,
 atividades, turmas, prazos e fóruns.
@@ -421,13 +442,16 @@ Group do curso ou de uma turma filha. Unit adapter: 22 testes / 256 assertions
 PASS; Kernel MariaDB: 3 testes / 168 assertions PASS, incluindo fixture real
 atividade→aula→curso, tópico autorizado por Group e exclusão de tópico em outro
 curso; 46 depreciações upstream. Config Sync foi aplicado
-parcialmente no Runtime de teste e o resolver/hook foram resolvidos no
+parcialmente no Runtime de desenvolvimento e o resolver/hook foram resolvidos no
 container; não há tópico/Comment LMS real nesse Runtime, então smoke autenticado
-e revisão visual seguem pendentes. O constraint de imagem em entrega é
-exercitado pelo `file.validator` do Core com arquivo válido/inválido, e o
-Kernel cobre a rota privada após revogação; upload de ponta a ponta no Runtime,
-renderização HTTP/visual e upload de entrega seguem pendentes. O Comment de
-discussão já reutiliza o editor `usuario_aculta` e o filtro de imagens
+segue pendente. O constraint de imagem em entrega é exercitado pelo
+`file.validator` do Core com arquivo válido/inválido. Smoke Runtime dev.80
+validou envio de PNG permitido e recusa de `.exe`; o dev.81 validou o download
+da resposta e a negação após revogar acesso. O que permanece pendente é o smoke
+HTTP de tópicos/Comments ligados a uma atividade, incluindo exibição sob o
+formulário. O smoke H5P associado foi bloqueado antes de criar fixtures porque
+o storage privado H5P está indisponível. O Comment de discussão já reutiliza o
+editor `usuario_aculta` e o filtro de imagens
 `aculta_image`; anexos separados de arquivo não fazem parte do fluxo.
 O Kernel H5P também confirma persistência do estado de tentativa ao retornar
 com a mesma conta e isolamento frente a outro membro matriculado (3 testes /
@@ -449,9 +473,39 @@ no purpose Revista para educadores com permissão contextual; membros ativos e
 educadores só recebem acesso à galeria enquanto ela estiver vinculada ao curso.
 As permissões gerais da Gallery permanecem inalteradas. Unit passou 8/39; Kernel
 no MariaDB dedicado 2/46 passou na versão anterior e não foi alterado nesta
-subfase. PHP 8.4.26; PHP 8.5 não validado. Ainda é necessário instalar os campos
-no Runtime, confirmar a seleção no formulário sob o purpose `courses`, fazer
-smoke autenticado e revisão visual; esses itens bloqueiam RC.
+subfase. Em 2026-11-04, leitura no Runtime `cursos` confirmou os três field
+storages e instâncias em `lms_course`, `aculta_lms_resources` habilitado e
+`updatedb:status`/`config:status` limpos. Nenhuma configuração foi aplicada.
+Em 2026-11-04, um smoke funcional autenticado usou um Group temporário e a
+Media `remote_video` publicada já existente. O formulário contextual carregou,
+recebeu foco e salvou a referência; a estrutura do curso mostrou o link
+canônico. A matriz funcional passou em 320/390/600/768/1280 px sem overflow e a
+fixture foi removida, preservando a Media original. A tentativa ampliada com
+leituras e galeria havia sido interrompida por erro Twig global no tema V2
+ativo (logs 843200/843205: slots SDC não declarados e bloco Twig duplicado).
+A correção funcional está em `aculta420_v2` 1.2.0-dev.9: o template de conta
+consome os slots SDC sem redefinir blocos do `embed`. Após `drush cr`, o gate
+SDC passou e a rota autenticada de materiais carregou sem 500. Uma fixture
+Group com associação criadora válida carregou e salvou leitura Wiki, galeria e
+vídeo existentes; os três target IDs persistiram. A estrutura do curso mostrou
+Wiki no host `wiki420` e galeria no host Revista. A verificação funcional
+encontrou que `Media::toUrl('canonical')` gera `/media/12/edit` com
+`media.settings:standalone_url: false`; a URL retorna 404 sem sessão editorial.
+`aculta_lms_resources` dev.33 agora aponta `remote_video` à URL de origem
+oEmbed somente após revalidar Entity Access no purpose Cursos e rejeitar URI
+fora de HTTP(S), sem hostname ou com credenciais. Firefox headless confirmou
+no Runtime o título existente apontando ao YouTube; Group removido. O Content
+Index não projeta URL. O formulário de PDF privado
+aceitou upload AJAX, salvou Media/File, persistiu a relação Group e exibiu o
+documento. Cada Group, Media e File temporário foi removido; as fontes
+editoriais existentes foram preservadas. A versão `aculta_lms_resources`
+0.1.0-dev.32 contém a alteração do controller: o `form_alter` registra callback
+estático antes do cache, e o salvamento da relação revalida a permissão. F15
+permanece aberta para outras integrações. O smoke autenticado de discussão H5P
+foi tentado sem criar fixtures: `aculta_lms_h5p.framework` falhou antes da
+criação com “The private H5P storage directory is unavailable” (watchdog
+843707). O Runtime não foi alterado para contornar a indisponibilidade de
+storage privado. Revisão visual continua fora do escopo funcional atual.
 
 Em `aculta_lms_resources` 0.1.0-dev.16, a classe Kernel LMS/Index passou novamente em MariaDB (4 testes / 208 assertions; 53 depreciações Core/contrib). Cobre policy de estudante e educador, terceiro negado e relações de leitura, galeria e `course_document`; providers vêm dos YAMLs owner, mas a relação PDF usa plugin Group fixture. Boot/DI completo dos módulos owner, instalação e Runtime permanecem pendentes.
 
@@ -460,8 +514,14 @@ Em `aculta_lms_resources` 0.1.0-dev.19, Unit + Kernel passaram nesta revisão:
 teste, leitura confirmou `aculta_lms_resources` habilitado, o campo
 `group.field_lms_videos`, o bundle Media `remote_video`, o provider de vídeo no
 Content Index e `updatedb:status` sem pendências. Nenhum update ou conteúdo foi
-aplicado ao Runtime nesta verificação. A revisão visual integrada e o boot da
-cadeia completa dos owners seguem pendentes; não promover a RC.
+aplicado ao Runtime nesta verificação. Em 2026-11-04, o
+`ContentIndexOwnerIntegrationKernelTest` inicializou a closure real de owners,
+incluindo LMS/Resources/Document Viewer/Index, instalou configuração do Portal
+e validou providers/tags e a derivação do plugin `course_document`. Integrando
+essa classe ao Kernel de upload: 8 testes / 162 assertions PASS, com 216
+depreciações Core/contrib. Boot/DI dos owners tem agora cobertura Kernel; a
+instalação dos campos e smoke/autenticação/revisão visual no Runtime continuam
+pendentes. Não promover a RC.
 
 **Revisão visual do campo `field_lms_videos` (2026-10-29):** X11 e o host
 `cursos.aculta.toca.net.br` responderam; o runner criou um Group e um Media
@@ -470,7 +530,7 @@ admin excedeu 60 segundos antes da navegação e dos asserts visuais. A limpeza
 foi confirmada por SQL: Group 87 e Media 270 ausentes; 607 tabelas antes/depois;
 `updatedb:status` sem pendências. Não houve alteração de schema/configuração.
 O teste visual permanece bloqueado até resolver o bootstrap de `uli`; o runner
-está em `tests/browser/aculta-lms-resources/` e foi ajustado para salvar o
+está em `tests/browser/courses/aculta-lms-resources/` e foi ajustado para salvar o
 resultado e manter IDs apenas se a limpeza falhar.
 
 Em `aculta_lms_resources` 0.1.0-dev.12, o Kernel do Content Index consulta a
@@ -743,9 +803,28 @@ entre consumidores e o contrib, mas não torna o provider independente: o
 publisher e as funções de curso, atividade, tentativas, notas e certificados
 ainda dependem do Drupal LMS.
 
+## Conteúdo de leitura das aulas — 2026-11-04
+
+`aculta_lms_lesson` armazena texto longo. Dev.187 introduziu o formato padrão
+`plain_text`, o formulário de autoria e o render element Drupal
+`processed_text`; o update `aculta_lms_update_10015` adicionou o field storage
+sem migrar nem apagar registros existentes. Dev.190 acrescenta o formato
+restrito `aculta_lms_lesson`, editor CKEditor 5 e acesso apenas ao papel global
+`lms_teacher`; sua allowlist não permite imagens, mídia incorporada ou HTML
+irrestrito. O formulário escapa valores legados `plain_text` antes de abrir no
+editor e a entidade recusa formatos fora de `plain_text` e `aculta_lms_lesson`.
+Unit LMS 257/964 PASS; Kernel focal de instalação/editor/render filtrado 1/80
+PASS (13 depreciações upstream). Runtime tem duas configs novas e alteração de
+permissão à espera de snapshot/import. Shell editor contextual, materiais,
+índice e revisão visual continuam pendentes.
+
 ### Microfase — acesso da agenda de turma pelo adapter LMS
 
-`aculta_lms_agenda` não importa mais `Drupal\\lms\\Entity\\Bundle\\CourseInterface` para autorizar eventos de turma. A verificação de curso publicado e `take course` foi centralizada em `ClassActivityDeadlineAccessCheck::courseAccessForClass()`, que retorna `AccessResult` com dependências e tags de cache; a agenda mantém a validação de membership ativa da turma. A mudança remove um import contrib fora do provider. **Estado:** implementada em `dev`; testes automatizados e Runtime desta microfase pendentes. Não altera conteúdo, memberships nem configuração.
+`aculta_lms_agenda` não importa mais `Drupal\\lms\\Entity\\Bundle\\CourseInterface` para autorizar eventos de turma. A verificação de curso publicado e `take course` foi centralizada em `ClassActivityDeadlineAccessCheck::courseAccessForClass()`, que retorna `AccessResult` com dependências e tags de cache; a agenda mantém a validação de membership ativa da turma. A negativa também depende do curso pai em rascunho, invalidando-se quando ele é publicado. **Estado:** implementada em `dev`; Agenda Kernel 5/195 e Unit 8/18, LMS Kernel 41/1.330 e Unit 270/1.024 PASS. Smoke autenticado de evento no Runtime fica pendente porque não há evento ligado a turma no banco atual e a validação não criou conteúdo. Não altera conteúdo, memberships nem configuração.
+
+### Microfase — invalidação de cache ao alterar o currículo
+
+Página de aula, acesso da aula e submissão de respostas resolvem posições dinâmicas de aulas/atividades; os links amigáveis também são derivados dessas listas. Foram adicionados os tags de lista do Core para as entidades próprias do ACULTA em cada consumidor, incluindo resultados de acesso permitidos e links gerados. O Kernel confirma que salvar uma atividade invalida uma entrada com os tags da página e que a página reconstruída inclui a nova atividade; Unit confirma os tags no link gerado. LMS Unit 271/1.034, Kernel `LearningDashboardKernelTest` 1/45 e PHPCS PASS. Runtime não teve escrita.
 
 ### Próximos gates
 

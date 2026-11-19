@@ -24,4 +24,3 @@ permissions:
   - 'view commerce_product'
   - 'view media'
   - 'view published media gallery entities'
-

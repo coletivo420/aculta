@@ -1,0 +1,10 @@
+{
+  "front": "aculta-theme-mobile-first",
+  "purpose": "transversal",
+  "origin_env": "REVISTA_HOST",
+  "source": "tests/browser/transversal/aculta-theme-mobile-first/README.md (magazine-cover-runtime.py abre a raiz do host de revista)",
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "notes": "Defina REVISTA_HOST=https://revista.aculta.toca.net.br. As demais checagens de layout exigem sessão ou dados de teste e ficam nos scripts da frente."
+}

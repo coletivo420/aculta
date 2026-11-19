@@ -1,0 +1,7 @@
+name: Gatilho de mensagens
+description: Gatilho de conversas no shell institucional.
+component: aculta420_v2:messenger-trigger
+props:
+  href: /mensagens
+  all_href: /mensagens
+  count: 2

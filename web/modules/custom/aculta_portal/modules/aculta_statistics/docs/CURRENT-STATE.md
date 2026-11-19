@@ -133,3 +133,10 @@ sistema de e-mail, não entregue.
 - Log de e-mail: `aculta_mail_log` é o registro. Não instalar Mailer Plus Log nem Trace Mail Log para isso.
 - Contagem de comentários: já existe no Core via `comment_count`.
 - Eventos de Commerce: não instalar ECA Commerce; a API nativa basta.
+
+## FST no código (2026-11-10)
+
+- Implementadas FST-00 a FST-10 com Unit e Kernel; FST-11 executada em testes isolados.
+- Runtime: `aculta_forum_update_9008` pendente; ledger ausente. Enquanto isso, eventos falham fechados e não incrementam agregados.
+- Functional e Browser DEFERRED. Coleta de busca desligada. Moderação resolvida/tempo bloqueada por falta de estado na fonte.
+- Nenhuma fase está HOMOLOGADA NO RUNTIME.

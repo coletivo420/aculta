@@ -7,7 +7,8 @@
 
 declare(strict_types=1);
 
-/** Instala apenas o catálogo G4 em sites onde Game já estava habilitado. */
+/**
+ * Instala apenas o catálogo G4 em sites onde Game já estava habilitado. */
 function aculta_game_update_10001(): void {
   $config = \Drupal::configFactory()->getEditable('aculta_game.missions');
   if (!$config->isNew()) {
@@ -36,5 +37,5 @@ function aculta_game_update_10001(): void {
       'criterion_version' => 1,
       'badge' => 'primeiro_curso',
     ],
-  ]])->save(TRUE);
+  ]])->save();
 }

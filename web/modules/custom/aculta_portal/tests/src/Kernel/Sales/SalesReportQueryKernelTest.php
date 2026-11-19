@@ -19,15 +19,42 @@ use PHPUnit\Framework\Attributes\Group;
  * SalesReportQuery sobre pedidos reais: escopo de produto e de doação, estado, datas e paginação.
  */
 #[Group('aculta_portal')]
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class SalesReportQueryKernelTest extends OrderKernelTestBase {
 
+  /**
+   * Fuso horário usado nas datas dos pedidos.
+   *
+   * @var \DateTimeZone
+   */
   private \DateTimeZone $fuso;
 
+  /**
+   * Serviço de consultas de relatório de vendas.
+   *
+   * @var \Drupal\aculta_portal\Sales\SalesReportQuery
+   */
   private SalesReportQuery $consultas;
 
+  /**
+   * Variação de produto usada nos pedidos de teste.
+   *
+   * @var \Drupal\commerce_product\Entity\ProductVariation
+   */
   private ProductVariation $variacao;
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
+    // commerce_product installs body configuration whose field schema is
+    // provided by Core's text module.
+    if (!in_array('text', static::$modules, TRUE)) {
+      static::$modules[] = 'text';
+    }
+    if (!in_array('text_with_summary', static::$modules, TRUE)) {
+      static::$modules[] = 'text_with_summary';
+    }
     parent::setUp();
     // A base importa só USD; o site opera em BRL.
     $this->container->get('commerce_price.currency_importer')->import('BRL');
@@ -49,6 +76,19 @@ final class SalesReportQueryKernelTest extends OrderKernelTestBase {
     $this->consultas = new SalesReportQuery($this->container->get('database'), $this->container->get('entity_type.manager'));
   }
 
+  /**
+   * Monta os filtros de relatório a partir do período e da loja informados.
+   *
+   * @param string $de
+   *   Data inicial no formato AAAA-MM-DD.
+   * @param string $ate
+   *   Data final no formato AAAA-MM-DD.
+   * @param int|null $loja
+   *   Identificador da loja, ou NULL para não filtrar por loja.
+   *
+   * @return \Drupal\aculta_portal\Sales\SalesReportFilters
+   *   Filtros prontos para uso nas consultas.
+   */
   private function filtros(string $de = '2026-10-01', string $ate = '2026-10-16', ?int $loja = NULL): SalesReportFilters {
     $query = ['de' => $de, 'ate' => $ate] + ($loja !== NULL ? ['loja' => (string) $loja] : []);
     return SalesReportFilters::fromQuery($query, $this->fuso, new \DateTimeImmutable('2026-10-16 12:00', $this->fuso));
@@ -83,6 +123,9 @@ final class SalesReportQueryKernelTest extends OrderKernelTestBase {
     return $pedido;
   }
 
+  /**
+   * Vendas de produto ignoram itens de doação do mesmo pedido.
+   */
   public function testVendasDeProdutoIgnoramDoacoesDoMesmoPedido(): void {
     $this->pedido('completed', '2026-10-10 12:00', [['default', 2, '40.00'], ['donation', 1, '15.00']]);
 
@@ -93,6 +136,9 @@ final class SalesReportQueryKernelTest extends OrderKernelTestBase {
     $this->assertSame('BRL', $linhas[0]['moeda']);
   }
 
+  /**
+   * Doações e produtos são contabilizados em escopos separados.
+   */
   public function testDoacoesEProdutosSeparamPorEscopo(): void {
     $this->pedido('completed', '2026-10-10 12:00', [['default', 1, '20.00'], ['donation', 1, '15.00']]);
 
@@ -105,18 +151,27 @@ final class SalesReportQueryKernelTest extends OrderKernelTestBase {
     $this->assertSame(1, $doacao[0]['pedidos']);
   }
 
+  /**
+   * Somente pedidos no estado concluído entram no relatório.
+   */
   public function testSomentePedidosConcluidosContam(): void {
     $this->pedido('canceled', '2026-10-10 12:00', [['default', 1, '20.00']]);
     $this->pedido('draft', '2026-10-10 12:00', [['default', 1, '20.00']]);
     $this->assertSame([], $this->consultas->porVariacao($this->filtros()));
   }
 
+  /**
+   * Pedidos fora do intervalo de datas não entram no relatório.
+   */
   public function testPedidoForaDoIntervaloNaoConta(): void {
     $this->pedido('completed', '2026-09-30 23:59', [['default', 1, '20.00']]);
     $this->pedido('completed', '2026-10-17 00:00', [['default', 1, '20.00']]);
     $this->assertSame([], $this->consultas->porPeriodo($this->filtros(), SalesReportQuery::ESCOPO_PRODUTO));
   }
 
+  /**
+   * O filtro de loja separa as vendas por loja.
+   */
   public function testFiltroDeLojaSeparaAsVendas(): void {
     $outraLoja = $this->store;
     $this->pedido('completed', '2026-10-10 12:00', [['default', 1, '20.00']], (int) $outraLoja->id());
@@ -124,6 +179,9 @@ final class SalesReportQueryKernelTest extends OrderKernelTestBase {
     $this->assertCount(1, $this->consultas->porVariacao($this->filtros(loja: (int) $outraLoja->id())));
   }
 
+  /**
+   * A paginação de pedidos com produto respeita limite e total.
+   */
   public function testPaginacaoDePedidosComProduto(): void {
     for ($i = 1; $i <= 3; $i++) {
       $this->pedido('completed', "2026-10-0$i 12:00", [['default', 1, '20.00']]);

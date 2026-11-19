@@ -7,6 +7,7 @@ namespace Drupal\aculta_portal\Form\Checkout;
 use Drupal\aculta_portal\Checkout\CheckoutMappingValidator;
 use Drupal\aculta_portal\Checkout\CheckoutSettings;
 use Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows;
+use Drupal\commerce_order\Entity\OrderTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -22,16 +23,50 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 abstract class OrderTypeMappingFormBase extends ConfigFormBase {
 
+  /**
+   * Gerenciador de tipos de entidade.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
   protected EntityTypeManagerInterface $entityTypeManager;
 
+  /**
+   * Validador de mapeamento de checkout.
+   *
+   * @var \Drupal\aculta_portal\Checkout\CheckoutMappingValidator
+   */
   protected CheckoutMappingValidator $validator;
 
+  /**
+   * Serviço dos checkout flows por tipo de pedido.
+   *
+   * @var \Drupal\aculta_portal\Checkout\OrderTypeCheckoutFlows
+   */
   protected OrderTypeCheckoutFlows $flows;
 
+  /**
+   * Construtor de rotas usado para marcar reconstrução.
+   *
+   * @var \Drupal\Core\Routing\RouteBuilderInterface
+   */
   protected RouteBuilderInterface $routeBuilder;
 
+  /**
+   * Logger do canal de checkout do Portal.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
   protected LoggerInterface $logger;
 
+  /**
+   * Cria a instância do formulário com os serviços necessários.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Instância do formulário.
+   */
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
     $instance->entityTypeManager = $container->get('entity_type.manager');
@@ -42,21 +77,47 @@ abstract class OrderTypeMappingFormBase extends ConfigFormBase {
     return $instance;
   }
 
-  /** ID do contexto no registry de checkout. */
+  /**
+   * ID do contexto no registry de checkout. */
   abstract protected function contextId(): string;
 
-  /** Chave de `aculta_portal.checkout_settings` com o tipo de pedido do contexto. */
+  /**
+   * Chave de `aculta_portal.checkout_settings` com o tipo de pedido do contexto. */
   abstract protected function settingKey(): string;
 
-  /** Tipo de pedido efetivo hoje. */
+  /**
+   * Tipo de pedido efetivo hoje. */
   abstract protected function currentOrderType(CheckoutSettings $settings): string;
 
+  /**
+   * Devolve o texto de introdução exibido na aba.
+   *
+   * @return string
+   *   Texto de introdução.
+   */
   abstract protected function intro(): string;
 
+  /**
+   * Devolve os nomes das configurações editáveis pelo formulário.
+   *
+   * @return list<string>
+   *   Nomes de configurações editáveis.
+   */
   protected function getEditableConfigNames(): array {
     return [CheckoutSettings::CONFIG];
   }
 
+  /**
+   * Monta o formulário de mapeamento do tipo de pedido.
+   *
+   * @param array<string, mixed> $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
+   * @return array<string, mixed>
+   *   Estrutura do formulário.
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $tipoAtual = $this->currentOrderType(new CheckoutSettings($this->configFactory()));
     $form['introducao'] = ['#plain_text' => $this->intro()];
@@ -75,12 +136,22 @@ abstract class OrderTypeMappingFormBase extends ConfigFormBase {
       '#default_value' => $this->flows->flowId($tipoAtual),
       '#required' => TRUE,
     ];
-    return parent::buildForm($form, $form_state);
+    /** @var array<string, mixed> $builtForm */
+    $builtForm = parent::buildForm($form, $form_state);
+    return $builtForm;
   }
 
+  /**
+   * Valida o tipo de pedido e o checkout flow escolhidos.
+   *
+   * @param array<string, mixed> $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    parent::validateForm($form, $form_state);
-    $tipo = (string) $form_state->getValue('order_type');
+    $rawTipo = $form_state->getValue('order_type');
+    $tipo = is_string($rawTipo) ? $rawTipo : '';
     $conflitos = $this->validator->conflictingContexts($this->contextId(), $tipo);
     if ($conflitos !== []) {
       $form_state->setErrorByName('order_type', $this->t('O tipo de pedido "@tipo" já é usado por outro contexto (@contextos). Cada tipo de pedido pertence a uma única experiência.', [
@@ -88,32 +159,52 @@ abstract class OrderTypeMappingFormBase extends ConfigFormBase {
         '@contextos' => implode(', ', $conflitos),
       ]));
     }
-    if (!isset($this->options('commerce_checkout_flow')[(string) $form_state->getValue('checkout_flow')])) {
+    $rawFlow = $form_state->getValue('checkout_flow');
+    $checkoutFlow = is_string($rawFlow) ? $rawFlow : '';
+    if (!isset($this->options('commerce_checkout_flow')[$checkoutFlow])) {
       $form_state->setErrorByName('checkout_flow', $this->t('Escolha um checkout flow existente.'));
     }
   }
 
+  /**
+   * Salva o tipo de pedido e grava o checkout flow no tipo de pedido.
+   *
+   * @param array<string, mixed> $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $tipo = (string) $form_state->getValue('order_type');
+    $rawTipo = $form_state->getValue('order_type');
+    $tipo = is_string($rawTipo) ? $rawTipo : '';
+    $rawFlow = $form_state->getValue('checkout_flow');
+    $checkoutFlow = is_string($rawFlow) ? $rawFlow : '';
     $anterior = $this->currentOrderType(new CheckoutSettings($this->configFactory()));
     $this->config(CheckoutSettings::CONFIG)->set($this->settingKey(), $tipo)->save();
     $tipoDePedido = $this->entityTypeManager->getStorage('commerce_order_type')->load($tipo);
-    $tipoDePedido?->setThirdPartySetting('commerce_checkout', 'checkout_flow', (string) $form_state->getValue('checkout_flow'));
-    $tipoDePedido?->save();
+    if ($tipoDePedido instanceof OrderTypeInterface) {
+      $tipoDePedido->setThirdPartySetting('commerce_checkout', 'checkout_flow', $checkoutFlow);
+      $tipoDePedido->save();
+    }
     $this->routeBuilder->setRebuildNeeded();
     // Auditoria sem segredos: contexto, valores antes e depois e a conta que alterou.
     $this->logger->notice('Checkout @contexto alterado: tipo de pedido @de para @para, checkout flow @flow (uid @uid).', [
       '@contexto' => $this->contextId(),
       '@de' => $anterior,
       '@para' => $tipo,
-      '@flow' => (string) $form_state->getValue('checkout_flow'),
+      '@flow' => $checkoutFlow,
       '@uid' => $this->currentUser()->id(),
     ]);
-    parent::submitForm($form, $form_state);
   }
 
   /**
+   * Monta as opções de seleção a partir dos rótulos das entidades.
+   *
+   * @param string $entityTypeId
+   *   ID do tipo de entidade consultado.
+   *
    * @return array<string, string>
+   *   Rótulos indexados pelo ID da entidade.
    */
   private function options(string $entityTypeId): array {
     if (!$this->entityTypeManager->hasDefinition($entityTypeId)) {

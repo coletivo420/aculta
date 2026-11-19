@@ -42,12 +42,12 @@ final class LmsNotificationEmailWorker extends QueueWorkerBase implements Contai
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly LearningNoticeManagerInterface $notices,
-    private readonly AvisoPreferenciasInterface $preferences,
-    private readonly EmailConfirmationPolicy $emailPolicy,
-    private readonly AcultaMailerInterface $mailer,
-    private readonly LockBackendInterface $lock,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly LearningNoticeManagerInterface $notices,
+    protected readonly AvisoPreferenciasInterface $preferences,
+    protected readonly EmailConfirmationPolicy $emailPolicy,
+    protected readonly AcultaMailerInterface $mailer,
+    protected readonly LockBackendInterface $lock,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

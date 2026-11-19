@@ -1,0 +1,70 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Publicação completa da Revista
+description: Composição editorial do view mode full; conteúdo, acesso e cache permanecem em Drupal e Portal.
+status: stable
+group: Revista
+props:
+  type: object
+  additionalProperties: false
+  required: [has_subtitle, has_summary, has_cover, has_footer]
+  properties:
+    has_meta:
+      type: boolean
+      title: Metadados disponíveis
+      description: Mostra o slot meta com autoria, data, hora e compartilhamento quando ele foi produzido.
+      default: false
+    has_subtitle:
+      type: boolean
+      title: Chamada disponível
+      description: Mostra o slot subtitle quando o campo de chamada editorial está preenchido.
+    has_summary:
+      type: boolean
+      title: Resumo disponível
+      description: Mostra o slot summary quando o campo de resumo está preenchido.
+    has_cover:
+      type: boolean
+      title: Capa disponível
+      description: Mostra o slot cover quando há imagem de capa no conteúdo.
+    has_footer:
+      type: boolean
+      title: Rodapé editorial disponível
+      description: Mostra o rodapé que agrupa categorias, tags, referências, créditos e outros metadados disponíveis.
+    has_authors:
+      type: boolean
+      title: Autoria disponível
+      description: Mostra o slot authors quando o módulo aculta_user produz a caixa de autoria.
+      default: false
+    has_discussion:
+      type: boolean
+      title: Discussão disponível
+      description: Mostra o slot discussion quando há render array de discussão.
+      default: false
+slots:
+  meta:
+    title: Autor, data, hora e compartilhamento
+    description: Render array cacheável do módulo aculta_magazine.
+  cover:
+    title: Imagem de capa
+    description: Imagem principal da publicação.
+  subtitle:
+    title: Chamada editorial
+    description: Linha de apoio exibida abaixo do título da publicação.
+  summary:
+    title: Resumo
+    description: Resumo editorial da publicação.
+  body:
+    title: Corpo da publicação
+    description: Conteúdo completo renderizado da publicação.
+  footer:
+    title: Categorias, tags, referências e créditos
+    description: Metadados editoriais exibidos ao final da publicação.
+  authors:
+    title: Caixa de autoria
+    description: Render array cacheável do módulo aculta_user.
+  discussion:
+    title: Discussão
+    description: Discussão renderizada pelo módulo proprietário.
+assets:
+  css:
+    component:
+      revista-publication.css: {}

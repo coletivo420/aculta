@@ -45,6 +45,7 @@ secrets.env
 /tmp/
 temp/
 .cache/
+/.twig-cs-fixer.cache
 
 # IDEs/editors
 .idea/
@@ -82,8 +83,25 @@ __pycache__/
 
 # Relatório neutro do ACULTA Deployer para o painel (sem valores; gerado localmente)
 /var/deployer/
+# Estado persistente e relatórios locais do Runtime Sync v2 (sem valores; fora do Git e do docroot)
+/var/runtime-sync/
 # Permissões locais do Claude Code: pessoais, não versionadas
 .claude/settings.local.json
 
 # Saída da suíte de navegador do Messenger (capturas e relatório locais).
 /.suite-out/
+
+# Dependências e resultados locais do Playwright.
+/tests/browser/node_modules/
+/tests/browser/test-results/
+
+# Grafo local do Graphify (gerado; fora do Git)
+/graphify-out/
+/node_modules/
+
+# PHPUnit 11 cache directories
+.phpunit.cache/
+.phpunit.performance.cache/
+
+# Relatórios gerados da auditoria CSS (reproduzíveis; não versionar)
+/reports/css-audit/

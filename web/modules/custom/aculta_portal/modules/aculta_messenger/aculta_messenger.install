@@ -5,6 +5,9 @@
  * Install and update hooks for ACULTA Messenger.
  */
 
+use Symfony\Component\Yaml\Yaml;
+use Drupal\Core\Config\Entity\ConfigDependencyManager;
+use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 use Drupal\Core\Config\FileStorage;
 
@@ -14,7 +17,86 @@ use Drupal\Core\Config\FileStorage;
 function aculta_messenger_schema(): array {
   return [
     ForumNoticeEventSchema::TABLE => ForumNoticeEventSchema::definition(),
+    'aculta_pm_thread_history' => [
+      'description' => 'Histórico de leitura e exclusão por participante de conversa privada (motor aculta_messenger).',
+      'fields' => [
+        'uid' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+        'thread_id' => ['type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0],
+        'access_timestamp' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+        'delete_timestamp' => ['type' => 'int', 'not null' => TRUE, 'default' => 0],
+      ],
+      'primary key' => ['uid', 'thread_id'],
+      'indexes' => ['thread_id' => ['thread_id']],
+    ],
   ];
+}
+
+/**
+ * Implements hook_install().
+ */
+function aculta_messenger_install(): void {
+  aculta_messenger_pm_engine_install();
+}
+
+/**
+ * Instala o motor de conversas privadas sob o provider aculta_messenger.
+ *
+ * Instalação limpa: nenhuma linha legada é reaproveitada. Só pode rodar depois
+ * que o módulo contrib private_message foi desinstalado.
+ *
+ * @return string[]
+ *   Relatório das ações executadas.
+ */
+function aculta_messenger_pm_engine_install(): array {
+  if (\Drupal::moduleHandler()->moduleExists('private_message')) {
+    throw new \RuntimeException('private_message ainda está habilitado; desinstale o contrib antes de instalar o motor aculta_messenger.');
+  }
+  $report = [];
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $types = \Drupal::entityTypeManager();
+  foreach (['private_message', 'private_message_thread', 'private_message_ban'] as $entity_type_id) {
+    if ($manager->getEntityType($entity_type_id) === NULL) {
+      $manager->installEntityType($types->getDefinition($entity_type_id));
+      $report[] = "entidade $entity_type_id instalada";
+    }
+  }
+  $database = \Drupal::database();
+  if (!$database->schema()->tableExists('aculta_pm_thread_history')) {
+    /** @var array<string, mixed> $history_schema */
+    $history_schema = aculta_messenger_schema()['aculta_pm_thread_history'];
+    $database->schema()->createTable('aculta_pm_thread_history', $history_schema);
+    $report[] = 'tabela aculta_pm_thread_history criada vazia';
+  }
+  $config_factory = \Drupal::configFactory();
+  $pm_configs = [
+    'core.entity_form_display.private_message.private_message.default',
+    'core.entity_form_display.private_message_thread.private_message_thread.default',
+    'core.entity_view_display.private_message.private_message.default',
+    'core.entity_view_display.private_message.private_message.inbox',
+    'core.entity_view_display.private_message_thread.private_message_thread.default',
+    'core.entity_view_display.private_message_thread.private_message_thread.inbox',
+    'core.entity_view_mode.private_message.inbox',
+    'core.entity_view_mode.private_message_thread.inbox',
+    'private_message.settings',
+  ];
+  foreach ($pm_configs as $name) {
+    if (!$config_factory->get($name)->isNew()) {
+      continue;
+    }
+    /** @var array<string, mixed> $data */
+    $data = Yaml::parseFile(__DIR__ . '/config/install/' . $name . '.yml');
+    $config_factory->getEditable($name)->setData($data)->save();
+    $report[] = "config $name criada";
+  }
+  return $report;
+}
+
+/**
+ * Corte do Private Message: instala o motor limpo sob aculta_messenger.
+ */
+function aculta_messenger_update_10019(): string {
+  $report = aculta_messenger_pm_engine_install();
+  return $report ? implode('; ', $report) : 'Motor de conversas já instalado; nada alterado.';
 }
 
 /**
@@ -167,7 +249,7 @@ function aculta_messenger_update_10012(): void {
  * Installs only missing unread-count fields without replacing active config.
  */
 function aculta_messenger_update_10013(): void {
-  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_messenger');
+  $module_path = \Drupal::service('extension.path.resolver')->getPath('module', 'aculta_messenger');
   $defaults = new FileStorage($module_path . '/config/install');
   $entity_type_manager = \Drupal::entityTypeManager();
   $field_storage = $entity_type_manager->getStorage('field_storage_config');
@@ -266,7 +348,7 @@ function aculta_messenger_update_10014(): void {
  * Installs the private Message bundle used for Events contribution outcomes.
  */
 function aculta_messenger_update_10015(): void {
-  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_messenger');
+  $module_path = \Drupal::service('extension.path.resolver')->getPath('module', 'aculta_messenger');
   $source = new FileStorage($module_path . '/config/install');
   $names = [
     'message.template.aculta_msg_events_contrib_notice',
@@ -280,7 +362,7 @@ function aculta_messenger_update_10015(): void {
     'field.field.message.aculta_msg_events_contrib_notice.field_aculta_events_prop_uuid',
   ];
   $config = $source->readMultiple($names);
-  $ordered_names = (new \Drupal\Core\Config\Entity\ConfigDependencyManager())
+  $ordered_names = (new ConfigDependencyManager())
     ->setData($config)
     ->sortAll();
   $config_manager = \Drupal::service('config.manager');
@@ -293,6 +375,9 @@ function aculta_messenger_update_10015(): void {
       throw new \LogicException(sprintf('Events notice configuration %s is missing or is not an entity.', $name));
     }
     $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+    if (!$storage instanceof ConfigEntityStorageInterface) {
+      throw new \LogicException(sprintf('Events notice configuration %s does not use config entity storage.', $name));
+    }
     $entity = $storage->createFromStorageRecord($config[$name]);
     if (!$entity->isInstallable()) {
       throw new \LogicException(sprintf('Events notice configuration %s has unmet dependencies.', $name));
@@ -337,7 +422,7 @@ function aculta_messenger_update_10016(): void {
  * Adds digest and direct-email delivery fields to Events proposal notices.
  */
 function aculta_messenger_update_10017(): void {
-  $module_path = \Drupal::service('extension.list.module')->getPath('aculta_messenger');
+  $module_path = \Drupal::service('extension.path.resolver')->getPath('module', 'aculta_messenger');
   $source = new FileStorage($module_path . '/config/install');
   $names = [
     'field.storage.message.field_aculta_msg_delivery',
@@ -349,7 +434,7 @@ function aculta_messenger_update_10017(): void {
   ];
   $config = $source->readMultiple($names);
   $config_manager = \Drupal::service('config.manager');
-  $ordered_names = (new \Drupal\Core\Config\Entity\ConfigDependencyManager())->setData($config)->sortAll();
+  $ordered_names = (new ConfigDependencyManager())->setData($config)->sortAll();
   foreach ($ordered_names as $name) {
     if ($config_manager->loadConfigEntityByName($name) !== NULL) {
       continue;
@@ -359,10 +444,32 @@ function aculta_messenger_update_10017(): void {
       throw new \LogicException(sprintf('Events notice delivery configuration %s is missing or is not an entity.', $name));
     }
     $storage = \Drupal::entityTypeManager()->getStorage($entity_type);
+    if (!$storage instanceof ConfigEntityStorageInterface) {
+      throw new \LogicException(sprintf('Events notice delivery configuration %s does not use config entity storage.', $name));
+    }
     $entity = $storage->createFromStorageRecord($config[$name]);
     if (!$entity->isInstallable()) {
       throw new \LogicException(sprintf('Events notice delivery configuration %s has unmet dependencies.', $name));
     }
     $entity->save();
   }
+}
+
+/**
+ * Reconciles the installed schema metadata for the friendship event field.
+ */
+function aculta_messenger_update_10018(): string {
+  $entity_type_id = 'message';
+  $field_name = 'field_aculta_friendship_event';
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $installed = $manager->getFieldStorageDefinition($field_name, $entity_type_id);
+  $current = \Drupal::service('entity_field.manager')
+    ->getFieldStorageDefinitions($entity_type_id)[$field_name] ?? NULL;
+
+  if ($installed !== NULL && $current !== NULL) {
+    $manager->updateFieldStorageDefinition($current);
+    return 'Reconciled the installed friendship event field schema without rewriting its values.';
+  }
+
+  return 'The friendship event field is not installed; no schema or values were changed.';
 }

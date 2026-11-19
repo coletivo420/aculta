@@ -23,7 +23,7 @@ final class MailLayoutForm extends EntityForm {
   public const VARIABLES = ['content', 'brand_name', 'brand_footer'];
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypes,
+    protected readonly EntityTypeManagerInterface $entityTypes,
   ) {}
 
   /**

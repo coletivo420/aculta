@@ -1,0 +1,39 @@
+name: Painéis Laterais do Fórum
+props:
+  stats:
+    - label: Tópicos
+      value: 1420
+    - label: Mensagens
+      value: 12580
+    - label: Membros
+      value: null
+    - label: Online
+      value: null
+  featured:
+    - title: Guia Definitivo de Nutrientes Orgânicos
+      url: /discussoes/guia-nutrientes-organicos
+      thumbnail: null
+      replies: 84
+    - title: Calendário Lunar para Plantio e Colheita 2026
+      url: /discussoes/calendario-lunar-2026
+      thumbnail: null
+      replies: 39
+  moderators:
+    - name: CarlosM
+      role: Mod Geral
+    - name: MarianaV
+      role: Agronomia
+  rules:
+    - Respeito mútuo entre cultivadores e sem ofensas.
+    - É proibido comércio ou oferta de substâncias ilícitas.
+    - Utilize títulos claros e objetivos para suas dúvidas.
+  related:
+    - name: Cultivo Básico
+      url: /categorias/cultivo-basico
+      count: 320
+    - name: Iluminação & Painéis
+      url: /categorias/iluminacao
+      count: 142
+    - name: Pragas & Doenças
+      url: /categorias/pragas-doencas
+      count: 98

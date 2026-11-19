@@ -18,17 +18,31 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class SearchPageForm extends FormBase implements ContainerInjectionInterface {
 
   public function __construct(
-    private readonly RequestStack $searchRequestStack,
+    protected readonly RequestStack $searchRequestStack,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('request_stack'));
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_search_page_form';
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<string, mixed>
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $term = mb_substr(trim((string) ($this->searchRequestStack->getCurrentRequest()?->query->get('q', '') ?? '')), 0, SearchPageController::MAX_CHARS);
     $form['#method'] = 'get';
@@ -49,8 +63,16 @@ final class SearchPageForm extends FormBase implements ContainerInjectionInterfa
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $form_state->setRedirectUrl(Url::fromRoute('aculta_portal.search', [], ['query' => ['q' => trim((string) $form_state->getValue('q'))]]));
+    $rawQ = $form_state->getValue('q');
+    $q = is_string($rawQ) ? trim($rawQ) : '';
+    $form_state->setRedirectUrl(Url::fromRoute('aculta_portal.search', [], ['query' => ['q' => $q]]));
   }
 
 }

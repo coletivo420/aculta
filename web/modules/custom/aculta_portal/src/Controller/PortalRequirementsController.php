@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Controller;
 
-use Drupal\Core\Template\Attribute;
 use Composer\InstalledVersions;
 use Composer\Semver\Semver;
 use Drupal\aculta_portal\Deployer\DeployerStatusReader;
@@ -22,10 +21,15 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Administrative status report for the Portal's runtime integrations. */
+/**
+ * Administrative status report for the Portal's runtime integrations. */
 final class PortalRequirementsController extends ControllerBase {
 
-  /** @var array<string, string>|null */
+  /**
+   * Requisitos do composer por pacote, ou NULL antes da primeira leitura.
+   *
+   * @var array<string, string>|null
+   */
   private ?array $composerRequirements = NULL;
 
   public function __construct(
@@ -168,7 +172,8 @@ final class PortalRequirementsController extends ControllerBase {
     ],
   ];
 
-  /** Composer packages used by custom modules that need explicit attribution. */
+  /**
+   * Composer packages used by custom modules that need explicit attribution. */
   private const PHP_EXTENSION_MODULE_REQUIREMENTS = [
     [
       'name' => 'ACULTA Image',
@@ -192,18 +197,54 @@ final class PortalRequirementsController extends ControllerBase {
     ],
   ];
 
-  /** Administrative landing page for the ACULTA Portal section. */
+  /**
+   * Administrative landing page for the ACULTA Portal section.
+   *
+   * @return array<string, mixed>
+   */
   public function overview(): array {
     $rows = [];
     foreach ([
-      ['aculta_portal.requirements', $this->t('Status'), $this->t('Confira os requisitos, versões instaladas e pendências conhecidas das integrações do Portal.')],
-      ['aculta_portal.turnstile_settings', $this->t('Turnstile (anti-bot)'), $this->t('Ativar ou desativar o desafio Turnstile em cadastro, login, recuperação de senha e contato. Só ativa com a chave configurada no ambiente.')],
-      ['aculta_portal_cep.settings', $this->t('Consulta de CEP'), $this->t('Banco de dados padrão e ordem das fontes de consulta de CEP (base local, ViaCEP e BrasilAPI), com a ativação de cada uma.')],
-      ['aculta_portal.support_settings', $this->t('Configurações do Apoio'), $this->t('Edite o texto institucional exibido na página pública Apoie.')],
-      ['aculta_portal.deployer_status', $this->t('ACULTA Deployer: status'), $this->t('Relatório de fronteiras, correções de deploy abertas e credenciais por ambiente. Somente leitura.')],
-      ['aculta_portal.secrets_import', $this->t('Credenciais do ambiente'), $this->t('Cadastrar e conferir as credenciais do ambiente. Valores salvos ficam mascarados e podem ser revelados pelo botão de olho.')],
-      ['entity.simple_sitemap.collection', $this->t('Sitemaps: variantes'), $this->t('Variantes de sitemap por purpose (MAIN, SUPPORT, WIKI, MAGAZINE, COURSES) e o índice em /sitemap.xml.')],
-      ['simple_sitemap.settings', $this->t('Sitemaps: configurações'), $this->t('Configurações gerais do sitemap (base URL, geração e limites).')],
+      [
+        'aculta_portal.requirements',
+        $this->t('Status'),
+        $this->t('Confira os requisitos, versões instaladas e pendências conhecidas das integrações do Portal.'),
+      ],
+      [
+        'aculta_portal.turnstile_settings',
+        $this->t('Turnstile (anti-bot)'),
+        $this->t('Ativar ou desativar o desafio Turnstile em cadastro, login, recuperação de senha e contato. Só ativa com a chave configurada no ambiente.'),
+      ],
+      [
+        'aculta_portal_cep.settings',
+        $this->t('Consulta de CEP'),
+        $this->t('Banco de dados padrão e ordem das fontes de consulta de CEP (base local, ViaCEP e BrasilAPI), com a ativação de cada uma.'),
+      ],
+      [
+        'aculta_portal.support_settings',
+        $this->t('Configurações do Apoio'),
+        $this->t('Edite o texto institucional exibido na página pública Apoie.'),
+      ],
+      [
+        'aculta_portal.deployer_status',
+        $this->t('ACULTA Deployer: status'),
+        $this->t('Relatório de fronteiras, correções de deploy abertas e credenciais por ambiente. Somente leitura.'),
+      ],
+      [
+        'aculta_portal.secrets_import',
+        $this->t('Credenciais do ambiente'),
+        $this->t('Cadastrar e conferir as credenciais do ambiente. Valores salvos ficam mascarados e podem ser revelados pelo botão de olho.'),
+      ],
+      [
+        'entity.simple_sitemap.collection',
+        $this->t('Sitemaps: variantes'),
+        $this->t('Variantes de sitemap por purpose (MAIN, SUPPORT, WIKI, MAGAZINE, COURSES) e o índice em /sitemap.xml.'),
+      ],
+      [
+        'simple_sitemap.settings',
+        $this->t('Sitemaps: configurações'),
+        $this->t('Configurações gerais do sitemap (base URL, geração e limites).'),
+      ],
     ] as [$route, $title, $description]) {
       $url = Url::fromRoute($route);
       if (!$url->access($this->account)) {
@@ -227,7 +268,11 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
-  /** Builds the report without exposing configuration or credential values. */
+  /**
+   * Builds the report without exposing configuration or credential values.
+   *
+   * @return array<string, mixed>
+   */
   public function report(): array {
     $rows = [];
     foreach (self::MODULE_REQUIREMENTS as $requirement) {
@@ -260,13 +305,11 @@ final class PortalRequirementsController extends ControllerBase {
         ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhum requisito foi encontrado.'),
-        '#attributes' => ['data-portal-ui' => 'requirements'],
       ],
       'php_extensions' => $this->buildPhpExtensionSection(),
       'note' => [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'notice-warning'],
-        'text' => ['#plain_text' => $this->t('Os avisos sobre Google e Turnstile refletem o estado pré-deploy intencional. Até a versão 1.0, o gateway Mercado Pago fica habilitado com chaves de teste. A compatibilidade de versão não significa que um serviço externo foi homologado.')],
+        '#component' => 'aculta420_v2:status-messages',
+        '#props' => ['type' => 'warning', 'messages' => [$this->t('Os avisos sobre Google e Turnstile refletem o estado pré-deploy intencional. Até a versão 1.0, o gateway Mercado Pago fica habilitado com chaves de teste. A compatibilidade de versão não significa que um serviço externo foi homologado.')]],
       ],
       'indexing' => $this->buildIndexingSection(),
       'cep' => $this->buildCepSection(),
@@ -277,15 +320,32 @@ final class PortalRequirementsController extends ControllerBase {
       ],
     ];
 
-    $build['#attached']['library'][] = 'system/admin';
-    $build['#attached']['library'][] = 'aculta_portal/requirements-report';
-    return $build;
+    $attached = &$build['#attached'];
+    if (!is_array($attached)) {
+      $attached = [];
+    }
+    $libraries = &$attached['library'];
+    if (!is_array($libraries)) {
+      $libraries = [];
+    }
+    $libraries[] = 'system/admin';
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:portal-requirements',
+      '#props' => [],
+      '#slots' => ['content' => $build],
+    ];
   }
 
-  /** Reports the runtime PHP extensions required by the integrated modules. */
+  /**
+   * Reports the runtime PHP extensions required by the integrated modules.
+   *
+   * @return array<string, mixed>
+   */
   private function buildPhpExtensionSection(): array {
     $lockFile = dirname($this->appRoot) . '/composer.lock';
-    $decoded = is_readable($lockFile) ? json_decode((string) file_get_contents($lockFile), TRUE) : NULL;
+    $rawLock = is_readable($lockFile) ? json_decode((string) file_get_contents($lockFile), TRUE) : NULL;
+    $decoded = is_array($rawLock) ? $rawLock : [];
     $lockAvailable = is_array($decoded['packages'] ?? NULL);
     $packages = $lockAvailable ? $decoded['packages'] : [];
     $extensionRows = PhpExtensionRequirements::build(
@@ -303,14 +363,40 @@ final class PortalRequirementsController extends ControllerBase {
     );
     $rows = [];
     foreach ($extensionRows as $extension) {
-      $status = $extension['loaded'] ? 'ok' : 'error';
+      if (!is_array($extension)) {
+        continue;
+      }
+      $isLoaded = !empty($extension['loaded']);
+      $status = $isLoaded ? 'ok' : 'error';
+      $extName = is_scalar($extension['extension'] ?? '') ? (string) ($extension['extension'] ?? '') : '';
+      $rawIntegrations = is_array($extension['integrations'] ?? NULL) ? $extension['integrations'] : [];
+      $integrations = [];
+      foreach ($rawIntegrations as $item) {
+        if (is_scalar($item)) {
+          $integrations[] = (string) $item;
+        }
+      }
+      $rawModules = is_array($extension['modules'] ?? NULL) ? $extension['modules'] : [];
+      $modules = [];
+      foreach ($rawModules as $item) {
+        if (is_scalar($item)) {
+          $modules[] = (string) $item;
+        }
+      }
+      $rawPackages = is_array($extension['packages'] ?? NULL) ? $extension['packages'] : [];
+      $extPackages = [];
+      foreach ($rawPackages as $item) {
+        if (is_scalar($item)) {
+          $extPackages[] = (string) $item;
+        }
+      }
       $rows[] = [
-        'extension' => ['data' => ['#plain_text' => $extension['extension']]],
-        'integrations' => ['data' => ['#plain_text' => implode(', ', $extension['integrations'])]],
-        'modules' => ['data' => ['#plain_text' => $extension['modules'] === [] ? '—' : implode(', ', $extension['modules'])]],
-        'packages' => ['data' => ['#plain_text' => implode(', ', $extension['packages'])]],
+        'extension' => ['data' => ['#plain_text' => $extName]],
+        'integrations' => ['data' => ['#plain_text' => implode(', ', $integrations)]],
+        'modules' => ['data' => ['#plain_text' => $modules === [] ? '—' : implode(', ', $modules)]],
+        'packages' => ['data' => ['#plain_text' => implode(', ', $extPackages)]],
         'status' => [
-          'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($extension['loaded']
+          'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($isLoaded
             ? $this->t('OK — carregada neste PHP.')
             : $this->t('Erro — ausente ou desativada neste PHP.'))],
           'data-portal-ui' => 'requirements-status status-' . $status,
@@ -347,6 +433,8 @@ final class PortalRequirementsController extends ControllerBase {
    *
    * Names and summaries come from each module's own .info.yml; this avoids a
    * second manually maintained inventory that could drift from runtime state.
+   *
+   * @return array<string, mixed>
    */
   private function buildActivePortalFunctions(): array {
     $rows = [];
@@ -357,15 +445,17 @@ final class PortalRequirementsController extends ControllerBase {
         continue;
       }
       $info = $this->infoParser->parse($this->appRoot . '/' . $path . '/' . $machineName . '.info.yml');
+      $nameVal = is_scalar($info['name'] ?? '') ? (string) ($info['name'] ?? '') : '';
+      $descVal = is_scalar($info['description'] ?? '') ? (string) ($info['description'] ?? '') : '';
       $rows[] = [
-        'name' => ['data' => ['#plain_text' => (string) ($info['name'] ?? $machineName)]],
-        'function' => ['data' => ['#plain_text' => (string) ($info['description'] ?? '')]],
+        'name' => ['data' => ['#plain_text' => $nameVal !== '' ? $nameVal : $machineName]],
+        'function' => ['data' => ['#plain_text' => $descVal]],
         'machine_name' => ['data' => ['#plain_text' => $machineName]],
       ];
     }
     usort($rows, static fn (array $a, array $b): int => strcmp(
-      (string) ($a['name']['data']['#plain_text'] ?? ''),
-      (string) ($b['name']['data']['#plain_text'] ?? ''),
+      (string) $a['name']['data']['#plain_text'],
+      (string) $b['name']['data']['#plain_text'],
     ));
 
     return [
@@ -383,7 +473,11 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
-  /** Lists active, explicitly registered Portal implementation services. */
+  /**
+   * Lists active, explicitly registered Portal implementation services.
+   *
+   * @return array<string, mixed>
+   */
   private function buildPortalImplementations(): array {
     return [
       '#type' => 'details',
@@ -400,7 +494,12 @@ final class PortalRequirementsController extends ControllerBase {
       'extras_title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Extras aplicados')],
       'extras' => [
         '#type' => 'table',
-        '#header' => [$this->t('Implementação'), $this->t('Efeito aplicado'), $this->t('Serviço'), $this->t('Documentação')],
+        '#header' => [
+          $this->t('Implementação'),
+          $this->t('Efeito aplicado'),
+          $this->t('Serviço'),
+          $this->t('Documentação'),
+        ],
         '#rows' => $this->implementationRegistry->rows(),
         '#empty' => $this->t('Nenhuma implementação extra está registrada.'),
       ],
@@ -409,8 +508,13 @@ final class PortalRequirementsController extends ControllerBase {
   }
 
   /**
-   * Indexação: regra do ambiente declarado e último resultado do deployer. O Portal não executa
-   * a verificação; ela é feita pela verificação de robots do ACULTA Deployer, que grava var/deployer/status.json.
+   * Monta a seção de indexação do relatório.
+   *
+   * Usa a regra do ambiente declarado e o último resultado do deployer. O
+   * Portal não executa a verificação; ela é feita pela verificação de robots
+   * do ACULTA Deployer, que grava var/deployer/status.json.
+   *
+   * @return array<string, mixed>
    */
   private function buildIndexingSection(): array {
     $environment = DeployerEnvironment::current(dirname($this->appRoot));
@@ -427,15 +531,34 @@ final class PortalRequirementsController extends ControllerBase {
       $rows[] = [$this->t('Como publicar'), $this->t('Execute a verificação de robots do ACULTA Deployer no ambiente.')];
     }
     else {
-      $rows[] = [$this->t('Última verificação'), $this->t('@at (ambiente @env)', ['@at' => (string) ($result['checked_at'] ?? ''), '@env' => (string) ($result['environment'] ?? '')])];
+      $checkedAt = is_scalar($result['checked_at'] ?? '') ? (string) ($result['checked_at'] ?? '') : '';
+      $envName = is_scalar($result['environment'] ?? '') ? (string) ($result['environment'] ?? '') : '';
+      $passedCount = is_numeric($result['passed'] ?? 0) ? (int) ($result['passed'] ?? 0) : 0;
+      $failedCount = is_numeric($result['failed'] ?? 0) ? (int) ($result['failed'] ?? 0) : 0;
+      $rows[] = [
+        $this->t('Última verificação'),
+        $this->t('@at (ambiente @env)', [
+          '@at' => $checkedAt,
+          '@env' => $envName,
+        ]),
+      ];
       if (($result['environment'] ?? NULL) !== $environment) {
-        $rows[] = [$this->t('Atenção'), $this->t('O resultado publicado é de outro ambiente. Execute a verificação de robots neste ambiente.')];
+        $rows[] = [
+          $this->t('Atenção'),
+          $this->t('O resultado publicado é de outro ambiente. Execute a verificação de robots neste ambiente.'),
+        ];
       }
       $rows[] = [$this->t('Resultado'), ($result['ok'] ?? FALSE) === TRUE
-        ? $this->t('OK: @passed verificações aprovadas.', ['@passed' => (int) ($result['passed'] ?? 0)])
-        : $this->t('Falha: @failed verificação(ões) com problema.', ['@failed' => (int) ($result['failed'] ?? 0)]),
+          ? $this->t('OK: @passed verificações aprovadas.', ['@passed' => $passedCount])
+          : $this->t('Falha: @failed verificação(ões) com problema.', ['@failed' => $failedCount]),
       ];
-      $failed = is_array($result['failed_urls'] ?? NULL) ? array_map('strval', $result['failed_urls']) : [];
+      $rawFailed = is_array($result['failed_urls'] ?? NULL) ? $result['failed_urls'] : [];
+      $failed = [];
+      foreach ($rawFailed as $failUrl) {
+        if (is_scalar($failUrl)) {
+          $failed[] = (string) $failUrl;
+        }
+      }
       if ($failed !== []) {
         $rows[] = [$this->t('URLs com falha'), ['#theme' => 'item_list', '#items' => $failed]];
       }
@@ -454,8 +577,13 @@ final class PortalRequirementsController extends ControllerBase {
   }
 
   /**
-   * Consultas de CEP (aculta_portal_cep): último resultado das APIs (cron) e versão da base local, pela data de hoje.
-   * Mesma legenda e mesmas classes de status das demais linhas do relatório.
+   * Monta a seção de consultas de CEP do relatório.
+   *
+   * Mostra o último resultado das APIs (cron) e a versão da base local, pela
+   * data de hoje. Usa a mesma legenda e as mesmas classes de status das demais
+   * linhas do relatório.
+   *
+   * @return array<string, mixed>
    */
   private function buildCepSection(): array {
     $rows = [];
@@ -484,7 +612,8 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
-  /** Texto do status, junto do símbolo (OK, Atenção ou Erro). */
+  /**
+   * Texto do status, junto do símbolo (OK, Atenção ou Erro). */
   private function statusText(string $status): string {
     return match ($status) {
       'ok' => (string) $this->t('OK'),
@@ -493,7 +622,13 @@ final class PortalRequirementsController extends ControllerBase {
     };
   }
 
-  /** Builds one module requirement row. */
+  /**
+   * Builds one module requirement row.
+   *
+   * @param array{name: string, modules: list<string>, package: string, minimum: string, purpose: string, related_package?: string, related_minimum?: string, warning?: string} $requirement
+   *
+   * @return array<string, mixed>
+   */
   private function buildModuleRow(array $requirement): array {
     $missing = [];
     foreach ($requirement['modules'] as $module) {
@@ -507,7 +642,8 @@ final class PortalRequirementsController extends ControllerBase {
     $compatible = $version !== NULL && $this->versionSatisfies($version, $minimum);
     $related_minimum = NULL;
     if (!empty($requirement['related_package'])) {
-      $related_minimum = $this->minimumConstraint($requirement['related_package'], $requirement['related_minimum']);
+      $relatedFallback = $requirement['related_minimum'] ?? '';
+      $related_minimum = $this->minimumConstraint($requirement['related_package'], $relatedFallback);
       $related_version = $this->packageVersion($requirement['related_package']);
       $related_compatible = $related_version !== NULL && $this->versionSatisfies($related_version, $related_minimum);
       $version = $version && $related_version ? $version . ' / ' . $related_version : ($version ?: $related_version);
@@ -520,15 +656,16 @@ final class PortalRequirementsController extends ControllerBase {
     }
     elseif (!empty($requirement['warning'])) {
       $status = 'attention';
-      $status_label = $this->t('Atenção — @warning', ['@warning' => $requirement['warning']]);
+      $status_label = $this->t('Atenção — @warning', ['@warning' => (string) $requirement['warning']]);
     }
     else {
       $status = 'ok';
       $status_label = $this->t('OK — extensões habilitadas e compatíveis.');
     }
 
+    $modList = $requirement['modules'];
     return [
-      'name' => ['data' => ['#plain_text' => $requirement['name'] . ' (' . implode(', ', $requirement['modules']) . ')']],
+      'name' => ['data' => ['#plain_text' => $requirement['name'] . ' (' . implode(', ', $modList) . ')']],
       'purpose' => ['data' => ['#plain_text' => $requirement['purpose']]],
       'minimum' => ['data' => ['#plain_text' => $minimum . ($related_minimum ? ' / ' . $related_minimum : '')]],
       'installed' => ['data' => ['#plain_text' => $version ?: $this->t('Não encontrado')]],
@@ -539,7 +676,11 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
-  /** Builds the enabled public theme row. */
+  /**
+   * Builds the enabled public theme row.
+   *
+   * @return array<string, mixed>
+   */
   private function buildBaseThemeRow(): array {
     // Tema base do ACULTA420 (base theme: bootstrap). O pacote é drupal/bootstrap (Bootstrap 5), não drupal/bootstrap5.
     $exists = $this->themes->themeExists('bootstrap');
@@ -559,16 +700,20 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
-  /** Builds the enabled public theme row. */
+  /**
+   * Builds the enabled public theme row.
+   *
+   * @return array<string, mixed>
+   */
   private function buildThemeRow(): array {
-    $theme_exists = $this->themes->themeExists('aculta420');
+    $theme_exists = $this->themes->themeExists('aculta420_v2');
     $default_theme = $this->configs->get('system.theme')->get('default');
-    $enabled = $theme_exists && $default_theme === 'aculta420';
+    $enabled = $theme_exists && $default_theme === 'aculta420_v2';
     $status = $enabled ? 'ok' : 'error';
     return [
-      'name' => ['data' => ['#plain_text' => 'Tema ACULTA420 (aculta420)']],
-      'purpose' => ['data' => ['#plain_text' => $this->t('Identidade visual global, componentes, header e footer usados pelo Portal.')]],
-      'minimum' => ['data' => ['#plain_text' => '^11 (core_version_requirement)']],
+      'name' => ['data' => ['#plain_text' => 'Tema ACULTA420 V2 (aculta420_v2)']],
+      'purpose' => ['data' => ['#plain_text' => $this->t('Identidade visual global, componentes SDC, header e footer usados pelo Portal.')]],
+      'minimum' => ['data' => ['#plain_text' => '^11.5 || ^12 (core_version_requirement)']],
       'installed' => ['data' => ['#plain_text' => $theme_exists ? $this->t('Tema custom do repositório; sem versão Composer') : $this->t('Não encontrado')]],
       'status' => [
         'data' => ['#plain_text' => $this->statusSymbol($status) . ' ' . ($enabled ? $this->t('OK — tema padrão habilitado.') : $this->t('Erro — tema ausente ou não é o tema padrão.'))],
@@ -577,7 +722,8 @@ final class PortalRequirementsController extends ControllerBase {
     ];
   }
 
-  /** Returns an installed Composer package version when available. */
+  /**
+   * Returns an installed Composer package version when available. */
   private function packageVersion(string $package): ?string {
     if (!class_exists(InstalledVersions::class) || !InstalledVersions::isInstalled($package)) {
       return NULL;
@@ -586,21 +732,34 @@ final class PortalRequirementsController extends ControllerBase {
       ?: InstalledVersions::getVersion($package);
   }
 
-  /** Reads the actual project requirement, falling back to the audited map. */
+  /**
+   * Reads the actual project requirement, falling back to the audited map. */
   private function minimumConstraint(string $package, string $fallback): string {
     if ($this->composerRequirements === NULL) {
       $file = dirname($this->appRoot) . '/composer.json';
-      $decoded = is_readable($file) ? json_decode((string) file_get_contents($file), TRUE) : NULL;
-      $this->composerRequirements = is_array($decoded['require'] ?? NULL) ? $decoded['require'] : [];
+      $rawJson = is_readable($file) ? json_decode((string) file_get_contents($file), TRUE) : NULL;
+      $decoded = is_array($rawJson) ? $rawJson : [];
+      $rawReqs = is_array($decoded['require'] ?? NULL) ? $decoded['require'] : [];
+      $reqs = [];
+      foreach ($rawReqs as $pkg => $constraint) {
+        if (is_scalar($constraint)) {
+          $reqs[(string) $pkg] = (string) $constraint;
+        }
+      }
+      $this->composerRequirements = $reqs;
     }
     return $this->composerRequirements[$package] ?? $fallback;
   }
 
-  /** Tests a Composer version constraint, including legacy Drupal versions. */
-  private function versionSatisfies(string $version, string $constraint): bool {
+  /**
+   * Tests a Composer version constraint, including legacy Drupal versions. */
+  private function versionSatisfies(?string $version, string $constraint): bool {
+    if ($version === NULL || $version === '') {
+      return FALSE;
+    }
     // Composer packages with older Drupal.org tags can expose versions like
     // "8.x-1.22"; Semver expects the project release portion only.
-    $version = preg_replace('/^8\.x-/', '', $version);
+    $version = (string) preg_replace('/^8\.x-/', '', $version);
     try {
       return Semver::satisfies($version, $constraint);
     }
@@ -609,7 +768,8 @@ final class PortalRequirementsController extends ControllerBase {
     }
   }
 
-  /** Returns an accessible textual status symbol. */
+  /**
+   * Returns an accessible textual status symbol. */
   private function statusSymbol(string $status): string {
     return match ($status) {
       'ok' => '✔',

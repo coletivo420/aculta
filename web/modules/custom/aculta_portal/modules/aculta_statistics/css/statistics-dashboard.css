@@ -32,3 +32,21 @@
 [data-portal-ui="statistics-panel"] td {
   overflow-wrap: anywhere;
 }
+
+[data-portal-ui="statistics-forum"] {
+  display: grid;
+  gap: 1rem;
+  margin-block-start: 1rem;
+}
+
+[data-portal-ui="statistics-forum-kpis"] {
+  display: grid;
+  gap: .75rem;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+}
+
+@media (max-width: 30rem) {
+  [data-portal-ui="statistics-forum-kpis"] {
+    grid-template-columns: 1fr;
+  }
+}

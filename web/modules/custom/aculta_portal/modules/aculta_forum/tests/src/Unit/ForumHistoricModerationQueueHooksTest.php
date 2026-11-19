@@ -8,6 +8,7 @@ use Drupal\aculta_forum\Hook\ForumHistoricModerationQueueHooks;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Schema;
 use Drupal\Tests\UnitTestCase;
+use Drupal\views\Plugin\views\relationship\RelationshipPluginBase;
 use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\ViewExecutable;
 use PHPUnit\Framework\Attributes\Group;
@@ -35,23 +36,23 @@ final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
       $conditions = [];
       $query->expects(self::exactly(2))
         ->method('addWhereExpression')
-        ->willReturnCallback(static function (int $group, string $expression) use (&$conditions): void {
+        ->willReturnCallback(static function (string $group, string $expression) use (&$conditions): void {
           $conditions[] = [$group, $expression];
         });
 
       $this->hook(TRUE)->viewsQueryAlter($view, $query);
       self::assertSame([
         [
-          0,
+          '0',
           'NOT EXISTS (SELECT 1 FROM {node__field_autor_legado} historical_topic '
-          . 'WHERE historical_topic.entity_id = node_host.nid AND historical_topic.deleted = 0 '
-          . 'AND historical_topic.field_autor_legado_target_id IS NOT NULL)',
+            . 'WHERE historical_topic.entity_id = node_host.nid AND historical_topic.deleted = 0 '
+            . 'AND historical_topic.field_autor_legado_target_id IS NOT NULL)',
         ],
         [
-          0,
+          '0',
           'NOT EXISTS (SELECT 1 FROM {comment__field_autor_legado} historical_comment '
-          . 'WHERE historical_comment.entity_id = comment_field_data.cid AND historical_comment.deleted = 0 '
-          . 'AND historical_comment.field_autor_legado_target_id IS NOT NULL)',
+            . 'WHERE historical_comment.entity_id = comment_field_data.cid AND historical_comment.deleted = 0 '
+            . 'AND historical_comment.field_autor_legado_target_id IS NOT NULL)',
         ],
       ], $conditions);
     }
@@ -78,7 +79,7 @@ final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
     $view->relationship = [];
     $query = $this->createMock(Sql::class);
     $query->expects(self::never())->method('getTableInfo');
-    $query->expects(self::once())->method('addWhereExpression')->with(0, '1 = 0');
+    $query->expects(self::once())->method('addWhereExpression')->with('0', '1 = 0');
     $query->expects(self::never())->method('addTable');
 
     $this->hook(FALSE)->viewsQueryAlter($view, $query);
@@ -138,7 +139,9 @@ final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
     $view = $this->createMock(ViewExecutable::class);
     $view->method('id')->willReturn($id);
     $view->current_display = $display;
-    $view->relationship = ['node' => (object) ['alias' => 'node_field_data_comment_field_data']];
+    $rel = $this->createMock(RelationshipPluginBase::class);
+    $rel->alias = 'node_field_data_comment_field_data';
+    $view->relationship = ['node' => $rel];
     return $view;
   }
 

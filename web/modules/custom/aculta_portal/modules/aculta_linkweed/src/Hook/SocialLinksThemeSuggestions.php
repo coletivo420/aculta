@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_linkweed\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\aculta_linkweed\Service\SocialLinksPagePresenter;
 use Drupal\node\NodeInterface;
@@ -15,8 +15,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class SocialLinksThemeSuggestions {
 
   public function __construct(
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurpose,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'aculta_linkweed.social_links_page')]
     private readonly SocialLinksPagePresenter $pagePresenter,
   ) {}
@@ -25,7 +25,7 @@ final class SocialLinksThemeSuggestions {
  * Adds the LINKS-specific identity/footer to the public page render array. */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
-    if ($this->domainPurpose->getCurrentPurpose() === 'links') {
+    if ($this->siteManager->getCurrentSiteKey()?->value === 'links') {
       $variables['social_links_page_footer'] = $this->pagePresenter->buildFooter();
     }
   }
@@ -44,7 +44,7 @@ final class SocialLinksThemeSuggestions {
     }
 
     $sourceDomainId = (string) $node->get('field_domain_source')->target_id;
-    if ($this->domainPurpose->getPurposeForDomainId($sourceDomainId) === 'links') {
+    if ($this->siteManager->getSiteKeyValueForDomainId($sourceDomainId) === 'links') {
       $suggestions[] = 'node__social_links';
     }
   }
@@ -63,7 +63,7 @@ final class SocialLinksThemeSuggestions {
     }
 
     $sourceDomainId = (string) $node->get('field_domain_source')->target_id;
-    if ($this->domainPurpose->getPurposeForDomainId($sourceDomainId) === 'links') {
+    if ($this->siteManager->getSiteKeyValueForDomainId($sourceDomainId) === 'links') {
       $variables['social_links_site_link'] = $this->pagePresenter->buildSiteButtons();
       $variables['social_links_has_items'] = !empty($variables['social_links_site_link']);
     }

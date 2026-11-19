@@ -38,7 +38,7 @@ quebraria essa ligação se o título mudasse.
   e o nó da home; uma execução seguinte cria os 3 destaques e, ao repetir, não altera nada (17 itens
   inalterados). A home mostra 27 de 27 textos declarados.
 - Dados institucionais (`aculta_institution`, "Dados oficiais da Associação") estão fora deste
-  conteúdo; são criados por `scripts/install-institution.php`.
+  conteúdo; são gerenciados pela configuração canônica institucional.
 - Scripts pontuais de migração (`create-fields`, `migrate-sections`, `split-who`,
   `projects-header`) ficam fora do Git: já foram aplicados ao Runtime e são substituídos por este
   JSON.

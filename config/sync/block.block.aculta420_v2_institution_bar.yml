@@ -1,0 +1,25 @@
+uuid: 37d3bcb1-e377-4470-b027-03d0a8a6eb1f
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - aculta_portal
+  theme:
+    - aculta420_v2
+id: aculta420_v2_institution_bar
+theme: aculta420_v2
+region: institution
+weight: -20
+provider: null
+plugin: aculta_institution_bar
+settings:
+  id: aculta_institution_bar
+  label: 'Barra institucional ACULTA'
+  label_display: '0'
+  provider: aculta_portal
+  ui_patterns:
+    component_id: null
+    variant_id: null
+    slots: {  }
+    props: {  }
+visibility: {  }

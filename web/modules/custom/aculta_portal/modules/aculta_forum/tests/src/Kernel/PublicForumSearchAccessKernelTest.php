@@ -15,6 +15,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
+use Drupal\search_api\Item\ItemInterface;
 use Drupal\search_api\Query\ResultSetInterface;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
@@ -74,8 +75,13 @@ final class PublicForumSearchAccessKernelTest extends KernelTestBase {
     $this->installEntitySchema('search_api_task');
     $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node', 'search_api', 'search_api_db']);
 
-    Role::load(RoleInterface::ANONYMOUS_ID)->grantPermission('access content')->save();
-    Role::load(RoleInterface::AUTHENTICATED_ID)
+    $anonRole = Role::load(RoleInterface::ANONYMOUS_ID);
+    self::assertInstanceOf(Role::class, $anonRole);
+    $anonRole->grantPermission('access content')->save();
+
+    $authRole = Role::load(RoleInterface::AUTHENTICATED_ID);
+    self::assertInstanceOf(Role::class, $authRole);
+    $authRole
       ->grantPermission('access content')
       ->grantPermission('view restricted forum counter topics')
       ->save();
@@ -138,7 +144,7 @@ final class PublicForumSearchAccessKernelTest extends KernelTestBase {
   public function testAnonymousSearchFiltersBeforePaging(): void {
     $results = $this->search(new AnonymousUserSession(), 1);
     self::assertSame(1, (int) $results->getResultCount());
-    self::assertSame(1, count($results->getResultItems()));
+    self::assertCount(1, $results->getResultItems());
   }
 
   /**
@@ -150,7 +156,7 @@ final class PublicForumSearchAccessKernelTest extends KernelTestBase {
     $items = $results->getResultItems();
     self::assertCount(2, $items);
     $ids = array_map(
-      static fn ($item): string => $item->getId(),
+      static fn (ItemInterface $item): string => $item->getId(),
       $items,
     );
     self::assertContains('entity:node/' . $this->topicId('Tópico restrito') . ':pt-br', $ids);
@@ -158,11 +164,15 @@ final class PublicForumSearchAccessKernelTest extends KernelTestBase {
 
   /**
    * Runs one query as the given account.
+   *
+   * @return \Drupal\search_api\Query\ResultSetInterface<\Drupal\search_api\Item\ItemInterface>
    */
   private function search(AccountInterface $account, int $limit, int $offset = 0): ResultSetInterface {
     $query = $this->index->query(['limit' => $limit, 'offset' => $offset]);
     $query->setOption('search_api_access_account', $account);
-    return $query->execute();
+    /** @var \Drupal\search_api\Query\ResultSetInterface<\Drupal\search_api\Item\ItemInterface> $resultSet */
+    $resultSet = $query->execute();
+    return $resultSet;
   }
 
   /**
@@ -189,7 +199,6 @@ final class PublicForumSearchAccessKernelTest extends KernelTestBase {
     ]);
     $topic->save();
     $database = $this->container->get('database');
-    self::assertInstanceOf(Connection::class, $database);
     $database->delete('node_access')->condition('nid', $topic->id())->execute();
     $database->insert('node_access')->fields([
       'nid' => $topic->id(),

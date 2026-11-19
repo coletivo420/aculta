@@ -105,7 +105,7 @@ final class CalendarIcsRemoteFetcherTest extends TestCase {
        * Resolves an approved calendar hostname to its IP addresses.
        */
       public function resolve(string $hostname): array {
-        self::fail('DNS should not be called for a host outside the allowlist.');
+        throw new \LogicException('DNS should not be called for a host outside the allowlist.');
       }
 
     };
@@ -128,7 +128,7 @@ final class CalendarIcsRemoteFetcherTest extends TestCase {
        * Resolves an approved calendar hostname to its IP addresses.
        */
       public function resolve(string $hostname): array {
-        self::fail('DNS should not be called for a wildcard allowlist.');
+        throw new \LogicException('DNS should not be called for a wildcard allowlist.');
       }
 
     };
@@ -151,7 +151,7 @@ final class CalendarIcsRemoteFetcherTest extends TestCase {
        * Resolves an approved calendar hostname to its IP addresses.
        */
       public function resolve(string $hostname): array {
-        self::fail('DNS should not be called for an invalid URL.');
+        throw new \LogicException('DNS should not be called for an invalid URL.');
       }
 
     };

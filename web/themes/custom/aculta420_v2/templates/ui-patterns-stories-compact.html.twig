@@ -1,0 +1,31 @@
+{#
+/**
+ * @file
+ * Labeled stories and variants for the ACULTA component overview.
+ */
+#}
+<div class="ui_patterns_component__stories">
+  {% for story_id, story in component.stories %}
+    <section class="ui_patterns_story">
+      <h3 class="ui_patterns_story__name">{{ story.name }}</h3>
+      {% if story.description %}
+        <p class="ui_patterns_story__description">{{ story.description }}</p>
+      {% endif %}
+      <div class="ui_patterns_story__preview">
+        {% if component.variants and not story.props.variant %}
+          {% for variant_id, variant in component.variants %}
+            <section class="ui_patterns_variant">
+              <h4 class="ui_patterns_variant__title">{{ variant.title }} <code>{{ variant_id }}</code></h4>
+              {% if variant.description %}
+                <p class="ui_patterns_variant__description">{{ variant.description }}</p>
+              {% endif %}
+              {{ component_story(component.id, story_id, story.slots|default({}), story.props|default({})|merge({variant: variant_id}), true) }}
+            </section>
+          {% endfor %}
+        {% else %}
+          {{ component_story(component.id, story_id, story.slots|default({}), story.props|default({}), true) }}
+        {% endif %}
+      </div>
+    </section>
+  {% endfor %}
+</div>

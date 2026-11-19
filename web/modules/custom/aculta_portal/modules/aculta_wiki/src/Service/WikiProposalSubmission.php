@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_wiki\Service;
 
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\KeyValueStore\KeyValueExpirableFactoryInterface;
@@ -38,7 +39,7 @@ final class WikiProposalSubmission {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly EmailConfirmationPolicy $emailConfirmationPolicy,
     private readonly FloodInterface $flood,
     private readonly LockBackendInterface $lock,
@@ -95,8 +96,8 @@ final class WikiProposalSubmission {
       throw new ConflictHttpException('O verbete mudou enquanto você preparava a proposta. Reabra a contribuição para revisar a versão atual.');
     }
 
-    $wikiDomain = $this->domainPurposes->getDomain('wiki');
-    if ($this->domainPurposes->getCurrentPurpose() !== 'wiki'
+    $wikiDomain = $this->siteManagers->getDomain(SiteKey::Wiki);
+    if ($this->siteManagers->getCurrentSiteKey()?->value !== 'wiki'
       || !$wikiDomain
       || $target->bundle() !== 'wiki_entry'
       || !$target->isDefaultRevision()
@@ -123,9 +124,6 @@ final class WikiProposalSubmission {
     }
     $validatedSources = [];
     foreach ($sourceUris as $sourceUri) {
-      if (!is_string($sourceUri)) {
-        throw new UnprocessableEntityHttpException('A fonte deve ser uma URL HTTP ou HTTPS válida.');
-      }
       $sourceUri = trim($sourceUri);
       $scheme = strtolower((string) parse_url($sourceUri, PHP_URL_SCHEME));
       $isValidUrl = filter_var($sourceUri, FILTER_VALIDATE_URL) !== FALSE;

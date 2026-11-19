@@ -34,7 +34,8 @@ final class DonationCampaignSelector implements SupportAmountsProviderInterface 
    * Campanha vigente agora, ou NULL. Em caso de sobreposição, vence a de início mais recente.
    */
   public function vigente(?\DateTimeImmutable $agora = NULL): ?DonationCampaign {
-    $fuso = new \DateTimeZone($this->configFactory->get('system.date')->get('timezone.default') ?: 'America/Sao_Paulo');
+    $zonaConfigurada = $this->configFactory->get('system.date')->get('timezone.default');
+    $fuso = new \DateTimeZone(is_string($zonaConfigurada) && $zonaConfigurada !== '' && $zonaConfigurada !== '0' ? $zonaConfigurada : 'America/Sao_Paulo');
     $hoje = ($agora ?? new \DateTimeImmutable('now', $fuso))->setTimezone($fuso)->format('Y-m-d');
     $candidatas = [];
     foreach ($this->entityTypeManager->getStorage('aculta_donation_campaign')->loadByProperties(['status' => TRUE]) as $campanha) {

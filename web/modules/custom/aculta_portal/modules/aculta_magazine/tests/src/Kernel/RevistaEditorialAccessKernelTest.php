@@ -6,7 +6,13 @@ namespace Drupal\Tests\aculta_magazine\Kernel;
 
 use Drupal\aculta_magazine\Hook\RevistaFormHooks;
 use Drupal\aculta_magazine\Form\EditorialCapabilitiesForm;
+use Drupal\aculta_image\FileRemover;
+use Drupal\domain\DomainNegotiator;
+use Drupal\commerce_checkout\Resolver\ChainCheckoutFlowResolverInterface;
+use Drupal\commerce_cart\CartProviderInterface;
 use Drupal\Component\Serialization\Yaml;
+use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\AccountInterface;
@@ -24,6 +30,8 @@ use Drupal\workflows\Entity\Workflow;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\Routing\Route;
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Proves the editorial contracts of the Revista against real Drupal access.
@@ -53,8 +61,77 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
     'node',
     'workflows',
     'content_moderation',
-    'node_co_authors',
+    'profile',
+    'comment',
+    'views',
+    'file',
+    'aculta_file_uploader',
+    'key',
+    'aculta_portal',
+    'aculta_user',
   ];
+
+  /**
+   * {@inheritdoc}
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+
+    $container->set('domain.negotiator', $this->createMock(DomainNegotiator::class));
+    $container->set(
+      'commerce_checkout.chain_checkout_flow_resolver',
+      $this->createMock(ChainCheckoutFlowResolverInterface::class),
+    );
+    $container->set('commerce_cart.cart_provider', $this->createMock(CartProviderInterface::class));
+
+    // The user module hooks need this contract during discovery, but file
+    // replacement is outside the editorial access scenarios in this kernel.
+    $container->setDefinition('aculta_image.file_remover', (new Definition(FileRemover::class, [
+      new Reference('file.usage'),
+      new Reference('entity_type.manager'),
+      new Reference('database'),
+      new Reference('file_system'),
+      new Reference('logger.factory'),
+    ]))->setPublic(TRUE));
+
+    // The real Portal module declares services for integrations that this
+    // access test does not exercise. Keep those references resolvable without
+    // enabling unrelated Commerce and Domain stacks.
+    $references = [];
+    foreach ($container->getDefinitions() as $definition) {
+      $this->collectServiceReferences($definition->getArguments(), $references);
+      $this->collectServiceReferences($definition->getMethodCalls(), $references);
+      $this->collectServiceReferences($definition->getProperties(), $references);
+    }
+    foreach (array_keys($references) as $service_id) {
+      if ($service_id === 'aculta_wiki.presentation.wiki_search_form') {
+        continue;
+      }
+      if (!$container->hasDefinition($service_id) && !$container->hasAlias($service_id)) {
+        $container->setDefinition($service_id, (new Definition(\stdClass::class))->setPublic(TRUE));
+      }
+    }
+  }
+
+  /**
+   * Collects service references recursively from a service definition value.
+   *
+   * @param mixed $value
+   *   The definition value to inspect.
+   * @param array<string, true> $references
+   *   The collected service IDs.
+   */
+  private function collectServiceReferences(mixed $value, array &$references): void {
+    if ($value instanceof Reference) {
+      $references[(string) $value] = TRUE;
+      return;
+    }
+    if (is_array($value)) {
+      foreach ($value as $nested) {
+        $this->collectServiceReferences($nested, $references);
+      }
+    }
+  }
 
   /**
    * Editorial actor with the content_editor role.
@@ -124,6 +201,9 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
+    $this->installEntitySchema('profile');
+    $this->installSchema('user', ['users_data']);
+    $this->installSchema('aculta_user', ['aculta_user_nickname']);
     $this->installEntitySchema('workflow');
     $this->installEntitySchema('content_moderation_state');
     $this->installConfig([
@@ -134,7 +214,13 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
       'node',
       'workflows',
       'content_moderation',
+      'profile',
     ]);
+    FieldStorageConfig::create([
+      'field_name' => 'field_nickname',
+      'entity_type' => 'profile',
+      'type' => 'string',
+    ])->save();
 
     // The node type and the workflow come first: the role permissions are
     // filtered against the permissions currently defined by the installed
@@ -198,9 +284,27 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
   private function permissionsOf(string $role_id): array {
     $file = dirname(DRUPAL_ROOT) . '/config/sync/user.role.' . $role_id . '.yml';
     self::assertFileExists($file);
-    $data = Yaml::decode((string) file_get_contents($file));
-    self::assertIsArray($data);
-    return $data['permissions'] ?? [];
+    $contents = file_get_contents($file);
+    if ($contents === FALSE) {
+      throw new \RuntimeException(sprintf('Unable to read role configuration "%s".', $file));
+    }
+    $data = Yaml::decode($contents);
+    if (!is_array($data)) {
+      throw new \UnexpectedValueException(sprintf('Role configuration "%s" must contain a mapping.', $file));
+    }
+    $permissions = $data['permissions'] ?? [];
+    if (!is_array($permissions)) {
+      throw new \UnexpectedValueException(sprintf('Role configuration "%s" must contain a permissions list.', $file));
+    }
+    $validated = [];
+    foreach ($permissions as $permission) {
+      if (!is_string($permission)) {
+        throw new \UnexpectedValueException(sprintf('Role configuration "%s" contains a non-string permission.', $file));
+      }
+      $validated[] = $permission;
+    }
+
+    return $validated;
   }
 
   /**
@@ -385,8 +489,9 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
    */
   private function addPendingRevision(NodeInterface $node, array $coauthors): void {
     $storage = $this->container->get('entity_type.manager')->getStorage('node');
-    $storage->resetCache([$node->id()]);
-    $revision = $storage->load($node->id());
+    $node_id = $this->entityId($node);
+    $storage->resetCache([$node_id]);
+    $revision = $storage->load($node_id);
     self::assertInstanceOf(NodeInterface::class, $revision);
     $this->setCoauthors($revision, $coauthors);
     $revision->set('moderation_state', 'draft');
@@ -403,7 +508,7 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
    *   Co-authors to record.
    */
   private function setCoauthors(NodeInterface $node, array $coauthors): void {
-    $node->set('co_authors', array_map(
+    $node->set('aculta_coauthors', array_map(
       static fn (UserInterface $user): array => ['target_id' => (int) $user->id()],
       $coauthors,
     ));
@@ -414,6 +519,31 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
    */
   private function account(UserInterface $user): AccountInterface {
     return $this->accounts[$user->getAccountName()];
+  }
+
+  /**
+   * Returns the latest revision ID of a persisted node.
+   */
+  private function latestRevisionId(NodeInterface $node): int|string {
+    $storage = $this->container->get('entity_type.manager')->getStorage('node');
+    $revision_id = $storage->getLatestRevisionId($this->entityId($node));
+    if ($revision_id === NULL) {
+      throw new \UnexpectedValueException('Expected a persisted node to have a latest revision ID.');
+    }
+
+    return $revision_id;
+  }
+
+  /**
+   * Returns the ID of a persisted node.
+   */
+  private function entityId(NodeInterface $node): int|string {
+    $id = $node->id();
+    if ($id === NULL) {
+      throw new \UnexpectedValueException('Expected the test node to be persisted.');
+    }
+
+    return $id;
   }
 
   /**
@@ -434,7 +564,7 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
     // of it is not.
     self::assertTrue($this->pending->access('view', $anonymous));
     $storage = $this->container->get('entity_type.manager')->getStorage('node');
-    $pendingDraft = $storage->loadRevision($storage->getLatestRevisionId($this->pending->id()));
+    $pendingDraft = $storage->loadRevision($this->latestRevisionId($this->pending));
     self::assertInstanceOf(NodeInterface::class, $pendingDraft);
     self::assertFalse($pendingDraft->access('view', $anonymous));
     self::assertFalse($this->published->access('update', $anonymous));
@@ -513,7 +643,7 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
    */
   public function testPendingRevisionStaysPrivate(): void {
     $storage = $this->container->get('entity_type.manager')->getStorage('node');
-    $draft = $storage->loadRevision($storage->getLatestRevisionId($this->pending->id()));
+    $draft = $storage->loadRevision($this->latestRevisionId($this->pending));
     self::assertInstanceOf(NodeInterface::class, $draft);
     self::assertFalse($draft->isDefaultRevision());
     $editor = $this->account($this->editor);
@@ -621,6 +751,8 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
     self::assertTrue($forEditor->isAllowed());
     self::assertTrue($forCoauthor->isAllowed());
     self::assertFalse($forConfirmed->isAllowed());
+    self::assertInstanceOf(CacheableDependencyInterface::class, $forCoauthor);
+    self::assertInstanceOf(CacheableDependencyInterface::class, $forEditor);
     self::assertContains('user', $forCoauthor->getCacheContexts());
     self::assertContains('user.permissions', $forCoauthor->getCacheContexts());
     self::assertContains('user.permissions', $forEditor->getCacheContexts());
@@ -632,11 +764,11 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
   public function testCoauthorsFieldAccess(): void {
     $editor = $this->account($this->editor);
     $coauthor = $this->account($this->coauthor);
-    $field = $this->editorDraft->get('co_authors');
+    $field = $this->editorDraft->get('aculta_coauthors');
     $definition = $field->getFieldDefinition();
-    self::assertTrue(node_co_authors_entity_field_access('edit', $definition, $editor, $field)->isForbidden());
+    self::assertTrue(\Drupal::service('entity_type.manager')->getAccessControlHandler('node')->fieldAccess('edit', $definition, $editor, $field, TRUE)->isForbidden());
     self::assertFalse($field->access('edit', $editor));
-    self::assertFalse($this->editorDraft->get('co_authors')->access('edit', $coauthor));
+    self::assertFalse($this->editorDraft->get('aculta_coauthors')->access('edit', $coauthor));
     self::assertTrue($this->editorDraft->get('title')->access('edit', $editor));
   }
 
@@ -650,22 +782,23 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
       ->getForm($this->editorDraft, 'default');
 
     self::assertArrayHasKey('moderation_state', $form);
-    $select = $this->firstSelect($form['moderation_state']);
+    $select = $this->firstSelect(self::arrayAt($form, 'moderation_state'));
     self::assertNotNull($select);
-    self::assertArrayHasKey('review', $select['#options']);
-    self::assertArrayHasKey('published', $select['#options']);
-    self::assertSame('draft', $select['#default_value']);
+    $options = self::arrayAt($select, '#options');
+    self::assertArrayHasKey('review', $options);
+    self::assertArrayHasKey('published', $options);
+    self::assertSame('draft', self::valueAt($select, '#default_value'));
 
     require_once DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_magazine/src/Hook/RevistaFormHooks.php';
     $form_state = new FormState();
     (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_edit_form');
 
     self::assertArrayHasKey('revista_secondary', $form);
-    self::assertFalse($form['revista_secondary']['#open']);
-    self::assertArrayHasKey('field_credits', $form['revista_secondary']);
+    self::assertFalse(self::valueAt($form, 'revista_secondary', '#open'));
+    self::assertArrayHasKey('field_credits', self::arrayAt($form, 'revista_secondary'));
     // The workflow widget is the owner's; it stays in the main flow.
-    self::assertArrayNotHasKey('moderation_state', $form['revista_secondary']);
-    self::assertContains('aculta_magazine/revista-form', $form['#attached']['library']);
+    self::assertArrayNotHasKey('moderation_state', self::arrayAt($form, 'revista_secondary'));
+    self::assertContains('aculta_magazine/revista-form', self::arrayAt($form, '#attached', 'library'));
   }
 
   /**
@@ -676,19 +809,20 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
     $build = $form->buildForm([], new FormState());
 
     foreach (['authoring_roles', 'review_roles', 'comments_roles'] as $key) {
-      self::assertArrayHasKey('content_editor', $build[$key]['#options']);
-      self::assertArrayHasKey('email_confirmed', $build[$key]['#options']);
-      self::assertArrayNotHasKey('anonymous', $build[$key]['#options']);
+      $options = self::arrayAt($build, $key, '#options');
+      self::assertArrayHasKey('content_editor', $options);
+      self::assertArrayHasKey('email_confirmed', $options);
+      self::assertArrayNotHasKey('anonymous', $options);
     }
   }
 
   /**
    * Finds the first select element below a form element.
    *
-   * @param array $element
+   * @param array<array-key, mixed> $element
    *   Form element to inspect.
    *
-   * @return array|null
+   * @return array<array-key, mixed>|null
    *   The select element, or NULL when there is none.
    */
   private function firstSelect(array $element): ?array {
@@ -704,6 +838,36 @@ final class RevistaEditorialAccessKernelTest extends KernelTestBase {
       }
     }
     return NULL;
+  }
+
+  /**
+   * Reads a form value while validating every parent element.
+   */
+  private static function valueAt(mixed $form, string ...$path): mixed {
+    $value = $form;
+    foreach ($path as $key) {
+      if (!is_array($value) || !array_key_exists($key, $value)) {
+        throw new \UnexpectedValueException(sprintf('Missing form element key "%s".', $key));
+      }
+      $value = $value[$key];
+    }
+
+    return $value;
+  }
+
+  /**
+   * Reads a nested form element while validating its array type.
+   *
+   * @return array<array-key, mixed>
+   *   Form element array.
+   */
+  private static function arrayAt(mixed $form, string ...$path): array {
+    $value = self::valueAt($form, ...$path);
+    if (!is_array($value)) {
+      throw new \UnexpectedValueException(sprintf('Form path "%s" must contain an array.', implode('.', $path)));
+    }
+
+    return $value;
   }
 
 }

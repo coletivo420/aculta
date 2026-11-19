@@ -1,0 +1,20 @@
+{#
+/**
+ * @file
+ * Feedback do carrinho (sucesso ou erro após adicionar ao carrinho), sobre o SDC status-messages.
+ */
+#}
+{% set status_message %}
+  <p>
+    <span>{{ message }}</span>
+    {% if url %}<a href="{{ url }}">{{ link_label }}</a>{% endif %}
+  </p>
+{% endset %}
+{{ include('aculta420_v2:status-messages', {
+  type: status_type == 'error' ? 'error' : 'status',
+  role: status_role,
+  messages: [status_message],
+  dismissible: true,
+  close_label: close_label,
+  attributes: create_attribute({'data-portal-cart-status': ''}),
+}, with_context = false) }}

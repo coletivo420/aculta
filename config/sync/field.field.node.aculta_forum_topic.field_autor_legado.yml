@@ -1,4 +1,4 @@
-uuid: d6e4e911-d2dc-4d49-ae99-1ea68b16a091
+uuid: 1f2bef2f-859b-483a-b6f2-c644a76b938c
 langcode: pt-br
 status: true
 dependencies:
@@ -17,7 +17,5 @@ required: false
 translatable: false
 default_value: {  }
 default_value_callback: ''
-settings:
-  handler: default
-  handler_settings: {  }
+settings: {  }
 field_type: entity_reference

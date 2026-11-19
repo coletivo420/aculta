@@ -23,12 +23,12 @@ final class QrCodeForm extends ContentEntityForm {
   /**
    * Serviço de criação e validação.
    */
-  private QrCodeManager $manager;
+  protected QrCodeManager $manager;
 
   /**
    * Presets, usados para validar as cores personalizadas.
    */
-  private QrCodePresetRegistry $presets;
+  protected QrCodePresetRegistry $presets;
 
   /**
    * {@inheritdoc}
@@ -42,8 +42,11 @@ final class QrCodeForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
    */
-  public function buildEntity(array $form, FormStateInterface $form_state) {
+  public function buildEntity(array $form, FormStateInterface $form_state): \Drupal\aculta_qrcode\Entity\QrCode {
+    /** @var \Drupal\aculta_qrcode\Entity\QrCode $entity */
     $entity = parent::buildEntity($form, $form_state);
     if ($entity->isNew() && $entity->get('code')->isEmpty()) {
       $entity->set('code', $this->manager->generateCode());
@@ -53,9 +56,12 @@ final class QrCodeForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
    */
-  public function validateForm(array &$form, FormStateInterface $form_state): void {
-    parent::validateForm($form, $form_state);
+  public function validateForm(array &$form, FormStateInterface $form_state): \Drupal\Core\Entity\ContentEntityInterface {
+    /** @var \Drupal\Core\Entity\ContentEntityInterface $parentResult */
+    $parentResult = parent::validateForm($form, $form_state);
     $entity = $this->buildEntity($form, $form_state);
     try {
       $this->manager->validateWindow($entity->getValidFrom(), $entity->getValidUntil());
@@ -69,10 +75,13 @@ final class QrCodeForm extends ContentEntityForm {
     catch (InvalidQrCodeException $exception) {
       $form_state->setErrorByName('foreground', $exception->getMessage());
     }
+    return $parentResult;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function save(array $form, FormStateInterface $form_state): int {
     $this->entity->setNewRevision();

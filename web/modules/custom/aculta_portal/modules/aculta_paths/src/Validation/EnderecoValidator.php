@@ -14,7 +14,15 @@ namespace Drupal\aculta_paths\Validation;
 final class EnderecoValidator {
 
   /**
+   * Informa o motivo de invalidação de um slug ou endereço de subdomínio.
+   *
+   * @param string $valor
+   *   Valor já convertido para minúsculas.
+   * @param bool $host
+   *   Indica se o valor é um endereço de subdomínio.
+   *
    * @return array{codigo: string, args: array<string, string>}|null
+   *   Código e argumentos do motivo, ou NULL quando o valor é válido.
    */
   public static function motivo(string $valor, bool $host): ?array {
     if ($valor === '') {
@@ -24,7 +32,7 @@ final class EnderecoValidator {
     // Tudo que é permitido sai; o que sobra são os caracteres recusados.
     $sobra = (string) preg_replace($host ? '/[a-z0-9.\-]/' : '/[a-z0-9\-]/', '', $valor);
     $proibidos = array_values(array_unique(mb_str_split($sobra)));
-    if ($proibidos !== [] && $proibidos[0] !== '') {
+    if ($proibidos !== []) {
       $lista = implode(', ', array_map(
         static fn (string $c): string => $c === ' ' ? '«espaço»' : '«' . $c . '»',
         $proibidos,

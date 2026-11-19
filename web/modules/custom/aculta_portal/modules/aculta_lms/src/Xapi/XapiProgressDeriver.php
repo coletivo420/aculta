@@ -38,6 +38,7 @@ final class XapiProgressDeriver {
    *   Declarações já validadas pelo XapiStatementValidator, na ordem recebida.
    *
    * @return list<array{registration: string, completed: bool, success: ?bool, score: ?float, finished: int}>
+   *   Estados derivados, na ordem das tentativas encontradas.
    */
   public function attempts(array $statements): array {
     $groups = [];
@@ -57,12 +58,14 @@ final class XapiProgressDeriver {
    * Resultado final da atividade: tentativas, nota mantida e status.
    *
    * @param list<array<string, mixed>> $statements
+   *   Declarações já validadas.
    * @param string $policy
    *   AttemptRule::KEEP_LATEST ou AttemptRule::KEEP_BEST.
    * @param float $requiredScore
    *   Nota mínima para aprovação, de 0 a 100.
    *
    * @return array{status: string, score: ?float, attempts: list<array<string, mixed>>}
+   *   Status final, nota mantida e tentativas derivadas.
    */
   public function result(array $statements, string $policy, float $requiredScore): array {
     $attempts = $this->attempts($statements);
@@ -87,9 +90,12 @@ final class XapiProgressDeriver {
    * Deriva uma tentativa a partir das declarações do mesmo registration.
    *
    * @param string $registration
+   *   Identificador da tentativa (context.registration).
    * @param list<array{0: int, 1: array<string, mixed>}> $items
+   *   Par de índice e declaração da mesma tentativa.
    *
    * @return array{registration: string, completed: bool, success: ?bool, score: ?float, finished: int}
+   *   Estado derivado da tentativa.
    */
   private function attempt(string $registration, array $items): array {
     $completed = FALSE;
@@ -109,7 +115,11 @@ final class XapiProgressDeriver {
       $result = $statement['result'] ?? [];
       $time = $this->time($statement);
 
-      if (($result['completion'] ?? FALSE) === TRUE || in_array($verb, [self::VERB_COMPLETED, self::VERB_PASSED, self::VERB_FAILED], TRUE)) {
+      if (($result['completion'] ?? FALSE) === TRUE || in_array($verb, [
+        self::VERB_COMPLETED,
+        self::VERB_PASSED,
+        self::VERB_FAILED,
+      ], TRUE)) {
         $completed = TRUE;
         $finished = max($finished, $time);
       }
@@ -141,6 +151,7 @@ final class XapiProgressDeriver {
    * Converte a pontuação do result para a escala de 0 a 100, ou NULL.
    *
    * @param array<string, mixed> $result
+   *   Bloco result da declaração xAPI.
    */
   private function score(array $result): ?float {
     $score = $result['score'] ?? NULL;
@@ -151,7 +162,7 @@ final class XapiProgressDeriver {
       return max(0.0, (float) $score['scaled']) * 100.0;
     }
     if (isset($score['raw'], $score['max'])) {
-      // min é opcional na xAPI; ausente, vale 0 (mesmo padrão do Opigno, sem nota máxima por success).
+      // Min é opcional na xAPI; ausente, vale 0 (mesmo padrão do Opigno, sem nota máxima por success).
       $min = (float) ($score['min'] ?? 0);
       $range = (float) $score['max'] - $min;
       if ($range <= 0) {
@@ -167,6 +178,7 @@ final class XapiProgressDeriver {
    * Timestamp da declaração como inteiro, ou 0 quando ausente.
    *
    * @param array<string, mixed> $statement
+   *   Declaração xAPI com o timestamp.
    */
   private function time(array $statement): int {
     $timestamp = $statement['timestamp'] ?? NULL;

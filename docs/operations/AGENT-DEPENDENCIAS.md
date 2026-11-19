@@ -38,6 +38,27 @@ Dependência transitiva não entra na tabela: registre só o que o projeto decla
 - Atualização de patch que não muda a versão declarada não exige nova linha; se a tabela cita a versão exata,
   ela precisa mudar.
 
+## Política até o ACULTA 1.0 (D-72)
+
+- Manter módulos Drupal contrib em atualização ativa, com foco em Drupal 12; releases alpha e beta são elegíveis
+  quando forem o caminho disponível para essa compatibilidade.
+- Em `composer.json`, prefira constraints de faixa compatíveis com a evolução do pacote; evite pins exatos que
+  impeçam atualizações sem uma razão técnica documentada. Use `@alpha` ou `@beta` quando necessário para aceitar
+  esses canais.
+- Atualize os módulos ACULTA que dependem das APIs alteradas e valide o conjunto integrado antes de concluir a
+  entrega. Uma release contrib compatível declarada ainda precisa passar pela resolução do Composer e pelos gates
+  do projeto.
+- **Compatibilidade ACULTA obrigatória:** sempre que atualizar um módulo contrib ou o Drupal Core, inspecione os
+  módulos ACULTA que declaram ou usam essa dependência: manifests e constraints, chamadas de API, hooks, plugins,
+  serviços, rotas, configuração exportada e testes pertinentes. Corrija incompatibilidades encontradas e registre
+  evidência da revisão; se nenhum ajuste ACULTA for necessário, anote os contratos verificados e bloqueios upstream
+  ou de testes que impeçam a validação integrada. A resolução bem-sucedida do Composer, sozinha, não comprova
+  compatibilidade.
+- Mantenha `composer.lock` versionado para builds reproduzíveis. A resolução travada no lock é atualizada junto
+  com cada entrega de dependências; ela não deve servir como justificativa para reter versões antigas.
+- A política é temporária até a versão oficial 1.0 do ACULTA. Depois, rever a cadência e o nível de estabilidade
+  aceito em nova decisão do responsável.
+
 ## Verificação antes do commit
 
 - `git diff --stat` deve mostrar o README da raiz e o README do módulo/tema junto com o manifesto.

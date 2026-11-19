@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_commerce_melhorenvio\Unit\Hook;
 
+use Drupal\aculta_commerce_melhorenvio\Quote\QuoteOption;
+use Drupal\commerce_product\Entity\ProductVariationInterface;
+use Drupal\aculta_commerce_melhorenvio\Quote\CartQuoteLines;
 use Drupal\aculta_commerce_melhorenvio\Hook\ShippingCalculatorHooks;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingQuoteStore;
 use Drupal\aculta_commerce_melhorenvio\Quote\ShippingSimulation;
@@ -24,6 +27,7 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
   /**
    * Creates the hooks with a configured simulator and session quote.
    */
+
   /**
    * Hook com simulador, armazenamento e leitor do carrinho. Por padrão o carrinho tem um item da loja.
    */
@@ -36,9 +40,9 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
     $store = $this->createMock(ShippingQuoteStore::class);
     $store->method('load')->willReturn($stored);
     $store->method('loadLastPostalCode')->willReturn($lastPostalCode);
-    $lines = $this->createMock(\Drupal\aculta_commerce_melhorenvio\Quote\CartQuoteLines::class);
+    $lines = $this->createMock(CartQuoteLines::class);
     $lines->method('lines')->willReturn($cartHasStoreItems
-      ? [['variation' => $this->createMock(\Drupal\commerce_product\Entity\ProductVariationInterface::class), 'quantity' => 1, 'total' => 30.0]]
+      ? [['variation' => $this->createMock(ProductVariationInterface::class), 'quantity' => 1, 'total' => 30.0]]
       : []);
     return new ShippingCalculatorHooks($simulator, $store, $lines);
   }
@@ -82,7 +86,7 @@ final class ShippingCalculatorHooksTest extends UnitTestCase {
    */
   public function testKnownPostalCodeQuotesTheCartWithTheStoreItems(): void {
     $quote = new ShippingSimulation(ShippingSimulation::STATE_AVAILABLE, NULL, [
-      new \Drupal\aculta_commerce_melhorenvio\Quote\QuoteOption('1', 'PAC', 'Correios', '37.79', 9),
+      new QuoteOption('1', 'PAC', 'Correios', '37.79', 9),
     ]);
     $props = $this->hooks(NULL, NULL, '01310100', TRUE, $quote)->props('frete-carrinho-lateral');
     $this->assertSame('available', $props['state']);

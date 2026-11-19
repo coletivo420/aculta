@@ -1,0 +1,33 @@
+{% set attributes = attributes|default(create_attribute()) %}
+{# Blocos do embed não viram variáveis: captura o avatar do bloco para o cartão. #}
+{% set avatar_slot %}{% block avatar %}{% endblock %}{% endset %}
+{% set body_slot %}{% block body %}{% endblock %}{% endset %}
+{% set actions_slot %}{% block actions %}{% endblock %}{% endset %}
+{% set reactions_slot_val %}{% block reactions_slot %}{% endblock %}{% endset %}
+{% set admin_slot_val %}{% block admin %}{% endblock %}{% endset %}
+{{ title_prefix }}
+{% set comment_card %}
+<article{{ attributes.addClass('comment', 'comment--discussion', 'js-comment', status ? 'comment--' ~ status) }}>
+  {{ context }}
+  {{ include('aculta420_v2:forum-post-card', {
+    stripe: 'brand',
+    accent_side: accent_side|default('start'),
+    accent_color: accent_side|default('start') == 'end' ? 'red' : 'green',
+    author_name: author_name|default('Participante'|t),
+    author_role: null,
+    author_posts: author_posts,
+    timestamp: timestamp,
+    reactions: null,
+    reply_url: null,
+    avatar: avatar_slot,
+    body: body_slot,
+    actions: actions_slot,
+    reactions_slot: reactions_slot_val,
+    reply: null
+  }, with_context = false) }}
+  {% if admin_slot_val|trim != '' %}<div class="forum-comment__admin">{{ admin_slot_val }}</div>{% endif %}
+  <div id="{{ composer_target_id }}" class="discussion-reply-target"></div>
+</article>
+{% endset %}
+{{ include('aculta420_v2:reply-indent', { depth: reply_depth|default(0), first: reply_first|default(false), content: comment_card }, with_context = false) }}
+{{ title_suffix }}

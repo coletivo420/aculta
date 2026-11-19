@@ -1,3 +1,4 @@
+diff --git a/src/Plugin/diff/Field/AddressFieldBuilder.php b/src/Plugin/diff/Field/AddressFieldBuilder.php
 --- a/src/Plugin/diff/Field/AddressFieldBuilder.php
 +++ b/src/Plugin/diff/Field/AddressFieldBuilder.php
 @@ -21,7 +21,7 @@

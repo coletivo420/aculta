@@ -6,19 +6,51 @@ dependencies:
     - field.field.taxonomy_term.editorial_author.field_author_kind
     - taxonomy.vocabulary.editorial_author
   module:
+    - layout_builder
     - text
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: 'ui_patterns:aculta420_v2:layout_section'
+        layout_settings:
+          label: ''
+          context_mapping:
+            entity: layout_builder.entity
+          ui_patterns:
+            component_id: 'aculta420_v2:layout-section'
+            variant_id: null
+            props: {  }
+            slots: {  }
+        components:
+          0dc8f93d-507f-408c-9d8f-55ec21ea154d:
+            uuid: 0dc8f93d-507f-408c-9d8f-55ec21ea154d
+            region: content
+            configuration:
+              id: 'field_block:taxonomy_term:editorial_author:description'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: text_default
+                label: hidden
+                settings: {  }
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+        third_party_settings: {  }
 id: taxonomy_term.editorial_author.default
 targetEntityType: taxonomy_term
 bundle: editorial_author
 mode: default
-content:
-  description:
-    type: text_default
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 0
-    region: content
+content: {  }
 hidden:
+  description: true
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_author_kind: true
   langcode: true
+  search_api_excerpt: true

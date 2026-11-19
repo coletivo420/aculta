@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_donation\Plugin\Commerce\CheckoutPane;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoSubscriptionRecorder;
 use Drupal\commerce\Response\NeedsRedirectException;
 use Drupal\commerce_checkout\Attribute\CommerceCheckoutPane;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowInterface;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\CheckoutPaneBase;
+use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
+use Drupal\commerce_price\Price;
 use Drupal\commerce_payment\Exception\PaymentGatewayException;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -45,24 +48,36 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
    * Gateway do Mercado Pago (o mesmo do pagamento avulso). */
   private const GATEWAY = 'mercado_pago';
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
     CheckoutFlowInterface $checkout_flow,
     EntityTypeManagerInterface $entity_type_manager,
-    private readonly MercadoPagoSubscriptionRecorder $assinaturas,
-    private readonly DomainPurposeManager $purposes,
-    private readonly LoggerChannelInterface $logger,
-    private readonly MessengerInterface $avisos,
+    protected readonly MercadoPagoSubscriptionRecorder $assinaturas,
+    protected readonly DomainSiteManager $purposes,
+    protected readonly LoggerChannelInterface $logger,
+    protected readonly MessengerInterface $avisos,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $checkout_flow, $entity_type_manager);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL) {
+    \assert($checkout_flow instanceof CheckoutFlowInterface);
     return new static(
       $configuration,
       $plugin_id,
@@ -70,7 +85,7 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
       $checkout_flow,
       $container->get('entity_type.manager'),
       $container->get('aculta_pagamentos_mercadopago.subscription_recorder'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('aculta_pagamentos_mercadopago.logger'),
       $container->get('messenger'),
     );
@@ -79,15 +94,19 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
   /**
    * {@inheritdoc}
    */
-  public function isVisible() {
+  public function isVisible(): bool {
     return $this->order->bundle() === MercadoPagoSubscriptionRecorder::TIPO_PEDIDO
       && !$this->order->getData(MercadoPagoSubscriptionRecorder::CHAVE_ASSINATURA);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $pane_form
+   * @param array<mixed> $complete_form
+   * @return array<mixed>
    */
-  public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
+  public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form): array {
     $pane_form['mensagem'] = [
       '#markup' => $this->t('Você será levado ao Mercado Pago para autorizar a doação mensal. A primeira cobrança acontece na autorização.'),
     ];
@@ -97,19 +116,25 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
   /**
    * {@inheritdoc}
    *
+   * @param array<mixed> $pane_form
+   * @param array<mixed> $complete_form
+   *
    * @throws \Drupal\commerce\Response\NeedsRedirectException
    *   Leva ao Mercado Pago para autorizar a assinatura, ou volta ao passo com
    *   a mensagem de erro.
    * @throws \Drupal\commerce_payment\Exception\PaymentGatewayException
    *   Gateway do Mercado Pago ausente (configuração).
    */
-  public function submitPaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form) {
+  public function submitPaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form): void {
     $gateway = $this->entityTypeManager->getStorage('commerce_payment_gateway')->load(self::GATEWAY);
-    if ($gateway === NULL) {
+    if (!$gateway instanceof PaymentGatewayInterface) {
       throw new PaymentGatewayException('Gateway do Mercado Pago ausente.');
     }
     $total = $this->order->getTotalPrice();
-    $retorno = $this->purposes->routeUrl('main', 'aculta_donation.donation_controller_formPage', [
+    if (!$total instanceof Price) {
+      $total = new Price('0.00', 'BRL');
+    }
+    $retorno = $this->purposes->routeUrl(SiteKey::Main, 'aculta_donation.donation_controller_formPage', [
       'commerce_order' => $this->order->id(),
       'step' => 'complete',
     ]);
@@ -139,10 +164,12 @@ final class RecurringAuthorizationPane extends CheckoutPaneBase {
         ? $e->getMessage()
         : $this->t('Não foi possível iniciar a autorização da doação mensal no Mercado Pago. Confira o e-mail do pedido e tente novamente em instantes.');
       $this->avisos->addError($mensagem);
-      $this->checkoutFlow->redirectToStep($this->checkoutFlow->getStepId());
+      $stepId = (string) $this->checkoutFlow->getStepId();
+      $this->checkoutFlow->redirectToStep($stepId);
+      return;
     }
 
-    throw new NeedsRedirectException($assinatura['init_point']);
+    throw new NeedsRedirectException((string) $assinatura['init_point']);
   }
 
 }

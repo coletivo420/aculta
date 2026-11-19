@@ -6,7 +6,7 @@ namespace Drupal\aculta_magazine\Hook;
 
 use Drupal\aculta_magazine\Presentation\PostPresentation;
 use Drupal\aculta_magazine\Revista\RevistaPublications;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
@@ -31,8 +31,8 @@ final class ArticleAuthorsHooks {
   use StringTranslationTrait;
 
   public function __construct(
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $purposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'aculta_magazine.post_presentation')]
     private readonly PostPresentation $presentation,
     #[Autowire(service: 'aculta_user.author_card_builder')]
@@ -41,16 +41,27 @@ final class ArticleAuthorsHooks {
 
   /**
    * Adiciona a caixa de autores à publicação da Revista.
+   *
+   * @param array $build
+   *   The render array.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity being viewed.
+   * @param mixed $display
+   *   The display configuration.
+   * @param string $view_mode
+   *   The view mode.
+   *
+   * @phpstan-ignore missingType.iterableValue
    */
   #[Hook('node_view')]
-  public function nodeView(array &$build, EntityInterface $entity, $display, $view_mode): void {
+  public function nodeView(array &$build, EntityInterface $entity, mixed $display, string $view_mode): void {
     if (!$entity instanceof NodeInterface
       || !RevistaPublications::isPublication($entity->bundle())
       || $entity->isNew()
       || !$entity->isPublished()) {
       return;
     }
-    if ($view_mode !== 'full' || $this->purposeManager->getCurrentPurpose() !== 'magazine') {
+    if ($view_mode !== 'full' || $this->siteManager->getCurrentSiteKey()?->value !== 'magazine') {
       return;
     }
 
@@ -64,8 +75,10 @@ final class ArticleAuthorsHooks {
       $authors[(int) $owner->id()] = ['user' => $owner, 'role' => 'author'];
       $cache->addCacheableDependency($owner);
     }
-    if ($entity->hasField('co_authors')) {
-      foreach ($entity->get('co_authors')->referencedEntities() as $user) {
+    if ($entity->hasField('aculta_coauthors')) {
+      /** @var array<int, \Drupal\Core\Entity\EntityInterface> $coAuthorEntities */
+      $coAuthorEntities = (array) $entity->get('aculta_coauthors')->referencedEntities();
+      foreach ($coAuthorEntities as $user) {
         if ($user instanceof UserInterface && !isset($authors[(int) $user->id()])) {
           $authors[(int) $user->id()] = ['user' => $user, 'role' => 'coauthor'];
           $cache->addCacheableDependency($user);
@@ -87,19 +100,17 @@ final class ArticleAuthorsHooks {
       return;
     }
     $build['article_authors'] = [
-      '#type' => 'container',
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:article-authors',
       '#weight' => 100,
-      '#attributes' => ['data-portal-ui' => 'article-authors'],
-      'title' => [
-        '#theme' => 'aculta_portal_element',
-        '#tag' => 'h2',
-        '#value' => $this->t('Autoria'),
-        '#element_attributes' => new Attribute(['data-portal-ui' => 'article-authors-title']),
-      ],
-      'list' => [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'article-authors-list'],
-        'items' => $items,
+      '#slots' => [
+        'title' => [
+          '#theme' => 'aculta_portal_element',
+          '#tag' => 'h2',
+          '#value' => $this->t('Autoria'),
+          '#element_attributes' => new Attribute(['data-portal-ui' => 'article-authors-title']),
+        ],
+        'authors' => $items,
       ],
       '#cache' => [
         'tags' => $cache->getCacheTags(),
@@ -111,7 +122,12 @@ final class ArticleAuthorsHooks {
   /**
    * Builds the shared identity card with Magazine-owned author/co-author role.
    *
-   * @return array|null
+   * @param \Drupal\user\UserInterface $user
+   *   The user entity.
+   * @param string $role
+   *   The role ('author' or 'coauthor').
+   *
+   * @return array<string, mixed>|null
    *   The render array for this author, or NULL without a public identity.
    */
   private function authorItem(UserInterface $user, string $role): ?array {

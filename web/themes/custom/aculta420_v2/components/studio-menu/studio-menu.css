@@ -1,0 +1,138 @@
+/* Menu lateral do Studio Dashboard: botão de três linhas e diálogo pela esquerda no mobile. */
+.aculta-studio-topbar {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  gap: var(--spacing-sm);
+}
+
+.aculta-studio-topbar .aculta-studio-menu__trigger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  color: var(--button-secondary-fg);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  min-block-size: 2.75rem;
+  min-inline-size: 2.75rem;
+}
+
+.aculta-studio-topbar .aculta-studio-menu__trigger:hover {
+  background: var(--button-secondary-bg-hover);
+}
+
+.aculta-studio-topbar .aculta-studio-menu__trigger:active {
+  background: var(--button-secondary-bg-active);
+}
+
+.aculta-studio-menu__trigger:focus-visible,
+.aculta-studio-menu-dialog a:focus-visible {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (min-width: 60rem) {
+  .aculta-studio-topbar {
+    display: none;
+  }
+}
+
+/* Somente no celular: o botão aparece. No desktop fica oculto. */
+@media (max-width: 59.9375rem) {
+  .aculta-studio-topbar .aculta-studio-menu__trigger {
+    display: inline-flex;
+  }
+}
+
+/* Diálogo pela esquerda (os diálogos da barra abrem pela direita). */
+.aculta-utility-dialog.aculta-studio-menu-dialog {
+  inset-block: 0;
+  inset-inline: 0 auto;
+}
+
+.aculta-studio-menu__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aculta-studio-menu__list li {
+  border-block-end: 1px solid var(--color-border);
+}
+
+.aculta-studio-menu__list a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  min-block-size: 2.75rem;
+}
+
+.aculta-studio-menu__list a[aria-current="page"] {
+  font-weight: 700;
+}
+
+.aculta-studio-menu__list a:hover {
+  text-decoration: underline;
+}
+
+/* Menu lateral completo: visível só no desktop, fixo à esquerda. No celular fica oculto e o diálogo acima cumpre o papel. */
+.aculta-studio-sidebar {
+  display: none;
+}
+
+.aculta-studio-sidebar__list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: var(--spacing-xs);
+}
+
+.aculta-studio-sidebar__list a {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-sm);
+  gap: var(--spacing-sm);
+  min-block-size: 2.75rem;
+  padding-inline: var(--spacing-sm);
+}
+
+.aculta-studio-sidebar__list a:hover {
+  background: var(--button-secondary-bg-hover);
+}
+
+.aculta-studio-sidebar__list a[aria-current="page"] {
+  color: var(--color-on-highlight);
+  background: var(--color-brand-highlight);
+  font-weight: 700;
+}
+
+.aculta-studio-sidebar__list a:focus-visible {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
+}
+
+.aculta-studio-sidebar__list .aculta-icon {
+  color: currentColor;
+}
+
+@media (min-width: 60rem) {
+  /* Menu lateral em fluxo natural dentro de sua coluna no layout do dashboard. */
+  .aculta-studio-sidebar {
+    position: static;
+    display: block;
+    padding: var(--spacing-md);
+    border: 1px solid var(--color-border);
+    border-block-start: 4px solid var(--studio-stripe);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    inline-size: 100%;
+    max-inline-size: 100%;
+  }
+}

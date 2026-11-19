@@ -10,7 +10,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Session\UserSession;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -29,13 +29,16 @@ final class ContentIndexStatusAccessKernelTest extends KernelTestBase {
   protected static $modules = [
     'system', 'user', 'field', 'file', 'image', 'media', 'entity_usage', 'media_duplicates',
     'aculta_image', 'aculta_index',
+    'aculta_calendar',
+    'aculta_file_uploader',
+    'filter',
   ];
 
   /**
    * {@inheritdoc} */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

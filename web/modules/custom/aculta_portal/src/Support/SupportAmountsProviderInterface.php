@@ -16,6 +16,7 @@ interface SupportAmountsProviderInterface {
    * Valores e permissão de valor personalizado da campanha vigente, ou NULL sem campanha.
    *
    * @return array{amounts: int[], customAmount: bool}|null
+   *   Valores sugeridos e permissão de valor personalizado, ou NULL.
    */
   public function valoresSugeridos(): ?array;
 

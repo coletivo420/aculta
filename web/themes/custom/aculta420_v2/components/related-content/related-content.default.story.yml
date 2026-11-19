@@ -1,0 +1,7 @@
+name: Conteúdo relacionado padrão
+description: Lista de conteúdo relacionado com rótulo, tipo e resumo.
+component: aculta420_v2:related-content
+slots:
+  content:
+    type: inline_template
+    template: '<h3>Locais do evento</h3><ul><li class="aculta-related-content__item"><a class="aculta-related-content__link" href="/eventos/local">Espaço cultural</a><span class="aculta-related-content__badge">Local</span><p class="aculta-related-content__summary">Espaço comunitário para atividades culturais.</p></li></ul>'

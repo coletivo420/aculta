@@ -17,8 +17,9 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\message\Entity\Message;
 use Drupal\message\Entity\MessageTemplate;
 use Drupal\message\MessageInterface;
-use Drupal\private_message\Entity\PrivateMessage;
-use Drupal\private_message\Entity\PrivateMessageThread;
+use Drupal\aculta_messenger\Entity\PrivateMessage;
+use Drupal\aculta_messenger\Entity\PrivateMessageThread;
+use Drupal\user\UserInterface;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -45,9 +46,76 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     'filter',
     'message',
     'message_notify',
-    'private_message',
-    'private_message_notify',
+    'aculta_messenger',
+    'flag',
+    'content_moderation',
+    'pathauto',
+    'path_alias',
+    'path',
+    'aculta_portal',
+    'key',
+    'message_subscribe',
+    'node',
+    'datetime',
+    'menu_ui',
+    'options',
+    'aculta_user',
+    'aculta_mailer',
+    'aculta_mail_confirmer',
+    'aculta_forum',
+    'site_alert',
     'aculta_messenger_retention_test',
+    'aculta_file_uploader',
+    'file',
+    'token',
+    'image',
+    'crop',
+    'image_widget_crop',
+    'ctools',
+    'ctools_views',
+    'aculta_image',
+    'profile',
+    'views',
+    'text_with_summary',
+    'vvjs',
+    'domain',
+    'domain_alias',
+    'domain_config',
+    'domain_source',
+    'address',
+    'aculta_portal_cep',
+    'login_emailusername',
+    'social_auth',
+    'group',
+    'commerce',
+    'commerce_cart',
+    'commerce_checkout',
+    'commerce_store',
+    'commerce_order',
+    'commerce_payment',
+    'physical',
+    'taxonomy',
+    'media',
+    'metatag',
+    'schema_metatag',
+    'schema_article',
+    'schema_event',
+    'schema_image_object',
+    'schema_organization',
+    'schema_product',
+    'schema_web_site',
+    'schema_web_page',
+    'search_api_db',
+    'commerce_price',
+    'commerce_product',
+    'state_machine',
+    'migrate',
+    'entity_usage',
+    'comment',
+    'social_api',
+    'workflows',
+    'entity_reference_revisions',
+    'link',
   ];
 
   /**
@@ -60,14 +128,24 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     $this->installEntitySchema('private_message_ban');
     $this->installEntitySchema('private_message_thread');
     $this->installEntitySchema('private_message');
-    $this->installSchema('private_message', ['pm_thread_history']);
+    $this->installSchema('aculta_user', ['aculta_user_nickname']);
+    $this->installEntitySchema('flagging');
+    $this->installEntitySchema('comment');
+    $this->installConfig('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installSchema('file', ['file_usage']);
+    $this->installSchema('entity_usage', ['entity_usage']);
+    $this->installConfig('aculta_user');
+    $this->installSchema('user', ['users_data']);
+    $this->installEntitySchema('profile');
+    $this->installEntitySchema('path_alias');
+    $this->installSchema('aculta_messenger', ['aculta_pm_thread_history']);
     $this->installConfig([
       'system',
       'user',
       'filter',
       'message',
       'message_notify',
-      'private_message_notify',
     ]);
 
     MessageTemplate::create([
@@ -105,7 +183,7 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     for ($index = 0; $index < 101; $index++) {
       $this->createThread([$first, $second], (int) $second->id(), $timestamp, 'Unread thread ' . $index);
     }
-    $this->container->get('database')->update('pm_thread_history')
+    $this->container->get('database')->update('aculta_pm_thread_history')
       ->fields(['access_timestamp' => $timestamp - 1])
       ->condition('uid', $firstId)
       ->execute();
@@ -259,7 +337,9 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
         'created' => $timestamp + $index,
       ]);
       $privateMessage->save();
-      $thread->addMessageById($privateMessage->id());
+      /** @var int|string $privateMessageId */
+      $privateMessageId = $privateMessage->id();
+      $thread->addMessageById($privateMessageId);
       $this->createNotice((int) $first->id(), (int) $privateMessage->id());
     }
     $thread->save();
@@ -292,6 +372,15 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
 
   /**
    * Creates and persists one thread with one private message.
+   *
+   * @param array<int, \Drupal\user\UserInterface> $members
+   *   O valor informado para $members.
+   * @param int $senderUid
+   *   O valor informado para $senderUid.
+   * @param int $timestamp
+   *   O valor informado para $timestamp.
+   * @param string $subject
+   *   O valor informado para $subject.
    */
   private function createThread(array $members, int $senderUid, int $timestamp, string $subject): PrivateMessageThread {
     $message = PrivateMessage::create([
@@ -301,7 +390,7 @@ final class PrivateMessageRetentionKernelTest extends KernelTestBase {
     ]);
     $message->save();
     $thread = PrivateMessageThread::create([
-      'members' => array_map(static fn(User $account): int => (int) $account->id(), $members),
+      'members' => array_map(static fn(UserInterface $account): int => (int) $account->id(), $members),
       'subject' => $subject,
       'updated' => $timestamp,
     ]);

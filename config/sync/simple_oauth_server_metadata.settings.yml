@@ -21,4 +21,3 @@ response_types_supported:
 response_modes_supported:
   - query
   - fragment
-

@@ -1,0 +1,7 @@
+.aculta-user-admin-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin-block: 0 1rem;
+}

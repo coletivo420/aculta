@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
+use Drupal\aculta_forum\Analytics\ForumActivityLedger;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Event\ForumActivityEvent;
 use Drupal\comment\CommentInterface;
@@ -28,6 +29,7 @@ final class ForumActivityEventHooks {
   public function __construct(
     private readonly EventDispatcherInterface $dispatcher,
     private readonly TimeInterface $time,
+    private readonly ?ForumActivityLedger $ledger = NULL,
   ) {}
 
   /**
@@ -91,6 +93,9 @@ final class ForumActivityEventHooks {
     if (!$this->isPublishedForumPost($entity)) {
       return;
     }
+    if (!$entity instanceof ForumPost) {
+      return;
+    }
     $this->dispatchPost($entity);
   }
 
@@ -100,6 +105,9 @@ final class ForumActivityEventHooks {
   #[Hook('entity_update')]
   public function entityPublished(EntityInterface $entity): void {
     if (!$this->isPublishedForumPost($entity)) {
+      return;
+    }
+    if (!$entity instanceof ForumPost) {
       return;
     }
     $original = $entity->getOriginal();
@@ -112,8 +120,12 @@ final class ForumActivityEventHooks {
    * Dispatches topic creation activity once.
    */
   private function dispatchTopic(NodeInterface $node): void {
+    if (!$this->claim($node, ForumActivityEvent::TOPIC_CREATED)) {
+      return;
+    }
+    $nodeId = (int) $node->id();
     $this->dispatcher->dispatch(
-      new ForumActivityEvent((int) $node->id(), $this->time->getRequestTime()),
+      new ForumActivityEvent($nodeId, $this->time->getRequestTime(), $nodeId),
       ForumActivityEvent::TOPIC_CREATED,
     );
   }
@@ -122,8 +134,15 @@ final class ForumActivityEventHooks {
    * Dispatches comment creation activity once.
    */
   private function dispatchComment(CommentInterface $comment): void {
+    if (!$this->claim($comment, ForumActivityEvent::COMMENT_CREATED)) {
+      return;
+    }
     $this->dispatcher->dispatch(
-      new ForumActivityEvent((int) $comment->id(), $this->time->getRequestTime()),
+      new ForumActivityEvent(
+        (int) $comment->id(),
+        $this->time->getRequestTime(),
+        (int) $comment->getCommentedEntityId(),
+      ),
       ForumActivityEvent::COMMENT_CREATED,
     );
   }
@@ -132,10 +151,27 @@ final class ForumActivityEventHooks {
    * Dispatches post creation activity once.
    */
   private function dispatchPost(ForumPost $post): void {
+    if (!$this->claim($post, ForumActivityEvent::POST_CREATED)) {
+      return;
+    }
     $this->dispatcher->dispatch(
-      new ForumActivityEvent((int) $post->id(), $this->time->getRequestTime()),
+      new ForumActivityEvent(
+        (int) $post->id(),
+        $this->time->getRequestTime(),
+        (int) $post->get('topic')->target_id,
+      ),
       ForumActivityEvent::POST_CREATED,
     );
+  }
+
+  /**
+   * Reivindica a emissão única de uma atividade.
+   */
+  private function claim(EntityInterface $entity, string $eventName): bool {
+    if ($this->ledger === NULL) {
+      return TRUE;
+    }
+    return $this->ledger->claim($entity->getEntityTypeId(), (int) $entity->id(), $eventName);
   }
 
   /**

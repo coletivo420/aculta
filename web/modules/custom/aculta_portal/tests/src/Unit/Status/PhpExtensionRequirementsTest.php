@@ -14,7 +14,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_portal')]
 final class PhpExtensionRequirementsTest extends UnitTestCase {
 
-  /** Checks transitive requirements, loaded status, and source attribution. */
+  /**
+   * Verifica requisitos transitivos, status de carregamento e origem.
+   */
   public function testBuildsRuntimeExtensionRows(): void {
     $requirements = [
       [
@@ -39,7 +41,9 @@ final class PhpExtensionRequirementsTest extends UnitTestCase {
     self::assertSame(['Integração de exemplo'], $rows[1]['integrations']);
   }
 
-  /** A new runtime package declaration is included by the global scan. */
+  /**
+   * Verifica que a varredura global inclui todo pacote de runtime.
+   */
   public function testGlobalScanFindsExtensionsFromEveryRuntimePackage(): void {
     $requirements = [
       ['name' => 'Varredura global', 'modules' => [], 'scan_all' => TRUE],
@@ -57,7 +61,9 @@ final class PhpExtensionRequirementsTest extends UnitTestCase {
     self::assertSame(['Varredura global'], $rows[1]['integrations']);
   }
 
-  /** Explicit roots retain module attribution for image and PDF integrations. */
+  /**
+   * Verifica a atribuição de módulo para integrações de imagem e PDF.
+   */
   public function testMapsImageAndPdfPackageRequirements(): void {
     $requirements = [
       ['name' => 'ACULTA Image', 'modules' => ['aculta_image'], 'packages' => ['drupal/imageapi_optimize']],

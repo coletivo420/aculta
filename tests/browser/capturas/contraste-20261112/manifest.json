@@ -1,0 +1,59 @@
+{
+  "frente": "aculta-contraste",
+  "data": "2026-11-12",
+  "objetivo": "Corrigir e homologar o contraste pré-existente do rodapé institucional e da trilha (Fórum) nos dez domínios de desenvolvimento.",
+  "ambiente": "servidor de desenvolvimento (*.aculta.toca.net.br)",
+  "metodo": "Firefox do Playwright headless com axe-core (regra color-contrast, WCAG 2.2 AA); claro e escuro por data-theme.",
+  "script": "tests/browser/transversal/aculta-contraste/axe-nodes.mjs",
+  "antes": {
+    "execucao": "2026-11-12T17:30Z (auditoria de CSS, axe em 5 hosts)",
+    "falhas": [
+      {
+        "alvo": "link do domínio no rodapé (.site-footer a)",
+        "cores": "texto #0c3c29 sobre fundo #689427",
+        "razao": 3.45,
+        "minimo": 4.5,
+        "causa": ".page a (base.css) vencia .site-footer a por ordem de folha e impunha --color-primary"
+      },
+      {
+        "alvo": ".aculta-breadcrumb__current > span (Fórum /categorias)",
+        "cores": "texto #689427 sobre fundo #ffffff",
+        "razao": 3.58,
+        "minimo": 4.5,
+        "causa": "--color-brand-secondary usado como cor de texto sobre o canvas claro"
+      }
+    ]
+  },
+  "correcao": {
+    "arquivos": [
+      "web/themes/custom/aculta420_v2/components/site-footer/site-footer.css",
+      "web/themes/custom/aculta420_v2/components/breadcrumb/breadcrumb.css",
+      "web/themes/custom/aculta420_v2/components/revista-teaser/revista-teaser.css"
+    ],
+    "commit": "e3a7f7140",
+    "resumo": "O rodapé declara :link/:visited com --color-footer-text; a trilha usa --color-text-primary e --color-link-editorial; a categoria do teaser da Revista deixa de usar o verde de marca como texto.",
+    "tokens_alterados": "nenhum"
+  },
+  "depois": {
+    "execucao": "2026-11-12 após drush cr no Runtime de desenvolvimento",
+    "matriz": "22/22 PASS (11 URLs × claro/escuro), zero violações color-contrast",
+    "hosts": [
+      "main",
+      "conta",
+      "revista",
+      "wiki420",
+      "growroom420 (home e /categorias)",
+      "loja",
+      "cursos",
+      "links",
+      "apoio",
+      "eventos"
+    ],
+    "resultado_bruto": "/home/piradopirata/aculta-suite-out/contraste-20261112/contraste-axe.json (fora do Git)"
+  },
+  "observacoes": [
+    "Nenhum token de marca foi alterado; a identidade verde permanece em superfícies e faixas decorativas.",
+    "O contraste foi provado no navegador após reconstrução de cache do Runtime; o agregado CSS antigo não refletia as folhas editadas até o drush cr.",
+    "Escopo não coberto: sessão autenticada, modais e gavetas."
+  ]
+}

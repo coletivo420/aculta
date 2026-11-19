@@ -28,7 +28,7 @@ function aculta_id_cpf_ensure_document_index_unique_key(): void {
     throw new \RuntimeException('Document source storage table is unavailable.');
   }
 
-  $unindexedDocuments = (int) \Drupal::database()->query(
+  $queryResult = \Drupal::database()->query(
     'SELECT COUNT(*)
     FROM {' . $documentTable . '} d
     LEFT JOIN {' . $table . '} i
@@ -43,7 +43,9 @@ function aculta_id_cpf_ensure_document_index_unique_key(): void {
       AND d.field_documento_value <> :empty_document
       AND (i.field_documento_indice_value IS NULL OR i.field_documento_indice_value = :empty_index)',
     [':bundle' => 'associado', ':empty_document' => '', ':empty_index' => ''],
-  )->fetchField();
+  );
+  $unindexedCount = $queryResult ? $queryResult->fetchField() : 0;
+  $unindexedDocuments = is_numeric($unindexedCount) ? (int) $unindexedCount : 0;
   if ($unindexedDocuments > 0) {
     throw new \RuntimeException(sprintf(
       'Document index constraint not created: %d associated document(s) lack a fingerprint.',
@@ -51,7 +53,7 @@ function aculta_id_cpf_ensure_document_index_unique_key(): void {
     ));
   }
 
-  $duplicateGroups = (int) \Drupal::database()->query(
+  $duplicateResult = \Drupal::database()->query(
     'SELECT COUNT(*) FROM (
       SELECT field_documento_indice_value
       FROM {' . $table . '}
@@ -61,7 +63,9 @@ function aculta_id_cpf_ensure_document_index_unique_key(): void {
       GROUP BY field_documento_indice_value
       HAVING COUNT(DISTINCT entity_id) > 1
     ) document_index_duplicates',
-  )->fetchField();
+  );
+  $duplicateCount = $duplicateResult ? $duplicateResult->fetchField() : 0;
+  $duplicateGroups = is_numeric($duplicateCount) ? (int) $duplicateCount : 0;
   if ($duplicateGroups > 0) {
     throw new \RuntimeException(sprintf(
       'Document index constraint not created: %d duplicate group(s) require resolution.',
@@ -87,8 +91,11 @@ function aculta_id_cpf_install(): void {
  *
  * Os valores continuam cifrados: o fingerprint é calculado a partir do documento decifrado, dentro da atualização.
  * Se dois perfis tiverem o mesmo documento, a atualização para com a contagem de conflitos (sem dados pessoais).
+ *
+ * @param array<string, mixed> $sandbox
  */
 function aculta_id_cpf_update_10001(array &$sandbox): string {
+  $sandbox['#finished'] = 1;
   if (!FieldStorageConfig::loadByName('profile', 'field_documento_indice')) {
     FieldStorageConfig::create([
       'field_name' => 'field_documento_indice',
@@ -113,6 +120,7 @@ function aculta_id_cpf_update_10001(array &$sandbox): string {
     ])->save();
   }
 
+  /** @var \Drupal\aculta_id_cpf\Service\AccountDocumentStore $indexer */
   $indexer = \Drupal::service('aculta_id_cpf.account_document');
   $storage = \Drupal::entityTypeManager()->getStorage('profile');
   $ids = $storage->getQuery()
@@ -122,7 +130,9 @@ function aculta_id_cpf_update_10001(array &$sandbox): string {
     ->execute();
   $counts = ['indexed' => 0, 'conflict' => 0, 'empty' => 0];
   foreach ($storage->loadMultiple($ids) as $profile) {
-    $counts[$indexer->indexStoredDocument($profile)]++;
+    if ($profile instanceof \Drupal\profile\Entity\ProfileInterface) {
+      $counts[$indexer->indexStoredDocument($profile)]++;
+    }
   }
   if ($counts['conflict'] > 0) {
     throw new \RuntimeException(sprintf('Índice de unicidade interrompido: %d documento(s) duplicado(s) entre contas. Resolva antes de repetir.', $counts['conflict']));

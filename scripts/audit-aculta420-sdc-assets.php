@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Read-only inventory and contract audit of ACULTA420 component assets.
  *
  * Usage: php scripts/audit-aculta420-sdc-assets.php

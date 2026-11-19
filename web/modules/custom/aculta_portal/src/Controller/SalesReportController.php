@@ -43,6 +43,9 @@ final class SalesReportController implements ContainerInjectionInterface {
     $this->stringTranslation = $stringTranslation;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.sales_report_query'),
@@ -55,9 +58,13 @@ final class SalesReportController implements ContainerInjectionInterface {
 
   /**
    * Página do relatório de vendas.
+   *
+   * @return array<string, mixed>
    */
   public function report(Request $request): array {
-    $fuso = new \DateTimeZone($this->configFactory->get('system.date')->get('timezone.default') ?: self::FUSO_PADRAO);
+    $timezoneConfig = $this->configFactory->get('system.date')->get('timezone.default');
+    $timezoneName = is_string($timezoneConfig) && $timezoneConfig !== '' ? $timezoneConfig : self::FUSO_PADRAO;
+    $fuso = new \DateTimeZone($timezoneName);
     $filtros = SalesReportFilters::fromQuery($request->query->all(), $fuso, new \DateTimeImmutable('now', $fuso));
 
     if ($filtros->erros !== []) {
@@ -65,11 +72,13 @@ final class SalesReportController implements ContainerInjectionInterface {
     }
 
     return [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'sales-panel'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:sales-panel',
+      '#slots' => ['content' => [
       'por_variacao' => $this->secao($this->t('Vendas por variação'), $this->tabelaPorVariacao($filtros)),
       'por_periodo' => $this->secao($this->t('Vendas por período'), $this->tabelaPorPeriodo($filtros)),
       'pedidos' => $this->secao($this->t('Pedidos e pagamentos'), $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_PRODUTO, $this->paginaAtual($request), 'aculta_portal.relatorio_vendas', $this->filtrosDaUrl($request))),
+      ]],
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
   }
@@ -77,7 +86,11 @@ final class SalesReportController implements ContainerInjectionInterface {
   /**
    * Seção do painel: título semântico e conteúdo. Aparência decidida pelo tema (tokens sales-*).
    *
+   * @param mixed $titulo
+   * @param array<string, mixed> $conteudo
+   *
    * @return array<string, mixed>
+   *   Render array da seção.
    */
   private function secao(mixed $titulo, array $conteudo): array {
     return [
@@ -86,13 +99,21 @@ final class SalesReportController implements ContainerInjectionInterface {
       'titulo' => [
         '#type' => 'html_tag',
         '#tag' => 'h2',
-        '#attributes' => ['data-portal-ui' => 'sales-heading'],
         '#value' => $titulo,
       ],
       'conteudo' => $conteudo,
     ];
   }
 
+  /**
+   * Número da página atual da listagem, a partir da URL.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Requisição atual.
+   *
+   * @return int
+   *   Página solicitada, nunca negativa.
+   */
   private function paginaAtual(Request $request): int {
     return max(0, (int) $request->query->get('pagina', 0));
   }
@@ -101,13 +122,22 @@ final class SalesReportController implements ContainerInjectionInterface {
    * Filtros da URL repassados à paginação (sem o parâmetro de página).
    *
    * @return array<string, string>
+   *   Filtros da URL, sem o parâmetro de página.
    */
   private function filtrosDaUrl(Request $request): array {
-    return array_filter($request->query->all(), static fn ($valor, $chave): bool => $chave !== 'pagina' && is_scalar($valor), ARRAY_FILTER_USE_BOTH);
+    $filtros = [];
+    foreach ($request->query->all() as $chave => $valor) {
+      if ($chave !== 'pagina' && is_scalar($valor)) {
+        $filtros[(string) $chave] = (string) $valor;
+      }
+    }
+    return $filtros;
   }
 
   /**
    * Tabela de vendas por variação, com total por moeda no rodapé.
+   *
+   * @return array<string, mixed>
    */
   private function tabelaPorVariacao(SalesReportFilters $filtros): array {
     $linhas = [];
@@ -119,7 +149,10 @@ final class SalesReportController implements ContainerInjectionInterface {
         $linha['quantidade'],
         $this->currencyFormatter->format($linha['total'], $linha['moeda']),
       ];
-      $totais[$linha['moeda']] = bcadd($totais[$linha['moeda']] ?? '0', $linha['total'], 2);
+      $moeda = $linha['moeda'];
+      $totalAtual = $totais[$moeda] ?? '0';
+      $valorLinha = is_numeric($linha['total']) ? (string) $linha['total'] : '0';
+      $totais[$moeda] = bcadd($totalAtual, $valorLinha, 2);
     }
     foreach ($totais as $moeda => $total) {
       $linhas[] = ['', '', $this->t('Total'), $this->currencyFormatter->format($total, (string) $moeda)];
@@ -137,6 +170,8 @@ final class SalesReportController implements ContainerInjectionInterface {
 
   /**
    * Tabela de vendas por período e moeda.
+   *
+   * @return array<string, mixed>
    */
   private function tabelaPorPeriodo(SalesReportFilters $filtros): array {
     $linhas = [];

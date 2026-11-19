@@ -53,7 +53,7 @@ de teste. `keys.production.*` recebe os de produção. Só os nomes ficam na con
 
 ## Estado
 
-- **Chave de cifragem provisionada no servidor de testes (2026-10-26).** `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` gravada em `secrets/aculta.secrets.env`, uma linha, gerada no próprio servidor. Autorizada pelo responsável (mensagem de 18:23: apenas a chave; `updatedb` segue proibido). Backup do arquivo original, fora do Git e do docroot, em `/home/piradopirata/worktrees/backup-secrets-20261026-1830/` (modo 600). Verificação: via Drush, comprimento 64 e formato hexadecimal PASS (valor não exibido). Via web: a linha aparece na aba Testes como "preenchida", status OK. Durante a gravação, o modo do arquivo ficou 660 por causa da máscara da ACL e o loader recusou o arquivo; restaurado para 640, com a ACL original.
+- **Chave de cifragem provisionada no servidor de desenvolvimento (2026-10-26).** `ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY` gravada em `secrets/aculta.secrets.env`, uma linha, gerada no próprio servidor. Autorizada pelo responsável (mensagem de 18:23: apenas a chave; `updatedb` segue proibido). Backup do arquivo original, fora do Git e do docroot, em `/home/piradopirata/worktrees/backup-secrets-20261026-1830/` (modo 600). Verificação: via Drush, comprimento 64 e formato hexadecimal PASS (valor não exibido). Via web: a linha aparece na aba Testes como "preenchida", status OK. Durante a gravação, o modo do arquivo ficou 660 por causa da máscara da ACL e o loader recusou o arquivo; restaurado para 640, com a ACL original.
 - **Rollback:** restaurar o backup (com acesso de escrita concedido ao dono) e rodar `drush cr`.
 - **Efeito:** trocar a chave invalida os tokens cifrados; o usuário precisa autorizar o Melhor Envio de novo. Enquanto `drush updatedb` não rodar, registros legados em texto puro não são lidos (falha fechada, reautorização).
 - Credenciais sandbox do Melhor Envio continuam pendentes.
@@ -65,10 +65,10 @@ de teste. `keys.production.*` recebe os de produção. Só os nomes ficam na con
   A afirmação anterior de que `secrets/` não tinha credencial do Melhor Envio estava errada e foi corrigida.
 - Origem das credenciais sandbox: **a confirmar pelo responsável.** O arquivo não declara a origem; o nome indica
   sandbox, mas não há prova no próprio arquivo.
-- Produção no servidor de teste: `aculta.secrets.env` também tem `MERCADOPAGO_PRODUCTION_PUBLIC_KEY`,
+- Produção no servidor de desenvolvimento: `aculta.secrets.env` também tem `MERCADOPAGO_PRODUCTION_PUBLIC_KEY`,
   `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` e `MERCADOPAGO_WEBHOOK_SECRET` (este último nos dois ambientes). O contrato
   reserva as chaves de Mercado Pago de produção ao ambiente `production`. **Decisão pendente do responsável:**
-  retirar do servidor de teste ou aceitar explicitamente. Não alterado nesta execução.
+  retirar do servidor de desenvolvimento ou aceitar explicitamente. Não alterado nesta execução.
 - Melhor Envio: a Key de produção (`melhorenvio_production_client_id` e `_client_secret`) não está no arquivo, como
   esperado. A Key de sandbox está. O estado do webhook (que respondia 503 sem chave de sandbox) não foi reverificado
   nesta execução.
@@ -84,7 +84,7 @@ de teste. `keys.production.*` recebe os de produção. Só os nomes ficam na con
 
 ### Decisões do responsável sobre `secrets/` (2026-10-26, 18:32)
 
-- **Mercado Pago de produção no servidor de testes:** `MERCADOPAGO_PRODUCTION_PUBLIC_KEY`, `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` e `MERCADOPAGO_WEBHOOK_SECRET` permanecem em `secrets/aculta.secrets.env`, aceitas explicitamente pelo responsável como **exceção** à regra "teste nunca usa chave de produção". A barreira de execução continua em modo de teste (ver abaixo).
+- **Mercado Pago de produção no servidor de desenvolvimento:** `MERCADOPAGO_PRODUCTION_PUBLIC_KEY`, `MERCADOPAGO_PRODUCTION_ACCESS_TOKEN` e `MERCADOPAGO_WEBHOOK_SECRET` permanecem em `secrets/aculta.secrets.env`, aceitas explicitamente pelo responsável como **exceção** à regra "teste nunca usa chave de produção". A barreira de execução continua em modo de teste (ver abaixo).
 - **Credencial SSH de produção** (`secrets/producao-ssh.env`) permanece, **sem rotação**.
 - **Permissões:** `chmod 600` não foi aplicado nos arquivos de modo `674`. Ele zeraria a máscara da ACL e cortaria os usuários nomeados `www-data`, `toca` e `aculta`, que têm entrada na ACL e processos ativos. A remoção de leitura para "outros" (`674` → `670`) foi aplicada em `credenciais_de_teste_mercadolivre` e `system`. Dono, conteúdo e ACL não mudaram. `producao-ssh.env` já estava em `670`.
 - **Regra de escrita:** gravar em `secrets/` somente como o dono do arquivo (`sudo -u aculta`), sem ACL de escrita concedida ao usuário de trabalho. A regra vale para qualquer alteração de conteúdo.

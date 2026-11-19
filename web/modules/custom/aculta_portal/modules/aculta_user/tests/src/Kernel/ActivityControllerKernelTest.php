@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_user\Kernel;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Controller\ActivityController;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
@@ -151,9 +151,9 @@ final class ActivityControllerKernelTest extends KernelTestBase {
     ])->save();
 
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
-    $negotiator->setActiveDomain($accountDomain);
+    $negotiator->getContext()->setDomain($accountDomain);
     $entityTypeManager = $this->container->get('entity_type.manager');
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $entityTypeManager,
       $negotiator,
       $this->container->get('config.factory'),
@@ -162,17 +162,23 @@ final class ActivityControllerKernelTest extends KernelTestBase {
     $controller = new ActivityController(
       $entityTypeManager,
       $currentUser,
-      $purposeManager,
+      $siteManager,
       $this->container->get('module_handler'),
       $this->container->get('string_translation'),
     );
     $build = $controller->view('forum');
+    self::assertIsArray($build['content']);
+    self::assertIsArray($build['content']['list']);
+    self::assertIsArray($build['content']['list']['#items']);
     $items = $build['content']['list']['#items'];
+    self::assertIsArray($items[0]);
 
     self::assertCount(1, $items, 'Only published topics owned by the current account are listed.');
+    $firstTitle = $items[0]['#title'];
+    self::assertInstanceOf(\Stringable::class, $firstTitle);
     self::assertSame(
       '2 comentários — Topic with published replies',
-      (string) $items[0]['#title'],
+      (string) $firstTitle,
     );
     self::assertSame(
       (int) $accountDomain->id(),
@@ -186,9 +192,14 @@ final class ActivityControllerKernelTest extends KernelTestBase {
       'uid' => $account->id(),
       'status' => 1,
     ])->save();
-    $magazineItems = $controller->view('revista')['content']['list']['#items'];
+    $magazineBuild = $controller->view('revista');
+    self::assertIsArray($magazineBuild['content']);
+    self::assertIsArray($magazineBuild['content']['list']);
+    self::assertIsArray($magazineBuild['content']['list']['#items']);
+    $magazineItems = $magazineBuild['content']['list']['#items'];
     self::assertCount(1, $magazineItems);
-    self::assertSame('Revista publication', (string) $magazineItems[0]['#title']);
+    self::assertIsArray($magazineItems[0]);
+    self::assertSame('Revista publication', $magazineItems[0]['#title']);
   }
 
   /**

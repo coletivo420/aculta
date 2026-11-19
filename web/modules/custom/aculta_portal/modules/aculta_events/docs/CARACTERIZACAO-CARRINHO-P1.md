@@ -341,7 +341,7 @@ Os testes de caracterização anteriores continuam PASS (19 testes, 41 asserçõ
 - **Functional / BrowserTestBase:** o ambiente não fornece `SIMPLETEST_BASE_URL` (limitação já registrada em
   `docs/modules/ACULTA-LMS-ROADMAP.md`). A rota `/carrinho/finalizar` foi caracterizada em Kernel, chamando o
   controller real com a rota pública registrada. Nenhum navegador foi usado.
-- **Teste Olivero:** não se aplica nesta fase — não há mudança de tema nem de renderização; os testes são Kernel/Unit,
+- **Validação visual:** não se aplica nesta fase — não há mudança de tema nem de renderização; os testes são Kernel/Unit,
   sem template. A regra segue valendo para as fases com interface.
 
 ---

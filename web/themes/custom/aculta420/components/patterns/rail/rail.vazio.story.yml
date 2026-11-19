@@ -1,5 +1,0 @@
-name: Vazio
-description: Trilho com rótulo e sem itens.
-component: aculta420:rail
-props:
-  label: Cursos

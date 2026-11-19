@@ -1,0 +1,4 @@
+{% set variant = mobile_variant|default('scroll') %}
+<div{{ attributes.addClass(['data-table', 'data-table--' ~ variant]) }} data-aculta-data-table data-mobile-variant="{{ variant }}">
+  <div class="data-table__viewport" data-aculta-data-table-viewport data-scroll-label="{{ label }}" role="region" aria-label="{{ label }}" tabindex="0">{{ table }}</div>
+</div>

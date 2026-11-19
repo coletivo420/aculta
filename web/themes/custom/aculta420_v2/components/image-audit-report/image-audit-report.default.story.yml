@@ -1,0 +1,7 @@
+name: Auditoria de imagens padrão
+description: Relatório somente de leitura composto com aviso e tabela de resumo.
+component: aculta420_v2:image-audit-report
+slots:
+  content:
+    type: inline_template
+    template: '<p>Relatório somente de leitura. Candidatas passam por revisão.</p><table><caption>Resumo</caption><tbody><tr><td>Imagens</td><td>12</td></tr></tbody></table>'

@@ -22,7 +22,7 @@ final class RetentionCronKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['aculta_statistics'];
+  protected static $modules = ['aculta_statistics', 'aculta_file_uploader', 'file' ];
 
   /**
    * {@inheritdoc}

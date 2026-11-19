@@ -56,8 +56,6 @@ configuration:
       step: _sidebar
       weight: 5
       view: commerce_checkout_order_summary
-    # O LMS não tem envio. O endereço de cobrança é exigido pelo Mercado Pago;
-    # o painel de envio fica desabilitado.
     aculta_shipping_information:
       step: _disabled
       weight: 99

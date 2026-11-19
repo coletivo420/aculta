@@ -67,3 +67,5 @@ core/.phpstan-baseline.php text eol=lf whitespace=blank-at-eol,-blank-at-eof,-sp
 
 patches/social-api-php84-nullable-request.patch whitespace=-blank-at-eol
 patches/turnstile-no-math-fallback.patch whitespace=-blank-at-eol
+patches/aculta_patcher/ui_patterns_drupal_static_deprecation.patch whitespace=-blank-at-eol
+config/sync/aculta_patcher.patch.*.yml whitespace=-blank-at-eol

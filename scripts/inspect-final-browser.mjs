@@ -1,5 +1,0 @@
-import { devtoolsUrl } from './lib/browser-env.mjs';
-const targets=await(await fetch(devtoolsUrl('/json'))).json();
-const ws=new WebSocket(targets.find(t=>t.type==='page').webSocketDebuggerUrl);await new Promise(r=>ws.onopen=r);
-ws.onmessage=e=>{const r=JSON.parse(e.data);console.log(JSON.stringify(r.result,null,2));ws.close();};
-ws.send(JSON.stringify({id:1,method:'Runtime.evaluate',params:{returnByValue:true,expression:`(()=>{const c=document.querySelector('vvjb-carousel'),nav=document.querySelector('.aculta-navbar .navbar-nav');return {url:location.href,innerPresent:!!c?.querySelector('.vvjb-inner'),initialized:!!c?._inner,innerClass:c?._inner?.className,constructor:c?.constructor.name,wrapper:!!c?._wrapper,playButton:!!c?._playPauseButton,html:c?.innerHTML.slice(0,1000),children:c?.children.length,outerAttrs:c?.getAttributeNames(),style:getComputedStyle(nav).backgroundColor,styles:[...document.styleSheets].map(s=>({href:s.href,rules:(()=>{try{return [...s.cssRules].filter(r=>r.selectorText?.includes('.aculta-navbar .navbar-nav')).map(r=>r.cssText)}catch{return[]}})()}))};})()`}}));

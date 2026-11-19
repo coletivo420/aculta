@@ -1,0 +1,7 @@
+name: Largura total
+description: Conteúdo sem limite de largura.
+component: aculta420_v2:layout-full
+slots:
+  content:
+    type: inline_template
+    template: '<h2>Galeria</h2><p>Conteúdo em toda a largura do contêiner.</p>'

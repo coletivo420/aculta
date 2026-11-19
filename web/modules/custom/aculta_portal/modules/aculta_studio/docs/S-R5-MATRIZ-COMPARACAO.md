@@ -95,7 +95,7 @@ público por obrigação de papel).
 
 1. **S-R4**: primeiro executar lint/PHPCS, Unit/Kernel/Functional,
    discovery real SDC, cache e duas contas, `aculta_image`, Firefox ESR/X11,
-   teste no-JS/AJAX e Olivero. Sem isso, S-R5 continua **pré-homologação**.
+   teste no-JS/AJAX no tema ACULTA ativo. Sem isso, S-R5 continua **pré-homologação**.
 2. **Acesso**: verificar host, URI, DB e branch no Homelab; usar somente
    fixtures sintéticas. As operações de escrita/checkout nunca devem usar
    dados pessoais. Executar suite `parity-s-r5.mjs` conforme seu README.

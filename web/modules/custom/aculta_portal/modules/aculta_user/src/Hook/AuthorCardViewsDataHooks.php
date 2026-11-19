@@ -23,6 +23,9 @@ final class AuthorCardViewsDataHooks {
    */
   #[Hook('views_data_alter')]
   public function viewsDataAlter(array &$data): void {
+    if (!isset($data['users_field_data']) || !is_array($data['users_field_data'])) {
+      $data['users_field_data'] = [];
+    }
     $data['users_field_data']['aculta_user_author_card'] = [
       'title' => 'ACULTA User: cartão de autor público',
       'help' => 'Renderiza o cartão de autor de contas com perfil público explícito.',

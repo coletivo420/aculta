@@ -1,0 +1,23 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Editorial category
+status: stable
+description: Rótulo de categoria editorial com a paleta aprovada da Revista.
+group: Editorial
+props:
+  type: object
+  additionalProperties: false
+  required: [color]
+  properties:
+    color:
+      type: string
+      title: Cor da categoria
+      enum: [red, green, yellow, green-dark]
+      description: Token da paleta editorial aplicado à classe visual do rótulo.
+slots:
+  label:
+    title: Link da categoria
+    description: Link de entidade renderizado pelo formatter do Drupal.
+assets:
+  css:
+    component:
+      editorial-category.css: {}

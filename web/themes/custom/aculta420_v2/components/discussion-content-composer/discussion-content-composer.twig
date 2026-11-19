@@ -1,0 +1,26 @@
+{#
+ * @file
+ * Compositor de publicação; a Library o mostra no popup e o Studio pode fornecer um popup compartilhado.
+#}
+{% set body %}
+<div id="{{ target_id }}" class="discussion-content-composer discussion-content-composer--{{ status|default('editando') }}" data-discussion-content-composer data-status="{{ status|default('editando') }}">
+  {% if messages %}
+    <div class="discussion-content-composer__messages" role="status" aria-live="polite">
+      {{ messages }}
+    </div>
+  {% endif %}
+  <div class="discussion-content-composer__form">
+    {{ form }}
+  </div>
+</div>
+{% endset %}
+{% if standalone_popup is not defined or standalone_popup %}
+  {{ include('aculta420_v2:popup', {
+    id: target_id ~ '-popup',
+    title: dialog_title|default('Nova publicação'|t),
+    trigger_label: trigger_label|default('Nova publicação'|t),
+    content: body,
+  }, with_context: false) }}
+{% else %}
+  {{ body }}
+{% endif %}

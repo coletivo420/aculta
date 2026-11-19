@@ -1,0 +1,30 @@
+.editorial-category a {
+  display: inline-block;
+  padding: .125rem .5rem;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.editorial-category--red a {
+  color: var(--color-black);
+  background-color: var(--palette-red);
+}
+
+/* Black on palette green is 5.85:1; --color-dark is only 3.46:1. */
+.editorial-category--green a {
+  color: var(--color-black);
+  background-color: var(--palette-green);
+}
+
+.editorial-category--yellow a {
+  color: var(--color-on-highlight);
+  background-color: var(--color-brand-highlight);
+}
+
+.editorial-category--green-dark a {
+  color: var(--color-on-brand);
+  background-color: var(--color-brand-primary);
+}

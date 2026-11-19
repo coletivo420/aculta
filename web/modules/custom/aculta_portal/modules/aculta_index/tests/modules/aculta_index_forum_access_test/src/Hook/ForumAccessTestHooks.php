@@ -51,6 +51,9 @@ final class ForumAccessTestHooks {
 
   /**
    * Delegates node grants to the production Forum hook.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   #[Hook('node_grants')]
   public function nodeGrants(AccountInterface $account, string $operation): array {
@@ -59,6 +62,9 @@ final class ForumAccessTestHooks {
 
   /**
    * Delegates node access records to the production Forum hook.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   #[Hook('node_access_records')]
   public function nodeAccessRecords(NodeInterface $node): array {

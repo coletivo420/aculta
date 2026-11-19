@@ -1,0 +1,45 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Confirmação de exclusão
+description: Janela de confirmação para excluir uma resposta da discussão. Confirmar usa botão vermelho (danger); cancelar usa botão secundário. Abre pelo gatilho com popover nativo, no mesmo estilo dos compositores.
+status: stable
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [target_id, confirm_url]
+  properties:
+    target_id:
+      type: string
+      title: ID da janela
+      minLength: 1
+      description: Identificador DOM estável; a janela e o gatilho usam este ID.
+    title:
+      type: string
+      title: Título
+      description: Título curto que identifica a confirmação para a pessoa usuária.
+      default: Excluir resposta?
+    message:
+      type: string
+      title: Mensagem
+      description: Explica a consequência de confirmar a exclusão.
+      default: Esta ação não pode ser desfeita.
+    confirm_label:
+      type: string
+      title: Texto do botão de confirmar
+      description: Rótulo do botão destrutivo que envia o formulário.
+      default: Excluir
+    cancel_label:
+      type: string
+      title: Texto do botão de cancelar
+      description: Rótulo do botão que fecha o popover sem enviar o formulário.
+      default: Cancelar
+    token:
+      type: string
+      title: Token CSRF
+      default: ''
+      description: Token da exclusão, validado pelo servidor.
+    confirm_url:
+      type: string
+      title: Endereço da exclusão
+      minLength: 1
+      description: Destino do botão de confirmar. A permissão é validada pela rota de exclusão.

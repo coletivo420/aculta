@@ -12,4 +12,3 @@ registration: false
 roles: {  }
 allow_revisions: false
 new_revision: false
-

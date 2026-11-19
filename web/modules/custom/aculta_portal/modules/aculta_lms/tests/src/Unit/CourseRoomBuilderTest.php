@@ -7,8 +7,8 @@ namespace Drupal\Tests\aculta_lms\Unit;
 use Drupal\aculta_lms\ClassRosterManager;
 use Drupal\aculta_lms\CourseRoomBuilder;
 use Drupal\aculta_lms\Form\CourseEnrollmentPurchaseForm;
-use Drupal\aculta_learning_contracts\Learning\CourseJourney;
-use Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface;
+use Drupal\aculta_lms\Learning\CourseJourney;
+use Drupal\aculta_lms\Learning\CourseJourneyReaderInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -65,7 +65,9 @@ final class CourseRoomBuilderTest extends UnitTestCase {
 
     $rosters = $this->createMock(ClassRosterManager::class);
     $rosters->expects(self::once())->method('build')->with($course, $account)->willReturn([
-      'classes' => ['class-1'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:layout-section',
+      '#slots' => ['content' => ['class-1']],
     ]);
 
     $builder = new CourseRoomBuilder(
@@ -76,8 +78,15 @@ final class CourseRoomBuilderTest extends UnitTestCase {
     );
     $build = $builder->build($course);
 
-    self::assertSame(['class-1'], $build['participant_rosters']['classes']);
+    $participantRosters = $build['participant_rosters'] ?? NULL;
+    self::assertIsArray($participantRosters);
+    self::assertSame('aculta420_v2:layout-section', $participantRosters['#component'] ?? NULL);
+    $slots = $participantRosters['#slots'] ?? NULL;
+    self::assertIsArray($slots);
+    self::assertSame(['class-1'], $slots['content'] ?? NULL);
     self::assertArrayNotHasKey('aculta_learning_journey', $build);
+    self::assertIsArray($build['#cache'] ?? NULL);
+    self::assertIsArray($build['#cache']['contexts'] ?? NULL);
     self::assertContains('user.group_permissions', $build['#cache']['contexts']);
   }
 

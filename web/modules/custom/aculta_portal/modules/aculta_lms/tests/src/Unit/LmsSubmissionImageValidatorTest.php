@@ -19,17 +19,31 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
+/**
+ * Testa o validador de imagem de envio do LMS.
+ */
 #[CoversClass(LmsSubmissionImageValidator::class)]
 final class LmsSubmissionImageValidatorTest extends TestCase {
 
+  /**
+   * Caminho do arquivo temporário usado nos testes.
+   *
+   * @var string
+   */
   private string $path;
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->path = tempnam(sys_get_temp_dir(), 'aculta-lms-image-');
     self::assertNotFalse($this->path);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   protected function tearDown(): void {
     if (isset($this->path) && is_file($this->path)) {
       unlink($this->path);
@@ -37,6 +51,9 @@ final class LmsSubmissionImageValidatorTest extends TestCase {
     parent::tearDown();
   }
 
+  /**
+   * Confirma que imagem raster válida passa e não-imagem usa a validação nativa.
+   */
   public function testValidRasterImagePassesAndNonImageUsesNativeValidation(): void {
     file_put_contents($this->path, base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l1sAAAAASUVORK5CYII=', TRUE));
     $context = $this->createMock(ExecutionContextInterface::class);
@@ -48,6 +65,9 @@ final class LmsSubmissionImageValidatorTest extends TestCase {
     $validator->validate($this->file('answer.pdf', filesize($this->path)), new LmsSubmissionImage());
   }
 
+  /**
+   * Confirma que imagem inválida e imagem acima do limite são rejeitadas.
+   */
   public function testInvalidImageAndOversizedImageAreRejected(): void {
     file_put_contents($this->path, 'not an image');
     $context = $this->createMock(ExecutionContextInterface::class);
@@ -59,6 +79,12 @@ final class LmsSubmissionImageValidatorTest extends TestCase {
     $validator->validate($this->file('answer.png', UploadPolicy::MAX_BYTES + 1), new LmsSubmissionImage());
   }
 
+  /**
+   * Cria um validador configurado com mocks de serviço.
+   *
+   * @return \Drupal\aculta_lms\Plugin\Validation\Constraint\LmsSubmissionImageValidator
+   *   Validador pronto para uso nos testes.
+   */
   private function validator(): LmsSubmissionImageValidator {
     $config = $this->createMock(Config::class);
     $config->method('get')->willReturnCallback(static fn (string $key) => match ($key) {
@@ -82,6 +108,17 @@ final class LmsSubmissionImageValidatorTest extends TestCase {
     return new LmsSubmissionImageValidator(new ConsumerUploadPolicy($config_factory, new UploadPolicy(), new MimeTypeVerifier(), $file_system, $image_factory));
   }
 
+  /**
+   * Cria um mock de arquivo com nome, URI e tamanho informados.
+   *
+   * @param string $name
+   *   Nome do arquivo.
+   * @param int|false $size
+   *   Tamanho do arquivo em bytes ou FALSO quando desconhecido.
+   *
+   * @return \Drupal\file\FileInterface
+   *   Mock do arquivo.
+   */
   private function file(string $name, int|false $size): FileInterface {
     $file = $this->createMock(FileInterface::class);
     $file->method('getFilename')->willReturn($name);

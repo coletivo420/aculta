@@ -31,11 +31,9 @@ final class WikiNoticeEventSubscriber implements EventSubscriberInterface {
       || !in_array($event->eventType(), ['wiki.review_requested', 'wiki.proposal_outcome'], TRUE)) {
       return;
     }
-    $expectedSources = match ($event->eventType()) {
-      'wiki.review_requested' => ['node'],
-      'wiki.proposal_outcome' => ['aculta_wiki_proposal', 'aculta_contribution'],
-      default => [],
-    };
+    $expectedSources = $event->eventType() === 'wiki.review_requested'
+      ? ['node']
+      : ['aculta_wiki_proposal', 'aculta_contribution'];
     $expectedNotice = $event->eventType() === 'wiki.review_requested' ? 'review_requested' : 'proposal_outcome';
     if (!in_array($event->sourceEntityType(), $expectedSources, TRUE)
       || ($event->metadata()['notice_type'] ?? NULL) !== $expectedNotice) {

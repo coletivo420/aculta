@@ -1,0 +1,147 @@
+{#
+/**
+ * @file
+ * ACULTA UI Patterns overview: metadata catalogue first, progressive on-demand previews via HTMX.
+ *
+ * Implements UP-03:
+ * - Separates metadata discovery/catalogue from heavy preview rendering.
+ * - 100% of SDCs and stories are indexed and available.
+ * - On initial load, component previews are loaded on-demand via HTMX (hx-get) or directly via single component link.
+ * - Preserves functional noscript fallback linking to the single component view.
+ */
+#}
+{% macro component_section(component, group_name, full_width) %}
+{% set safe_component_id = component.id|replace({':': '--'}) %}
+{% set single_url = url('ui_patterns_library.single', {provider: component.provider, machineName: component.machineName}) %}
+<section class="ui_patterns_component{% if full_width %} aculta-component-library__full{% endif %}" id="{{ safe_component_id }}" data-component-id="{{ component.id }}" data-component-name="{{ component.name|lower }}" data-group-name="{{ group_name|lower }}" data-group-id="grupo-{{ group_name|clean_class }}">
+  <div class="ui_patterns_component__header">
+    <h2 class="ui_patterns_component__title">
+      <a href="{{ single_url }}" class="component__link">{{ component.name }}</a>
+    </h2>
+    <span class="ui_patterns_component__badge badge">{{ component.provider }}</span>
+  </div>
+
+  {% if component.stories %}
+    <div class="ui_patterns_component__stories-container" id="preview-container-{{ safe_component_id }}">
+      <div class="aculta-preview-placeholder" id="placeholder-{{ safe_component_id }}">
+        <a href="{{ single_url }}"
+            class="button button--secondary aculta-load-preview-btn">
+          {{ 'Carregar prévia sob demanda'|t }} ({{ component.stories|length }} {{ 'histórias'|t }})
+        </a>
+        <span id="indicator-{{ safe_component_id }}" class="htmx-indicator" aria-hidden="true">{{ 'Carregando prévia...'|t }}</span>
+        <noscript>
+          <p><a href="{{ single_url }}">{{ 'Visualizar prévia na página dedicada'|t }}</a></p>
+        </noscript>
+      </div>
+    </div>
+  {% endif %}
+
+  <details class="aculta-component-library__details">
+    <summary>{{ 'Descrição, propriedades e slots'|t }}</summary>
+    <div class="aculta-component-library__details-content">
+      {{ include('ui-patterns-component-metadata.html.twig', {component: component}, with_context: false) }}
+      {{ include('ui-patterns-component-table.html.twig', {component: component}, with_context: false) }}
+    </div>
+  </details>
+</section>
+{% endmacro %}
+{% if groups is not empty %}
+  <div class="ui_patterns_quicklinks">
+    <div class="aculta-component-library__toolbar">
+      <h2 class="ui_patterns_quicklinks__title">{{ 'Available components'|t }}</h2>
+      <div class="aculta-component-library__toolbar-actions">
+        <div class="aculta-component-library__search-box">
+          <label for="aculta-ui-search" class="visually-hidden">{{ 'Filtrar componentes'|t }}</label>
+          <input type="search" id="aculta-ui-search" class="form-element form-element--type-search" placeholder="{{ 'Pesquisar por nome ou ID...'|t }}" aria-controls="aculta-components-container" autocomplete="off">
+        </div>
+      </div>
+    </div>
+
+    {% set tab_links %}
+      <a href="#painel-todos" aria-current="page">{{ 'Todos'|t }} ({{ aculta_total_components }})</a>
+      {% for group_name, components in groups %}
+        <a href="#painel-{{ aculta_group_anchors[group_name] }}">{{ group_name }} ({{ components|length }})</a>
+      {% endfor %}
+    {% endset %}
+    {{ include('aculta420_v2:tabs', {label: 'Grupos de componentes'|t, items: tab_links|raw}, with_context: false) }}
+
+    {# Painel "Todos": lista todos os componentes; é o padrão ao carregar a página. #}
+    <div class="aculta-component-library__panel" id="painel-todos" data-group-id="todos">
+      <h3 class="aculta-component-library__panel-title">{{ 'Todos'|t }}</h3>
+      {% for group_name, components in groups %}
+        <h4 class="aculta-component-library__panel-subtitle">{{ group_name }}</h4>
+        <ul class="aculta-component-library__panel-list">
+          {% for component in components %}
+            {% set safe_component_id = component.id|replace({':': '--'}) %}
+            <li><a class="button button--secondary" href="#{{ safe_component_id }}">{{ component.name }}</a></li>
+          {% endfor %}
+        </ul>
+      {% endfor %}
+    </div>
+
+    {% for group_name, components in groups %}
+      <div class="aculta-component-library__panel" id="painel-{{ aculta_group_anchors[group_name] }}" hidden>
+        <h3 class="aculta-component-library__panel-title">{{ group_name }}</h3>
+        <ul class="aculta-component-library__panel-list">
+          {% for component in components %}
+            {% set safe_component_id = component.id|replace({':': '--'}) %}
+            <li><a class="button button--secondary" href="#{{ safe_component_id }}">{{ component.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endfor %}
+  </div>
+
+  {% set bulk_preview_attributes = create_attribute({
+    id: 'aculta-btn-bulk-preview',
+    class: ['aculta-btn-bulk-preview'],
+    type: 'button',
+    'aria-controls': 'aculta-components-container',
+    'aria-describedby': 'aculta-bulk-preview-status',
+    'data-state': 'idle',
+  }) %}
+
+  <div class="aculta-component-library__bulk-bar" data-portal-ui="surface-raised">
+    <div class="aculta-component-library__bulk-bar-action">
+      {{ include('aculta420_v2:button', {
+        text: 'Exibir todas as prévias'|t,
+        variant: 'secondary',
+        icon_before: 'eye',
+        attributes: bulk_preview_attributes,
+      }, with_context: false) }}
+    </div>
+    <div id="aculta-bulk-preview-status" class="aculta-bulk-preview-status" aria-live="polite" role="status"></div>
+    <div class="aculta-component-library__viewport">
+      <button type="button" class="aculta-btn-viewport" id="aculta-btn-viewport" aria-pressed="false" data-viewport="desktop">
+        {{ 'Visualizar em celular'|t }}
+      </button>
+    </div>
+  </div>
+  <hr>
+
+  {% set full_ids = ['aculta420_v2:forum-post-card', 'aculta420_v2:forum-reply-mirror', 'aculta420_v2:forum-opening-post', 'aculta420_v2:forum-reply-compact', 'aculta420_v2:forum-quote', 'aculta420_v2:forum-topic-meta'] %}
+  <div id="aculta-components-container" data-viewport="desktop">
+    {# Grade em duas colunas: sem os cards de largura total, que ficam no fim. #}
+    {% for group_name, components in groups %}
+      {% if components|filter(c => c.id not in full_ids)|length %}
+        <div class="aculta-component-library__group-wrapper" data-group-name="{{ group_name }}" data-group-id="grupo-{{ group_name|clean_class }}">
+          {% if groups|length > 1 %}
+            <h2 class="aculta-component-library__group-title" id="{{ aculta_group_anchors[group_name] }}">{{ group_name }}</h2>
+          {% endif %}
+          {% for component in components|filter(c => c.id not in full_ids) %}
+            {{ _self.component_section(component, group_name, false) }}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    {# Cards do Fórum (versão desktop e mobile), em duas colunas, no fim da lista. #}
+    <div class="aculta-component-library__full-grid">
+    {% for group_name, components in groups %}
+      {% for component in components|filter(c => c.id in full_ids) %}
+        {{ _self.component_section(component, group_name, true) }}
+      {% endfor %}
+    {% endfor %}
+    </div>
+  </div>
+{% endif %}

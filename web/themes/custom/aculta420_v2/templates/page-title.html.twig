@@ -1,0 +1,19 @@
+{#
+/**
+ * @file
+ * Título da rota pelo SDC heading (H1 único por página).
+ *
+ * Substitui o h1 sem classe do core pela escala ACULTA420 V2. Os atributos do
+ * bloco (id, classes e âncoras) continuam aplicados ao próprio h1.
+ */
+#}
+{{ title_prefix }}
+{% if title %}
+  {{ include('aculta420_v2:heading', {
+    text: title,
+    level: 1,
+    style: 'stripe',
+    attributes: title_attributes
+  }, with_context = false) }}
+{% endif %}
+{{ title_suffix }}

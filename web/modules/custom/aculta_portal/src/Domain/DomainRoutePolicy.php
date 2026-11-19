@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Domain;
 
+
+use Drupal\aculta_portal\Domain\SiteKey;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -12,26 +14,96 @@ use Symfony\Component\Routing\Route;
 final class DomainRoutePolicy {
 
   /**
-   * Checks an explicitly shared route's allowed purposes.
+   * Canonical route metadata names.
+   */
+  private const SITE_KEY_OPTION = '_aculta_site_key';
+
+  private const SITE_KEYS_OPTION = '_aculta_site_keys';
+
+  private const CANONICAL_SITE_KEY_OPTION = '_aculta_cross_domain_canonical_site_key';
+
+  /**
+   * Route option names removed by the site-key cutover.
    *
-   * A shared route must list both its declared owner and the current purpose.
+   * These are rejected if found on a route; they are never read as fallback.
+   */
+  private const REMOVED_PURPOSE_OPTIONS = [
+    '_aculta_domain_purpose',
+    '_aculta_domain_purposes',
+    '_aculta_cross_domain_canonical_purpose',
+  ];
+
+  /**
+   * Returns the route's declared site key.
+   */
+  public static function declaredSiteKey(Route $route): ?string {
+    if (self::hasInvalidSiteKeyOptions($route)) {
+      return NULL;
+    }
+    $value = $route->getOption(self::SITE_KEY_OPTION);
+    return self::isSiteKey($value) ? $value : NULL;
+  }
+
+  /**
+   * Returns the canonical target site key.
+   */
+  public static function canonicalSiteKey(Route $route): ?string {
+    if (self::hasInvalidSiteKeyOptions($route)) {
+      return NULL;
+    }
+    $value = $route->getOption(self::CANONICAL_SITE_KEY_OPTION);
+    return self::isSiteKey($value) ? $value : NULL;
+  }
+
+  /**
+   * Returns TRUE when removed or malformed site-key metadata is present.
+   */
+  public static function hasInvalidSiteKeyOptions(Route $route): bool {
+    $options = $route->getOptions();
+    foreach (self::REMOVED_PURPOSE_OPTIONS as $option) {
+      if (array_key_exists($option, $options)) {
+        return TRUE;
+      }
+    }
+    foreach ([self::SITE_KEY_OPTION, self::CANONICAL_SITE_KEY_OPTION] as $option) {
+      $value = $route->getOption($option);
+      if ($value !== NULL && !self::isSiteKey($value)) {
+        return TRUE;
+      }
+    }
+    $siteKeys = $route->getOption(self::SITE_KEYS_OPTION);
+    return $siteKeys !== NULL
+      && (!is_array($siteKeys)
+        || !array_is_list($siteKeys)
+        || array_filter($siteKeys, [self::class, 'isSiteKey']) !== $siteKeys);
+  }
+
+  /**
+   * Checks an explicitly shared route's allowed site keys.
+   *
+   * A shared route must list both its declared owner and the current site key.
    * This keeps the exception narrow and prevents a route from becoming public
    * on arbitrary domains by setting only a boolean option.
    */
-  public static function allowsSharedPurpose(Route $route, string $declaredPurpose, string $currentPurpose): bool {
-    if ($declaredPurpose === $currentPurpose) {
+  public static function allowsSharedSite(Route $route, string $declaredSiteKey, string $currentSiteKey): bool {
+    if (!self::isSiteKey($declaredSiteKey)
+      || !self::isSiteKey($currentSiteKey)
+      || self::hasInvalidSiteKeyOptions($route)) {
+      return FALSE;
+    }
+    if ($declaredSiteKey === $currentSiteKey) {
       return TRUE;
     }
     if ($route->getOption('_admin_route')) {
       return FALSE;
     }
-    $purposes = $route->getOption('_aculta_domain_purposes');
-    if (!is_array($purposes)) {
+    $siteKeys = $route->getOption(self::SITE_KEYS_OPTION);
+    if (!is_array($siteKeys) || array_filter($siteKeys, [self::class, 'isSiteKey']) !== $siteKeys) {
       return FALSE;
     }
-    $purposes = array_values(array_unique(array_filter($purposes, 'is_string')));
-    return in_array($declaredPurpose, $purposes, TRUE)
-      && in_array($currentPurpose, $purposes, TRUE);
+    $siteKeys = array_values(array_unique(array_filter($siteKeys, 'is_string')));
+    return in_array($declaredSiteKey, $siteKeys, TRUE)
+      && in_array($currentSiteKey, $siteKeys, TRUE);
   }
 
   /**
@@ -58,13 +130,20 @@ final class DomainRoutePolicy {
   }
 
   /**
-   * Returns the owning purpose for a donation route.
+   * Returns the owning site key for a donation route.
    *
    * Donation selection routes belong to SUPPORT. The Commerce checkout
    * portion belongs to MAIN.
    */
-  public static function purposeForDonationRoute(string $routeName): string {
+  public static function siteKeyForDonationRoute(string $routeName): string {
     return $routeName === 'aculta_donation.donation_controller_formPage' ? 'main' : 'support';
+  }
+
+  /**
+   * Validates one of the stable Portal site keys.
+   */
+  private static function isSiteKey(mixed $value): bool {
+    return is_string($value) && SiteKey::tryFrom($value) !== NULL;
   }
 
   /**

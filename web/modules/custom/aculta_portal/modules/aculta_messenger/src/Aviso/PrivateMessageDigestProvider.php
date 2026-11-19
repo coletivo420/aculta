@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Aviso;
 
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\message\MessageInterface;
-use Drupal\private_message\Entity\PrivateMessageInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageServiceInterface;
 use Drupal\user\UserInterface;
 use Drupal\user\UserDataInterface;
 use Psr\Log\LoggerInterface;
@@ -115,12 +115,14 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
       }
       $senderId = (int) $privateMessage->getOwnerId();
       $thread = $this->privateMessageService->getThreadFromMessage($privateMessage);
-      if (!$thread instanceof PrivateMessageThreadInterface
-        || !$thread->access('view', $recipient, TRUE)->isAllowed()
-        || !in_array($uid, array_map('intval', $thread->getMembersId()), TRUE)
+      if (!$thread instanceof PrivateMessageThreadInterface) {
+        $this->markRecordsDone([$notice]);
+        continue;
+      }
+      if (!$thread->access('view', $recipient, TRUE)->isAllowed()
+        || !in_array($uid, array_map('intval', $thread->getMemberIds()), TRUE)
         || $this->isBlockedPair($senderId, $uid)
-        || (is_numeric($thread->getLastDeleteTimestamp($recipient))
-          && (int) $thread->getLastDeleteTimestamp($recipient) >= $privateMessage->getCreatedTime())) {
+        || $thread->getLastDeleteTimestamp($recipient) >= $privateMessage->getCreatedTime()) {
         $this->markRecordsDone([$notice]);
         continue;
       }
@@ -185,6 +187,13 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
 
   /**
    * Marks selected records complete without advancing the seven-day window.
+   *
+   * @param iterable<\Drupal\Core\Entity\EntityInterface> $notices
+   *   O valor informado para $notices.
+   * @param ?int $uid
+   *   O valor informado para $uid.
+   * @param string $status
+   *   O valor informado para $status.
    */
   private function markRecordsDone(iterable $notices, ?int $uid = NULL, string $status = 'cancelled'): void {
     foreach ($notices as $notice) {
@@ -215,7 +224,7 @@ final class PrivateMessageDigestProvider implements AvisoDigestProviderIdentityI
    */
   private function digestIsDue(int $uid): bool {
     $anchor = (string) $this->configFactory->get('aculta_messenger.settings')->get('private_message_digest_anchor');
-    $timezone = (string) ($this->configFactory->get('system.date')?->get('timezone.default') ?: 'UTC');
+    $timezone = (string) ($this->configFactory->get('system.date')->get('timezone.default') ?: 'UTC');
     try {
       $date = \DateTimeImmutable::createFromFormat('!Y-m-d', $anchor, new \DateTimeZone($timezone));
     }

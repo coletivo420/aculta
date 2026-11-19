@@ -10,6 +10,8 @@ homologado.
 
 **Revalidação adicional 2026-11-02:** Unit completa do gateway passou com 258 testes / 1.156 assertions; Kernel `CheckoutProTest` passou com 3 testes / 135 assertions em `aculta_simpletest` (78 depreciações Core/contrib). As chamadas foram simuladas/localizadas; nenhuma transação ou mensagem externa ocorreu. Autenticação do comprador sandbox e conciliação live permanecem pendentes.
 
+**Compatibilidade Drupal 12, 2026-11-04:** o pagamento Unit segue em 258/1.156; Kernel completo do módulo (Checkout Pro + update de campos) passou com 4/152. As depreciações Kernel caíram de 72 para 58 após trocar os acessos `Entity::$original` de Commerce, Profile e Group por `getOriginal()`/`setOriginal()` via patches Composer versionados. As 58 restantes são avisos upstream de hooks de requisitos/anotações e não são os acessos removidos do Drupal 12. Nenhuma chamada externa foi feita; autenticação do comprador sandbox continua pendente.
+
 ## O que faz
 
 - Gestão de planos da Conta em `/conta/mercado-pago/planos` no purpose `account`; a submissão usa `/integracoes/mercadopago/planos` no MAIN. Lista, cria e atualiza modelos remotos somente por gateway ativo em sandbox; requer `access aculta portal` e `administrar doacoes`, sem armazenamento paralelo. A URL antiga `/studio/conta/mercado-pago/planos` não possui alias.

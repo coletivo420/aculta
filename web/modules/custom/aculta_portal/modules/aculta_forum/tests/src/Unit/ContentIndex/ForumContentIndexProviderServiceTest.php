@@ -25,30 +25,42 @@ final class ForumContentIndexProviderServiceTest extends UnitTestCase {
    */
   public function testForumServicesAreCollectedByTaggedRegistry(): void {
     $moduleDirectory = dirname(__DIR__, 4);
-    $services = Yaml::parseFile(
+    $parsed = Yaml::parseFile(
       $moduleDirectory . '/aculta_forum.services.yml',
       Yaml::PARSE_CUSTOM_TAGS,
-    )['services'];
+    );
+    /** @var array<string, mixed> $services */
+    $services = is_array($parsed) && isset($parsed['services']) && is_array($parsed['services'])
+      ? $parsed['services']
+      : [];
     $container = new ContainerBuilder();
     foreach ($services as $serviceId => $definition) {
+      if (!is_array($definition)) {
+        continue;
+      }
+      $rawTags = $definition['tags'] ?? [];
+      $tags = is_array($rawTags) ? $rawTags : [];
       $providerTags = array_filter(
-        $definition['tags'] ?? [],
-        static fn (array $tag): bool => ($tag['name'] ?? NULL) === 'aculta_index.provider',
+        $tags,
+        static fn (mixed $tag): bool => is_array($tag) && ($tag['name'] ?? NULL) === 'aculta_index.provider',
       );
       if ($providerTags === []) {
         continue;
       }
+      $rawArguments = $definition['arguments'] ?? [];
+      $args = is_array($rawArguments) ? $rawArguments : [];
       $arguments = array_map(static function (mixed $argument): mixed {
         if (is_string($argument) && str_starts_with($argument, '@')) {
           return new Reference(substr($argument, 1));
         }
         return $argument;
-      }, $definition['arguments'] ?? []);
-      $providerDefinition = (new Definition($definition['class'], $arguments))->setPublic(TRUE);
+      }, $args);
+      $class = is_string($definition['class'] ?? NULL) ? (string) $definition['class'] : NULL;
+      $providerDefinition = (new Definition($class, $arguments))->setPublic(TRUE);
       foreach ($providerTags as $tag) {
-        $providerDefinition->addTag($tag['name']);
+        $providerDefinition->addTag((string) $tag['name']);
       }
-      $container->setDefinition($serviceId, $providerDefinition);
+      $container->setDefinition((string) $serviceId, $providerDefinition);
     }
     $registryDefinition = (new Definition(ContentIndexProviderRegistry::class, [new TaggedIteratorArgument('aculta_index.provider')]))
       ->setPublic(TRUE);
@@ -56,7 +68,6 @@ final class ForumContentIndexProviderServiceTest extends UnitTestCase {
     $container->compile();
 
     $registry = $container->get('aculta_index.provider_registry');
-    self::assertInstanceOf(ContentIndexProviderRegistry::class, $registry);
     self::assertSame('forum', $registry->findProviderIdForBundle('node', 'aculta_forum_topic'));
     self::assertSame('forum', $registry->findProviderIdForBundle('aculta_forum_post', 'aculta_forum_post'));
     self::assertSame('forum', $registry->findProviderIdForBundle('comment', 'aculta_discussion_post'));

@@ -38,12 +38,11 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 - [architecture/aculta_messenger.md](architecture/aculta_messenger.md) — ownership de mensagens e avisos.
 - [architecture/aculta_mailer.md](architecture/aculta_mailer.md) — políticas e transportes de e-mail.
 - [architecture/aculta_pagamentos_mercadopago.md](architecture/aculta_pagamentos_mercadopago.md) — fronteira do adapter de pagamentos.
-- [architecture/aculta420.md](architecture/aculta420.md) — catálogo visual, SDC, tokens e ícones do tema.
+- [architecture/ARQUITETURA-ACULTA420-V2.md](architecture/ARQUITETURA-ACULTA420-V2.md) — catálogo visual, SDC, tokens e arquitetura autônoma do tema V2.
 - [decisions/](decisions/) — ADRs vigentes.
 - [ADR-010](decisions/ADR-010-hostinger-litespeed.md) — LiteSpeed na produção Hostinger Cloud Startup; Apache no Homelab.
-- [ADR-012](decisions/ADR-012-aculta420-mobile-first.md) — direção Mobile First do ACULTA420, mantendo Bootstrap, SDC e fronteiras atuais.
+- [ADR-046](decisions/ADR-046-desenho-tema-v2-shell-e-fundacoes.md) — desenho do tema ACULTA420 V2, shell e fundações mobile-first.
 - [ADR-032](decisions/ADR-032-portal-multi-cart-checkout.md) — Portal orquestra carrinhos e seleção de checkout por contexto; abas Comum/Loja/LMS/Doações, responsabilidades, segurança e fases.
-- [Auditoria Mobile First](../web/themes/custom/aculta420/docs/mobile-first-audit.md) — evidências de responsividade do tema, Studio e Runtime.
 
 ## Institucional e compliance
 
@@ -60,7 +59,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 ## Portal
 
 - [portal/README.md](portal/README.md) — índice do Portal.
-- [portal/DRUPAL-11-STANDARDS.md](portal/DRUPAL-11-STANDARDS.md) — padrão obrigatório Drupal 11+ para código.
+- [portal/DRUPAL-12-STANDARDS.md](portal/DRUPAL-12-STANDARDS.md) — padrão obrigatório Drupal 11+ para código.
 - [portal/GUARDRAILS.md](portal/GUARDRAILS.md) — regras de Fórum, Revista, Loja, Wiki e Conta.
 - [portal/ROADMAP.md](portal/ROADMAP.md) — saneamento e, depois, features de produto.
 - [portal/CHECKOUT-BILLING.md](portal/CHECKOUT-BILLING.md) — endereço único, envio (Commerce Shipping) e pagamento pelo Mercado Pago.
@@ -69,7 +68,7 @@ concluídos não ficam aqui; estão no Git (ver [DOCUMENTATION.md](DOCUMENTATION
 
 ## Tema
 
-- [../web/themes/custom/aculta420/docs/README.md](../web/themes/custom/aculta420/docs/README.md) — índice do ACULTA420.
+- [../web/themes/custom/aculta420_v2/README.md](../web/themes/custom/aculta420_v2/README.md) — índice do ACULTA420 V2 (SDC, sem Bootstrap).
 
 ## Operação
 

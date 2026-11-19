@@ -1,0 +1,147 @@
+.data-table {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-control-card);
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.data-table__viewport {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  min-inline-size: 0;
+  overflow: auto;
+  scrollbar-color: var(--color-text-secondary) var(--color-surface-highlight);
+  scrollbar-width: auto;
+}
+
+.data-table__viewport:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: -3px;
+}
+
+.data-table__viewport::-webkit-scrollbar {
+  block-size: .75rem;
+}
+
+.data-table__viewport::-webkit-scrollbar-track {
+  background: var(--color-surface-highlight);
+}
+
+.data-table__viewport::-webkit-scrollbar-thumb {
+  background: var(--color-text-secondary);
+}
+
+.data-table__table {
+  border-collapse: collapse;
+  inline-size: max-content;
+  min-inline-size: 100%;
+}
+
+.data-table__table caption {
+  position: absolute;
+  overflow: hidden;
+  white-space: nowrap;
+  block-size: 1px;
+  clip-path: inset(50%);
+  inline-size: 1px;
+}
+
+.data-table__table :is(th, td) {
+  padding: var(--spacing-base);
+  text-align: start;
+  vertical-align: top;
+  border-block-end: 1px solid var(--color-border);
+  min-inline-size: 8rem;
+}
+
+.data-table__table th {
+  color: var(--color-text-primary);
+  background: var(--color-surface-highlight);
+  font-weight: 700;
+}
+
+.data-table__table td {
+  color: var(--color-text-primary);
+  background: var(--color-surface-raised);
+}
+
+.data-table__table tr:last-child td {
+  border-block-end: 0;
+}
+
+.data-table__table a {
+  color: var(--color-brand-primary);
+  min-block-size: var(--tap-target-min);
+}
+
+.data-table__table a:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+@media (width < 40rem) {
+  .data-table--cards .data-table__viewport {
+    overflow: visible;
+  }
+
+  .data-table--cards .data-table__table,
+  .data-table--cards .data-table__table tbody {
+    display: block;
+    inline-size: 100%;
+    max-inline-size: 100%;
+    min-inline-size: 0;
+  }
+
+  .data-table--cards .data-table__table thead {
+    position: absolute;
+    overflow: hidden;
+    white-space: nowrap;
+    block-size: 1px;
+    clip-path: inset(50%);
+    inline-size: 1px;
+  }
+
+  .data-table--cards .data-table__table tbody {
+    display: grid;
+    gap: var(--spacing-base);
+    padding: var(--spacing-base);
+  }
+
+  .data-table--cards .data-table__table tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--spacing-sm) var(--spacing-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-control-card);
+    background: var(--color-surface-raised);
+    inline-size: 100%;
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .data-table--cards .data-table__table td {
+    display: grid;
+    grid-template-columns: minmax(6rem, .65fr) minmax(0, 1fr);
+    align-items: start;
+    padding: var(--spacing-xs) 0;
+    border: 0;
+    background: transparent;
+    gap: var(--spacing-sm);
+    inline-size: 100%;
+    max-inline-size: 100%;
+    min-inline-size: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .data-table--cards .data-table__table td::before {
+    content: attr(data-label);
+    color: var(--color-text-secondary);
+    font-weight: 600;
+  }
+
+  .data-table--cards .data-table__table a {
+    inline-size: fit-content;
+  }
+}

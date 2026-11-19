@@ -54,7 +54,7 @@ final class FriendshipNoticeManager implements FriendshipNoticeManagerInterface 
           ->condition('uid', (int) $account->id())
           ->condition(self::EVENT_FIELD, ['requested', 'accepted'], 'IN');
         NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
-        return $query->sort('created', 'DESC')->sort('id', 'DESC')
+        return $query->sort('created', 'DESC')->sort('mid', 'DESC')
           ->range($scanOffset, $batchSize)->execute();
       },
       static fn(array $ids): array => array_values($storage->loadMultiple($ids)),

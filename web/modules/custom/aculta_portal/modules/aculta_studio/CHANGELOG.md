@@ -1,3 +1,124 @@
+## Não versionado — remoção de pontes Twig do Dashboard Studio (2026-11-13)
+
+- O provider, compositores e controller agora retornam SDCs diretamente para o painel da Conta, cartões de experiência, calendário e conexões. Removidos quatro theme hooks, `StudioThemeHooks` e os templates neutros/overrides que só retransmitiam os dados.
+- Props tipadas, slots, links autorizados, metadados de cache e biblioteca HTMX do calendário permanecem nos render arrays. As asserções existentes foram ajustadas ao novo contrato; não foram executadas.
+
+## Não versionado — transferência segura de mensagens do popup HTMX
+
+- Mensagens Drupal capturadas da resposta HTMX são clonadas do documento parseado
+  e anexadas como nós DOM, sem converter o conteúdo em string HTML.
+
+## Não versionado — StudioProfileController preparado para HTMX (ADR-050 F2 item 2)
+
+- `StudioProfileController` adiciona identificador de raiz estável
+  `id="aculta-studio-profile-editor"`, `data-aculta-studio-profile-root` e ponto
+  de foco `data-aculta-focus` com `tabindex="-1"`.
+- Anexa as bibliotecas `core/drupal.htmx` e `aculta420_v2/studio-htmx` para
+  suporte a fragmento e navegação acessível.
+
+## Não versionado — navegação do Studio e da conta por HTMX (ADR-050 F2 parcial)
+
+- `studio-navigation.js` e `account-navigation.js` deixam `Drupal.Ajax` e o
+  `pushState` próprio. Os links reais ganham `hx-get`, alvo e seleção da raiz,
+  `outerHTML`, `hx-push-url`, `hx-sync` e `onlyMainContent`; sem JavaScript, o
+  `href` abre a página completa.
+- `MarleyController` marca o heading com `data-aculta-focus`; a seção da conta
+  marca o conteúdo com `data-aculta-focus` e `tabindex`. O tema move o foco
+  após a troca, inclusive em swaps `outerHTML`.
+- As bibliotecas `navigation` e `account-navigation` dependem de
+  `core/drupal.htmx`, não de `core/drupal.ajax`.
+- Validado no Runtime no host `account`: `/marley` e `/conta/dados` navegam por
+  HTMX, atualizam URL e título, devolvem o foco e funcionam com o histórico do
+  navegador; sem overflow em 1024 px. Faltam os itens 2 a 5 da F2 (perfil,
+  bio, redes, endereço e popup de foto).
+
+## Não versionado — dashboard do Studio na raiz de Conta
+
+- `aculta_studio.dashboard` serve o dashboard privado na raiz do purpose
+  `account`; o path interno responde 404 quando acessado diretamente.
+- `/conta` apresenta Dados cadastrais privados na navegação contextual já
+  existente. Access, Form API, `noindex` e cache privado permanecem no Portal.
+
+## Não versionado — noindex das rotas privadas do Studio
+
+- Rotas `aculta_studio.*` recebem `robots: noindex, nofollow` e removem
+  canonical/Open Graph URL públicas. Coberto por teste Unit para rota privada
+  e preservação de metadados em rota de perfil público.
+
+## 0.1.0-dev.52 — Meu Perfil em rota canônica privada
+
+- A tela de edição do próprio perfil e seus formulários passam a usar
+  `/meu-perfil` e `/meu-perfil/*`, conforme decisão registrada em
+  `studio-estrutura.md`. `/perfil` e seus caminhos deixam de ser rotas; não há
+  alias ou redirecionamento.
+- As rotas privadas do perfil declaram `no_cache`; o hook existente mantém
+  `noindex, nofollow` e remove URLs canônicas públicas. A rota pública segue
+  independente e sem decisão de slug.
+- Gates: suíte Unit Studio 69 testes/738 assertions PASS; PHPCS Drupal e
+  DrupalPractice, parse das 40 rotas, PHP lint e `git diff --check` PASS.
+  `validate-module-theme-boundary.php` falha por seis classes de design
+  preexistentes em `aculta_lms`/`aculta_lms_resources`. O gate Portal Drupal 11+
+  e o índice de status falham por versões divergentes preexistentes em
+  `aculta_calendar`, `aculta_donation`, `aculta_file_uploader`, `aculta_linkweed`,
+  `aculta_mailer`, `aculta_messenger`, `aculta_paths`, `aculta_ugc` e
+  `aculta_user`. Nenhuma dessas falhas pertence a este incremento.
+- Runtime `toca`, Drupal 11.5.0-beta1, `aculta_runtime`: antes e depois do push,
+  `updatedb:status` sem updates e `config:status` sem diferenças. `drush cr`
+  passou; o route provider confirmou os cinco caminhos `/meu-perfil/*`, purpose
+  `account` e `no_cache: true`, e não encontrou os paths privados antigos.
+  Acesso anônimo não permitido. Nenhum dado, configuração ou formulário foi
+  alterado. HTTP autenticado e captura visual permanecem pendentes.
+
+## 0.1.0-dev.51 — edição contextual de materiais de curso
+
+- Rota Ganjalab Educador para editar os materiais já referenciados no curso;
+  formulário no owner `aculta_lms_resources`, acesso revalidado pelo LMS.
+- Reutiliza os campos e widgets existentes do Group, sem alterar currículo,
+  matrículas, documentos de estudantes ou storage.
+
+## 0.1.0-dev.50 — adiciona prévia privada de aula ao Educador
+
+- Nova rota da Suite Ganjalab usa a autorização contextual e o controller do
+  owner `aculta_lms` para apresentar o conteúdo e perguntas de uma aula.
+- A prévia não mostra gabaritos, respostas, notas ou dados de estudantes e não
+  permite submissões. A rota revalida curso/aula e permissionamento de educador.
+
+## 0.1.0-dev.49 — caminhos de ordenação localizados
+
+- Os comandos do Educador usam segmentos `acima` e `abaixo`; o mapa de rotas
+  lista as rotas de autoria e movimentação no purpose `courses`.
+
+## 0.1.0-dev.48 — comandos de ordenação do currículo no Educador
+
+- Rotas no purpose `courses` apresentam os formulários de confirmação de mover
+  aula/atividade do owner `aculta_lms`, com acesso contextual revalidado no POST.
+- Sem JavaScript, o workspace oferece comandos acessíveis para mover itens uma
+  posição acima/abaixo; o aviso informa que a ordem afeta turmas vinculadas.
+
+## 0.1.0-dev.47 — ações seguras de exclusão no Educador
+
+- O workspace mantém as rotas de confirmação para excluir aulas e atividades,
+  encaminhando a operação para os formulários do `aculta_lms`, owner dos dados.
+- A autorização contextual do curso e o purpose `courses` são aplicados nas
+  duas rotas; o LMS bloqueia exclusões que afetariam respostas ou histórico.
+
+## 0.1.0-dev.44 — alinhar a ação Criar ao título do trabalho (2026-11-03)
+
+- A apresentação da seção agora agrupa título e ações em um cabeçalho próprio. Owners continuam fornecendo as mesmas ações e rotas; o token semântico do tema monta o botão junto ao título “Meu trabalho”.
+- Theme Unit 49/355, Studio Unit 65/634 e Firefox ESR visível no Runtime (97/97 verificações aplicáveis, 21 SKIP, 0 falhas) PASS; o cabeçalho e a listagem não têm overflow em 320/390px. Capturas em `$SUITE_OUT/studio-dashboard-final-20261103/marley-header-dev30-retest/`.
+
+## 0.1.0-dev.43 — corrigir a aplicação de cache do link de Perfil (2026-11-03)
+
+- `AccessResultAllowed` não possui `applyTo()`. O Dashboard agora transfere a cacheabilidade do acesso via `CacheableMetadata`, evitando HTTP 500 ao renderizar a entrada autenticada; o resultado negado também mantém os contextos de cache.
+- Firefox ESR detectou HTTP 500 em `/` após a publicação dev.42. Correção aplicada; Runtime e captura visual após a correção serão registrados abaixo.
+
+## 0.1.0-dev.42 — Dashboard em caixas e acesso separado ao Perfil (2026-11-03)
+
+- A entrada raiz substitui os nove atalhos de Conta por um cartão para Dados cadastrais. O editor privado do Perfil usa sua rota no mesmo purpose `account` e `Url::access()`; o link ao perfil público só aparece quando `AuthorIdentityResolver` fornece URL pública resolvida pelo owner.
+- Identidade e avatar vêm do `AuthorIdentityResolver`, com cacheabilidade de User/AuthorIdentity; o link público só aparece quando resolvido. Cards de experiências seguem registry, acesso e `DomainPurposeManager`. Conta, Perfil e owners não mudam.
+- A lista de plugins Marley fica limitada a Revista, Fórum/moderação e Galerias. `WikiTab` e `CursosTab` saem do Marley; WE SATIVA e Ganjalab continuam com os owners e rotas próprios. Grants, workflows e dados não mudam. Teste focal de escopo protege a lista.
+- `account-entry-links` conecta a estrutura neutra ao SDC existente `aculta420:card`, variante `studio_fidelity`; cabeçalho global intacto. Runtime pós-alteração e captura comparativa final ainda pendentes.
+
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
 ## 0.1.0-dev.41 — evitar listener duplicado na navegação AJAX da Conta
@@ -432,4 +553,21 @@ RUNTIME STATUS: DEFERRED. Testes não executados (sem vendor/ nem Runtime).
 
 - A experiência `mercado_pago_plans` oferece a administração no ACULTA Studio, delegando rota, operações remotas e autorização ao módulo Mercado Pago e à permissão proprietária `administrar doacoes`.
 - Provider: 2 Unit / 19 assertions PASS. Suíte Studio: 62 testes / 502 assertions PASS. Fronteira módulo/tema e gate Portal Drupal 11 PASS (1.155 verificações) após alinhar contrato e testes à política de salvar config sem credenciais e negar edição direta. Firefox ESR/X11 verificou entrada, tela, labels acessíveis, caption da tabela e reflow em 390/1280px. O fluxo sandbox pelo formulário criou e atualizou um plano de teste; nenhum pagamento foi iniciado.
+
+## 0.1.0-dev.46 — acesso do Educador à estrutura do curso (2026-11-03)
+
+- O dashboard do Educador passa a oferecer a ação “Editar estrutura” por curso
+  com base na autorização da rota do LMS. Currículo e Form API permanecem sob
+  ownership do `aculta_lms`; Studio só compõe a entrada no workspace.
+- Testes Unit cobrem o link e as rotas no purpose `courses`.
+
+## 0.1.0-dev.45 — integra a sala à rota ACULTA de respostas (2026-11-03)
+
+- `CourseJourneyPresentationHooks` agora envolve `aculta_lms.answer_submission`
+  com a sala Ganjalab; a referência antiga a `lms.group.answer_form` impedia a
+  integração depois da remoção do LMS contrib.
+- Fixtures do `CourseJourneyComposerTest` usam as rotas ACULTA atuais.
+- Unit de composição e integração da sala: 3 testes / 19 assertions PASS;
+  PHPCS Drupal/DrupalPractice dos arquivos alterados PASS.
+
 

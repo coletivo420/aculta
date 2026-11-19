@@ -1,0 +1,16 @@
+name: Categoria sem tópicos
+description: Estado vazio da página de categoria, mantendo navegação e painel lateral.
+component: aculta420_v2:forum-category-page
+slots:
+  header:
+    type: inline_template
+    template: '<header><h1>Categoria nova</h1><p>Ainda não há tópicos nesta categoria.</p></header>'
+  navigation:
+    type: inline_template
+    template: '<nav aria-label="Navegação da categoria">Todas as discussões · Em alta · Sem resposta</nav>'
+  empty:
+    type: inline_template
+    template: '<p>Seja a primeira pessoa a iniciar uma discussão.</p>'
+  sidebar:
+    type: inline_template
+    template: '<section><h2>Regras da comunidade</h2><p>Colabore com respostas úteis e fundamentadas.</p></section>'

@@ -8,19 +8,23 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
 use Drupal\Core\Routing\LocalRedirectResponse;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\aculta_ugc\ModerationScope;
+use Drupal\aculta_cgu\ModerationScope;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Painel de moderação da fila unificada de denúncias do Fórum (ARQ-06F/G).
+ *
+ * @phpstan-type QueueItem array{target_type: string, target_id: int, motivos: list<string>, ultima: int, total: int}
+ * @phpstan-type QueuePage array{items: list<QueueItem>, total_items: int, total_pages: int}
  */
 final class ReportQueueController extends ControllerBase {
 
   public function __construct(
-    private readonly mixed $ugcQueue = NULL,
+    private readonly ?object $ugcQueue = NULL,
   ) {}
 
   /**
@@ -28,7 +32,7 @@ final class ReportQueueController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): self {
     return new self(
-      $container->has('aculta_ugc.report_queue') ? $container->get('aculta_ugc.report_queue') : NULL,
+      $container->has('aculta_cgu.report_queue') ? $container->get('aculta_cgu.report_queue') : NULL,
     );
   }
 
@@ -57,7 +61,7 @@ final class ReportQueueController extends ControllerBase {
     $page = $request ? max(0, $request->query->getInt('page', 0)) : 0;
     $limit = 25;
 
-    $queueData = $this->ugcQueue->getQueueItems($account, 'forum', 'pendente', $page, $limit);
+    $queueData = $this->readQueue($this->ugcQueue, $account, $page, $limit);
 
     $rows = [];
     $storage = $this->entityTypeManager();
@@ -110,7 +114,17 @@ final class ReportQueueController extends ControllerBase {
       ];
     }
 
+    $cacheability = (new CacheableMetadata())
+      ->addCacheContexts(['user.permissions', 'url.query_args:page'])
+      ->addCacheTags(['aculta_cgu_report_list', 'flagging_list']);
+
     $build = [
+      '#attached' => ['library' => ['aculta_user/report-queue']],
+      '#cache' => [
+        'contexts' => $cacheability->getCacheContexts(),
+        'tags' => $cacheability->getCacheTags(),
+        'max-age' => $cacheability->getCacheMaxAge(),
+      ],
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'forum-report-queue'],
       'title' => [
@@ -160,12 +174,46 @@ final class ReportQueueController extends ControllerBase {
       }
     }
 
-    $cacheability = (new CacheableMetadata())
-      ->addCacheContexts(['user.permissions', 'url.query_args:page'])
-      ->addCacheTags(['aculta_ugc_report_list', 'flagging_list']);
-    $cacheability->applyTo($build);
-
     return $build;
+  }
+
+  /**
+   * Lê a página da fila do serviço e valida o formato antes de usar.
+   *
+   * Entradas malformadas são descartadas; a validação fica nesta fronteira para
+   * que o restante do painel trabalhe com tipos conhecidos.
+   *
+   * @phpstan-return QueuePage
+   */
+  private function readQueue(object $queue, AccountInterface $account, int $page, int $limit): array {
+    $data = method_exists($queue, 'getQueueItems') ? $queue->getQueueItems($account, 'forum', 'pendente', $page, $limit) : [];
+    $data = is_array($data) ? $data : [];
+
+    $items = [];
+    foreach (is_array($data['items'] ?? NULL) ? $data['items'] : [] as $raw) {
+      if (!is_array($raw) || !is_string($raw['target_type'] ?? NULL) || !is_numeric($raw['target_id'] ?? NULL)) {
+        continue;
+      }
+      $motivos = [];
+      foreach (is_array($raw['motivos'] ?? NULL) ? $raw['motivos'] : [] as $motivo) {
+        if (is_string($motivo)) {
+          $motivos[] = $motivo;
+        }
+      }
+      $items[] = [
+        'target_type' => $raw['target_type'],
+        'target_id' => (int) $raw['target_id'],
+        'motivos' => $motivos,
+        'ultima' => is_numeric($raw['ultima'] ?? NULL) ? (int) $raw['ultima'] : 0,
+        'total' => is_numeric($raw['total'] ?? NULL) ? (int) $raw['total'] : 0,
+      ];
+    }
+
+    return [
+      'items' => $items,
+      'total_items' => is_numeric($data['total_items'] ?? NULL) ? (int) $data['total_items'] : 0,
+      'total_pages' => is_numeric($data['total_pages'] ?? NULL) ? (int) $data['total_pages'] : 0,
+    ];
   }
 
 }

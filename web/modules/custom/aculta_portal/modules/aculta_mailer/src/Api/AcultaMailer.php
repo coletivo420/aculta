@@ -36,7 +36,8 @@ use Drupal\Core\Lock\LockBackendInterface;
  * Implementação de AcultaMailerInterface sobre o plugin.manager.mail do Core.
  *
  * O Core renderiza o e-mail pelo hook `mail` deste módulo (ver Hook\MailHooks). O transporte é escolhido por mensagem
- * pelo cabeçalho `X-Transport`, lido pelo MultiTransport do mailer_transport; sem transporte, vale o padrão configurado.
+ * pelo cabeçalho `X-Transport`, lido pelo MultiTransport do mailer_transport; sem transporte, vale o padrão
+ * configurado.
  */
 final class AcultaMailer implements AcultaMailerInterface {
 
@@ -125,7 +126,8 @@ final class AcultaMailer implements AcultaMailerInterface {
    * Performs delivery after the idempotency lock, when one is required.
    */
   private function deliverUnlocked(MailMessage $message, ?string $transport = NULL): SendResult {
-    // Decisão do responsável (2026-10-20): sem hash_salt nada é enviado, porque o HMAC do destinatário não seria seguro.
+    // Decisão do responsável (2026-10-20): sem hash_salt nada é enviado, porque o HMAC do destinatário não seria
+    // seguro.
     if (!$this->log->recipientKeyAvailable()) {
       $this->logger->error('Envio recusado: hash_salt ausente no settings.php (correlação @id).', ['@id' => $message->correlationId]);
       return SendResult::failed(DeliveryError::Permanent, NULL);

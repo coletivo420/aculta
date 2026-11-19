@@ -1,0 +1,2 @@
+.aculta-shop-card { display: block; padding: 1rem; text-align: start; text-decoration: none; border: 2px solid var(--color-border); border-radius: .5rem; }
+.aculta-shop-grid { display: grid; gap: 1rem; margin-block-start: 1.5rem; }

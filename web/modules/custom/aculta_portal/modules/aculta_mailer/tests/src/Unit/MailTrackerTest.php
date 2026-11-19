@@ -22,7 +22,9 @@ final class MailTrackerTest extends UnitTestCase {
   private const CORR = '0410e60e-f014-4eb9-bd0f-e3d9b638d42d';
 
   /**
-   * Rastreador com o recurso ligado ou não, e o consentimento informado. O hash_salt pode ser trocado (vazio testa a falha fechada).
+   * Rastreador com o recurso ligado ou não, e o consentimento informado.
+   *
+   * O hash_salt pode ser trocado; vazio testa a falha fechada.
    */
   private function tracker(bool $enabled, bool $consent, string $salt = 'segredo-de-teste'): MailTracker {
     $config = $this->createMock(ImmutableConfig::class);

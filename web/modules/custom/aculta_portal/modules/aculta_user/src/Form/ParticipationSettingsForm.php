@@ -15,6 +15,9 @@ final class ParticipationSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return list<string>
+   *   Nomes das configurações editáveis.
    */
   protected function getEditableConfigNames(): array {
     return ['aculta_user.settings'];
@@ -29,6 +32,12 @@ final class ParticipationSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
+   *
+   * @return array<array-key, mixed>
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('aculta_user.settings');
@@ -41,7 +50,7 @@ final class ParticipationSettingsForm extends ConfigFormBase {
     $form['topico_comentarios_minimos'] = [
       '#type' => 'number',
       '#title' => $this->t('Comentários publicados necessários para criar tópico'),
-      '#default_value' => (int) $config->get('topico_comentarios_minimos'),
+      '#default_value' => $this->intValue($config->get('topico_comentarios_minimos')),
       '#min' => 0,
     ];
     $form['primeiro_comentario_discussao_moderado'] = [
@@ -65,7 +74,7 @@ final class ParticipationSettingsForm extends ConfigFormBase {
     $form['janela_edicao']['wiki_edit_window_minutes'] = [
       '#type' => 'number',
       '#title' => $this->t('Discussões da Wiki (minutos)'),
-      '#default_value' => max(0, (int) ($config->get('wiki_edit_window_minutes') ?? 10)),
+      '#default_value' => max(0, $this->intValue($config->get('wiki_edit_window_minutes') ?? 10)),
       '#min' => 0,
       '#step' => 1,
       '#required' => TRUE,
@@ -73,7 +82,7 @@ final class ParticipationSettingsForm extends ConfigFormBase {
     $form['janela_edicao']['comment_edit_window_minutes'] = [
       '#type' => 'number',
       '#title' => $this->t('Comentários em outros conteúdos, incluindo Revista (minutos)'),
-      '#default_value' => max(0, (int) ($config->get('comment_edit_window_minutes') ?? 10)),
+      '#default_value' => max(0, $this->intValue($config->get('comment_edit_window_minutes') ?? 10)),
       '#min' => 0,
       '#step' => 1,
       '#required' => TRUE,
@@ -89,25 +98,51 @@ final class ParticipationSettingsForm extends ConfigFormBase {
       '#type' => 'checkboxes',
       '#title' => $this->t('Papéis isentos das regras'),
       '#options' => $roles,
-      '#default_value' => array_values(array_intersect((array) $config->get('papeis_isentos'), array_keys($roles))),
+      '#default_value' => array_values(array_intersect($this->stringsOf($config->get('papeis_isentos')), array_keys($roles))),
     ];
     return parent::buildForm($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config('aculta_user.settings')
       ->set('topico_limite_ativo', (bool) $form_state->getValue('topico_limite_ativo'))
-      ->set('topico_comentarios_minimos', max(0, (int) $form_state->getValue('topico_comentarios_minimos')))
+      ->set('topico_comentarios_minimos', max(0, $this->intValue($form_state->getValue('topico_comentarios_minimos'))))
       ->set('primeiro_comentario_discussao_moderado', (bool) $form_state->getValue('primeiro_comentario_discussao_moderado'))
       ->set('bloqueio_ate_aprovacao', (bool) $form_state->getValue('bloqueio_ate_aprovacao'))
-      ->set('wiki_edit_window_minutes', max(0, (int) $form_state->getValue('wiki_edit_window_minutes')))
-      ->set('comment_edit_window_minutes', max(0, (int) $form_state->getValue('comment_edit_window_minutes')))
+      ->set('wiki_edit_window_minutes', max(0, $this->intValue($form_state->getValue('wiki_edit_window_minutes'))))
+      ->set('comment_edit_window_minutes', max(0, $this->intValue($form_state->getValue('comment_edit_window_minutes'))))
       ->set('papeis_isentos', array_values(array_filter((array) $form_state->getValue('papeis_isentos'))))
       ->save();
     parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Só os itens textuais de uma lista (ids de papel são strings).
+   *
+   * @return list<string>
+   *   Itens que são strings, na mesma ordem.
+   */
+  private function stringsOf(mixed $values): array {
+    $strings = [];
+    foreach (is_array($values) ? $values : [] as $value) {
+      if (is_string($value)) {
+        $strings[] = $value;
+      }
+    }
+    return $strings;
+  }
+
+  /**
+   * Inteiro de um valor de configuração ou de formulário; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

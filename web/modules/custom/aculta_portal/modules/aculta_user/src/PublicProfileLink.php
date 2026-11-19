@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
 use Drupal\aculta_user\Account\AccountNames;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -23,7 +24,7 @@ final class PublicProfileLink implements PublicProfileLinkInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $purposeManager,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -36,15 +37,41 @@ final class PublicProfileLink implements PublicProfileLinkInterface {
       $cache->addCacheableDependency($profile);
     }
 
-    $nickname = $profile && $profile->hasField('field_nickname') ? trim((string) $profile->get('field_nickname')->value) : '';
+    $nickname = $profile && $profile->hasField('field_nickname') ? trim($this->textValue($profile->get('field_nickname')->value)) : '';
     $publico = $profile ? (bool) $profile->get('field_perfil_publico')->value : TRUE;
-    $publico = $publico || PublicProfilePolicy::isObrigatorioPublico($account->getRoles());
+    $publico = $publico || PublicProfilePolicy::isObrigatorioPublico($this->stringsOf($account->getRoles()));
     $slug = AccountNames::publicRouteSlug($nickname);
     if (!$publico || $slug === NULL) {
       return NULL;
     }
 
-    return $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $slug]);
+    return $this->siteManager->routeUrl(SiteKey::Main, 'aculta_user.perfil_publico', ['apelido' => $slug]);
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
+  }
+
+  /**
+   * Só os itens textuais de uma lista (papéis são strings).
+   *
+   * @param array<array-key, mixed> $values
+   *   Lista de valores não tipados.
+   *
+   * @return list<string>
+   *   Itens que são strings, na mesma ordem.
+   */
+  private function stringsOf(array $values): array {
+    $strings = [];
+    foreach ($values as $value) {
+      if (is_string($value)) {
+        $strings[] = $value;
+      }
+    }
+    return $strings;
   }
 
 }

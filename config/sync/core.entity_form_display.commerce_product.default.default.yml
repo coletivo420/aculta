@@ -8,7 +8,7 @@ dependencies:
   module:
     - commerce
     - path
-    - text
+    - text_with_summary
 _core:
   default_config_hash: bVqhDE0CBvUi4RPHqKu4sBhUOUwOTgcHVhn5PkfngLU
 id: commerce_product.default.default

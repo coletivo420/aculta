@@ -1,0 +1,136 @@
+{
+  "metodo": "Firefox ESR visível via WebDriver BiDi/geckodriver; ULI e suíte aculta-editor/access.py",
+  "motor": "Firefox ESR",
+  "viewport": [
+    {
+      "width": 1280,
+      "height": 900
+    },
+    {
+      "width": 390,
+      "height": 844
+    },
+    {
+      "width": 320,
+      "height": 720
+    }
+  ],
+  "modo": "claro padrão do Runtime (sem override)",
+  "url_relativa": "/node/add/revista no host principal; rota administrativa ausente no host Revista",
+  "resultados": {
+    "before": {
+      "captura": "before/route-unavailable-404.png",
+      "host": "host Revista do deploy.json",
+      "status_http": 404,
+      "formularios": 0,
+      "documento_vazio": true,
+      "hash_commit_testado_runtime": "ebdecca126f3fabd89b5c7a7618ba9026a7dab10"
+    },
+    "causa": "A suíte solicitava a rota administrativa no host Revista. A sessão ULI não era a causa: o cookie tinha escopo pai compartilhado; o papel tem permissão e a rota node.add existe.",
+    "after": {
+      "casos": 8,
+      "verificacoes": 32,
+      "passaram": 32,
+      "falharam": 0,
+      "grupos_passaram": [
+        "anonymous.full_html_format",
+        "anonymous.aculta_adm_create",
+        "anonymous.rendered_sanitization",
+        "content_editor.full_html_format",
+        "content_editor.aculta_adm_create",
+        "content_editor.revista_ckeditor",
+        "administrator.aculta_adm_create",
+        "administrator.page_ckeditor"
+      ],
+      "revista": {
+        "http": 200,
+        "form_count": 2,
+        "ckeditor": true,
+        "editables": 1,
+        "formatos": [
+          "revista_editorial",
+          "wiki",
+          "aculta_lms_lesson"
+        ],
+        "full_html_exposto": false
+      },
+      "administrator_page": {
+        "ckeditor": true,
+        "toolbar_buttons": 23
+      },
+      "viewports_css": {
+        "anonymous.rendered_sanitization": {
+          "1280": {
+            "innerWidth": 1280,
+            "scrollWidth": 1280,
+            "overflowPx": 0
+          },
+          "390": {
+            "innerWidth": 390,
+            "scrollWidth": 390,
+            "overflowPx": 0
+          },
+          "320": {
+            "innerWidth": 320,
+            "scrollWidth": 320,
+            "overflowPx": 0
+          }
+        },
+        "content_editor.revista_ckeditor": {
+          "1280": {
+            "innerWidth": 1280,
+            "scrollWidth": 1280,
+            "overflowPx": 0
+          },
+          "390": {
+            "innerWidth": 390,
+            "scrollWidth": 390,
+            "overflowPx": 0
+          },
+          "320": {
+            "innerWidth": 320,
+            "scrollWidth": 320,
+            "overflowPx": 0
+          }
+        },
+        "administrator.aculta_adm_create": {
+          "1280": {
+            "innerWidth": 1280,
+            "scrollWidth": 1280,
+            "overflowPx": 0
+          },
+          "390": {
+            "innerWidth": 390,
+            "scrollWidth": 390,
+            "overflowPx": 0
+          },
+          "320": {
+            "innerWidth": 320,
+            "scrollWidth": 320,
+            "overflowPx": 0
+          }
+        },
+        "administrator.page_ckeditor": {
+          "1280": {
+            "innerWidth": 1280,
+            "scrollWidth": 1280,
+            "overflowPx": 0
+          },
+          "390": {
+            "innerWidth": 390,
+            "scrollWidth": 390,
+            "overflowPx": 0
+          },
+          "320": {
+            "innerWidth": 320,
+            "scrollWidth": 320,
+            "overflowPx": 0
+          }
+        }
+      },
+      "capturas_png": 12,
+      "observacao_visual": "O modal de aceite de termos aparece sobre o formulário content_editor; CKEditor está presente sob o overlay. Nenhum aceite foi submetido."
+    }
+  },
+  "hash_commit_testado_runtime": "bf9c6e0af08f103fdfc85f72c62a24138c238a27"
+}

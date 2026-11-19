@@ -5,9 +5,10 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Service\ForumReadMarker;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\domain\DomainNegotiationContext;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -105,14 +106,18 @@ final class ForumReadMarkerKernelTest extends KernelTestBase {
     $this->createTopic((string) $forumDomain->id(), FALSE);
 
     $activeDomain = Domain::load('aculta_org');
+    self::assertInstanceOf(Domain::class, $activeDomain);
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): Domain {
+      /** @var \Drupal\domain\Entity\Domain $activeDomain */
       return $activeDomain;
     });
-    $negotiator->method('setActiveDomain')->willReturnCallback(static function (Domain $domain) use (&$activeDomain): void {
+    $context = $this->createMock(DomainNegotiationContext::class);
+    $context->method('setDomain')->willReturnCallback(static function (Domain $domain) use (&$activeDomain): void {
       $activeDomain = $domain;
     });
-    $purposeManager = new DomainPurposeManager(
+    $negotiator->method('getContext')->willReturn($context);
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -120,27 +125,32 @@ final class ForumReadMarkerKernelTest extends KernelTestBase {
     );
     $marker = new ForumReadMarker(
       $this->container->get('entity_type.manager'),
-      $purposeManager,
+      $siteManager,
       $currentUser,
       $this->container->get('string_translation'),
       $this->container->get('messenger'),
     );
 
     self::assertSame(0, $marker->countEligibleTopics(), 'The central Batch purpose cannot discover Forum topics directly.');
-    self::assertSame(1, $purposeManager->runInPurpose('forum', static fn(): int => $marker->countEligibleTopics()));
-    self::assertSame('main', $purposeManager->getCurrentPurpose(), 'Purpose context is restored after eligibility checks.');
+    self::assertSame(1, $siteManager->runInSite('forum', static fn(): int => $marker->countEligibleTopics()));
+    $siteKey = $siteManager->getCurrentSiteKey();
+    self::assertNotNull($siteKey);
+    self::assertSame('main', $siteKey->value, 'Purpose context is restored after eligibility checks.');
     $context = [];
     while (($context['finished'] ?? 0) < 1) {
       $marker->markBatch((int) $account->id(), 1, $context);
     }
-    self::assertSame('main', $purposeManager->getCurrentPurpose(), 'Purpose context is restored after the Batch callback.');
-    $rows = $this->container->get('database')->select('history', 'h')
+    $afterBatchKey = $siteManager->getCurrentSiteKey();
+    self::assertNotNull($afterBatchKey);
+    self::assertSame('main', $afterBatchKey->value, 'Purpose context is restored after the Batch callback.');
+    $statement = $this->container->get('database')->select('history', 'h')
       ->fields('h', ['uid', 'nid'])
-      ->execute()
-      ->fetchAllKeyed();
+      ->execute();
+    self::assertNotNull($statement);
+    $rows = $statement->fetchAllKeyed();
     self::assertSame(
       [(int) $account->id() => (int) $publicTopic->id()],
-      array_map('intval', $rows),
+      array_map(static fn(mixed $val): int => is_numeric($val) ? (int) $val : 0, $rows),
     );
   }
 

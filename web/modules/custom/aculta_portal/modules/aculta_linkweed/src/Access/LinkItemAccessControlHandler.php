@@ -23,8 +23,8 @@ final class LinkItemAccessControlHandler extends EntityAccessControlHandler impl
 
   public function __construct(
     EntityTypeInterface $entity_type,
-    private readonly TimeInterface $time,
-    private readonly RouteMatchInterface $routeMatch,
+    protected readonly TimeInterface $time,
+    protected readonly RouteMatchInterface $routeMatch,
   ) {
     parent::__construct($entity_type);
   }

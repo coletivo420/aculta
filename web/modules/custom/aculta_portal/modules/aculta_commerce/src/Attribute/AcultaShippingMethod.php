@@ -24,7 +24,7 @@ class AcultaShippingMethod extends Plugin {
    *   The plugin ID.
    * @param \Drupal\Core\StringTranslation\TranslatableMarkup $label
    *   The plugin label.
-   * @param array $services
+   * @param array<int|string, string|\Drupal\Core\StringTranslation\TranslatableMarkup> $services
    *   Supported shipping services, as labels keyed by ID.
    * @param string $workflow
    *   The shipment workflow ID.

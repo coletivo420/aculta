@@ -1,0 +1,8 @@
+name: Preferência automática
+description: Preferência Automático que herda a aparência atual da prévia.
+props:
+  mode: auto
+  context: library
+  appearance: auto
+  alignment: end
+  instance_id: color-mode-auto

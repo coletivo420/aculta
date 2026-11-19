@@ -79,9 +79,14 @@ final class SecretsTabsTest extends UnitTestCase {
    */
   public function testActiveEnvironmentOpensItsOwnTab(): void {
     $page = $this->controller('test', "TURNSTILE_KEYS_JSON=segredo-ficticio\n")->page();
-    $buttons = $page['tabs']['list'];
-    $this->assertSame('true', $buttons['test']['#attributes']['aria-selected']);
-    $this->assertSame('false', $buttons['production']['#attributes']['aria-selected']);
+    $tabs = is_array($page['tabs'] ?? NULL) ? $page['tabs'] : [];
+    $buttons = is_array($tabs['list'] ?? NULL) ? $tabs['list'] : [];
+    $testButton = is_array($buttons['test'] ?? NULL) ? $buttons['test'] : [];
+    $testAttrs = is_array($testButton['#attributes'] ?? NULL) ? $testButton['#attributes'] : [];
+    $this->assertSame('true', $testAttrs['aria-selected'] ?? NULL);
+    $prodButton = is_array($buttons['production'] ?? NULL) ? $buttons['production'] : [];
+    $prodAttrs = is_array($prodButton['#attributes'] ?? NULL) ? $prodButton['#attributes'] : [];
+    $this->assertSame('false', $prodAttrs['aria-selected'] ?? NULL);
   }
 
   /**
@@ -89,11 +94,20 @@ final class SecretsTabsTest extends UnitTestCase {
    */
   public function testOtherEnvironmentPanelHasNoValuesOrActions(): void {
     $page = $this->controller('test', "TURNSTILE_KEYS_JSON=segredo-ficticio\n")->page();
-    $rows = $page['tabs']['section_production']['table_wrapper']['table']['#rows'];
+    $tabs = is_array($page['tabs'] ?? NULL) ? $page['tabs'] : [];
+    $sectionProd = is_array($tabs['section_production'] ?? NULL) ? $tabs['section_production'] : [];
+    $tableWrapper = is_array($sectionProd['table_wrapper'] ?? NULL) ? $sectionProd['table_wrapper'] : [];
+    $table = is_array($tableWrapper['table'] ?? NULL) ? $tableWrapper['table'] : [];
+    $rows = is_array($table['#rows'] ?? NULL) ? $table['#rows'] : [];
     $this->assertNotEmpty($rows);
     foreach ($rows as $row) {
-      $this->assertSame('Não consultado neste servidor', (string) $row[3]['data']['#plain_text']);
-      $this->assertArrayNotHasKey('eye', $row[3]['data']);
+      $rowArray = is_array($row) ? $row : [];
+      $col3 = is_array($rowArray[3] ?? NULL) ? $rowArray[3] : [];
+      $col3Data = is_array($col3['data'] ?? NULL) ? $col3['data'] : [];
+      $plainText = $col3Data['#plain_text'] ?? NULL;
+      $plainTextStr = is_scalar($plainText) || $plainText instanceof \Stringable ? (string) $plainText : '';
+      $this->assertSame('Não consultado neste servidor', $plainTextStr);
+      $this->assertArrayNotHasKey('eye', $col3Data);
     }
     $this->assertStringNotContainsString('segredo-ficticio', serialize($page));
   }

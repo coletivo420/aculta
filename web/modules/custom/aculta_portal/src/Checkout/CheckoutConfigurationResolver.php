@@ -13,12 +13,15 @@ final class CheckoutConfigurationResolver {
 
   public function __construct(private readonly CheckoutContextRegistry $registry) {}
 
-  /** NULL quando o contexto não está registrado. */
+  /**
+   * NULL quando o contexto não está registrado. */
   public function resolve(string $contextId): ?CheckoutContextConfiguration {
     return $this->registry->get($contextId)?->configuration();
   }
 
   /**
+   * Resolve a configuração de todos os contextos registrados.
+   *
    * @return array<string, \Drupal\aculta_portal\Checkout\CheckoutContextConfiguration>
    *   Configurações por ID de contexto, na ordem do registry.
    */

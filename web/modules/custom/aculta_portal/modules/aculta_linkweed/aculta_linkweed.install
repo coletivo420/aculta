@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Instalação e atualização do módulo aculta_linkweed.
+ *
+ * @file
+ */
+
 declare(strict_types=1);
 
 /**
@@ -205,15 +211,34 @@ function aculta_linkweed_update_10009(): string {
     }
   }
 
+  aculta_linkweed_repair_installed_entity_definitions();
+
   return 'Renomeados o módulo LinkWeed, suas entidades, tabelas, schema e configurações ativas.';
 }
 
-/** Recursively renames LinkWeed identifiers without corrupting serialized values. */
+/**
+ * Recursively renames LinkWeed identifiers without corrupting serialized values. */
 function aculta_linkweed_rename_value(mixed $value): mixed {
   if (is_string($value)) {
     return str_replace(
-      ['aculta_linkweedweed_page', 'aculta_linkweedweed_item', 'aculta_linkweedweed', 'aculta_links', 'aculta_link_page', 'aculta_link_item', 'aculta_link'],
-      ['aculta_linkweed_page', 'aculta_linkweed_item', 'aculta_linkweed', 'aculta_linkweed', 'aculta_linkweed_page', 'aculta_linkweed_item', 'aculta_linkweed'],
+      [
+        'aculta_linkweedweed_page',
+        'aculta_linkweedweed_item',
+        'aculta_linkweedweed',
+        'aculta_links',
+        'aculta_link_page',
+        'aculta_link_item',
+        'aculta_link',
+      ],
+      [
+        'aculta_linkweed_page',
+        'aculta_linkweed_item',
+        'aculta_linkweed',
+        'aculta_linkweed',
+        'aculta_linkweed_page',
+        'aculta_linkweed_item',
+        'aculta_linkweed',
+      ],
       $value,
     );
   }
@@ -227,7 +252,8 @@ function aculta_linkweed_rename_value(mixed $value): mixed {
   return $value;
 }
 
-/** Repairs identifiers produced by the first idempotent migration pass. */
+/**
+ * Repairs identifiers produced by the first idempotent migration pass. */
 function aculta_linkweed_update_10010(): string {
   $repair = static function (mixed $value) use (&$repair): mixed {
     if (is_string($value)) {
@@ -260,3 +286,69 @@ function aculta_linkweed_update_10010(): string {
   return 'Corrigidos os identificadores duplicados da migração LinkWeed.';
 }
 
+/**
+ * Rewrites installed definition objects after entity type IDs have changed.
+ *
+ * The rename passes above can rename key-value keys and arrays, but entity
+ * type and field storage definitions are objects. Their embedded entity type
+ * IDs must come from the active definitions, or Core fails while calculating
+ * the change list (before update hooks can run).
+ */
+function aculta_linkweed_repair_installed_entity_definitions(): void {
+  $entity_type_manager = \Drupal::entityTypeManager();
+  $entity_field_manager = \Drupal::service('entity_field.manager');
+  $repository = \Drupal::service('entity.last_installed_schema.repository');
+
+  $entity_type_manager->useCaches(FALSE);
+  $entity_field_manager->useCaches(FALSE);
+  try {
+    foreach (['aculta_linkweed', 'aculta_linkweed_item', 'aculta_linkweed_page'] as $entity_type_id) {
+      if (!$entity_type_manager->hasDefinition($entity_type_id)) {
+        continue;
+      }
+      $repository->setLastInstalledDefinition($entity_type_manager->getDefinition($entity_type_id));
+      $repository->setLastInstalledFieldStorageDefinitions(
+        $entity_type_id,
+        $entity_field_manager->getFieldStorageDefinitions($entity_type_id),
+      );
+    }
+  }
+  finally {
+    $entity_type_manager->useCaches(TRUE);
+    $entity_field_manager->useCaches(TRUE);
+  }
+}
+
+/**
+ * Repairs stale serialized IDs before Core's pending entity updates run. */
+function aculta_linkweed_update_10011(): string {
+  aculta_linkweed_repair_installed_entity_definitions();
+
+  return 'Alinhadas as definições instaladas das entidades LinkWeed aos tipos e campos ativos.';
+}
+
+/**
+ * Reconciles installed schema metadata for revision and availability fields.
+ */
+function aculta_linkweed_update_10013(): string {
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  $field_manager = \Drupal::service('entity_field.manager');
+  $updated = [];
+  foreach ([
+    'aculta_linkweed_item' => ['revision_uid', 'available_from', 'available_until'],
+    'aculta_linkweed_page' => ['revision_uid'],
+  ] as $entity_type_id => $field_names) {
+    $current = $field_manager->getFieldStorageDefinitions($entity_type_id);
+    foreach ($field_names as $field_name) {
+      $original = $manager->getFieldStorageDefinition($field_name, $entity_type_id);
+      if ($original !== NULL && isset($current[$field_name])) {
+        $manager->updateFieldStorageDefinition($current[$field_name]);
+        $updated[] = "$entity_type_id.$field_name";
+      }
+    }
+  }
+
+  return $updated
+    ? 'Reconciled installed schema metadata for: ' . implode(', ', $updated) . '.'
+    : 'LinkWeed field schema metadata was already current.';
+}

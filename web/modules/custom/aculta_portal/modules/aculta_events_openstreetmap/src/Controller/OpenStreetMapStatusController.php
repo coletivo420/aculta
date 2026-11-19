@@ -25,7 +25,11 @@ final class OpenStreetMapStatusController extends ControllerBase {
   ) {}
 
   /**
-   * Exibe estado do ambiente e da conexão sem revelar credenciais. */
+   * Exibe estado do ambiente e da conexão sem revelar credenciais.
+   *
+   * @return array<string, mixed>
+   *   Render array da página.
+   */
   public function page(): array {
     $environment = $this->environment->environment();
     $connected = $this->tokens->isConnected();

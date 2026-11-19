@@ -17,6 +17,7 @@ final class CheckoutMappingValidator {
    * IDs dos outros contextos que já reivindicam o tipo de pedido.
    *
    * @return list<string>
+   *   Lista de IDs dos contextos conflitantes.
    */
   public function conflictingContexts(string $contextId, string $orderTypeId): array {
     $outros = [];

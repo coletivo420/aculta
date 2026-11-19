@@ -1,0 +1,24 @@
+.card-cultural { display: grid; overflow: hidden; grid-template-columns: minmax(0, 1fr); min-inline-size: 0; overflow-wrap: anywhere; color: var(--color-text-primary); border: 1px solid var(--color-border); border-radius: var(--radius-base); background: var(--color-surface); box-shadow: var(--shadow-sm); }
+.card-cultural[class*="card-cultural--accent-"] { border-inline-start-width: .375rem; }
+.card-cultural--accent-green { border-inline-start-color: var(--accent-green-stripe); }
+.card-cultural--accent-yellow { border-inline-start-color: var(--accent-yellow-stripe); }
+.card-cultural--accent-red { border-inline-start-color: var(--accent-red-stripe); }
+.card-cultural__image img { display: block; width: 100%; height: auto; object-fit: cover; }
+.card-cultural__body { display: grid; gap: var(--spacing-sm); min-width: 0; padding: var(--spacing-base); }
+.card-cultural__category { margin: 0; letter-spacing: .04em; text-transform: uppercase; color: var(--color-text-secondary); font-size: var(--font-size-sm); font-weight: 700; }
+.card-cultural__category,
+.card-cultural__title,
+.card-cultural__metadata,
+.card-cultural__summary,
+.card-cultural__cancel-status { min-inline-size: 0; overflow-wrap: anywhere; }
+.card-cultural__title { margin: 0; font-family: var(--font-family-heading); font-size: var(--font-size-xl); overflow-wrap: anywhere; }
+.card-cultural__title a { display: inline-flex; align-items: center; min-block-size: var(--tap-target-min); max-inline-size: 100%; text-decoration: underline; color: var(--color-brand-primary); text-underline-offset: .15em; }
+.card-cultural__date,
+.card-cultural__location { margin: 0; color: var(--color-text-secondary); font-family: var(--font-family-base); font-size: var(--font-size-sm); }
+.card-cultural__summary { margin: 0; color: var(--color-text-secondary); font-family: var(--font-family-base); font-size: var(--font-size-sm); }
+.card-cultural__metadata { display: flex; align-items: flex-start; gap: var(--spacing-xs); min-inline-size: 0; }
+.card-cultural__actions { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); }
+.card-cultural--cancelled .card-cultural__title { text-decoration: line-through; text-decoration-thickness: .08em; }
+.card-cultural__cancel-status { margin: 0; padding: var(--spacing-xs) var(--spacing-sm); color: var(--color-status-error-text); border-inline-start: .25rem solid var(--color-status-error-text); border-radius: var(--radius-sm); background: var(--color-status-error-surface); font-weight: 700; }
+.card-cultural--compact .card-cultural__body { gap: var(--spacing-xs); padding: var(--spacing-sm); }
+.card-cultural--compact .card-cultural__title { font-size: var(--font-size-base); }

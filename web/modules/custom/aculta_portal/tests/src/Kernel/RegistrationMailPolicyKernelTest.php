@@ -19,8 +19,16 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class RegistrationMailPolicyKernelTest extends KernelTestBase {
 
+  /**
+   * Módulos necessários ao teste de kernel.
+   *
+   * @var string[]
+   */
   protected static $modules = ['system', 'user', 'aculta_mailer'];
 
+  /**
+   * Instala o esquema de usuário e registra o tipo de e-mail de teste.
+   */
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
@@ -32,6 +40,9 @@ final class RegistrationMailPolicyKernelTest extends KernelTestBase {
     ]));
   }
 
+  /**
+   * Confirma que a conta só é encontrada para e-mail cadastrado.
+   */
   public function testExistingAccountIsFoundOnlyForRegisteredMail(): void {
     $owner = User::create(['name' => 'titular', 'mail' => 'titular@example.invalid', 'status' => 1]);
     $owner->save();
@@ -41,6 +52,9 @@ final class RegistrationMailPolicyKernelTest extends KernelTestBase {
     $this->assertNull($policy->existingAccount('   '));
   }
 
+  /**
+   * Confirma que o dono é avisado e nenhuma conta nova é criada.
+   */
   public function testOwnerIsNotifiedThroughMailerAndNoAccountIsCreated(): void {
     $owner = User::create(['name' => 'titular2', 'mail' => 'titular2@example.invalid', 'status' => 1]);
     $owner->save();
@@ -61,6 +75,12 @@ final class RegistrationMailPolicyKernelTest extends KernelTestBase {
     $this->assertSame($before, count(User::loadMultiple()), 'Nenhuma conta nova foi criada.');
   }
 
+  /**
+   * Monta a política de e-mail de cadastro com os serviços do container.
+   *
+   * @return \Drupal\aculta_portal\Account\RegistrationMailPolicy
+   *   Política pronta para uso.
+   */
   private function policy(): RegistrationMailPolicy {
     return new RegistrationMailPolicy(
       $this->container->get('entity_type.manager'),

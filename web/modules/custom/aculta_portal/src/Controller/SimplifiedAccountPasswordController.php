@@ -44,6 +44,8 @@ final class SimplifiedAccountPasswordController extends ControllerBase {
 
   /**
    * Formulário de senha, ou redirecionamento quando não há cadastro simplificado pendente.
+   *
+   * @return array<string, mixed>|RedirectResponse
    */
   public function page(): array|RedirectResponse {
     $uid = (int) $this->accountProxy->id();
@@ -51,10 +53,17 @@ final class SimplifiedAccountPasswordController extends ControllerBase {
     if (!$pendente) {
       return new RedirectResponse('/');
     }
+    /** @var array<string, mixed> $form */
     $form = $this->pageFormBuilder->getForm(SimplifiedAccountPasswordForm::class);
     // O formulário abre como diálogo modal sem botão de fechar (js/account-password-modal.js).
     $form['#prefix'] = '<div id="aculta-account-password" hidden>';
     $form['#suffix'] = '</div>';
+    if (!isset($form['#attached']) || !is_array($form['#attached'])) {
+      $form['#attached'] = [];
+    }
+    if (!isset($form['#attached']['library']) || !is_array($form['#attached']['library'])) {
+      $form['#attached']['library'] = [];
+    }
     $form['#attached']['library'][] = 'aculta_portal/account-password-modal';
     return $form;
   }

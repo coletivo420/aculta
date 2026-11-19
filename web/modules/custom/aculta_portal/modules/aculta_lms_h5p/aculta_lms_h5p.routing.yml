@@ -16,7 +16,7 @@ aculta_lms_h5p.student_dashboard:
     _permission: access content
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
 
 aculta_lms_h5p.educator_dashboard:
   path: '/educador/atividades-interativas'
@@ -26,7 +26,7 @@ aculta_lms_h5p.educator_dashboard:
   requirements:
     _role: lms_teacher
   options:
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 # ACULTA fork of Drupal H5P 2.0.0-beta1; adapted 2026-10-18.
 aculta_lms_h5p.admin.config.system.h5p:
@@ -123,7 +123,7 @@ aculta_lms_h5p.ajax.set_finished:
      group_id: '\d+'
   methods: [POST]
   options:
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 aculta_lms_h5p.ajax.content_user_data:
   path: '/h5p-ajax/{group_id}/content-user-data/{content_main_id}/{data_id}/{sub_content_id}'
@@ -138,7 +138,7 @@ aculta_lms_h5p.ajax.content_user_data:
      sub_content_id: '\d+'
   methods: [GET, POST]
   options:
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 aculta_lms_h5p.content_file:
   path: '/h5p-content/{group_id}/{content_id}/{file_path}/{path_2}/{path_3}/{path_4}/{path_5}/{path_6}/{path_7}/{path_8}/{path_9}/{path_10}'
@@ -168,7 +168,7 @@ aculta_lms_h5p.content_file:
     path_9: '[A-Za-z0-9._~-]+'
     path_10: '[A-Za-z0-9._~-]+'
   options:
-    _aculta_domain_purpose: courses
+    _aculta_site_key: courses
 
 aculta_lms_h5p.library_file:
   path: '/h5p-library-assets/libraries/{library}/{file_path}/{path_3}/{path_4}/{path_5}/{path_6}/{path_7}/{path_8}/{path_9}/{path_10}/{path_11}/{path_12}'
@@ -231,5 +231,3 @@ aculta_lms_h5p.editor_ajax:
     argument_9: '[A-Za-z0-9._~-]+'
     argument_10: '[A-Za-z0-9._~-]+'
   methods: [GET, POST]
-  options:
-    _aculta_domain_purpose: main

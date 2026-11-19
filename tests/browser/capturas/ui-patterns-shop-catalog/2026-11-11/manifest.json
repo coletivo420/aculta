@@ -1,0 +1,117 @@
+{
+  "date": "2026-11-11",
+  "purpose": "shop",
+  "path": "/produtos",
+  "environment": "development server; anonymous request",
+  "change": "UI Patterns layout-grid composes native Commerce rows; the catalog view-mode template delegates the product card to SDC product-card",
+  "configuration": {
+    "before_runtime_yaml_sha256": "f0f24cc4e937a02e565379f8273661926d45c2027410a854ce5fe2ead082f214",
+    "sync_yaml_sha256": "3d0f9ac0bc1d285dfc1151b4ee709524d0ccc52d1f3288c6dedf6451d8cf5a69",
+    "after_runtime_yaml_sha256": "4d00b9e8cc181957dc917f0c003a447542bff460e98d37c096a7b51e876794e0",
+    "sync_runtime_parsed_yaml_equal": true,
+    "rollback": "restore only views.view.aculta_shop_catalog.yml from captured Runtime snapshot"
+  },
+  "runtime_before_after": {
+    "http_status": [
+      200,
+      200
+    ],
+    "product_ids": [
+      1
+    ],
+    "rows": [
+      1,
+      1
+    ],
+    "h1": [
+      1,
+      1
+    ],
+    "main": [
+      1,
+      1
+    ],
+    "card_sdc": "aculta420_v2:product-card",
+    "grid_sdc": "aculta420_v2:layout-grid",
+    "native_catalog_view_mode": "commerce_product.produto_loja.catalog",
+    "add_to_cart_form": "present before and after",
+    "pager": "full, 12 items",
+    "filters": "published and produto_loja",
+    "sort": "title ASC",
+    "access": "access content; anonymous page allowed",
+    "cache_after": {
+      "cache-control": "private, no-cache",
+      "x-drupal-cache": "MISS",
+      "x-drupal-dynamic-cache": "UNCACHEABLE (poor cacheability)"
+    }
+  },
+  "browser": {
+    "engine": "Firefox ESR headless via WebDriver BiDi",
+    "scenarios": 10,
+    "keyboard_product_focus": true,
+    "viewports_css_px": [
+      320,
+      390,
+      768,
+      1024,
+      1440
+    ],
+    "modes": [
+      "light",
+      "dark"
+    ],
+    "overflow_px_max": 0,
+    "title_contrast_ratio_min": 12.4,
+    "product_card_and_add_to_cart": "present in all scenarios",
+    "captures": [
+      {
+        "file": "light-320.png",
+        "sha256": "206784e5a734972543648a3956520c97d5e7ffaafe881873ac2c300b15cd36b2"
+      },
+      {
+        "file": "light-390.png",
+        "sha256": "8b24c4cfe9808ff041e7e73fbe472fed6ca1cd04b65091fd8f8f83334226cef9"
+      },
+      {
+        "file": "light-768.png",
+        "sha256": "06a0a11deeab21e698e0b4570a5052e0be67d8b80d62a243e8fdc0dd7f25dc0e"
+      },
+      {
+        "file": "light-1024.png",
+        "sha256": "dcb9bb4dfd8f453a60936ea6ea6be31a87bcfb70ddbe4f8ba889ac414a05dcc3"
+      },
+      {
+        "file": "light-1440.png",
+        "sha256": "45ca48c107342f8f12d40b8cd377b26c045e42116377143e457f9b43ac25bde0"
+      },
+      {
+        "file": "dark-320.png",
+        "sha256": "cd15df809b2dd106b9034587c40d10e4228d193327a6268b9f5e1c2c27c7c1e2"
+      },
+      {
+        "file": "dark-390.png",
+        "sha256": "2cabcf485a4cb382a2040f03e196b896b05dd008a9049a0feb328b0bbc44db63"
+      },
+      {
+        "file": "dark-768.png",
+        "sha256": "b9e2311c22be726ccd5bb36128d10097f95292bb3111edd78f03308f8b399117"
+      },
+      {
+        "file": "dark-1024.png",
+        "sha256": "668e9d9043fdf740f81727c9b4c38e81af40182c7ebac24f22ca60efe78428c1"
+      },
+      {
+        "file": "dark-1440.png",
+        "sha256": "b897825de5047f41b287d0e23b51a06c41e14a8ed10100f56c07df52f04102c2"
+      }
+    ]
+  },
+  "deferred": [
+    "zoom 200%",
+    "editor/admin profiles",
+    "assistive technology",
+    "cache-hit",
+    "human visual review"
+  ],
+  "evidence_limit": "Only one published product was available, so responsive column count with multiple product rows was not measured."
+}

@@ -40,6 +40,34 @@ final class ForumActivitySubscriberTest extends TestCase {
   }
 
   /**
+   * Comentário com host informa a dimensão do tópico para drilldown.
+   */
+  public function testCommentRecordsHostTopicDimension(): void {
+    $storage = $this->createMock(AggregateStorageInterface::class);
+    $storage->expects($this->exactly(2))
+      ->method('record')
+      ->willReturnCallback(function (string $metric, string $dimension = '', int $amount = 1): void {
+        static $calls = 0;
+        $calls++;
+        if ($calls === 1) {
+          self::assertSame('forum.comments.created', $metric);
+          self::assertSame('', $dimension);
+        }
+        else {
+          self::assertSame('forum.replies.created', $metric);
+          self::assertSame('42', $dimension);
+        }
+      });
+
+    $event = new class {
+
+      public int $hostEntityId = 42;
+
+    };
+    (new ForumActivitySubscriber($this->recorder($storage)))->onCommentCreated($event);
+  }
+
+  /**
    * Post revisionável grava a métrica de posts, sem dimensão.
    */
   public function testPostIsRecordedAsPostMetric(): void {

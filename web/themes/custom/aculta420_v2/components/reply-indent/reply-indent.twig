@@ -1,0 +1,13 @@
+{#
+/**
+ * @file
+ * Resposta recuada: recua em níveis 1 a 3; na primeira resposta do nível mostra a seta de resposta (Phosphor).
+ */
+#}
+{% set level = depth|default(0) %}
+<div class="reply-indent reply-indent--depth-{{ level }}" data-reply-depth="{{ level }}">
+  {% if first and level > 0 %}
+    <span class="reply-indent__marker">{{ include('aculta420_v2:icon', { name: 'arrow-elbow-down-right', variant: 'duotone', size: 'md' }, with_context = false) }}</span>
+  {% endif %}
+  {{ content }}
+</div>

@@ -1,4 +1,6 @@
-{#
-  Fallback neutro do link "Doar" (aculta_donation). Sem aparência: o tema ACULTA420 sobrescreve este template.
-#}
+{% if component %}
+  {{ component }}
+{% else %}
+{# Fallback neutro para temas sem o SDC button. #}
 <a class="aculta-donation-donate" href="{{ href }}">{{ label }}</a>
+{% endif %}

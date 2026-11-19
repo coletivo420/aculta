@@ -11,10 +11,10 @@ use Drupal\aculta_messenger\Aviso\EligibleNoticePage;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Session\AccountInterface;
@@ -54,7 +54,7 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly AvisoPreferenciasInterface $preferences,
     private readonly QueueFactory $queueFactory,
     private readonly LockBackendInterface $lock,
@@ -126,7 +126,7 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       }
 
       $mode = $this->preferences->emailMode($event->recipientUid(), 'revista');
-      $message = $storage->create([
+      $created = $storage->create([
         'template' => self::TEMPLATE,
         'uid' => $event->recipientUid(),
         self::EVENT_FIELD => $event->metadata()['notice_type'],
@@ -137,6 +137,10 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
         self::DELIVERY_FIELD => $mode === AvisoPreferencias::EMAIL_IMMEDIATE ? 'pending' : 'sent',
         self::ATTEMPTS_FIELD => 0,
       ]);
+      if (!$created instanceof MessageInterface) {
+        throw new \LogicException('The message storage returned an unexpected entity.');
+      }
+      $message = $created;
       $message->save();
       if ($mode === AvisoPreferencias::EMAIL_IMMEDIATE) {
         try {
@@ -167,12 +171,12 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
   /**
    * Resolves a batch of notices while loading source nodes in one query.
    *
-   * @param \Drupal\message\MessageInterface[] $messages
-   *   Messages to resolve.
+   * @param \Drupal\Core\Entity\EntityInterface[] $messages
+   *   Messages to resolve; non-message records are ignored.
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Current recipient.
    *
-   * @return array<int, array{title: string, summary: string, email_summary: string, url: string}>
+   * @return array<int, array{title: \Drupal\Core\StringTranslation\TranslatableMarkup, summary: \Drupal\Core\StringTranslation\TranslatableMarkup, email_summary: \Drupal\Core\StringTranslation\TranslatableMarkup, url: \Drupal\Core\Url}>
    *   Resolved notices keyed by Message ID.
    */
   private function resolveMessages(array $messages, AccountInterface $account): array {
@@ -199,9 +203,6 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       return [];
     }
     $storage = $this->entityTypeManager->getStorage('node');
-    if (!$storage instanceof RevisionableStorageInterface) {
-      return [];
-    }
     $latest = $storage->getQuery()->latestRevision()->accessCheck(FALSE)
       ->condition('uuid', array_values($uuids), 'IN')->condition('type', 'revista')->execute();
     $nodes = $latest === [] ? [] : $storage->loadMultipleRevisions(array_keys($latest));
@@ -216,14 +217,14 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       $node = $nodesByUuid[$uuid] ?? NULL;
       if (!$node instanceof NodeInterface || (int) $node->getRevisionId() !== $revision
         || !$this->revisionIsEligible($node, $type)
-        || !$this->domainPurposes->runInPurpose('magazine', static fn(): bool => $node->access('view', $account, TRUE)->isAllowed())
+        || !$this->siteManagers->runInSite('magazine', static fn(): bool => $node->access('view', $account, TRUE)->isAllowed())
         || !$this->isRecipient($node, (int) $account->id(), $type)) {
         continue;
       }
       $url = in_array($type, ['review_submitted', 'review_returned'], TRUE) && !$node->isDefaultRevision()
-        ? $this->domainPurposes->routeUrl('magazine', 'entity.node.latest_version', ['node' => $node->id()])
-        : $this->domainPurposes->routeUrl('magazine', 'entity.node.canonical', ['node' => $node->id()]);
-      if ($url === NULL || !$this->domainPurposes->runInPurpose('magazine', static fn(): bool => $url->access($account, TRUE)->isAllowed())) {
+        ? $this->siteManagers->routeUrl(SiteKey::Magazine, 'entity.node.latest_version', ['node' => $node->id()])
+        : $this->siteManagers->routeUrl(SiteKey::Magazine, 'entity.node.canonical', ['node' => $node->id()]);
+      if ($url === NULL || !$this->siteManagers->runInSite('magazine', static fn(): bool => $url->access($account, TRUE)->isAllowed())) {
         continue;
       }
       $title = match ($type) {
@@ -265,18 +266,20 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       return FALSE;
     }
     $storage = $this->entityTypeManager->getStorage('message');
-    $resolved = [];
+    $resolved = new \ArrayObject();
     $page = EligibleNoticePage::collect(
       function (int $scanOffset, int $batchSize) use ($storage, $account, $filters): array {
         $query = $storage->getQuery()->accessCheck(FALSE)
           ->condition('template', self::TEMPLATE)
           ->condition('uid', (int) $account->id());
         NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
-        return $query->sort('created', 'DESC')->sort('id', 'DESC')->range($scanOffset, $batchSize)->execute();
+        return $query->sort('created', 'DESC')->sort('mid', 'DESC')->range($scanOffset, $batchSize)->execute();
       },
-      function (array $ids) use ($storage, $account, &$resolved): array {
+      function (array $ids) use ($storage, $account, $resolved): array {
         $messages = array_values($storage->loadMultiple($ids));
-        $resolved += $this->resolveMessages($messages, $account);
+        foreach ($this->resolveMessages($messages, $account) as $resolvedId => $resolvedNotice) {
+          $resolved->offsetSet($resolvedId, $resolvedNotice);
+        }
         return $messages;
       },
       static fn(mixed $message): ?array => $message instanceof MessageInterface ? ($resolved[(int) $message->id()] ?? NULL) : NULL,
@@ -385,7 +388,7 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       }
       $rows[] = [
         'tipo' => 'revista',
-        'titulo' => $notice['email_summary'],
+        'titulo' => (string) $notice['email_summary'],
         'quantidade' => 1,
         'delivery_id' => (int) $message->id(),
       ];
@@ -419,9 +422,6 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       return NULL;
     }
     $storage = $this->entityTypeManager->getStorage('node');
-    if (!$storage instanceof RevisionableStorageInterface) {
-      return NULL;
-    }
     $latest = $storage->getQuery()->latestRevision()->accessCheck(FALSE)
       ->condition('uuid', $uuid)->condition('type', 'revista')->execute();
     if (!isset($latest[$revisionId])) {
@@ -433,7 +433,7 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
       || !$this->revisionIsEligible($node, $noticeType)) {
       return NULL;
     }
-    $allowed = $this->domainPurposes->runInPurpose('magazine', static fn(): bool =>
+    $allowed = $this->siteManagers->runInSite('magazine', static fn(): bool =>
       $node->access('view', $account, TRUE)->isAllowed()
     );
     return $allowed === TRUE ? $node : NULL;
@@ -459,8 +459,8 @@ final class MagazineNoticeManager implements MagazineNoticeManagerInterface {
     if ((int) $node->getOwnerId() === $uid) {
       return TRUE;
     }
-    if ($node->hasField('co_authors')) {
-      foreach ($node->get('co_authors')->getValue() as $item) {
+    if ($node->hasField('aculta_coauthors')) {
+      foreach ($node->get('aculta_coauthors')->getValue() as $item) {
         if ((int) ($item['target_id'] ?? 0) === $uid) {
           return TRUE;
         }

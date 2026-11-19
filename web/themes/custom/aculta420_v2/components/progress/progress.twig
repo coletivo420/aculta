@@ -1,0 +1,10 @@
+{% set maximum = max|default(100) %}
+{% set current = value is not null ? min(value, maximum) : null %}
+{% set percentage = current is not null ? ((current / maximum) * 100)|round : null %}
+<div{{ attributes.addClass('progress') }}>
+  <div class="progress__meta">
+    <label class="progress__label" for="{{ id }}">{{ label }}</label>
+    {% if percentage is not null %}<span class="progress__value">{{ percentage }}%</span>{% endif %}
+  </div>
+  <progress class="progress__track" id="{{ id }}" max="{{ maximum }}"{% if current is not null %} value="{{ current }}"{% endif %}>{{ percentage is not null ? percentage ~ '%' : label }}</progress>
+</div>

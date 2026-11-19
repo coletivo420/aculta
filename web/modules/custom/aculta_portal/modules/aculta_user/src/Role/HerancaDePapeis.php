@@ -31,12 +31,16 @@ class HerancaDePapeis {
    * Mapa de herança derivado da cadeia atual.
    *
    * @return array<string, string[]>
+   *   Mapa de herança por papel.
    */
   public function mapa(): array {
     $configuracao = $this->configFactory->get('aculta_portal.role_hierarchy');
     $todos = array_keys($this->entityTypeManager->getStorage('user_role')->loadMultiple());
     $existentes = array_values(array_diff($todos, RoleHierarchy::FORA_DA_CADEIA));
-    $cadeia = RoleHierarchy::completar((array) ($configuracao->get('cadeia') ?? []), $existentes);
+    $rawCadeia = $configuracao->get('cadeia');
+    /** @var array<string> $cadeiaConfig */
+    $cadeiaConfig = is_array($rawCadeia) ? array_values(array_filter($rawCadeia, 'is_string')) : [];
+    $cadeia = RoleHierarchy::completar($cadeiaConfig, $existentes);
     return RoleHierarchy::derivarMapa($cadeia, $todos);
   }
 
@@ -44,8 +48,12 @@ class HerancaDePapeis {
    * Herdados (sem os básicos) dos papéis informados.
    *
    * @param string[] $papeis
+   *   Papéis informados.
+   * @param bool $emailConfirmado
+   *   Se o e-mail da conta está confirmado.
    *
    * @return string[]
+   *   Papéis herdados, sem os básicos.
    */
   public function herdados(array $papeis, bool $emailConfirmado = TRUE): array {
     $herdados = array_values(array_diff(RoleHierarchy::herdados($papeis, $this->mapa()), self::PAPEIS_BASICOS));
@@ -59,16 +67,24 @@ class HerancaDePapeis {
    * Papéis gravados diretamente na conta (sem herança), lidos do banco.
    *
    * @return string[]
+   *   Papéis gravados diretamente na conta.
    */
   public function papeisDiretos(int $uid): array {
     if ($uid <= 0) {
       return [];
     }
-    return array_values(array_map('strval', $this->database->select('user__roles', 'r')
+    $queryResult = $this->database->select('user__roles', 'r')
       ->fields('r', ['roles_target_id'])
       ->condition('entity_id', $uid)
-      ->execute()
-      ->fetchCol()));
+      ->execute();
+    $rolesCol = $queryResult ? $queryResult->fetchCol() : [];
+    $roles = [];
+    foreach ($rolesCol as $r) {
+      if (is_scalar($r) || $r instanceof \Stringable) {
+        $roles[] = (string) $r;
+      }
+    }
+    return $roles;
   }
 
   /**
@@ -78,7 +94,9 @@ class HerancaDePapeis {
     $configuracao = $this->configFactory->getEditable('aculta_portal.role_hierarchy');
     $todos = array_keys($this->entityTypeManager->getStorage('user_role')->loadMultiple());
     $existentes = array_values(array_diff($todos, RoleHierarchy::FORA_DA_CADEIA, [$papel]));
-    $cadeia = array_values(array_diff((array) $configuracao->get('cadeia'), [$papel]));
+    $rawCadeia = $configuracao->get('cadeia');
+    $cadeiaArr = is_array($rawCadeia) ? array_values(array_filter($rawCadeia, 'is_string')) : [];
+    $cadeia = array_values(array_diff($cadeiaArr, [$papel]));
     $configuracao->set('cadeia', RoleHierarchy::completar($cadeia, $existentes))->save();
   }
 
@@ -86,6 +104,7 @@ class HerancaDePapeis {
    * Papéis herdados que não foram gravados diretamente na conta: são os que a conta não deve salvar.
    *
    * @return string[]
+   *   Papéis herdados que não devem ser gravados.
    */
   public function herdadosNaoGravados(int $uid, bool $emailConfirmado = TRUE): array {
     $diretos = $this->papeisDiretos($uid);
@@ -96,9 +115,12 @@ class HerancaDePapeis {
    * Conta a que se aplica a herança (o usuário logado precisa do mesmo cálculo).
    *
    * @return string[]
+   *   Papéis da conta somados aos herdados.
    */
   public function papeisEstendidos(AccountInterface $conta, bool $emailConfirmado = TRUE): array {
-    return array_values(array_unique(array_merge($conta->getRoles(), $this->herdados($conta->getRoles(), $emailConfirmado))));
+    /** @var list<string> $roles */
+    $roles = $conta->getRoles();
+    return array_values(array_unique(array_merge($roles, $this->herdados($roles, $emailConfirmado))));
   }
 
 }

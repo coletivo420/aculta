@@ -1,0 +1,8 @@
+name: Preferência clara
+description: Botão fechado com a preferência Claro selecionada.
+props:
+  mode: light
+  context: library
+  appearance: light
+  alignment: end
+  instance_id: color-mode-light

@@ -1,5 +1,9 @@
 # Roadmap — ACULTA Statistics
 
+## FST-00 a FST-11 - integração analítica com o Fórum (planejamento de 2026-11-10)
+
+O plano consolidado, os achados P0/P1, os contratos, o catálogo proposto, os testes e os gates ficam em [FORUM-ANALYTICS-PLANO-FST-00-11.md](FORUM-ANALYTICS-PLANO-FST-00-11.md). **Estado: apenas documentado**; a auditoria foi estática, sem execução em Runtime. A integração atual registra três contadores de eventos e o painel do Fórum lê a série de sete dias, mas o isolamento de Group/reações, a idempotência durável, snapshots e a homologação integrada seguem pendentes. O texto histórico abaixo não deve ser interpretado como comprovação de homologação deste ciclo.
+
 Planejamento. O estado real de cada entrega fica no CHANGELOG e nos commits.
 Cada fase termina antes da próxima começar, sem autorização explícita.
 

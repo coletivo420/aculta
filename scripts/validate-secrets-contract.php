@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @file
+ */
+
 declare(strict_types=1);
 
 use Symfony\Component\Yaml\Yaml;
@@ -31,7 +35,8 @@ $expected = [
   'mercadopago_webhook_secret' => ['MERCADOPAGO_WEBHOOK_SECRET', FALSE],
   'turnstile' => ['TURNSTILE_KEYS_JSON', TRUE],
   'turnstile_test' => ['TURNSTILE_TEST_KEYS_JSON', TRUE],
-  // Chaves de aplicação em texto puro (docs/operations/SECRETS.md e config/secrets-contract.json).
+  // Chaves de aplicação em texto puro (docs/operations/SECRETS.md e
+  // config/secrets-contract.json).
   'aculta_document_encryption_key' => ['ACULTA_DOCUMENT_ENCRYPTION_KEY', FALSE],
   'aculta_id_cpf_fingerprint' => ['ACULTA_ID_CPF_FINGERPRINT_KEY', FALSE],
   'aculta_melhorenvio_token_encryption' => ['ACULTA_MELHORENVIO_TOKEN_ENCRYPTION_KEY', FALSE],
@@ -47,7 +52,8 @@ $expected = [
   'melhorenvio_production_client_secret' => ['MELHORENVIO_PRODUCTION_CLIENT_SECRET', FALSE],
 ];
 
-// Credenciais de envio ficam no arquivo de segredos do servidor, sem Key (regra de segredos do AGENTS.md).
+// Credenciais de envio ficam no arquivo de segredos do servidor, sem Key
+// (regra de segredos do AGENTS.md).
 $file_secrets = [
   'ga4_property_id' => 'GA4_PROPERTY_ID',
   'ga4_service_account_json' => 'GA4_SERVICE_ACCOUNT_JSON',

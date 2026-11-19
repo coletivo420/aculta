@@ -7,8 +7,8 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_messenger\Hook\PrivateMessageReplyHooks;
 use Drupal\aculta_messenger\Service\ConversationMessagingState;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageBanManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -27,7 +27,7 @@ final class PrivateMessageReplyHooksTest extends UnitTestCase {
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('id')->willReturn(42);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    $thread->method('getMembersId')->willReturn([42, 84, 85]);
+    $thread->method('getMemberIds')->willReturn([42, 84, 85]);
     $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
     $banManager->method('isBanned')->willReturnCallback(static fn(int $uid): bool => $uid === 84);
     $state = new ConversationMessagingState($currentUser, $banManager);
@@ -37,6 +37,9 @@ final class PrivateMessageReplyHooksTest extends UnitTestCase {
 
     $notice = $noticeMethod->invoke($hook, $thread, $state->stateFor($thread));
 
+    if (!is_array($notice) || !is_array($notice['text'] ?? NULL)) {
+      self::fail('The notice has no text element.');
+    }
     self::assertSame(
       'Você bloqueou um participante desta conversa. Remova o bloqueio nas opções dessa pessoa para enviar mensagens novamente.',
       $notice['text']['#plain_text'],
@@ -51,7 +54,7 @@ final class PrivateMessageReplyHooksTest extends UnitTestCase {
     $currentUser = $this->createMock(AccountProxyInterface::class);
     $currentUser->method('id')->willReturn(42);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
-    $thread->method('getMembersId')->willReturn([42, 84, 85]);
+    $thread->method('getMemberIds')->willReturn([42, 84, 85]);
     $banManager = $this->createMock(PrivateMessageBanManagerInterface::class);
     $banManager->method('isBanned')->willReturn(FALSE);
     $banManager->method('isCurrentUserBannedByUser')->willReturnCallback(static fn(int $uid): bool => $uid === 85);

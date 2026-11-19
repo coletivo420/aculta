@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Access;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\flexible_permissions\CalculatedPermissionsItem;
@@ -36,17 +37,7 @@ final class ClassPermissionCalculator extends PermissionCalculatorBase {
     }
 
     $settings = $this->configFactory->get('aculta_lms.settings');
-    $mappings = [
-      'class' => array_replace([
-        'view group' => '',
-        'administer members' => 'add students',
-        'view group_membership relationship' => 'view students',
-      ], (array) ($settings->get('class_permission_mappings') ?? [])),
-      'course' => array_replace([
-        'view group' => '',
-        'take course' => '',
-      ], (array) ($settings->get('course_permission_mappings') ?? [])),
-    ];
+    $mappings = $this->permissionMappings($settings);
     $permissions->addCacheableDependency($settings)
       ->addCacheTags(['group_relationship_list:plugin:group_membership:entity:' . $account->id()]);
 
@@ -60,7 +51,7 @@ final class ClassPermissionCalculator extends PermissionCalculatorBase {
         continue;
       }
       $group = $membership->getGroup();
-      if (!$group instanceof GroupInterface || !in_array($group->bundle(), ['lms_course', 'lms_class'], TRUE)) {
+      if (!in_array($group->bundle(), ['lms_course', 'lms_class'], TRUE)) {
         continue;
       }
       $permissions->addCacheableDependency($membership)
@@ -115,6 +106,48 @@ final class ClassPermissionCalculator extends PermissionCalculatorBase {
   }
 
   /**
+   * Builds the normalized course and class permission mappings.
+   *
+   * @return array{class: array<string, string>, course: array<string, string>}
+   *   Target permission maps for each Group bundle.
+   */
+  private function permissionMappings(ImmutableConfig $settings): array {
+    return [
+      'class' => array_replace([
+        'view group' => '',
+        'administer members' => 'add students',
+        'view group_membership relationship' => 'view students',
+      ], $this->normalizePermissionMapping($settings->get('class_permission_mappings'))),
+      'course' => array_replace([
+        'view group' => '',
+        'take course' => '',
+      ], $this->normalizePermissionMapping($settings->get('course_permission_mappings'))),
+    ];
+  }
+
+  /**
+   * Keeps only valid permission names from editable configuration.
+   *
+   * @param mixed $mapping
+   *   Untrusted configuration value.
+   *
+   * @return array<string, string>
+   *   Target permission to required source permission mappings.
+   */
+  private function normalizePermissionMapping(mixed $mapping): array {
+    if (!is_array($mapping)) {
+      return [];
+    }
+    $normalized = [];
+    foreach ($mapping as $target => $required) {
+      if (is_string($target) && is_string($required)) {
+        $normalized[$target] = $required;
+      }
+    }
+    return $normalized;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function getPersistentCacheContexts($scope): array {
@@ -124,7 +157,7 @@ final class ClassPermissionCalculator extends PermissionCalculatorBase {
   /**
    * Maps role permissions on a membership to inherited target permissions.
    *
-   * @param \Drupal\group\Entity\GroupRelationshipInterface $membership
+   * @param \Drupal\group\Entity\GroupMembershipInterface $membership
    *   Group membership relationship.
    * @param array<string, string> $mapping
    *   Target permission to required source permission mappings.

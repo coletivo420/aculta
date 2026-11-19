@@ -1,0 +1,98 @@
+.lms-learning-room [data-portal-ui="aculta-learning-room"] {
+  min-inline-size: 0;
+  margin-block-start: 1rem;
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room"] a {
+  color: var(--color-link-editorial);
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room"] a:is(:hover, :focus-visible) {
+  color: var(--color-brand-primary);
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room__layout"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 1.25rem;
+  min-inline-size: 0;
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room__outline"] {
+  min-inline-size: 0;
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room__outline-title"] {
+  margin: 0 0 .75rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room__outline"][data-variant="desktop"] {
+  display: none;
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room__outline"][data-variant="mobile"] {
+  padding: .5rem .75rem;
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  background-color: var(--color-surface-raised);
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room__outline"][data-variant="mobile"] > summary {
+  display: flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room__outline"][data-variant="mobile"][open] > summary {
+  margin-block-end: .75rem;
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room__content"] {
+  min-inline-size: 0;
+  max-inline-size: 72ch;
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room__content"] :is(img, video, iframe, svg) {
+  max-inline-size: 100%;
+  block-size: auto;
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room__content"] :is(input, select, textarea) {
+  max-inline-size: 100%;
+}
+
+.lms-learning-room [data-portal-ui="aculta-learning-room__back-link"] {
+  display: inline-flex;
+  min-block-size: 2.75rem;
+  align-items: center;
+}
+
+@media (min-width: 64rem) {
+  .lms-learning-room [data-portal-ui="aculta-learning-room__layout"] {
+    grid-template-columns: minmax(14rem, 18rem) minmax(0, 1fr);
+  }
+
+  .lms-learning-room [data-portal-ui="aculta-learning-room__outline"][data-variant="mobile"] {
+    display: none;
+  }
+
+  .lms-learning-room [data-portal-ui="aculta-learning-room__outline"][data-variant="desktop"] {
+    position: sticky;
+    display: block;
+    overflow-y: auto;
+    inset-block-start: 1rem;
+    max-block-size: calc(100vh - 2rem);
+  }
+
+  .lms-learning-room [data-portal-ui="aculta-learning-room__content"] {
+    justify-self: start;
+    inline-size: 100%;
+  }
+}

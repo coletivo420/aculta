@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+#
+# Hook post-checkout para protecao do checkout principal.
+# Garante que o checkout principal (/home/piradopirata/projetos/aculta ou repo base)
+# permaneca sempre na branch 'dev'.
+#
+
+set -euo pipefail
+
+prev_head="$1"
+new_head="$2"
+flag="$3" # 1 = branch checkout, 0 = file checkout
+
+if [ "$flag" -ne 1 ]; then
+  exit 0
+fi
+
+# Detecta se estamos na worktree principal ou em worktree secundaria
+git_common_dir=$(git rev-parse --git-common-dir 2>/dev/null || true)
+git_dir=$(git rev-parse --git-dir 2>/dev/null || true)
+
+# Na worktree principal, git_common_dir == git_dir (ou .git)
+# Em worktrees secundarias, git_dir fica dentro de $git_common_dir/worktrees/...
+if [ "$git_common_dir" = "$git_dir" ] || [ "$git_dir" = ".git" ]; then
+  current_branch=$(git symbolic-ref --short HEAD 2>/dev/null || true)
+  if [ -n "$current_branch" ] && [ "$current_branch" != "dev" ]; then
+    echo "================================================================================" >&2
+    echo "BLOQUEIO DE SEGURANÇA: Checkout principal deve permanecer fixado na branch 'dev'!" >&2
+    echo "O checkout principal é servido pelo Apache e não pode ser desatrelado de 'dev'." >&2
+    echo "Para trabalhar em uma nova branch, crie uma worktree separada:" >&2
+    echo "    git worktree add ../<nome-da-worktree> -b $current_branch dev" >&2
+    echo "Retornando automaticamente o checkout principal para 'dev'..." >&2
+    echo "================================================================================" >&2
+    git checkout dev
+    exit 1
+  fi
+fi
+
+exit 0

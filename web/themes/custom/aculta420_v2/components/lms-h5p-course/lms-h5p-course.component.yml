@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Curso com atividades H5P
+description: Cartão de curso com link e atividades H5P autorizadas pelo módulo.
+status: experimental
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+slots:
+  title:
+    title: Título do curso
+    description: Título do curso associado às atividades H5P.
+  course_link:
+    title: Link do curso
+    description: Link autorizado para abrir o curso.
+  activities:
+    title: Atividades H5P
+    description: Atividades renderizadas conforme o acesso ao curso.
+assets:
+  css:
+    component:
+      lms-h5p-course.css: {}

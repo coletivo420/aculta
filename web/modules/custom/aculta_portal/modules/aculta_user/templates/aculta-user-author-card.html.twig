@@ -1,4 +1,7 @@
-{# Neutral fallback. ACULTA420 supplies the visual implementation. #}
+{% if component %}
+  {{ component }}
+{% else %}
+{# Neutral fallback for themes without a component implementation. #}
 <article>
   {% if has_avatar %}<div>{{ avatar }}</div>{% endif %}
   <div>
@@ -17,3 +20,4 @@
   </div>
   {% if actions %}<div>{{ actions }}</div>{% endif %}
 </article>
+{% endif %}

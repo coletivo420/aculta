@@ -1,0 +1,368 @@
+<?php
+
+namespace Drupal\aculta_messenger\Mapper;
+
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\SelectInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
+use Drupal\user\UserInterface;
+
+/**
+ * Interface for the Private Message Mapper class.
+ */
+class PrivateMessageMapper implements PrivateMessageMapperInterface {
+
+  public function __construct(
+    protected readonly Connection $database,
+    protected readonly AccountProxyInterface $currentUser,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<int, \Drupal\user\UserInterface> $members
+   *   Os membros da conversa.
+   */
+  public function getThreadIdForMembers(array $members) {
+    $uids = [];
+    foreach ($members as $member) {
+      $uids[$member->id()] = $member->id();
+    }
+
+    // Select threads common for the given members.
+    $query = $this->database->select('private_message_thread__members', 'pmt')
+      ->fields('pmt', ['entity_id'])
+      ->groupBy('entity_id');
+    // Add conditions where the threads are in the set of threads for each of
+    // the users.
+    foreach ($uids as $uid) {
+      $subQuery = $this->database->select('private_message_thread__members', 'pmt')
+        ->fields('pmt', ['entity_id'])
+        ->condition('members_target_id', $uid);
+      $query->condition('entity_id', $subQuery, 'IN');
+    }
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var list<int> $thread_ids */
+    $thread_ids = $statement->fetchCol();
+
+    // Exclude threads with other participants.
+    foreach ($thread_ids as $thread_id) {
+      $query = $this->database->select('private_message_thread__members', 'pmt')
+        ->condition('members_target_id', $uids, 'NOT IN')
+        ->condition('entity_id', $thread_id);
+      /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $countStatement */
+      $countStatement = $query->countQuery()->execute();
+      if ($countStatement->fetchField() == 0) {
+        return $thread_id;
+      }
+    }
+
+    return FALSE;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFirstThreadIdForUser(UserInterface $user) {
+
+    $uid = $user->id();
+    if (!ctype_digit((string) $uid)) {
+      return FALSE;
+    }
+    $bannedThreadsQuery = $this->getBannedThreads((int) $uid);
+
+    $query = $this->database->select('private_message_threads', 'thread');
+    $query->addField('thread', 'id');
+    $query->innerJoin('aculta_pm_thread_history', 'thread_history', 'thread_history.thread_id = thread.id AND thread_history.uid = :uid', [':uid' => $user->id()]);
+    $query->innerJoin('private_message_thread__members', 'thread_member', 'thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid', [':uid' => $user->id()]);
+    $query->innerJoin('private_message_thread__private_messages', 'thread_messages', 'thread_messages.entity_id = thread.id');
+    $query->innerJoin('private_messages', 'messages', 'messages.id = thread_messages.private_messages_target_id AND thread_history.delete_timestamp <= messages.created');
+    $query->condition('thread.id', $bannedThreadsQuery, 'NOT IN');
+    $query->orderBy('thread.updated', 'desc');
+    $query->range(0, 1);
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var int|false $threadId */
+    $threadId = $statement->fetchField();
+    return $threadId;
+
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @param UserInterface $user
+   *   O usuário.
+   * @param int|false $count
+   *   A quantidade.
+   * @param int|false|null $timestamp
+   *   O instante de referência, quando informado.
+   *
+   * @return array<mixed, mixed>
+   *   A lista com os valores resultantes.
+   */
+  public function getThreadIdsForUser(UserInterface $user, $count = FALSE, $timestamp = FALSE): array {
+
+    $uid = $user->id();
+    if (!ctype_digit((string) $uid)) {
+      return [];
+    }
+    $bannedThreadsQuery = $this->getBannedThreads((int) $uid);
+
+    $query = $this->database->select('private_message_threads', 'thread');
+    $query->addField('thread', 'id');
+    $query->addExpression('MAX(thread.updated)', 'last_updated');
+    $query->innerJoin('aculta_pm_thread_history', 'thread_history', 'thread_history.thread_id = thread.id AND thread_history.uid = :uid', [':uid' => $user->id()]);
+    $query->innerJoin('private_message_thread__members', 'thread_member', 'thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid', [':uid' => $user->id()]);
+    $query->innerJoin('private_message_thread__private_messages', 'thread_messages', 'thread_messages.entity_id = thread.id');
+    $query->innerJoin('private_messages', 'messages', 'messages.id = thread_messages.private_messages_target_id AND thread_history.delete_timestamp <= messages.created');
+
+    $query->condition('thread.id', $bannedThreadsQuery, 'NOT IN');
+
+    if ($timestamp) {
+      $query->condition('updated', $timestamp, '<');
+    }
+
+    $query->groupBy('thread.id');
+    $query->orderBy('last_updated', 'desc');
+    $query->orderBy('thread.id');
+
+    if ($count > 0) {
+      /** @var int $rangeLength */
+      $rangeLength = $count;
+      $query->range(0, $rangeLength);
+    }
+
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    return $statement->fetchCol();
+
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function checkForNextThread(UserInterface $user, $timestamp): bool {
+    $query = 'SELECT DISTINCT(thread.id) ' .
+      'FROM {private_message_threads} AS thread ' .
+      'JOIN {aculta_pm_thread_history} aculta_pm_thread_history ' .
+      'ON aculta_pm_thread_history.thread_id = thread.id AND aculta_pm_thread_history.uid = :history_uid ' .
+      'JOIN {private_message_thread__members} AS thread_member ' .
+      'ON thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid ' .
+      'JOIN {private_message_thread__private_messages} AS thread_messages ' .
+      'ON thread_messages.entity_id = thread.id ' .
+      'JOIN {private_messages} AS messages ' .
+      'ON messages.id = thread_messages.private_messages_target_id ' .
+      'WHERE aculta_pm_thread_history.delete_timestamp <= messages.created ' .
+      'AND thread.updated < :timestamp';
+    $vars = [
+      ':uid' => $user->id(),
+      ':history_uid' => $user->id(),
+      ':timestamp' => $timestamp,
+    ];
+
+    return (bool) $this->database->queryRange(
+      $query,
+      0, 1,
+      $vars
+    )->fetchField();
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $existingThreadIds
+   *   Os identificadores de conversas já existentes.
+   * @param int|false $count
+   *   A quantidade.
+   *
+   * @return array<mixed, mixed>
+   *   A lista com os valores resultantes.
+   */
+  public function getUpdatedInboxThreadIds(array $existingThreadIds, $count = FALSE): array {
+
+    $bannedThreadsQuery = $this->getBannedThreads($this->currentUser->id());
+
+    $query = $this->database->select('private_message_threads', 'thread');
+    $query->addField('thread', 'id');
+    $query->addField('thread', 'updated');
+    $query->innerJoin('aculta_pm_thread_history', 'thread_history', 'thread_history.thread_id = thread.id AND thread_history.uid = :uid', [':uid' => $this->currentUser->id()]);
+    $query->innerJoin('private_message_thread__members', 'thread_member', 'thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid', [':uid' => $this->currentUser->id()]);
+    $query->innerJoin('private_message_thread__private_messages', 'thread_messages', 'thread_messages.entity_id = thread.id');
+    $query->innerJoin('private_messages', 'messages', 'messages.id = thread_messages.private_messages_target_id AND thread_history.delete_timestamp <= messages.created');
+    $query->condition('thread.id', $bannedThreadsQuery, 'NOT IN');
+    $query->orderBy('thread.updated', 'desc');
+    $query->groupBy('thread.id');
+
+    if (count($existingThreadIds)) {
+      $subquery = $this->database->select('private_message_threads', 'thread');
+      $subquery->addExpression('MIN(updated)');
+      $subquery->condition('id', $existingThreadIds, 'IN');
+
+      $query->condition('thread.updated', $subquery, '>=');
+    }
+    else {
+      $query->range(0, (int) $count);
+    }
+
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    return $statement->fetchAllAssoc('id');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUnreadThreadCount($uid, $lastCheckTimestamp): int {
+
+    $bannedThreadsQuery = $this->getBannedThreads($uid);
+
+    $query = $this->database->select('private_messages', 'message');
+    $query->addField('thread', 'id');
+    $query->innerJoin('private_message_thread__private_messages', 'thread_message', 'message.id = thread_message.private_messages_target_id');
+    $query->innerJoin('private_message_threads', 'thread', 'thread_message.entity_id = thread.id');
+    $query->innerJoin('aculta_pm_thread_history', 'thread_history', 'thread_history.thread_id = thread.id AND thread_history.access_timestamp < thread.updated AND thread_history.uid = :uid', [':uid' => $uid]);
+    $query->innerJoin('private_message_thread__members', 'thread_member', 'thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid', [':uid' => $uid]);
+    $query->condition('thread.updated', $lastCheckTimestamp, '>');
+    $query->condition('message.created', $lastCheckTimestamp, '>');
+    $query->condition('message.owner', $uid, '<>');
+    $query->condition('thread.id', $bannedThreadsQuery, 'NOT IN');
+    $query->groupBy('thread.id');
+
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->countQuery()->execute();
+    /** @var int $unreadCount */
+    $unreadCount = $statement->fetchField();
+    return $unreadCount;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getUnreadMessageCount($uid, $lastCheckTimestamp) {
+    $bannedThreadsQuery = $this->getBannedThreads($uid);
+
+    $query = $this->database->select('private_messages', 'message');
+    $query->join(
+      'private_message_thread__private_messages',
+      'thread_message',
+      'message.id = thread_message.private_messages_target_id'
+    );
+    $query->join(
+      'private_message_threads',
+      'thread',
+      'thread_message.entity_id = thread.id'
+    );
+    $query->join(
+      'aculta_pm_thread_history',
+      'thread_history',
+      'thread_history.thread_id = thread.id AND thread_history.uid = :uid',
+      [':uid' => $uid]
+    );
+    $query->join(
+      'private_message_thread__members',
+      'thread_member',
+      'thread_member.entity_id = thread.id AND thread_member.members_target_id = :uid',
+      [':uid' => $uid]
+    );
+    $query
+      ->condition('thread.updated ', $lastCheckTimestamp, '>')
+      ->condition('message.created', $lastCheckTimestamp, '>')
+      ->condition('message.owner', $uid, '<>')
+      ->condition('thread.id', $bannedThreadsQuery, 'NOT IN')
+      ->where('thread_history.access_timestamp < thread.updated');
+    $query = $query->countQuery();
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->execute();
+    /** @var int $unreadMessageCount */
+    $unreadMessageCount = $statement->fetchField();
+    return $unreadMessageCount;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getThreadUnreadMessageCount($uid, $thread_id) {
+    // @todo Optimize this, consider deletions and banned users.
+    $query = $this->database->select('aculta_pm_thread_history', 'aculta_pm_thread_history')
+      ->condition('uid', $uid)
+      ->condition('thread_id', $thread_id);
+    $query->join(
+      'private_message_thread__private_messages',
+      'thread_message',
+      'thread_message.entity_id = aculta_pm_thread_history.thread_id'
+    );
+    $query->join(
+      'private_messages',
+      'messages_data',
+      'messages_data.id = thread_message.private_messages_target_id'
+    );
+    $query->where('[messages_data].[created] > [aculta_pm_thread_history].[access_timestamp]');
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query->countQuery()->execute();
+    /** @var int $unreadCount */
+    $unreadCount = $statement->fetchField();
+    return $unreadCount;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getThreadIdFromMessage(PrivateMessageInterface $privateMessage): int {
+    $query = $this->database->select('private_message_threads', 'thread');
+    $query->fields('thread', ['id']);
+    $query->join('private_message_thread__private_messages',
+      'messages',
+      'messages.entity_id = thread.id AND messages.private_messages_target_id = :message_id',
+      [':message_id' => $privateMessage->id()]
+    );
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $query
+      ->range(0, 1)
+      ->execute();
+    /** @var int $threadId */
+    $threadId = $statement->fetchField();
+    return $threadId;
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @return array<mixed, mixed>
+   *   A lista com os valores resultantes.
+   */
+  public function getThreadIds(): array {
+    /** @var \Drupal\Core\Database\StatementInterface<int, mixed> $statement */
+    $statement = $this->database->select('private_message_threads', 'pmt')
+      ->fields('pmt', ['id'])
+      ->execute();
+    return $statement->fetchCol();
+  }
+
+  /**
+   * Returns query object of banned threads for the user.
+   *
+   * @param int $user_id
+   *   The user id.
+   *
+   * @return \Drupal\Core\Database\Query\SelectInterface
+   *   The select query object.
+   */
+  protected function getBannedThreads(int $user_id): SelectInterface {
+    // Get the list of banned users for this user.
+    $subquery = $this->database->select('private_message_ban', 'pmb');
+    $subquery->addField('pmb', 'target');
+    $subquery->condition('pmb.owner', $user_id);
+
+    // Get list of threads with banned users.
+    $bannedThreadsQuery = $this->database->select('private_message_thread__members', 'thread_member');
+    $bannedThreadsQuery->addField('thread_member', 'entity_id');
+    $bannedThreadsQuery->condition('thread_member.members_target_id', $subquery, 'IN');
+    $bannedThreadsQuery->groupBy('entity_id');
+
+    return $bannedThreadsQuery;
+  }
+
+}

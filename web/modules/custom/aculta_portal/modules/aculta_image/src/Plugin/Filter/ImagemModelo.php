@@ -49,9 +49,9 @@ final class ImagemModelo extends FilterBase implements ContainerFactoryPluginInt
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly ImageCatalog $catalog,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly FileSystemInterface $fileSystem,
+    protected readonly ImageCatalog $catalog,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly FileSystemInterface $fileSystem,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

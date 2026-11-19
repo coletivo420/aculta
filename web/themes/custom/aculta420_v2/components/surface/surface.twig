@@ -1,0 +1,43 @@
+{#
+/**
+ * @file
+ * Template para o SDC Superfície (aculta420_v2:surface).
+ */
+#}
+{% set tone = tone|default('green-soft') %}
+{% if tone not in ['canvas', 'raised', 'subtle', 'institution', 'green-soft'] %}
+  {% set tone = 'green-soft' %}
+{% endif %}
+
+{% set radius = radius|default('lg') %}
+{% if radius not in ['none', 'sm', 'md', 'lg', 'xl', 'full'] %}
+  {% set radius = 'lg' %}
+{% endif %}
+
+{% set spacing = spacing|default('normal') %}
+{% if spacing not in ['none', 'compact', 'normal', 'spacious'] %}
+  {% set spacing = 'normal' %}
+{% endif %}
+
+{% set elevation = elevation|default('subtle') %}
+{% if elevation not in ['none', 'subtle', 'raised', 'floating'] %}
+  {% set elevation = 'subtle' %}
+{% endif %}
+
+{% set border = border|default('subtle') %}
+{% if border not in ['none', 'subtle', 'strong'] %}
+  {% set border = 'subtle' %}
+{% endif %}
+
+{% set classes = [
+  'aculta-surface',
+  'aculta-surface--tone-' ~ tone,
+  'aculta-surface--radius-' ~ radius,
+  'aculta-surface--spacing-' ~ spacing,
+  'aculta-surface--elevation-' ~ elevation,
+  'aculta-surface--border-' ~ border,
+] %}
+
+<div{{ attributes.addClass(classes) }}>
+  {{ content }}
+</div>

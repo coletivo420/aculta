@@ -28,8 +28,10 @@ final class SalesPaymentAccess {
    * Escopos presentes nos itens do pedido, a partir dos tipos de item.
    *
    * @param string[] $tiposDosItens
+   *   Tipos de item presentes no pedido.
    *
    * @return string[]
+   *   Escopos de permissão exigidos pelo pedido.
    */
   public static function escoposDoPedido(array $tiposDosItens): array {
     $escopos = [];
@@ -50,6 +52,7 @@ final class SalesPaymentAccess {
    * Pode agir sobre um pedido com estes escopos: precisa de todas as permissões correspondentes.
    *
    * @param string[] $escopos
+   *   Escopos presentes no pedido.
    */
   public function podeAgir(array $escopos): bool {
     if ($escopos === []) {

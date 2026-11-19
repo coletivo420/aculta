@@ -12,4 +12,3 @@ type: node
 plugin: domain_source_set_action
 configuration:
   domain_id: forum_aculta_org
-

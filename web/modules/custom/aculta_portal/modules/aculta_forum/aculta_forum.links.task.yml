@@ -58,6 +58,12 @@ aculta_forum.admin_revisionable_posts_tab:
   base_route: aculta_forum.admin
   weight: 2
 
+aculta_forum.admin_topic_deletions_tab:
+  title: Exclusões de tópicos
+  route_name: aculta_forum.topic_deletion_queue
+  base_route: aculta_forum.admin
+  weight: 2.5
+
 aculta_forum.admin_settings_tab:
   title: Configurações
   route_name: aculta_forum.settings

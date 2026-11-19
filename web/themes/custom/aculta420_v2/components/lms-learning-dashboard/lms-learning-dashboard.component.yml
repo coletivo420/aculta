@@ -1,0 +1,52 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Painel de aprendizagem LMS
+description: Página estudantil com retomada, cursos matriculados e certificados.
+status: stable
+group: LMS
+props:
+  type: object
+  additionalProperties: false
+  required: [title, introduction, continue_title, courses_title, empty_courses_message, certificates_title]
+  properties:
+    title:
+      title: Título do painel de aprendizagem
+      type: string
+      description: Título H1 do painel, renderizado pelo SDC heading.
+      minLength: 1
+    introduction:
+      title: Introdução do painel
+      type: string
+      description: Texto de introdução exibido no cabeçalho do painel.
+    continue_title:
+      title: Título da seção de continuidade
+      type: string
+      description: Cabeçalho da seção que contém o cartão de retomada, quando resume está presente.
+    courses_title:
+      title: Título da lista de cursos
+      type: string
+      description: Cabeçalho da lista de cursos matriculados.
+    empty_courses_message:
+      title: Mensagem sem cursos
+      type: string
+      description: Mensagem passada ao estado vazio quando não há cartões no slot courses.
+    certificates_title:
+      title: Título da lista de certificados
+      type: string
+      description: Cabeçalho da seção de certificados, exibida quando o slot certificates contém itens.
+slots:
+  resume:
+    title: Curso para continuar
+    description: Cartão do curso atual, fornecido pelo composer LMS somente quando há destino válido.
+  courses:
+    title: Cursos matriculados
+    description: Cartões autorizados de cursos pertencentes à pessoa autenticada.
+  empty_action:
+    title: Catálogo de cursos
+    description: Ação para descobrir cursos quando não há matrículas.
+  certificates:
+    title: Certificados
+    description: Certificados públicos e verificáveis associados à conta.
+assets:
+  css:
+    component:
+      lms-learning-dashboard.css: {}

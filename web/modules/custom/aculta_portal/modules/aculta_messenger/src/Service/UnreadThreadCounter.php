@@ -6,7 +6,7 @@ namespace Drupal\aculta_messenger\Service;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 
 /**
  * Counts unread conversations using Private Message's per-thread read state.
@@ -76,7 +76,8 @@ final class UnreadThreadCounter {
     // after the last access, no message can be newer. Short-circuit before
     // access checking because private_message's access handler loads the list
     // to apply the member's deletion cutoff.
-    if ((int) $thread->get('updated')->value <= $lastAccess) {
+    $atualizadoBruto = $thread->get('updated')->value;
+    if ((is_scalar($atualizadoBruto) ? (int) $atualizadoBruto : 0) <= $lastAccess) {
       return FALSE;
     }
     if (!$thread->access('view', $this->currentUser, TRUE)->isAllowed()) {

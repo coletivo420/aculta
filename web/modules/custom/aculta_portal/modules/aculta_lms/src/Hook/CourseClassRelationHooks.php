@@ -16,6 +16,9 @@ final class CourseClassRelationHooks {
 
   /**
    * Provides the permission used by course and class administration.
+   *
+   * @return array<string, array{title: \Drupal\Core\StringTranslation\TranslatableMarkup, 'restrict access': true}>
+   *   The LMS administration permission definition.
    */
   #[Hook('permission')]
   public function permissions(): array {
@@ -29,6 +32,9 @@ final class CourseClassRelationHooks {
 
   /**
    * Overrides the contrib definition while preserving its stable ID.
+   *
+   * @param array<string, mixed> $definitions
+   *   Group relationship plugin definitions keyed by plugin ID.
    */
   #[Hook('group_relation_type_alter')]
   public function groupRelationTypeAlter(array &$definitions): void {

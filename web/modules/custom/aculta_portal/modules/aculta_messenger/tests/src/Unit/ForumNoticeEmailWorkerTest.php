@@ -19,7 +19,7 @@ use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\Mail\ForumNoticeMailType;
 use Drupal\aculta_messenger\Plugin\QueueWorker\ForumNoticeEmailWorker;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -95,7 +95,7 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
       $this->createMock(ForumNoticeAccessPolicyInterface::class),
       $this->createMock(FlagServiceInterface::class),
       new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class)),
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $entities,
         $this->createMock(DomainNegotiatorInterface::class),
         $this->createMock(ConfigFactoryInterface::class),
@@ -129,7 +129,7 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
       ->with(12, 72, Aviso::TIPO_RESPOSTA, 1);
     $outbox->expects(self::once())
       ->method('completeDirectDelivery')
-      ->with(17, self::isType('callable'))
+      ->with(17, self::isCallable())
       ->willReturnCallback(static function (int $id, callable $acknowledge) use ($event): bool {
         $acknowledge($event);
         return TRUE;
@@ -199,7 +199,7 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
         $access,
         $flags,
         new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class)),
-        new DomainPurposeManager(
+        new DomainSiteManager(
           $entities,
           $domainNegotiator,
           $this->createMock(ConfigFactoryInterface::class),
@@ -304,7 +304,7 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
         $access,
         $flags,
         new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class)),
-        new DomainPurposeManager(
+        new DomainSiteManager(
           $entities,
           $domainNegotiator,
           $this->createMock(ConfigFactoryInterface::class),
@@ -415,7 +415,7 @@ final class ForumNoticeEmailWorkerTest extends UnitTestCase {
         $access,
         $flags,
         new EmailConfirmationPolicy($userData, $entities, $this->createMock(ModuleHandlerInterface::class)),
-        new DomainPurposeManager(
+        new DomainSiteManager(
           $entities,
           $domainNegotiator,
           $this->createMock(ConfigFactoryInterface::class),

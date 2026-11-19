@@ -22,8 +22,8 @@ class aculta_H5PLibraryDeleteForm extends FormBase {
   protected aculta_H5PDrupal $framework;
 
   public function __construct(
-    private readonly Connection $database,
-    private readonly aculta_H5PLibraryCacheInvalidator $cacheInvalidator,
+    protected readonly Connection $database,
+    protected readonly aculta_H5PLibraryCacheInvalidator $cacheInvalidator,
     aculta_H5PDrupal $framework,
   ) {
     $this->framework = $framework;

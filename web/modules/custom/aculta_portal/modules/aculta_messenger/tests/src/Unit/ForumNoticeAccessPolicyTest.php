@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -13,10 +13,12 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\domain\DomainNegotiationContext;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -67,6 +69,13 @@ final class ForumNoticeAccessPolicyTest extends UnitTestCase {
 
   /**
    * Creates the Forum domain, active recipient, and topic fixtures.
+   *
+   * @return array{ForumNoticeAccessPolicy, NodeInterface&MockObject, UserInterface}
+   *   Policy, topic, and recipient fixtures.
+   */
+  /**
+   * @return array{ForumNoticeAccessPolicy, NodeInterface&MockObject, UserInterface&MockObject}
+   *   Access policy and its node/account fixtures.
    */
   private function fixture(string $assignedDomain, AccessResult $access, bool $active = TRUE): array {
     $domain = $this->createMock(DomainInterface::class);
@@ -88,8 +97,8 @@ final class ForumNoticeAccessPolicyTest extends UnitTestCase {
 
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn($domain);
-    $negotiator->method('setActiveDomain')->willReturn(NULL);
-    $purposeManager = new DomainPurposeManager(
+    $negotiator->method('getContext')->willReturn($this->createMock(DomainNegotiationContext::class));
+    $siteManager = new DomainSiteManager(
       $entityTypeManager,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -106,7 +115,7 @@ final class ForumNoticeAccessPolicyTest extends UnitTestCase {
     $topic->method('get')->with('field_domain_source')->willReturn($source);
     $topic->method('access')->willReturn($access);
 
-    return [new ForumNoticeAccessPolicy($entityTypeManager, $purposeManager), $topic, $account];
+    return [new ForumNoticeAccessPolicy($entityTypeManager, $siteManager), $topic, $account];
   }
 
 }

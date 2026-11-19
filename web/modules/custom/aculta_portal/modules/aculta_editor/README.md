@@ -20,6 +20,11 @@ Os formatos antigos recebem as funções do ACULTA; os excedentes foram removido
 | `wiki` | **Aculta Wiki (somente Wiki)** | CKEditor 5 |
 | `webform_default` | formato do sistema do Webform (não alterar) | CKEditor 5 |
 
+O formato `revista_editorial` integra o plugin oficial UI Styles CKEditor 5 de
+bloco, com opções de superfície, espaçamento, elevação e raio do SDC `surface`.
+As classes são restritas ao catálogo do tema e preservadas pelo filtro HTML.
+UI Patterns CKEditor 5 não é configurado.
+
 Removidos: `aculta_basico`, `aculta_editorial`, `aculta_institucional`, `aculta_email` (sem conteúdo) e
 `restricted_html` (o único conteúdo, a página 372, foi migrado para `usuario_aculta` sem perda: só `<p>` e `<a>`).
 
@@ -45,6 +50,18 @@ Habilitados: `ckeditor5_plugin_pack_auto_image` (exceção do responsável; iner
 
 Desabilitados: `html_embed`, `free_wproofreader`, `font`, `emoji`, `todo_document_list`, `empty_block`,
 `restricted_editing`. Premium Features está instalado no código, mas não habilitado.
+
+## Emojis Fluent (seletor próprio)
+
+O botão `acultaFluentEmoji` está em `usuario_aculta`, `revista_editorial`, `wiki` e `forum`. O seletor lê o catálogo curado de
+`data/fluent-emoji-catalog.json` (37 emojis de cultivo, vibe 420, saúde e direitos) e insere apenas o caractere Unicode
+nativo. Mãos e gestos usam o tom pardo (Fitzpatrick Tipo 4, modificador `U+1F3FD`).
+
+O filtro `fluent_emoji` (`TYPE_TRANSFORM_REVERSIBLE`, peso 25) troca o glifo na saída pelo SVG colorido do componente
+`reaction-emoji` do tema `aculta420_v2`, com `role="img"` e `aria-label` em português. O banco, a busca e os feeds
+continuam em Unicode puro. O filtro não converte glifos dentro de atributos HTML, `<pre>` ou `<code>`.
+
+O Plugin Pack `emoji` continua desabilitado: este seletor é código próprio do `aculta_editor`.
 
 ## Contrato com o aculta_mailer
 

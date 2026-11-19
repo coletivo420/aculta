@@ -1,17 +1,25 @@
 <?php
 
 /**
- * Gate anti-regressão das exceções do Turnstile (docs/portal/TURNSTILE.md, seção "Exceções").
+ * @file
+ * Gate anti-regressão das exceções do Turnstile.
+ *
+ * Ver docs/portal/TURNSTILE.md, seção "Exceções".
  *
  * Confere, sem bootstrap do Drupal:
- * - cada formulário excluído (EXCEPTION_FORM_IDS) tem captcha_point com status false em config/sync;
- * - os formulários que precisam de proteção (login, cadastro, recuperação, contato, participação) seguem com status true;
+ * - cada formulário excluído (EXCEPTION_FORM_IDS) tem captcha_point com
+ *   status false em config/sync;
+ * - os formulários que precisam de proteção (login, cadastro,
+ *   recuperação, contato, participação) seguem com status true;
  * - a lista de exceções do código e a documentação são as mesmas;
- * - o popup "Entrar" é o único formulário novo de exceção: sem elemento de captcha e com o ID registrado;
- * - a rota do popup existe e o /entrar continua com o Turnstile (caminho e ponto ativo).
+ * - o popup "Entrar" é o único formulário novo de exceção: sem
+ *   elemento de captcha e com o ID registrado;
+ * - a rota do popup existe e o /entrar continua com o Turnstile
+ *   (caminho e ponto ativo).
  *
- * Motivo: a exceção só é segura enquanto for explícita. Uma mudança em config ou em código que aplique o desafio
- * ao modal, ou que tire o desafio de /entrar, precisa falhar aqui e não passar despercebida.
+ * Motivo: a exceção só é segura enquanto for explícita. Uma mudança em
+ * config ou em código que aplique o desafio ao modal, ou que tire o
+ * desafio de /entrar, precisa falhar aqui e não passar despercebida.
  */
 
 declare(strict_types=1);
@@ -34,10 +42,11 @@ else {
   $exceptions = $ids[1];
 }
 
-// Exceções obrigatórias (contrato): loja, checkout (cadastro pela compra) e popup "Entrar".
+// Exceções obrigatórias (contrato): loja, checkout (cadastro pela
+// compra) e popup "Entrar".
 $required = ['commerce_order_item_add_to_cart_form', 'commerce_checkout_flow_default', 'aculta_login_popup_form'];
 foreach ($required as $formId) {
-  if (!in_array($formId, $exceptions, true)) {
+  if (!in_array($formId, $exceptions, TRUE)) {
     $errors[] = "Exceção obrigatória fora de EXCEPTION_FORM_IDS: {$formId}.";
   }
 }
@@ -68,7 +77,8 @@ foreach ($protected as $formId) {
   }
 }
 
-// O popup não pode receber elemento de captcha, e o ID do formulário é o registrado.
+// O popup não pode receber elemento de captcha, e o ID do formulário
+// é o registrado.
 $popup = $read('web/modules/custom/aculta_portal/src/Form/LoginPopupForm.php');
 if ($popup === '') {
   $errors[] = 'LoginPopupForm.php não encontrado.';
@@ -80,7 +90,8 @@ else {
   if (!preg_match('/extends\s+UserLoginForm\b/', $popup)) {
     $errors[] = 'LoginPopupForm deve herdar de UserLoginForm (validação e flood do Core).';
   }
-  // Só código conta: comentários (que citam a exceção) são removidos antes da checagem.
+  // Só código conta: comentários (que citam a exceção) são removidos
+  // antes da checagem.
   $code = preg_replace('#/\*.*?\*/|//[^\n]*#s', '', $popup) ?? $popup;
   if (preg_match("/['\"]#type['\"]\s*=>\s*['\"]captcha['\"]|captcha_|Turnstile/i", $code)) {
     $errors[] = 'LoginPopupForm não pode receber captcha (exceção do Turnstile).';

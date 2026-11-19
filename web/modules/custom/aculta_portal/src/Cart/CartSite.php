@@ -18,13 +18,16 @@ final class CartSite {
 
   public const APOIO = 'apoio';
 
-  /** Assinatura: espaço próprio no carrinho, com checkout próprio (fora do carrinho unificado). */
+  /**
+   * Assinatura: espaço próprio no carrinho, com checkout próprio (fora do carrinho unificado). */
   public const ASSINATURA = 'assinatura';
 
-  /** Ordem dos separadores no painel. */
+  /**
+   * Ordem dos separadores no painel. */
   public const ORDEM = [self::LOJA, self::CURSOS, self::APOIO, self::ASSINATURA];
 
-  /** Tipo de pedido → separador. Tipo não listado cai na loja. */
+  /**
+   * Tipo de pedido → separador. Tipo não listado cai na loja. */
   private const POR_TIPO = [
     'default' => self::LOJA,
     'curso' => self::CURSOS,
@@ -32,7 +35,8 @@ final class CartSite {
     'assinatura' => self::ASSINATURA,
   ];
 
-  /** Rótulo visível do separador (texto fixo do painel). */
+  /**
+   * Rótulo visível do separador (texto fixo do painel). */
   private const ROTULOS = [
     self::LOJA => 'Loja',
     self::CURSOS => 'Cursos',
@@ -40,10 +44,28 @@ final class CartSite {
     self::ASSINATURA => 'Assinatura',
   ];
 
+  /**
+   * Devolve o separador do tipo de pedido, caindo na loja quando desconhecido.
+   *
+   * @param string $tipoDePedido
+   *   Tipo de pedido.
+   *
+   * @return string
+   *   Identificador do separador.
+   */
   public static function paraTipo(string $tipoDePedido): string {
     return self::POR_TIPO[$tipoDePedido] ?? self::LOJA;
   }
 
+  /**
+   * Devolve o rótulo visível do separador.
+   *
+   * @param string $site
+   *   Identificador do separador.
+   *
+   * @return string
+   *   Rótulo do separador.
+   */
   public static function rotulo(string $site): string {
     return self::ROTULOS[$site];
   }

@@ -45,7 +45,7 @@ final class DomainSurfaceMapTest extends UnitTestCase {
       'shop' => '/loja',
       'forum' => '/discussoes',
       'links' => '/redes-sociais',
-      'account' => '/conta',
+      'account' => '/aculta-studio-dashboard',
       'eventos' => '/eventos',
     ], DomainSurfaceMap::FRONT_PATHS);
   }
@@ -53,7 +53,7 @@ final class DomainSurfaceMapTest extends UnitTestCase {
   /**
    * Nó da loja e caminho legado do Forum preservados.
    */
-  public function testNoDaRaizECaminhosLegadosPreservados(): void {
+  public function testRootNodeAndLegacyPathsArePreserved(): void {
     $this->assertSame(['shop' => '/node/372'], DomainSurfaceMap::NO_DA_RAIZ);
     $this->assertSame(['forum' => ['/forum']], DomainSurfaceMap::CAMINHOS_LEGADOS);
   }

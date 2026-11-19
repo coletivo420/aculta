@@ -2,15 +2,22 @@
 
 /**
  * @file
- * Gate: links de acesso único valem 24 horas em todo o projeto, e reenvio não reaproveita link antigo.
+ * Gate: links de acesso único valem 24 horas em todo o projeto.
+ *
+ * Reenvio não reaproveita link antigo.
  *
  * Decisão do responsável (2026-10-20). Ver docs/portal/LINKS-DE-USO-UNICO.md.
  *
  * Confere, sem Runtime:
- * - password_reset_timeout (Core user) e hash_expiration (email_confirmer) em config/sync: no máximo 86400.
- * - constante de validade do Portal (SingleUseLinkPolicy::TTL) e do aculta_mailer (SingleUseLinkMail::TTL): 86400.
- * - AcultaMailConfirmerManager::isExpired() usa hash_expiration com a fronteira da política; nenhum isExpired() customizado devolve FALSE fixo.
- * - cancelamento do conteúdo anterior no pedido novo (AcultaMailer::deliver) e recusa de reenvio de link de uso único
+ * - password_reset_timeout (Core user) e hash_expiration
+ *   (email_confirmer) em config/sync: no máximo 86400.
+ * - constante de validade do Portal (SingleUseLinkPolicy::TTL) e do
+ *   aculta_mailer (SingleUseLinkMail::TTL): 86400.
+ * - AcultaMailConfirmerManager::isExpired() usa hash_expiration com a
+ *   fronteira da política; nenhum isExpired() customizado devolve
+ *   FALSE fixo.
+ * - cancelamento do conteúdo anterior no pedido novo
+ *   (AcultaMailer::deliver) e recusa de reenvio de link de uso único
  *   (MailResend::canResend).
  * - documento normativo e índice do Portal presentes.
  */
@@ -48,13 +55,16 @@ $check(preg_match('/const TTL = 86400;/', $portalPolicy) === 1, 'SingleUseLinkPo
 $mailerPolicy = $read($root . '/web/modules/custom/aculta_portal/modules/aculta_mailer/src/Log/SingleUseLinkMail.php');
 $check(preg_match('/const TTL = 86400;/', $mailerPolicy) === 1, 'SingleUseLinkMail::TTL deve ser 86400 (aculta_mailer/src/Log/SingleUseLinkMail.php).');
 
-// Confirmação de e-mail: a expiração vem do hash_expiration (verificado acima), com a mesma fronteira da política.
-// A classe de entidade do Portal que sobrescrevia isExpired() foi retirada na 0.1.0-dev.2 do aculta_mail_confirmer.
+// Confirmação de e-mail: a expiração vem do hash_expiration (verificado
+// acima), com a mesma fronteira da política.
+// A classe de entidade do Portal que sobrescrevia isExpired() foi
+// retirada na 0.1.0-dev.2 do aculta_mail_confirmer.
 $confirmerManager = $read($root . '/web/modules/custom/aculta_portal/modules/aculta_mail_confirmer/src/AcultaMailConfirmerManager.php');
 $check(str_contains($confirmerManager, 'getCreatedTime() >= $this->hashExpiration()'), 'AcultaMailConfirmerManager::isExpired() deve usar hash_expiration com a fronteira >= (igual à SingleUseLinkPolicy).');
 $check(!is_file($root . '/web/modules/custom/aculta_portal/src/Email/EmailConfirmationEntity.php'), 'EmailConfirmationEntity não deve voltar: a expiração fica no manager da confirmação.');
 
-// Nenhum isExpired() customizado do projeto pode devolver FALSE fixo (a validade infinita foi revogada).
+// Nenhum isExpired() customizado do projeto pode devolver FALSE fixo
+// (a validade infinita foi revogada).
 foreach (['web/modules/custom', 'web/themes/custom/aculta420/src'] as $dir) {
   $iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($root . '/' . $dir, FilesystemIterator::SKIP_DOTS));
   foreach ($iterator as $file) {
@@ -68,7 +78,8 @@ foreach (['web/modules/custom', 'web/themes/custom/aculta420/src'] as $dir) {
   }
 }
 
-// Pedido novo cancela o conteúdo anterior; reenvio não reaproveita link de uso único.
+// Pedido novo cancela o conteúdo anterior; reenvio não reaproveita
+// link de uso único.
 $deliver = $read($root . '/web/modules/custom/aculta_portal/modules/aculta_mailer/src/Api/AcultaMailer.php');
 $check(str_contains($deliver, 'cancelPayloads('), 'AcultaMailer::deliver deve cancelar o conteúdo anterior de link de uso único (cancelPayloads).');
 $resend = $read($root . '/web/modules/custom/aculta_portal/modules/aculta_mailer/src/Delivery/MailResend.php');

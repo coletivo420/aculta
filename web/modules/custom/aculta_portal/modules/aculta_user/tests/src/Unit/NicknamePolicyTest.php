@@ -50,6 +50,9 @@ final class NicknamePolicyTest extends UnitTestCase {
   /**
    * Creates a read-only Entity Query mock with no bypass of accessCheck(FALSE).
    */
+  /**
+   * @param array<int, mixed> $conditions
+   */
   private function policy(array &$conditions, int $count): NicknamePolicy {
     $query = $this->createMock(QueryInterface::class);
     $query->expects(self::once())->method('accessCheck')->with(FALSE)->willReturnSelf();

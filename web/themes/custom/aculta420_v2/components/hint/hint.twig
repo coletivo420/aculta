@@ -1,0 +1,5 @@
+{% set tone = tone|default('normal') %}
+{% if tone not in ['normal', 'muted'] %}
+  {% set tone = 'normal' %}
+{% endif %}
+<p{{ attributes.addClass('aculta-hint', 'aculta-hint--' ~ tone) }}>{{ content }}</p>

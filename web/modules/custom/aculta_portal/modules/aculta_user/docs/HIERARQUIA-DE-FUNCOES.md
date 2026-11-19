@@ -73,7 +73,7 @@ Unitários (rodar sem o Runtime):
 Comando: `php vendor/bin/phpunit -c web/core/phpunit.xml.dist web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit`
 
 Gates: `validate-role-hierarchy.php` (cadeia decidida, sem ciclo, administrador herda de todos, linha de base de `hasRole`),
-`validate-aculta-user-roles.php`, `validate-aculta-portal-drupal11.php`.
+`validate-aculta-user-roles.php`, `validate-aculta-portal-drupal12.php`.
 
 Integração (Runtime de teste, `aculta.toca.net.br`, banco `aculta_runtime`): ver registro na CHANGELOG do aculta_user, 0.4.0-dev.23.
 

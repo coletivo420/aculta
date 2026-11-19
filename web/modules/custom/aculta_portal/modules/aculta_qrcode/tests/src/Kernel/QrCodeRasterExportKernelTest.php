@@ -62,7 +62,7 @@ final class QrCodeRasterExportKernelTest extends KernelTestBase {
       /**
        * {@inheritdoc}
        */
-      public function publicUrl(QrCode $entity): ?Url {
+      public function publicUrl(QrCode $entity): Url {
         return Url::fromUri('https://links.example.invalid/qr/' . $entity->getCode());
       }
 
@@ -90,7 +90,10 @@ final class QrCodeRasterExportKernelTest extends KernelTestBase {
       'status' => 0,
     ]);
     self::assertCount(1, $files);
-    self::assertStringStartsWith(QrCodeExporter::DIRECTORY . '/', reset($files)->getFileUri());
+    $firstFile = reset($files);
+    $fileUri = $firstFile->getFileUri();
+    self::assertNotNull($fileUri);
+    self::assertStringStartsWith(QrCodeExporter::DIRECTORY . '/', $fileUri);
   }
 
 }

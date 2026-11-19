@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -21,6 +21,9 @@ final class ConversationPolicyTest extends UnitTestCase {
 
   /**
    * Creates the conversation policy with test settings.
+   *
+   * @param array<mixed> $settings
+   *   Configurações da política.
    */
   private function policy(array $settings = []): ConversationPolicy {
     return new ConversationPolicy($this->getConfigFactoryStub(['aculta_messenger.settings' => $settings]));

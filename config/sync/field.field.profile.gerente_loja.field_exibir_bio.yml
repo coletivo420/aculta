@@ -21,4 +21,3 @@ settings:
   on_label: Habilitado
   off_label: Desligado
 field_type: boolean
-

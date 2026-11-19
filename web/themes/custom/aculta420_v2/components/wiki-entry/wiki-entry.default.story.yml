@@ -1,0 +1,27 @@
+name: Artigo Wiki
+description: Verbetes com abas de ação, resumo, corpo, mídia, categorias e referências.
+component: aculta420_v2:wiki-entry
+props:
+  variant: article
+  url: /wiki/exemplo
+  entity_title: Exemplo de verbete
+  has_summary: true
+  has_image: true
+  has_categories: true
+slots:
+  summary:
+    markup: '<p>Resumo do verbete com uma apresentação direta do assunto.</p>'
+  image:
+    markup: '<figure><img src="/themes/custom/aculta420_v2/assets/logos/wiki420-globe-512.png" alt="Ilustração representativa do verbete" width="512" height="512"></figure>'
+  categories:
+    markup: '<ul><li><a href="/wiki/categoria/cultura">Cultura</a></li></ul>'
+  body:
+    markup: '<p>O corpo do verbete preserva a marcação e os links gerados pelo Drupal.</p><h2>História</h2><p>Texto de exemplo para demonstrar a coluna de leitura.</p>'
+  related:
+    markup: '<h2>Verbetes relacionados</h2><ul><li><a href="/wiki/outro">Outro verbete</a></li></ul>'
+  references:
+    markup: '<h2>Referências</h2><ol><li>Referência editorial de exemplo.</li></ol>'
+  discussion:
+    markup: '<p>Discussão do verbete fornecida pelo módulo proprietário.</p>'
+  actions:
+    markup: '<ul class="links"><li><a href="/wiki/exemplo/editar">Editar</a></li></ul>'

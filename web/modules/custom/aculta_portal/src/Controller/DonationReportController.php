@@ -61,9 +61,13 @@ final class DonationReportController implements ContainerInjectionInterface {
 
   /**
    * Página do relatório de doações.
+   *
+   * @return array<string, mixed>
    */
   public function report(Request $request): array {
-    $fuso = new \DateTimeZone($this->configFactory->get('system.date')->get('timezone.default') ?: self::FUSO_PADRAO);
+    $timezoneConfig = $this->configFactory->get('system.date')->get('timezone.default');
+    $timezoneName = is_string($timezoneConfig) && $timezoneConfig !== '' ? $timezoneConfig : self::FUSO_PADRAO;
+    $fuso = new \DateTimeZone($timezoneName);
     $filtros = SalesReportFilters::fromQuery($request->query->all(), $fuso, new \DateTimeImmutable('now', $fuso));
 
     if ($filtros->erros !== []) {
@@ -93,16 +97,13 @@ final class DonationReportController implements ContainerInjectionInterface {
       '#empty' => $this->t('Nenhuma doação concluída no intervalo.'),
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
-    $saida = [
-      '#type' => 'container',
-      '#attributes' => ['data-portal-ui' => 'sales-panel'],
+    $conteudo = [
       'resumo' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'sales-section'],
         'titulo' => [
           '#type' => 'html_tag',
           '#tag' => 'h2',
-          '#attributes' => ['data-portal-ui' => 'sales-heading'],
           '#value' => $this->t('Doações por período'),
         ],
         'conteudo' => $tabela,
@@ -113,7 +114,6 @@ final class DonationReportController implements ContainerInjectionInterface {
         'titulo' => [
           '#type' => 'html_tag',
           '#tag' => 'h2',
-          '#attributes' => ['data-portal-ui' => 'sales-heading'],
           '#value' => $this->t('Doações e pagamentos'),
         ],
         'conteudo' => $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_DOACAO, $this->paginaAtual($request), 'aculta_portal.relatorio_doacoes', $this->filtrosDaUrl($request)),
@@ -121,19 +121,23 @@ final class DonationReportController implements ContainerInjectionInterface {
     ];
     $recorrentes = $this->recorrentes->construir();
     if ($recorrentes !== []) {
-      $saida['recorrentes'] = [
+      $conteudo['recorrentes'] = [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'sales-section'],
         'titulo' => [
           '#type' => 'html_tag',
           '#tag' => 'h2',
-          '#attributes' => ['data-portal-ui' => 'sales-heading'],
           '#value' => $this->t('Doações recorrentes'),
         ],
         'conteudo' => $recorrentes,
       ];
     }
-    return $saida;
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:sales-panel',
+      '#slots' => ['content' => $conteudo],
+      '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
+    ];
   }
 
   /**
@@ -150,7 +154,13 @@ final class DonationReportController implements ContainerInjectionInterface {
    *   Filtros escalares da URL.
    */
   private function filtrosDaUrl(Request $request): array {
-    return array_filter($request->query->all(), static fn ($valor, $chave): bool => $chave !== 'pagina' && is_scalar($valor), ARRAY_FILTER_USE_BOTH);
+    $filtros = [];
+    foreach ($request->query->all() as $chave => $valor) {
+      if ($chave !== 'pagina' && is_scalar($valor)) {
+        $filtros[(string) $chave] = (string) $valor;
+      }
+    }
+    return $filtros;
   }
 
 }

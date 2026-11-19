@@ -17,11 +17,13 @@ use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\aculta_user\Social\SocialNetworks;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Tests\CommentTestTrait;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\NodeType;
+use Drupal\profile\ProfileStorageInterface;
 use Drupal\user\Entity\User;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
@@ -109,10 +111,19 @@ final class PublicForumLastActivityAuthorKernelTest extends KernelTestBase {
       ->method('loadMultiple')
       ->with([(int) $legacyAuthor->id()])
       ->willReturn([(int) $legacyAuthor->id() => $legacyAuthor]);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $userStorage->expects(self::once())
+      ->method('loadMultiple')
+      ->with([(int) $account->id()])
+      ->willReturn([(int) $account->id() => $account]);
+    $profileStorage = $this->createMock(ProfileStorageInterface::class);
+    $profileStorage->method('loadByUser')->willReturn(NULL);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->willReturnMap([
       ['aculta_forum_post', $postStorage],
       ['aculta_legado_autor', $legacyStorage],
+      ['user', $userStorage],
+      ['profile', $profileStorage],
     ]);
 
     $resolver = new AuthorIdentityResolver(
@@ -142,11 +153,51 @@ final class PublicForumLastActivityAuthorKernelTest extends KernelTestBase {
 
     $hooks->preprocessViewsViewFields($variables);
 
-    self::assertSame('aculta_user_author_card', $variables['last_comment_author']['#theme']);
-    self::assertSame('author_growroom_historico', $variables['last_comment_author']['#variant']);
-    self::assertSame('Autora do Growroom-gr', $variables['last_comment_author']['#display_name']);
-    self::assertSame('Acervo histórico Growroom', $variables['last_comment_author']['#source_label']);
-    self::assertContains('aculta_legado_autor:' . $legacyAuthor->id(), $variables['last_comment_author']['#cache']['tags']);
+    $authorCard = $variables['last_comment_author'] ?? NULL;
+    self::assertIsArray($authorCard);
+    self::assertSame('aculta_user_author_card', $authorCard['#theme'] ?? NULL);
+    self::assertSame('author_growroom_historico', $authorCard['#variant'] ?? NULL);
+    self::assertSame('Autora do Growroom-gr', $authorCard['#display_name'] ?? NULL);
+    self::assertSame('Acervo histórico Growroom', $authorCard['#source_label'] ?? NULL);
+    $cache = $authorCard['#cache'] ?? NULL;
+    self::assertIsArray($cache);
+    $tags = $cache['tags'] ?? NULL;
+    self::assertIsArray($tags);
+    self::assertContains('aculta_legado_autor:' . $legacyAuthor->id(), $tags);
+
+    $invalidViewVariables = ['view' => new \stdClass()];
+    $hooks->preprocessViewsViewFields($invalidViewVariables);
+    self::assertArrayNotHasKey('last_comment_author', $invalidViewVariables);
+
+    $commentRow = new ResultRow([
+      'topic_id' => $topicId,
+      'comment_uid' => (int) $account->id(),
+      'comment_timestamp' => $timestamp + 100,
+      'comment_count' => 1,
+      'last_updated' => $timestamp + 100,
+    ]);
+    $commentView = $this->getMockBuilder(ViewExecutable::class)->disableOriginalConstructor()->getMock();
+    $commentView->method('id')->willReturn('aculta_forum_public_topics');
+    $commentView->result = [$commentRow];
+    $commentView->field = [
+      'nid' => $this->fieldValue('topic_id'),
+      'last_comment_uid' => $this->fieldValue('comment_uid'),
+      'last_comment_timestamp' => $this->fieldValue('comment_timestamp'),
+      'last_comment_count' => $this->fieldValue('comment_count'),
+      'last_updated' => $this->fieldValue('last_updated'),
+    ];
+    $noCardVariables = ['view' => $commentView, 'row' => $commentRow];
+
+    $hooks->preprocessViewsViewFields($noCardVariables);
+
+    $placeholder = $noCardVariables['last_comment_author_cache'] ?? NULL;
+    self::assertIsArray($placeholder);
+    $placeholderCache = $placeholder['#cache'] ?? NULL;
+    self::assertIsArray($placeholderCache);
+    $accountMetadata = CacheableMetadata::createFromObject($account);
+    self::assertSame($accountMetadata->getCacheContexts(), $placeholderCache['contexts'] ?? NULL);
+    self::assertSame($accountMetadata->getCacheTags(), $placeholderCache['tags'] ?? NULL);
+    self::assertSame(0, $placeholderCache['max-age'] ?? NULL);
   }
 
   /**
@@ -155,7 +206,17 @@ final class PublicForumLastActivityAuthorKernelTest extends KernelTestBase {
   private function fieldValue(string $property, int $default = 0): FieldPluginBase {
     $field = $this->getMockBuilder(FieldPluginBase::class)->disableOriginalConstructor()->getMock();
     $field->method('getValue')->willReturnCallback(
-      static fn (ResultRow $row): int => (int) ($row->{$property} ?? $default),
+      static function (ResultRow $row) use ($property, $default): int {
+        $value = $row->{$property} ?? NULL;
+        if (is_int($value)) {
+          return $value;
+        }
+        if ((is_float($value) || is_string($value)) && is_numeric($value)) {
+          return (int) $value;
+        }
+
+        return $default;
+      },
     );
     return $field;
   }

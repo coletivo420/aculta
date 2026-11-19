@@ -59,6 +59,9 @@ final class UploadPolicy {
   /**
    * Monta validadores do Managed File API para documentos, dentro do catálogo.
    *
+   * @return array<string, array<string, int|string>>
+   *   Validadores do Managed File API.
+   *
    * @throws \InvalidArgumentException
    *   Quando o limite é inválido ou as extensões saem do catálogo de documentos.
    */

@@ -55,7 +55,7 @@ class EventEditorialPresenter {
 
     $renderItems = [];
     foreach ($items as $item) {
-      $name = htmlspecialchars($item['nome'] ?? '', ENT_QUOTES, 'UTF-8');
+      $name = htmlspecialchars($item['nome'], ENT_QUOTES, 'UTF-8');
       $cota = htmlspecialchars($item['cota'] ?? 'Apoio', ENT_QUOTES, 'UTF-8');
       $link = !empty($item['link']) ? filter_var($item['link'], FILTER_VALIDATE_URL) : NULL;
 
@@ -111,9 +111,9 @@ class EventEditorialPresenter {
 
     $renderItems = [];
     foreach ($quotes as $quote) {
-      $veiculo = htmlspecialchars($quote['veiculo'] ?? '', ENT_QUOTES, 'UTF-8');
+      $veiculo = htmlspecialchars($quote['veiculo'], ENT_QUOTES, 'UTF-8');
       $data = htmlspecialchars($quote['data'] ?? '', ENT_QUOTES, 'UTF-8');
-      $trecho = htmlspecialchars($quote['trecho'] ?? '', ENT_QUOTES, 'UTF-8');
+      $trecho = htmlspecialchars($quote['trecho'], ENT_QUOTES, 'UTF-8');
       $link = !empty($quote['link']) ? filter_var($quote['link'], FILTER_VALIDATE_URL) : NULL;
 
       $sourceText = $veiculo . ($data ? ' · ' . $data : '');
@@ -170,7 +170,7 @@ class EventEditorialPresenter {
       }
       $parts = array_map('trim', explode('|', $line));
       $results[] = [
-        'nome' => $parts[0] ?? '',
+        'nome' => $parts[0],
         'cota' => $parts[1] ?? 'Apoio',
         'link' => $parts[2] ?? NULL,
       ];
@@ -204,7 +204,7 @@ class EventEditorialPresenter {
       }
       $parts = array_map('trim', explode('|', $line));
       $results[] = [
-        'veiculo' => $parts[0] ?? 'Imprensa',
+        'veiculo' => $parts[0],
         'trecho' => $parts[1] ?? '',
         'data' => $parts[2] ?? '',
         'link' => $parts[3] ?? NULL,

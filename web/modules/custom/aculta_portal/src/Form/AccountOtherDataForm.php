@@ -26,11 +26,11 @@ use Symfony\Component\HttpFoundation\RequestStack;
 final class AccountOtherDataForm extends FormBase {
 
   public function __construct(
-    private readonly ?AccountDocumentInterface $document,
-    private readonly AccountInterface $currentUser,
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly MessengerInterface $messages,
-    private readonly RequestStack $requests,
+    protected readonly ?AccountDocumentInterface $document,
+    protected readonly AccountInterface $currentUser,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly MessengerInterface $messages,
+    protected readonly RequestStack $requests,
   ) {}
 
   /**
@@ -66,6 +66,11 @@ final class AccountOtherDataForm extends FormBase {
 
   /**
    * Monta o formulário conforme o documento salvo e o serviço disponível.
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['#cache'] = ['contexts' => ['user'], 'max-age' => 0];
@@ -73,8 +78,13 @@ final class AccountOtherDataForm extends FormBase {
       return $this->unavailableForm($form);
     }
 
+    $user = $this->user();
+    if ($user === NULL) {
+      return $this->unavailableForm($form);
+    }
+
     try {
-      $saved = $this->document->savedDocument($this->user());
+      $saved = $this->document->savedDocument($user);
     }
     catch (\RuntimeException) {
       $form['unavailable'] = ['#plain_text' => (string) $this->t('Não foi possível ler o documento salvo. Tente novamente mais tarde.')];
@@ -124,13 +134,17 @@ final class AccountOtherDataForm extends FormBase {
 
   /**
    * Valida a entrada antes de gravar, sem incluí-la em mensagens.
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     if ($this->document === NULL) {
       $form_state->setErrorByName('document', $this->unavailableMessage());
       return;
     }
-    $canonical = $this->document->canonicalize((string) $form_state->getValue('document'));
+    $rawDocument = $form_state->getValue('document');
+    $canonical = $this->document->canonicalize(is_scalar($rawDocument) ? (string) $rawDocument : '');
     if ($canonical === NULL) {
       $form_state->setErrorByName('document', $this->t('Informe um CPF ou CNPJ válido.'));
       return;
@@ -140,10 +154,21 @@ final class AccountOtherDataForm extends FormBase {
 
   /**
    * Grava o documento e volta ao checkout, quando o link trouxe destino válido.
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    if ($this->document === NULL) {
+      return;
+    }
+    $user = $this->user();
+    if ($user === NULL) {
+      return;
+    }
     try {
-      $this->document->save($this->user(), (string) $form_state->get('canonical'));
+      $rawCanonical = $form_state->get('canonical');
+      $this->document->save($user, is_scalar($rawCanonical) ? (string) $rawCanonical : '');
       $this->messages->addStatus($this->t('Documento salvo.'));
     }
     catch (\LogicException) {
@@ -183,6 +208,10 @@ final class AccountOtherDataForm extends FormBase {
 
   /**
    * Formulário de indisponibilidade com uma única mensagem.
+   *
+   * @param array<mixed> $form
+   *
+   * @return array<mixed>
    */
   private function unavailableForm(array $form): array {
     $form['unavailable'] = ['#plain_text' => (string) $this->unavailableMessage()];
@@ -199,8 +228,10 @@ final class AccountOtherDataForm extends FormBase {
   /**
    * Auxiliar do formulário.
    */
-  private function user(): UserInterface {
-    return $this->entities->getStorage('user')->load($this->currentUser->id());
+  private function user(): ?UserInterface {
+    $uid = $this->currentUser->id();
+    $account = $this->entities->getStorage('user')->load($uid);
+    return $account instanceof UserInterface ? $account : NULL;
   }
 
 }

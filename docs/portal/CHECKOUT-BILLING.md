@@ -42,7 +42,7 @@
 
 ## Incidente de ambiente: redirecionamento do Mercado Pago com token de teste (2026-10-11)
 
-- **Sintoma:** ao pagar o pedido 5 no servidor de testes, o Mercado Pago abriu a tela de revisão no domínio `mercadopago.com.br`, com a conta logada do responsável (com saldo). Nada foi pago.
+- **Sintoma:** ao pagar o pedido 5 no servidor de desenvolvimento, o Mercado Pago abriu a tela de revisão no domínio `mercadopago.com.br`, com a conta logada do responsável (com saldo). Nada foi pago.
 - **Verificado:** o token do ambiente (`MERCADOPAGO_TEST_ACCESS_TOKEN`) começa com `APP_USR` e pertence a uma **conta de teste** do Mercado Pago (`test_data.test_user = true`, apelido `TESTUSER…`, tag `test_user`). A captura do painel "Credenciais de teste" mostra o mesmo formato. Portanto, `APP_USR` **não** indica produção. Não há orientação de rotação para essas credenciais.
 - **Causa provável do domínio `mercadopago.com.br`:** o código usa `init_point`. A tela de pagamento abriu no navegador onde a sessão do responsável estava logada no Mercado Pago. Para testar, o comprador precisa ser o usuário de teste do Mercado Pago, e não uma conta real.
 - **Ação:** gateway religado em 2026-10-11 para o teste de compra simulada. Antes de cada teste, o navegador deve estar **deslogado** do Mercado Pago ou logado no comprador de teste.
@@ -52,7 +52,7 @@
 
 - **Sintoma:** "Pagar e concluir a compra" abria a tela do Mercado Pago só com saldo ("Você não tem saldo suficiente") ou só com "Cartão de Débito Virtual CAIXA". Cartão de crédito não aparecia.
 - **Causa:** a configuração do gateway estava com `payment_types` vazio e `payment_method` vazio. Pelo módulo `commerce_mercado_pago`, isso gera `excluded_payment_types` com todos os tipos configuráveis e `excluded_payment_methods` com todas as bandeiras (visa, master, amex, hipercard, elo, caixa). Sobrava apenas a conta de saldo.
-- **Correção aplicada só no servidor de testes:** `payment_types = {credit_card, debit_card}` e `payment_method` com as bandeiras desses tipos para o Brasil (visa, master, amex, hipercard, elo, caixa). Resultado: nenhuma exclusão de métodos; excluídos apenas boleto, transferência e pré-pago.
+- **Correção aplicada só no servidor de desenvolvimento:** `payment_types = {credit_card, debit_card}` e `payment_method` com as bandeiras desses tipos para o Brasil (visa, master, amex, hipercard, elo, caixa). Resultado: nenhuma exclusão de métodos; excluídos apenas boleto, transferência e pré-pago.
 - **Repositório:** a mesma configuração foi levada ao `config/sync` (ver seção seguinte).
 
 ## Crédito, débito e Pix no Checkout Pro (2026-10-11)
@@ -62,15 +62,15 @@
 - Validado pela função `CheckoutPro::getExcludedPaymentTypesForPreference`: excluídos apenas `ticket` (boleto) e `prepaid_card`. `getExcludedPaymentMethodsForPreference`: nenhum.
 - Parcelamento: `max_installments` = 1 (a preferência envia 1 parcela). Não alterado, porque o pedido não pediu parcelas.
 - Pix: o módulo mapeia Pix como o método `pix` do tipo `bank_transfer`. **Não foi possível confirmar pela API** se a conta vendedora de teste tem a chave Pix cadastrada. Esse dado está no painel do Mercado Pago (conta de teste) e precisa ser confirmado pelo Felipe; se a opção não aparecer no checkout, é esse o motivo provável.
-- Configuração aplicada no servidor de testes e levada ao `config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml`.
+- Configuração aplicada no servidor de desenvolvimento e levada ao `config/sync/commerce_payment.commerce_payment_gateway.mercado_pago.yml`.
 - **Resultado do reteste (d277f2a):** a tela "Como você prefere pagar?" mostra cartões de crédito salvos (Mastercard e Visa de teste), "Novo cartão – Crédito" e "Cartão de Débito Virtual CAIXA". Crédito e débito confirmados. **Pix não aparece** no teste: provável falta de chave Pix na conta vendedora de teste.
-- **Decisão do responsável:** Pix **mantido ativado** na configuração (servidor de testes e `config/sync`). Não remover. A validação do Pix será feita em produção, com chave real cadastrada.
+- **Decisão do responsável:** Pix **mantido ativado** na configuração (servidor de desenvolvimento e `config/sync`). Não remover. A validação do Pix será feita em produção, com chave real cadastrada.
 
 
 ## Pagamento bloqueado: "Pagar" desabilitado com cartão salvo (2026-10-11)
 
 - **Preferência analisada (leitura pela API):** site MLB, vendedor e comprador são contas de teste distintas, moeda BRL, um item de R$ 30,00, não expirada, `binary_mode` true, `installments` 1, `auto_return` approved, `payer.identification` vazio, `payer.email` com domínio `.invalid`.
-- **Alteração no servidor de testes:** e-mail do usuário `teste.comum` e do pedido 5 trocados para `teste.comum@testuser.com`. A troca pelo fluxo do Drupal exige confirmação na caixa de entrada, por isso foi aplicada direto na tabela `users_field_data`, só no servidor de testes. Confirmação de conta e aceite dos termos permanecem.
+- **Alteração no servidor de desenvolvimento:** e-mail do usuário `teste.comum` e do pedido 5 trocados para `teste.comum@testuser.com`. A troca pelo fluxo do Drupal exige confirmação na caixa de entrada, por isso foi aplicada direto na tabela `users_field_data`, só no servidor de desenvolvimento. Confirmação de conta e aceite dos termos permanecem.
 - **Limitações herdadas do porte (não alteradas):** o submódulo `aculta_pagamentos_mercadopago` envia `binary_mode` fixo em true e não envia CPF no pagador. O envio de `excluded_payment_methods` vazio também é decidido pelo módulo. Mudar qualquer um desses pontos exige alteração no módulo ou um ajuste no Portal, o que ainda não foi decidido.
 - **Pendente:** se "Pagar" continuar desabilitado com o novo e-mail, o caminho seguinte é avaliar CPF no pagador (módulo) e binary_mode.
 

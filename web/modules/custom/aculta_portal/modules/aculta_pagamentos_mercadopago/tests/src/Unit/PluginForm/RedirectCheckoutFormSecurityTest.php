@@ -94,8 +94,6 @@ final class RedirectCheckoutFormSecurityTest extends UnitTestCase {
    */
   public function testPreferenceRedirectRequiresValidIdAndMercadoPagoOrigin(): void {
     $method = new \ReflectionMethod(RedirectCheckoutForm::class, 'preferenceRedirect');
-    $method->setAccessible(TRUE);
-
     $valid = $method->invoke(NULL, (object) [
       'id' => 'preference-1',
       'init_point' => 'https://www.mercadopago.com/mla/checkout/start?pref_id=preference-1',

@@ -1,6 +1,13 @@
 <?php
 
+/**
+ * Módulo de teste de publicações do Fórum.
+ *
+ * @file
+ */
+
 use Drupal\Core\Entity\ContentEntityType;
+use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\aculta_user\Entity\LegacyAuthor;
 use Drupal\aculta_user\Entity\LegacyAuthorAccessControlHandler;
 
@@ -9,6 +16,8 @@ use Drupal\aculta_user\Entity\LegacyAuthorAccessControlHandler;
  *
  * Registers the production legacy-author entity class in the focused Forum
  * Kernel fixture without enabling the full ACULTA User service graph.
+ *
+ * @param array<string, \Drupal\Core\Entity\EntityTypeInterface> $entity_types
  */
 function aculta_forum_post_test_entity_type_build(array &$entity_types): void {
   $entity_types['aculta_legado_autor'] = new ContentEntityType([

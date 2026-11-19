@@ -32,7 +32,8 @@ final class EventDateHooksKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'user', 'taxonomy', 'link', 'text', 'filter', 'datetime', 'datetime_range',
-    'options', 'field', 'key', 'address', 'geofield', 'views', 'aculta_calendar', 'aculta_events',
+    'options', 'field', 'key', 'address', 'geofield', 'views', 'ui_patterns',
+    'ui_patterns_views', 'aculta_calendar', 'aculta_events',
   ];
 
   /**
@@ -82,7 +83,7 @@ final class EventDateHooksKernelTest extends KernelTestBase {
 
     $pagina = EventPageController::create($this->container)->page((string) $evento->get('field_slug')->value);
 
-    $this->assertSame([], $pagina['#datas']);
+    $this->assertArrayNotHasKey('dates', $pagina['#slots']['essentials'] ?? []);
   }
 
   /**
@@ -93,8 +94,12 @@ final class EventDateHooksKernelTest extends KernelTestBase {
 
     $pagina = EventPageController::create($this->container)->page((string) $evento->get('field_slug')->value);
 
-    $this->assertCount(1, $pagina['#datas']);
-    $this->assertStringContainsString(' às ', (string) $pagina['#datas'][0]['#markup']);
+    $dateItems = array_filter(
+      array_keys($pagina['#slots']['essentials']['dates']['items']),
+      static fn (string|int $key): bool => is_string($key) && !str_starts_with($key, '#'),
+    );
+    $this->assertCount(1, $dateItems);
+    $this->assertStringContainsString(' às ', (string) $pagina['#slots']['essentials']['dates']['items']['date_0']['#markup']);
   }
 
   /**
@@ -119,7 +124,8 @@ final class EventDateHooksKernelTest extends KernelTestBase {
 
     // O tearDown restaura a pilha; esta requisição de teste não tem sessão.
     $pilha = $this->container->get('request_stack');
-    $pilha->push(Request::create('/eventos'));
+    $requisicao = Request::create('/eventos');
+    $pilha->push($requisicao);
     try {
       $pagina = EventCatalogueController::create($this->container)->page();
     }
@@ -128,7 +134,9 @@ final class EventDateHooksKernelTest extends KernelTestBase {
     }
 
     $agora = $this->container->get('datetime.time')->getCurrentTime();
-    $this->assertCount(1, $pagina['#items']);
+    $this->assertSame('view', $pagina['catalogue']['#type']);
+    $this->assertSame('eventos_publicos', $pagina['catalogue']['#name']);
+    $this->assertCount(1, $requisicao->attributes->get('_aculta_events_catalogue_cards', []));
     $this->assertEqualsWithDelta($fim->getTimestamp() - $agora, $pagina['#cache']['max-age'], 5);
     $this->assertSame([EventCacheTags::LISTA], $pagina['#cache']['tags']);
   }

@@ -30,15 +30,15 @@ final class ForumContentIndexProviderTest extends UnitTestCase {
     $otherNode = $this->createMock(NodeInterface::class);
     $otherNode->method('bundle')->willReturn('article');
 
-    self::assertInstanceOf(ContentIndexAccessContextProviderInterface::class, $provider);
+    self::assertContains(ContentIndexAccessContextProviderInterface::class, class_implements($provider) ?: []);
     self::assertSame('forum', $provider->getProviderId());
     self::assertSame([
       'node' => ['aculta_forum_topic'],
       'aculta_forum_post' => ['aculta_forum_post'],
       'comment' => ['aculta_discussion_post'],
     ], $provider->getSupportedEntityTypes());
-    self::assertSame('forum', $provider->getAccessPurpose($topic));
-    self::assertNull($provider->getAccessPurpose($otherNode));
+    self::assertSame('forum', $provider->getAccessSiteKey($topic));
+    self::assertNull($provider->getAccessSiteKey($otherNode));
   }
 
   /**
@@ -52,9 +52,9 @@ final class ForumContentIndexProviderTest extends UnitTestCase {
     $otherComment = $this->createMock(CommentInterface::class);
     $otherComment->method('bundle')->willReturn('comment');
 
-    self::assertSame('forum', $provider->getAccessPurpose($forumPost));
-    self::assertSame('forum', $provider->getAccessPurpose($legacyComment));
-    self::assertNull($provider->getAccessPurpose($otherComment));
+    self::assertSame('forum', $provider->getAccessSiteKey($forumPost));
+    self::assertSame('forum', $provider->getAccessSiteKey($legacyComment));
+    self::assertNull($provider->getAccessSiteKey($otherComment));
   }
 
 }

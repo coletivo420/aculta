@@ -9,6 +9,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeQueueInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
@@ -208,14 +209,16 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
    */
   public function testStaleSourceVersionDoesNotCreateNotice(): void {
     $friendship = $this->friendship(FriendshipStatus::Pending->value, 1700000001);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
     $entityTypeManager = $this->entityTypeManager(
-      $this->createMock(EntityStorageInterface::class),
-      $this->createMock(EntityStorageInterface::class),
+      $userStorage,
+      $messageStorage,
       $this->friendshipStorage($friendship),
     );
-    $entityTypeManager->getStorage('user')->expects(self::never())->method('load');
-    $entityTypeManager->getStorage('message')->expects(self::never())->method('getQuery');
-    $entityTypeManager->getStorage('message')->expects(self::never())->method('create');
+    $userStorage->expects(self::never())->method('load');
+    $messageStorage->expects(self::never())->method('getQuery');
+    $messageStorage->expects(self::never())->method('create');
     $queue = $this->createMock(FriendshipNoticeQueueInterface::class);
     $queue->expects(self::never())->method('enqueue');
 
@@ -238,14 +241,16 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
       ->method('loadUnchanged')
       ->with('44')
       ->willReturn($currentFriendship);
+    $userStorage = $this->createMock(EntityStorageInterface::class);
+    $messageStorage = $this->createMock(EntityStorageInterface::class);
     $entityTypeManager = $this->entityTypeManager(
-      $this->createMock(EntityStorageInterface::class),
-      $this->createMock(EntityStorageInterface::class),
+      $userStorage,
+      $messageStorage,
       $friendshipStorage,
     );
-    $entityTypeManager->getStorage('user')->expects(self::never())->method('loadUnchanged');
-    $entityTypeManager->getStorage('message')->expects(self::never())->method('getQuery');
-    $entityTypeManager->getStorage('message')->expects(self::never())->method('create');
+    $userStorage->expects(self::never())->method('loadUnchanged');
+    $messageStorage->expects(self::never())->method('getQuery');
+    $messageStorage->expects(self::never())->method('create');
     $queue = $this->createMock(FriendshipNoticeQueueInterface::class);
     $queue->expects(self::never())->method('enqueue');
 
@@ -361,6 +366,10 @@ final class FriendshipNoticeSubscriberTest extends UnitTestCase {
 
   /**
    * Creates a field item list exposing one configured value.
+   */
+  /**
+   * @return FieldItemListInterface<FieldItemInterface>&\PHPUnit\Framework\MockObject\MockObject
+   *   Mocked field item list with the configured value.
    */
   private function fieldValue(mixed $value): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);

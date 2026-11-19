@@ -19,7 +19,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 /**
  * Tests validation and file handling for image uploads.
  */
-#[CoversClass(\DefaultClass\Drupal\aculta_image\ImageUploadIngestor::class)]
+#[CoversClass(ImageUploadIngestor::class)]
 final class ImageUploadIngestorTest extends UnitTestCase {
 
   /**

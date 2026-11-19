@@ -89,21 +89,24 @@ final class CepStatusReport {
         continue;
       }
       $result = $last[$id];
-      $age = $this->time->getRequestTime() - (int) $result['checked_at'];
+      $checkedAt = is_numeric($result['checked_at'] ?? NULL) ? (int) $result['checked_at'] : 0;
+      $age = $this->time->getRequestTime() - $checkedAt;
       $stale = $age > self::API_STALE_SECONDS;
-      $ok = (bool) $result['ok'];
+      $ok = !empty($result['ok']);
       $status = $ok && !$stale ? 'ok' : ($ok ? 'attention' : 'error');
+      $httpStatus = isset($result['http_status']) && is_scalar($result['http_status']) ? (string) $result['http_status'] : 'sem resposta';
+      $ms = isset($result['ms']) && is_scalar($result['ms']) ? (string) $result['ms'] : '0';
       $value = $ok
         ? (string) $this->translation->translate(
           'Respondendo (HTTP @code, @ms ms)',
-          ['@code' => (string) $result['http_status'], '@ms' => (string) $result['ms']],
+          ['@code' => $httpStatus, '@ms' => $ms],
         )
-        : (string) $this->translation->translate('Falhou (HTTP @code)', ['@code' => $result['http_status'] === NULL ? 'sem resposta' : (string) $result['http_status']]);
+        : (string) $this->translation->translate('Falhou (HTTP @code)', ['@code' => $httpStatus]);
       $rows[] = [
         'item' => (string) $label,
         'value' => $value,
         'detail' => (string) $this->translation->translate('Verificado em @at (@days dias atrás).', [
-          '@at' => date('d/m/Y H:i', (int) $result['checked_at']),
+          '@at' => date('d/m/Y H:i', $checkedAt),
           '@days' => (string) (int) floor($age / 86400),
         ]) . ($stale ? ' ' . (string) $this->translation->translate('Verificação antiga: confira o cron.') : ''),
         'status' => $status,

@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Controller;
 
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Form\ForumPostRevisionSelectionForm;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Link;
@@ -43,16 +46,20 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
 
   /**
    * Builds the administrative history table for a post.
+   *
+   * @return array<mixed>
    */
   public function history(ForumPost $aculta_forum_post): array {
     $storage = $this->forumEntityTypeManager->getStorage('aculta_forum_post');
     assert($storage instanceof RevisionableStorageInterface);
     $entityType = $aculta_forum_post->getEntityType();
+    $idKey = (string) $entityType->getKey('id');
+    $revisionKey = (string) $entityType->getKey('revision');
     $revisionIds = array_keys($storage->getQuery()
       ->accessCheck(FALSE)
       ->allRevisions()
-      ->condition($entityType->getKey('id'), $aculta_forum_post->id())
-      ->sort($entityType->getKey('revision'), 'DESC')
+      ->condition($idKey, $aculta_forum_post->id())
+      ->sort($revisionKey, 'DESC')
       ->pager(self::REVISIONS_PER_PAGE)
       ->execute());
     $olderRevisionId = NULL;
@@ -61,12 +68,13 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
       $olderRevisionIds = $storage->getQuery()
         ->accessCheck(FALSE)
         ->allRevisions()
-        ->condition($entityType->getKey('id'), $aculta_forum_post->id())
-        ->condition($entityType->getKey('revision'), $oldestVisibleRevisionId, '<')
-        ->sort($entityType->getKey('revision'), 'DESC')
+        ->condition($idKey, $aculta_forum_post->id())
+        ->condition($revisionKey, $oldestVisibleRevisionId, '<')
+        ->sort($revisionKey, 'DESC')
         ->range(0, 1)
         ->execute();
-      $olderRevisionId = array_key_first($olderRevisionIds);
+      $olderKey = array_key_first($olderRevisionIds);
+      $olderRevisionId = is_numeric($olderKey) ? (int) $olderKey : NULL;
     }
     $revisions = $storage->loadMultipleRevisions($revisionIds);
     $rows = [];
@@ -84,6 +92,9 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
 
     foreach ($revisionIds as $index => $revisionId) {
       $revision = $revisions[$revisionId];
+      if (!$revision instanceof ContentEntityInterface || !$revision instanceof RevisionLogInterface) {
+        continue;
+      }
       $cacheability->addCacheableDependency($revision);
       $revisionUser = $revision->getRevisionUser();
       if ($revisionUser instanceof UserInterface) {
@@ -92,10 +103,12 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
       $isDefault = $revision->isDefaultRevision();
       $date = $this->dateFormatter->format($revision->getRevisionCreationTime(), 'short');
       $revisionLabel = $revision->getRevisionLogMessage();
+      $rawState = $revision->hasField('moderation_state') ? $revision->get('moderation_state')->value : '';
+      $state = is_scalar($rawState) ? (string) $rawState : '';
       $revisionOptions[(string) $revisionId] = new TranslatableMarkup('Revisão @id — @date — @state', [
         '@id' => (string) $revisionId,
         '@date' => $date,
-        '@state' => (string) ($revision->get('moderation_state')->value ?? ''),
+        '@state' => $state,
       ]);
       $operations = [];
       $previousRevisionId = $revisionIds[$index + 1] ?? $olderRevisionId;
@@ -109,6 +122,8 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
           ]),
         )->toRenderable();
       }
+      $rawState = $revision->hasField('moderation_state') ? $revision->get('moderation_state')->value : '';
+      $state = is_scalar($rawState) ? (string) $rawState : '';
       $rows[] = [
         ['data' => ['#plain_text' => (string) $revision->getRevisionId()]],
         ['data' => ['#plain_text' => $date]],
@@ -120,7 +135,7 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
             ]
             : ['#plain_text' => $this->t('Pessoa desconhecida')],
         ],
-        ['data' => ['#plain_text' => (string) ($revision->get('moderation_state')->value ?? '')]],
+        ['data' => ['#plain_text' => $state]],
         ['data' => ['#plain_text' => (string) $revision->label()]],
         ['data' => ['#plain_text' => $revisionLabel]],
         [

@@ -56,6 +56,30 @@ Quando nenhum local tem coordenadas, o mapa não é desenhado e não há requisi
 ao Google: a verificação da chave aparece como **SKIP** em vez de passar por
 omissão.
 
+## `catalogue-card-cultural.mjs` — listagem pública em cards SDC
+
+Captura a listagem da raiz do purpose Eventos e a página do primeiro Evento
+listado. Confere que a raiz contém `card-cultural`, mede overflow, registra o
+foco de teclado no conteúdo e salva os estados claro/escuro em 320 e 1440 px.
+Não autentica nem grava conteúdo.
+
+```bash
+cd "$ACULTA_ROOT"
+DISPLAY=:0 EVENTOS_BASE="$EVENTOS_TEST_BASE" \
+  SUITE_OUT=/tmp/aculta-suite-eventos-cards \
+  node tests/browser/eventos/catalogue-card-cultural.mjs
+```
+
+`ACULTA_ROOT` é o caminho do checkout local.
+
+`EVENTOS_BASE` é obrigatório; informe o host de teste por variável local, sem
+registrá-lo no repositório. Use `FIREFOX` e `GECKODRIVER_BIN` para substituir os
+padrões documentados acima. Os arquivos `listagem-{light,dark}-{320,1440}.png`,
+`evento-{light,dark}-{320,1440}.png` e `resultado.json` são gravados em
+`SUITE_OUT`. A captura da listagem foi validada no Runtime de desenvolvimento;
+não há baseline anterior da listagem porque essa página foi criada nesta
+entrega.
+
 No fim, o script alterna o atributo `data-bs-theme="dark"` na própria página (o mecanismo do
 ACULTA420; o site de teste está em claro) e captura a grade em modo escuro, sem mudar a
 configuração do servidor.

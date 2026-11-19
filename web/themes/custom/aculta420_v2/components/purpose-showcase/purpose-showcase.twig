@@ -1,0 +1,14 @@
+{% if links is not empty %}
+  <nav{{ attributes.addClass('purpose-showcase') }} aria-labelledby="purpose-showcase-title">
+    <h2 id="purpose-showcase-title" class="purpose-showcase__heading">{{ heading }}</h2>
+    <ul class="purpose-showcase__list">
+      {% for link in links %}
+        {% if link.title is defined and link.url is defined %}
+          <li class="purpose-showcase__item">
+            <a class="purpose-showcase__link" href="{{ link.url }}">{{ link.title }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  </nav>
+{% endif %}

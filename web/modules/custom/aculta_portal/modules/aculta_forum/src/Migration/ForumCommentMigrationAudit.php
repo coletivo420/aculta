@@ -4,17 +4,22 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Migration;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\flag\FlagInterface;
+use Drupal\flag\FlaggingInterface;
 use Drupal\node\NodeInterface;
 
 /**
  * Builds a read-only inventory of Forum Comments for migration planning.
+ *
+ * @phpstan-type ResponseNoticeReport array{available: bool, records: int, records_with_comment_marker: int, records_with_post_marker: int, markers_in_scope: int, markers_outside_scope: int, markers_missing: int, markers_for_other_topic: int, post_markers_in_scope: int, post_markers_outside_scope: int, post_markers_missing: int, post_markers_for_other_topic: int}
+ * @phpstan-type AuditReport array{source_comments: int, eligible_comments: int, invalid_topic: int, wrong_purpose: int, published_comments: int, unpublished_comments: int, rejected_comments: int, comments_with_legacy_author: int, anonymous_comments_without_legacy_author: int, comments_with_missing_owner: int, comments_with_missing_legacy_author: int, comments_with_empty_body_translation: int, comments_with_incompatible_body_format: int, comments_with_rejected_published_translation: int, comments_with_publication_timestamp: int, comments_with_translations: int, media_embeds: int, gallery_embeds: int, unique_media_references: int, media_embeds_without_uuid: int, missing_media_references: int, unique_gallery_references: int, gallery_embeds_without_uuid: int, missing_gallery_references: int, flaggings: int, flaggings_by_flag: array<string, int>, flaggings_global: int, flaggings_with_missing_owner: int, anonymous_flaggings_without_session: int, flaggings_without_valid_created_time: int, flaggings_without_post_flag_configuration: int, topics: int, parent_outside_scope: int, parent_missing: int, parent_cross_topic: int, parent_after_child: int, self_parent: int, body_formats: array<string, int>, languages: array<string, int>, response_notices: ResponseNoticeReport, existing_revisionable_posts: int}
  */
 final class ForumCommentMigrationAudit {
 
@@ -26,26 +31,24 @@ final class ForumCommentMigrationAudit {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly ModuleHandlerInterface $moduleHandler,
   ) {}
 
   /**
    * Inspects source Comments in bounded batches without changing entities.
    *
-   * @return array<string, mixed>
+   * @return AuditReport
    *   Counts only; no content, names, email addresses, or entity IDs.
    */
   public function inspect(int $batch_size = 200): array {
-    if ($batch_size < 1 || $batch_size > 1000) {
-      throw new \InvalidArgumentException('O tamanho do lote deve ficar entre 1 e 1000.');
-    }
+    $batch_size = $this->validateBatchSize($batch_size);
 
     $storage = $this->entityTypeManager->getStorage('comment');
-    $last_source_ids = $this->sourceCommentQuery()
+    $last_source_ids = $this->queryIds($this->sourceCommentQuery()
       ->sort('cid', 'DESC')
       ->range(0, 1)
-      ->execute();
+      ->execute());
     $max_source_id = $last_source_ids === [] ? 0 : (int) reset($last_source_ids);
     $source_comments = $max_source_id > 0
       ? $this->sourceCommentQuery()
@@ -93,6 +96,7 @@ final class ForumCommentMigrationAudit {
       'self_parent' => 0,
       'body_formats' => [],
       'languages' => [],
+      'response_notices' => $this->emptyResponseNoticeReport(),
       'existing_revisionable_posts' => 0,
     ];
     $topic_ids = [];
@@ -101,12 +105,12 @@ final class ForumCommentMigrationAudit {
 
     $last_comment_id = 0;
     while ($last_comment_id < $max_source_id) {
-      $batch = $this->sourceCommentQuery()
+      $batch = $this->queryIds($this->sourceCommentQuery()
         ->condition('cid', $last_comment_id, '>')
         ->condition('cid', $max_source_id, '<=')
         ->sort('cid')
         ->range(0, $batch_size)
-        ->execute();
+        ->execute());
       if ($batch === []) {
         break;
       }
@@ -118,16 +122,13 @@ final class ForumCommentMigrationAudit {
       $anonymous_comment_ids = [];
       $anonymous_comment_lookup = [];
       foreach ($storage->loadMultiple($batch) as $comment) {
-        if (!$comment instanceof CommentInterface) {
-          continue;
-        }
         $topic = $comment->getCommentedEntity();
         if (!$topic instanceof NodeInterface || $topic->bundle() !== self::TOPIC_BUNDLE) {
           $report['invalid_topic']++;
           continue;
         }
         if (!$topic->hasField('field_domain_source') || $topic->get('field_domain_source')->isEmpty()
-          || $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
+          || $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
           $report['wrong_purpose']++;
           continue;
         }
@@ -161,8 +162,8 @@ final class ForumCommentMigrationAudit {
           $body = $translation->hasField('comment_body') && !$translation->get('comment_body')->isEmpty()
             ? $translation->get('comment_body')
             : NULL;
-          $body_value = (string) ($body?->value ?? '');
-          $format = (string) ($body?->format ?? '');
+          $body_value = $body === NULL ? '' : $this->fieldString($body->value);
+          $format = $body === NULL ? '' : $this->fieldString($body->format);
           if (trim($body_value) === '') {
             $has_empty_body = TRUE;
           }
@@ -261,15 +262,18 @@ final class ForumCommentMigrationAudit {
 
       if ($eligible_comment_ids !== []) {
         $flagging_storage = $this->entityTypeManager->getStorage('flagging');
-        $flagging_ids = $flagging_storage->getQuery()
+        $flagging_ids = $this->queryIds($flagging_storage->getQuery()
           ->accessCheck(FALSE)
           ->condition('entity_type', 'comment')
           ->condition('entity_id', $eligible_comment_ids, 'IN')
-          ->execute();
+          ->execute());
         $flaggings = $flagging_storage->loadMultiple($flagging_ids);
         $flagging_owner_ids = [];
         foreach ($flaggings as $flagging) {
-          $owner_id = (int) ($flagging->getOwnerId() ?? 0);
+          if (!$flagging instanceof FlaggingInterface) {
+            continue;
+          }
+          $owner_id = (int) $flagging->getOwnerId();
           if ($owner_id > 0) {
             $flagging_owner_ids[] = (string) $owner_id;
           }
@@ -278,14 +282,17 @@ final class ForumCommentMigrationAudit {
           ->getStorage('user')
           ->loadMultiple(array_unique($flagging_owner_ids));
         foreach ($flaggings as $flagging) {
+          if (!$flagging instanceof FlaggingInterface) {
+            continue;
+          }
           $flag_id = (string) $flagging->getFlagId();
           $report['flaggings']++;
           $report['flaggings_by_flag'][$flag_id] = ($report['flaggings_by_flag'][$flag_id] ?? 0) + 1;
-          $owner_id = (int) ($flagging->getOwnerId() ?? 0);
+          $owner_id = (int) $flagging->getOwnerId();
           if ($owner_id > 0 && !isset($flagging_owners[$owner_id])) {
             $report['flaggings_with_missing_owner']++;
           }
-          if ($owner_id === 0 && trim((string) $flagging->get('session_id')->value) === '') {
+          if ($owner_id === 0 && trim($this->fieldString($flagging->get('session_id')->value)) === '') {
             $report['anonymous_flaggings_without_session']++;
           }
           if ((bool) $flagging->get('global')->value) {
@@ -308,11 +315,12 @@ final class ForumCommentMigrationAudit {
       $batch_size,
     );
     if ($report['flaggings_by_flag'] !== []) {
+      $source_flag_ids = array_keys($report['flaggings_by_flag']);
       $target_flag_ids = array_map(
         static fn (string $source_flag_id): string => $source_flag_id === 'sinalizar_comentario'
           ? 'sinalizar_post_forum'
           : $source_flag_id,
-        array_keys($report['flaggings_by_flag']),
+        $source_flag_ids,
       );
       $flags = $this->entityTypeManager->getStorage('flag')->loadMultiple(array_unique($target_flag_ids));
       foreach ($report['flaggings_by_flag'] as $flag_id => $flagging_count) {
@@ -351,7 +359,7 @@ final class ForumCommentMigrationAudit {
       || !$topic->hasField('field_domain_source') || $topic->get('field_domain_source')->isEmpty()) {
       return NULL;
     }
-    if ($this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
+    if ($this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
       return NULL;
     }
     return (string) $topic->id();
@@ -376,14 +384,145 @@ final class ForumCommentMigrationAudit {
    *
    * @param list<string> $topic_ids
    *   Eligible public Forum topic IDs.
-   * @param int $batch_size
+   * @param int<1, 1000> $batch_size
    *   Bounded number of notices or Comments loaded in each batch.
    *
-   * @return array<string, int|bool>
+   * @return ResponseNoticeReport
    *   Aggregate counts only, or an unavailable marker when Messenger is off.
    */
   private function inspectResponseNotices(array $topic_ids, int $batch_size): array {
-    $result = [
+    $result = $this->emptyResponseNoticeReport();
+    if (!$result['available'] || $topic_ids === []) {
+      return $result;
+    }
+
+    $notice_storage = $this->entityTypeManager->getStorage('aculta_aviso');
+    $comment_storage = $this->entityTypeManager->getStorage('comment');
+
+    foreach (array_chunk($topic_ids, $batch_size) as $topic_batch) {
+      $max_notice_ids = $this->queryIds($this->responseNoticeQuery($topic_batch)
+        ->sort('id', 'DESC')
+        ->range(0, 1)
+        ->execute());
+      $max_notice_id = $max_notice_ids === [] ? 0 : (int) reset($max_notice_ids);
+      $last_notice_id = 0;
+      while ($last_notice_id < $max_notice_id) {
+        $notice_ids = $this->queryIds($this->responseNoticeQuery($topic_batch)
+          ->condition('id', $last_notice_id, '>')
+          ->condition('id', $max_notice_id, '<=')
+          ->sort('id')
+          ->range(0, $batch_size)
+          ->execute());
+        if ($notice_ids === []) {
+          break;
+        }
+        $last_notice_id = (int) end($notice_ids);
+
+        $markers = [];
+        $post_markers = [];
+        $marker_comment_ids = [];
+        $marker_post_ids = [];
+        foreach ($notice_storage->loadMultiple($notice_ids) as $notice) {
+          if (!$notice instanceof ContentEntityInterface) {
+            continue;
+          }
+          $result['records']++;
+          $comment_id = $this->fieldInteger($notice->get('ultimo_comentario')->value);
+          if ($comment_id > 0) {
+            $result['records_with_comment_marker']++;
+            $comment_id = (string) $comment_id;
+            $markers[$notice->id()] = [
+              'comment_id' => $comment_id,
+              'topic_id' => $this->fieldString($notice->get('assunto_nid')->value),
+            ];
+            $marker_comment_ids[$comment_id] = $comment_id;
+          }
+          $post_id = $this->fieldInteger($notice->get('ultimo_post')->value);
+          if ($post_id > 0) {
+            $result['records_with_post_marker']++;
+            $post_id = (string) $post_id;
+            $post_markers[$notice->id()] = [
+              'post_id' => $post_id,
+              'topic_id' => $this->fieldString($notice->get('assunto_nid')->value),
+            ];
+            $marker_post_ids[$post_id] = $post_id;
+          }
+        }
+
+        $eligible_topic_by_comment = [];
+        $existing_comment_ids = [];
+        foreach (array_chunk(array_values($marker_comment_ids), $batch_size) as $comment_batch) {
+          foreach ($comment_storage->loadMultiple($comment_batch) as $comment) {
+            $comment_id = (string) $comment->id();
+            $existing_comment_ids[$comment_id] = TRUE;
+            $topic_id = $this->eligibleTopicId($comment);
+            if ($topic_id !== NULL) {
+              $eligible_topic_by_comment[$comment_id] = $topic_id;
+            }
+          }
+        }
+        foreach ($markers as $marker) {
+          $comment_id = $marker['comment_id'];
+          if (array_key_exists($comment_id, $eligible_topic_by_comment)) {
+            $result['markers_in_scope']++;
+            if ($eligible_topic_by_comment[$comment_id] !== $marker['topic_id']) {
+              $result['markers_for_other_topic']++;
+            }
+          }
+          elseif (array_key_exists($comment_id, $existing_comment_ids)) {
+            $result['markers_outside_scope']++;
+          }
+          else {
+            $result['markers_missing']++;
+          }
+        }
+
+        $existing_posts = [];
+        $post_topic_by_id = [];
+        $post_storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+        foreach (array_chunk(array_values($marker_post_ids), $batch_size) as $post_batch) {
+          foreach ($post_storage->loadMultiple($post_batch) as $post) {
+            if (!$post instanceof ContentEntityInterface) {
+              continue;
+            }
+            $post_id = (string) $post->id();
+            $existing_posts[$post_id] = TRUE;
+            $topic = $post->get('topic')->entity;
+            if ($topic instanceof NodeInterface && $topic->bundle() === self::TOPIC_BUNDLE
+              && $topic->hasField('field_domain_source') && !$topic->get('field_domain_source')->isEmpty()
+              && $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum') {
+              $post_topic_by_id[$post_id] = (string) $topic->id();
+            }
+          }
+        }
+        foreach ($post_markers as $marker) {
+          $post_id = $marker['post_id'];
+          if (array_key_exists($post_id, $post_topic_by_id)) {
+            $result['post_markers_in_scope']++;
+            if ($post_topic_by_id[$post_id] !== $marker['topic_id']) {
+              $result['post_markers_for_other_topic']++;
+            }
+          }
+          elseif (array_key_exists($post_id, $existing_posts)) {
+            $result['post_markers_outside_scope']++;
+          }
+          else {
+            $result['post_markers_missing']++;
+          }
+        }
+      }
+    }
+    return $result;
+  }
+
+  /**
+   * Creates a zeroed response-notice report with current availability.
+   *
+   * @return ResponseNoticeReport
+   *   Empty aggregate report.
+   */
+  private function emptyResponseNoticeReport(): array {
+    return [
       'available' => $this->moduleHandler->moduleExists('aculta_messenger'),
       'records' => 0,
       'records_with_comment_marker' => 0,
@@ -397,123 +536,6 @@ final class ForumCommentMigrationAudit {
       'post_markers_missing' => 0,
       'post_markers_for_other_topic' => 0,
     ];
-    if (!$result['available'] || $topic_ids === []) {
-      return $result;
-    }
-
-    $notice_storage = $this->entityTypeManager->getStorage('aculta_aviso');
-    $comment_storage = $this->entityTypeManager->getStorage('comment');
-
-    foreach (array_chunk($topic_ids, $batch_size) as $topic_batch) {
-      $max_notice_ids = $this->responseNoticeQuery($topic_batch)
-        ->sort('id', 'DESC')
-        ->range(0, 1)
-        ->execute();
-      $max_notice_id = $max_notice_ids === [] ? 0 : (int) reset($max_notice_ids);
-      $last_notice_id = 0;
-      while ($last_notice_id < $max_notice_id) {
-        $notice_ids = $this->responseNoticeQuery($topic_batch)
-          ->condition('id', $last_notice_id, '>')
-          ->condition('id', $max_notice_id, '<=')
-          ->sort('id')
-          ->range(0, $batch_size)
-          ->execute();
-        if ($notice_ids === []) {
-          break;
-        }
-        $last_notice_id = (int) end($notice_ids);
-
-        $markers = [];
-        $post_markers = [];
-        $marker_comment_ids = [];
-        $marker_post_ids = [];
-        foreach ($notice_storage->loadMultiple($notice_ids) as $notice) {
-          $result['records']++;
-          $comment_id = (int) $notice->get('ultimo_comentario')->value;
-          if ($comment_id > 0) {
-            $result['records_with_comment_marker']++;
-            $comment_id = (string) $comment_id;
-            $markers[$notice->id()] = [
-              'comment_id' => $comment_id,
-              'topic_id' => (string) $notice->get('assunto_nid')->value,
-            ];
-            $marker_comment_ids[$comment_id] = $comment_id;
-          }
-          $post_id = (int) $notice->get('ultimo_post')->value;
-          if ($post_id > 0) {
-            $result['records_with_post_marker']++;
-            $post_id = (string) $post_id;
-            $post_markers[$notice->id()] = [
-              'post_id' => $post_id,
-              'topic_id' => (string) $notice->get('assunto_nid')->value,
-            ];
-            $marker_post_ids[$post_id] = $post_id;
-          }
-        }
-
-        $eligible_topic_by_comment = [];
-        $existing_comment_ids = [];
-        foreach (array_chunk(array_values($marker_comment_ids), $batch_size) as $comment_batch) {
-          foreach ($comment_storage->loadMultiple($comment_batch) as $comment) {
-            if ($comment instanceof CommentInterface) {
-              $comment_id = (string) $comment->id();
-              $existing_comment_ids[$comment_id] = TRUE;
-              $topic_id = $this->eligibleTopicId($comment);
-              if ($topic_id !== NULL) {
-                $eligible_topic_by_comment[$comment_id] = $topic_id;
-              }
-            }
-          }
-        }
-        foreach ($markers as $marker) {
-          $comment_id = $marker['comment_id'];
-          if (isset($eligible_topic_by_comment[$comment_id])) {
-            $result['markers_in_scope']++;
-            if ($eligible_topic_by_comment[$comment_id] !== $marker['topic_id']) {
-              $result['markers_for_other_topic']++;
-            }
-          }
-          elseif (isset($existing_comment_ids[$comment_id])) {
-            $result['markers_outside_scope']++;
-          }
-          else {
-            $result['markers_missing']++;
-          }
-        }
-
-        $existing_posts = [];
-        $post_topic_by_id = [];
-        $post_storage = $this->entityTypeManager->getStorage('aculta_forum_post');
-        foreach (array_chunk(array_values($marker_post_ids), $batch_size) as $post_batch) {
-          foreach ($post_storage->loadMultiple($post_batch) as $post) {
-            $post_id = (string) $post->id();
-            $existing_posts[$post_id] = TRUE;
-            $topic = $post->get('topic')->entity;
-            if ($topic instanceof NodeInterface && $topic->bundle() === self::TOPIC_BUNDLE
-              && $topic->hasField('field_domain_source') && !$topic->get('field_domain_source')->isEmpty()
-              && $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum') {
-              $post_topic_by_id[$post_id] = (string) $topic->id();
-            }
-          }
-        }
-        foreach ($post_markers as $marker) {
-          $post_id = $marker['post_id'];
-          if (isset($post_topic_by_id[$post_id])) {
-            $result['post_markers_in_scope']++;
-            if ($post_topic_by_id[$post_id] !== $marker['topic_id']) {
-              $result['post_markers_for_other_topic']++;
-            }
-          }
-          elseif (isset($existing_posts[$post_id])) {
-            $result['post_markers_outside_scope']++;
-          }
-          else {
-            $result['post_markers_missing']++;
-          }
-        }
-      }
-    }
-    return $result;
   }
 
   /**
@@ -537,7 +559,7 @@ final class ForumCommentMigrationAudit {
    *
    * @param string $body
    *   Filtered-text source stored in the Comment body.
-   * @param array<string, mixed> $report
+   * @param AuditReport $report
    *   The audit report being built.
    * @param array<string, bool> $media_uuids
    *   The unique Media UUIDs encountered.
@@ -552,7 +574,11 @@ final class ForumCommentMigrationAudit {
   ): void {
     $document = Html::load($body);
     $xpath = new \DOMXPath($document);
-    foreach ($xpath->query('//*[@data-entity-uuid and @data-entity-type]') as $element) {
+    $elements = $xpath->query('//*[@data-entity-uuid and @data-entity-type]');
+    if ($elements === FALSE) {
+      return;
+    }
+    foreach ($elements as $element) {
       if (!$element instanceof \DOMElement) {
         continue;
       }
@@ -586,7 +612,7 @@ final class ForumCommentMigrationAudit {
    *   The referenced entity type.
    * @param list<string> $uuids
    *   Unique UUIDs found in the source markup.
-   * @param int $batch_size
+   * @param int<1, 1000> $batch_size
    *   Maximum number of UUIDs checked per query.
    *
    * @return int
@@ -599,15 +625,76 @@ final class ForumCommentMigrationAudit {
     $storage = $this->entityTypeManager->getStorage($entity_type);
     $found = [];
     foreach (array_chunk($uuids, $batch_size) as $batch) {
-      $ids = $storage->getQuery()
+      $ids = $this->queryIds($storage->getQuery()
         ->accessCheck(FALSE)
         ->condition('uuid', $batch, 'IN')
-        ->execute();
+        ->execute());
       foreach ($storage->loadMultiple($ids) as $entity) {
         $found[$entity->uuid()] = TRUE;
       }
     }
     return count(array_diff_key(array_fill_keys($uuids, TRUE), $found));
+  }
+
+  /**
+   * Validates and narrows a requested batch size.
+   *
+   * @return int<1, 1000>
+   *   A positive batch size bounded by the audit limit.
+   */
+  private function validateBatchSize(int $batch_size): int {
+    if ($batch_size < 1 || $batch_size > 1000) {
+      throw new \InvalidArgumentException('O tamanho do lote deve ficar entre 1 e 1000.');
+    }
+    return $batch_size;
+  }
+
+  /**
+   * Converts a scalar entity field value to a string.
+   */
+  private function fieldString(mixed $value): string {
+    if ($value === NULL) {
+      return '';
+    }
+    if (!is_string($value) && !is_int($value) && !is_float($value) && !is_bool($value)) {
+      throw new \UnexpectedValueException('Valor escalar inválido em campo da auditoria.');
+    }
+    return (string) $value;
+  }
+
+  /**
+   * Converts a scalar entity field value to an integer.
+   */
+  private function fieldInteger(mixed $value): int {
+    if ($value === NULL) {
+      return 0;
+    }
+    if (!is_int($value) && !is_string($value) && !is_float($value) && !is_bool($value)) {
+      throw new \UnexpectedValueException('Identificador inválido em campo da auditoria.');
+    }
+    return (int) $value;
+  }
+
+  /**
+   * Narrows entity query output to a list of IDs, rejecting count results.
+   *
+   * @param int|array<array-key, mixed> $ids
+   *   Result returned by an entity query.
+   *
+   * @return list<int|string>
+   *   Entity IDs.
+   */
+  private function queryIds(int|array $ids): array {
+    if (!is_array($ids)) {
+      throw new \UnexpectedValueException('A consulta de entidades deveria retornar uma lista de IDs.');
+    }
+    $values = array_values($ids);
+    foreach ($values as $value) {
+      if (!is_int($value) && !is_string($value)) {
+        throw new \UnexpectedValueException('A consulta de entidades retornou um ID inválido.');
+      }
+    }
+    return $values;
   }
 
 }

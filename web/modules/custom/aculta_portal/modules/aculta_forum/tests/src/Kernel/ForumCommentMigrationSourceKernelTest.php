@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\aculta_forum\Plugin\migrate\source\ForumComment;
 use Drupal\aculta_forum\Plugin\migrate\source\ForumCommentFlagging;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Entity\CommentType;
@@ -165,22 +165,26 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
     self::assertCount(2, $rows);
     $by_id = [];
     foreach ($rows as $row) {
-      $by_id[$row['cid']] = $row;
+      $cid = is_numeric($row['cid'] ?? NULL) ? (int) $row['cid'] : 0;
+      $by_id[$cid] = $row;
     }
-    $root_row = $by_id[(int) $root->id()];
-    self::assertSame((int) $this->topic->id(), $root_row['topic_id']);
-    self::assertSame((int) $this->author->id(), $root_row['uid']);
-    self::assertNull($root_row['parent_cid']);
-    self::assertSame(1700000000, $root_row['first_published']);
-    self::assertSame(1, $root_row['published']);
-    self::assertSame(0, $root_row['rejected']);
-    self::assertCount(1, $root_row['translations']);
-    $translation = reset($root_row['translations']);
-    self::assertSame('Resposta raiz', $translation['subject']);
-    self::assertSame('plain_text', $translation['body_format']);
+    $root_row = $by_id[(int) $root->id()] ?? [];
+    self::assertSame((int) $this->topic->id(), $root_row['topic_id'] ?? NULL);
+    self::assertSame((int) $this->author->id(), $root_row['uid'] ?? NULL);
+    self::assertNull($root_row['parent_cid'] ?? NULL);
+    self::assertSame(1700000000, $root_row['first_published'] ?? NULL);
+    self::assertSame(1, $root_row['published'] ?? NULL);
+    self::assertSame(0, $root_row['rejected'] ?? NULL);
+    $rootTranslations = $root_row['translations'] ?? [];
+    self::assertIsArray($rootTranslations);
+    self::assertCount(1, $rootTranslations);
+    $translation = reset($rootTranslations);
+    self::assertIsArray($translation);
+    self::assertSame('Resposta raiz', $translation['subject'] ?? NULL);
+    self::assertSame('plain_text', $translation['body_format'] ?? NULL);
 
-    $reply_row = $by_id[(int) $reply->id()];
-    self::assertSame((int) $root->id(), $reply_row['parent_cid']);
+    $reply_row = $by_id[(int) $reply->id()] ?? [];
+    self::assertSame((int) $root->id(), $reply_row['parent_cid'] ?? NULL);
   }
 
   /**
@@ -263,7 +267,9 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
    */
   public function testSourceGroupsTranslationsInOneRow(): void {
     ConfigurableLanguage::createFromLangcode('pt-br')->save();
-    CommentType::load('aculta_discussion_post')
+    $commentType = CommentType::load('aculta_discussion_post');
+    self::assertInstanceOf(CommentType::class, $commentType);
+    $commentType
       ->set('translatable', TRUE)
       ->save();
     $comment = $this->comment($this->topic, 'Original');
@@ -274,9 +280,13 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
 
     $rows = $this->sourceRows();
     self::assertCount(1, $rows);
-    self::assertSame((int) $comment->id(), $rows[0]['cid']);
-    self::assertCount(2, $rows[0]['translations']);
-    self::assertSame('Tradução', $rows[0]['translations']['pt-br']['subject']);
+    self::assertSame((int) $comment->id(), $rows[0]['cid'] ?? NULL);
+    $translations = $rows[0]['translations'] ?? [];
+    self::assertIsArray($translations);
+    self::assertCount(2, $translations);
+    $ptTranslation = $translations['pt-br'] ?? [];
+    self::assertIsArray($ptTranslation);
+    self::assertSame('Tradução', $ptTranslation['subject'] ?? NULL);
   }
 
   /**
@@ -308,7 +318,7 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
       [],
       $this->createMock(MigrationInterface::class),
       $this->container->get('entity_type.manager'),
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $this->container->get('entity_type.manager'),
         $this->container->get('domain.negotiator'),
         $this->container->get('config.factory'),
@@ -316,8 +326,11 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
       ),
     );
     $method = new \ReflectionMethod($source, 'initializeIterator');
-    $method->setAccessible(TRUE);
-    return iterator_to_array($method->invoke($source), FALSE);
+    $iterator = $method->invoke($source);
+    self::assertInstanceOf(\Traversable::class, $iterator);
+    /** @var array<int, array<string, mixed>> $rows */
+    $rows = iterator_to_array($iterator, FALSE);
+    return $rows;
   }
 
   /**
@@ -333,7 +346,7 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
       [],
       $this->createMock(MigrationInterface::class),
       $this->container->get('entity_type.manager'),
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $this->container->get('entity_type.manager'),
         $this->container->get('domain.negotiator'),
         $this->container->get('config.factory'),
@@ -341,8 +354,11 @@ final class ForumCommentMigrationSourceKernelTest extends KernelTestBase {
       ),
     );
     $method = new \ReflectionMethod($source, 'initializeIterator');
-    $method->setAccessible(TRUE);
-    return iterator_to_array($method->invoke($source), FALSE);
+    $iterator = $method->invoke($source);
+    self::assertInstanceOf(\Traversable::class, $iterator);
+    /** @var array<int, array<string, mixed>> $rows */
+    $rows = iterator_to_array($iterator, FALSE);
+    return $rows;
   }
 
   /**

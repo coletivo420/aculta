@@ -1,0 +1,8 @@
+name: Progresso determinado
+description: Exibe o avanço atual como valor nativo e percentual legível.
+component: aculta420_v2:progress
+props:
+  id: progresso-curso
+  label: Progresso do curso
+  value: 60
+  max: 100

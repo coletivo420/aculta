@@ -1,0 +1,8 @@
+name: Mensagens de status
+description: Mensagem de confirmação de ação.
+component: aculta420_v2:status-messages
+props:
+  type: status
+  dismissible: false
+  messages:
+    - Operação realizada com sucesso.

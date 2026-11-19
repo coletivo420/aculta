@@ -1,0 +1,12 @@
+{% set page_content %}
+  <section{{ attributes.addClass('lms-course-curriculum') }} data-aculta-lms="course-structure">
+    <header class="lms-course-curriculum__header">{{ header }}</header>
+    <div class="lms-course-curriculum__summary">{{ summary }}</div>
+    <div class="lms-course-curriculum__actions">{{ actions }}</div>
+    <h2>{{ lessons_heading }}</h2>
+    {{ lessons }}
+    {{ lesson_order_form }}
+    {{ resources }}
+  </section>
+{% endset %}
+{{ include('aculta420_v2:layout-narrow', { content: page_content }, with_context = false) }}

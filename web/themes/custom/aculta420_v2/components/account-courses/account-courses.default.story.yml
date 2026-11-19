@@ -1,0 +1,7 @@
+name: Cursos da conta
+description: Cartões de curso com estado, metadados e ação.
+component: aculta420_v2:account-courses
+slots:
+  content:
+    type: inline_template
+    template: '<article class="portal-account-course"><h3>Curso de exemplo</h3><div class="portal-account-course__meta">Em andamento · 40%</div><a href="#">Continuar curso</a></article>'

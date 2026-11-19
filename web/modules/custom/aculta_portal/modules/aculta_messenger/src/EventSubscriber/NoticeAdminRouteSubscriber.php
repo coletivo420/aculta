@@ -9,10 +9,12 @@ use Drupal\Core\Routing\RoutingEvents;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
-/** Assigns Portuguese admin paths to the native Site Alert management routes. */
+/**
+ * Assigns Portuguese admin paths to the native Site Alert management routes. */
 final class NoticeAdminRouteSubscriber extends RouteSubscriberBase {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public static function getSubscribedEvents(): array {
     // Run after DomainRouteSubscriber and Rename Admin Paths have finalized
     // administrative paths, then put the native Site Alert forms in the ACULTA
@@ -20,7 +22,8 @@ final class NoticeAdminRouteSubscriber extends RouteSubscriberBase {
     return [RoutingEvents::ALTER => [['onAlterRoutes', -2050]]];
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected function alterRoutes(RouteCollection $collection): void {
     $paths = [
       'entity.site_alert.collection' => '/painel-administrativo/avisos/temporarios/lista',

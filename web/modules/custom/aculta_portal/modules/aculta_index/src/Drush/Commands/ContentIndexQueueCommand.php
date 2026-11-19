@@ -47,7 +47,8 @@ final class ContentIndexQueueCommand extends Command {
    * {@inheritdoc}
    */
   protected function execute(InputInterface $input, OutputInterface $output): int {
-    $action = (string) $input->getArgument('action');
+    $argumento = $input->getArgument('action');
+    $action = is_string($argumento) ? $argumento : '';
     if ($action === 'status') {
       $state = $this->work->getActivationGateState(array_keys($this->providers->all()));
       $output->writeln(sprintf(

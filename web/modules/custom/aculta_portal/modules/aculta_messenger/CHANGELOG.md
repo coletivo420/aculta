@@ -1,3 +1,12 @@
+# 0.1.1-dev.411 — corrige a ordenação dos avisos no inbox
+
+- Consultas paginadas agora ordenam pelo ID real da entidade Message (`mid`). O uso de `id` lançava `QueryException` e fazia os adaptadores opcionais de Loja, Doações, Game, Eventos, Revista, Wiki, Amizades e Aprendizagem falharem ao montar a lista.
+- Kernel LMS cobre a listagem de avisos com a chave correta e confirma que origens removidas continuam fora do inbox.
+
+## 0.1.1-dev.410 — reconcilia schema do evento de amizade
+
+- Update `10018` atualiza o registro do schema de `message.field_aculta_friendship_event` sem reescrever os valores existentes.
+
 ## Homologação de avisos Events no Runtime (2026-11-01)
 
 - Updates 10015 e 10016 concluíram em `aculta_runtime`; não há updates pendentes
@@ -39,7 +48,7 @@
 
 ## 0.1.1-dev.404 — avatar padrão no remetente da mensagem (Fase 4)
 
-- O avatar do remetente segue a regra única: foto, depois acervo ilustrativo, depois inicial.
+- O avatar do remetente segue a regra única: foto, depois acervo ilustrativo. *(Correção 2026-11-04: a inicial do nome nunca é usada; o acervo é o último fallback obrigatório. Ver `docs/architecture/avatar.md`.)*
   Antes, sem foto não havia nada na mensagem.
 - Validação: PHP lint PASS. PHPUnit e Runtime não executados (sem `vendor/`). RUNTIME STATUS: DEFERRED.
 

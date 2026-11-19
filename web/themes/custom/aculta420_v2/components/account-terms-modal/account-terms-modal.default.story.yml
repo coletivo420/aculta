@@ -1,0 +1,8 @@
+name: Modal dos termos da Conta
+component: aculta420_v2:account-terms-modal
+props:
+  title: Termos da conta
+slots:
+  content:
+    type: inline_template
+    template: '<form><div class="portal-terms-modal__documents"><a href="#politica">Política de privacidade</a><a href="#uso">Termos de uso</a></div><label><input type="checkbox" name="aceito"> Li e aceito os termos</label><button type="submit">Continuar</button></form>'

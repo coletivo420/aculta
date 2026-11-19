@@ -1,6 +1,6 @@
 # ACULTA Statistics
 
-**Versão:** `0.9.0-dev.10` — reflow responsivo dos controles e tabelas do painel.
+**Versão:** `0.9.0-dev.12` — integração analítica do Fórum (FST-00 a FST-11).
 
 Central de métricas da plataforma ACULTA: catálogo, agregados diários, retenção
 configurável por métrica e consulta. Não substitui os dados de origem. Pedidos
@@ -19,6 +19,9 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
   até 100 dimensões selecionadas em uma única consulta agrupada; consumidores
   como o Content Index podem correlacionar uma página já autorizada sem ler
   todas as dimensões globais. A autorização do conteúdo continua no módulo dono.
+- `dailyDimensionTotalsForDimensions()` lê uma allowlist de até 100 dimensões
+  agrupadas por dia UTC e dimensão; o Course Dashboard usa isso para exibir
+  snapshots históricos por turma, sem expor métricas de outros cursos ou UIDs.
 - `AuthorizedEntityMetricAggregator` implementa o contrato opcional do Portal;
   exige `view content-level statistics` para métricas públicas da allowlist e
   `administer aculta_statistics` para métricas internas. Métricas restritas
@@ -34,7 +37,7 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
   (`wiki.entries.read`, dimensão = nid, retenção configurável). Antiabuso: uma leitura por visitante
   e verbete a cada 30 min, até 60 por visitante por hora, com identificador pseudonimo do visitante.
 - Banner de consentimento para visitante anônimo (`consent_banner.enabled`, desligado por padrão):
-  biblioteca `aculta_statistics/consent`; o marcado visual é do tema (`consent-banner`).
+  biblioteca `aculta_statistics/consent`; o SDC `aculta420_v2:consent-banner` é renderizado em `page_bottom` só para visitantes anônimos quando habilitado.
 
 ## Documentação
 
@@ -42,6 +45,7 @@ ficam no Commerce, matrículas e progresso no LMS, mensagens no sistema de e-mai
 - [Catálogo de métricas](docs/METRIC-CATALOG.md) e [integrações](docs/INTEGRATIONS.md)
 - [Matriz de portabilidade](docs/PORTABILITY-MATRIX.md)
 - [Roteiro](docs/ROADMAP.md) e [changelog](docs/CHANGELOG.md)
+- [Plano FST-00 a FST-11: auditoria e integração com o Fórum](docs/FORUM-ANALYTICS-PLANO-FST-00-11.md) (planejado, não homologado).
 - [ADRs](docs/adr/)
 
 ## Código portado

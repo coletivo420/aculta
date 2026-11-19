@@ -61,6 +61,7 @@ final class CheckoutsConfiguracaoCaracterizacaoTest extends UnitTestCase {
    * Painéis de envio e cobrança de um flow.
    *
    * @return array<string, mixed>
+   *   Configuração dos painéis do flow informado.
    */
   private function panes(string $flow): array {
     return $this->config('commerce_checkout.commerce_checkout_flow.' . $flow)['configuration']['panes'] ?? [];
@@ -78,6 +79,14 @@ final class CheckoutsConfiguracaoCaracterizacaoTest extends UnitTestCase {
     ];
   }
 
+  /**
+   * Verifica que cada tipo de pedido aponta para o checkout flow esperado.
+   *
+   * @param string $tipo
+   *   Identificador do tipo de pedido.
+   * @param string|null $flowEsperado
+   *   Flow esperado, ou NULL quando o tipo não declara flow.
+   */
   #[DataProvider('tiposDePedido')]
   public function testTipoDePedidoApontaParaOCheckoutFlow(string $tipo, ?string $flowEsperado): void {
     $config = $this->config('commerce_order.commerce_order_type.' . $tipo);

@@ -1,8 +1,21 @@
+## Coautoria nativa - preparação de corte direto (2026-11-14)
+
+O plano de substituição do contrib Node Co-Authors 1.2.3, incluindo as quatro sessões administrativas MAIN e os gates de segurança, está em [docs/COAUTORIA.md](docs/COAUTORIA.md). Nesta primeira entrega há somente API de consulta, fábrica de campo não registrada e Unit focal. Não houve remoção do contrib, mudança de schema, permissões ou Runtime; o corte é único e depende de revisão R2/R3 e autorização operacional própria.
+
 Em dev.91, a instalação limpa e o rollback do módulo passam a ter cobertura Kernel isolada (`AcultaUserInstallRollbackKernelTest`): schema próprio, entidades, profile types, field storages, serviços, rotas e permissões são verificados na instalação; o uninstall é bloqueado enquanto houver amizade e, depois da remoção, derruba tabelas, entidades, config simples e profile types. As field storages do Profile permanecem no rollback por serem config compartilhada com dados de membros. A instalação limpa do site completo (cadeia Portal↔MP) não é deste módulo.
 
 Em dev.80, os cartões de autoria histórica exibidos no Fórum acrescentam `-gr` ao nome para identificar a origem Growroom. Autores legados não têm perfil público individual nem rota `/u/`; o memorial coletivo `/u/lendashistoricas` mantém os nomes sem sufixo. Unit focal 1/1, PHPCS e lint alterados PASS; nenhuma importação ou escrita no Runtime.
 
 # ACULTA User (`aculta_user`)
+
+## Contrato de identidade do menu de conta
+
+`AccountMenuPresentationBuilder` fornece `aculta_account_name` somente para
+usuário autenticado. O valor é o `field_nickname` do Profile principal, aparado;
+sem apelido, retorna `NULL` e não usa username nem inicial como fallback.
+`AccountMenuPresentationHooks` expõe o nome junto ao avatar, com os mesmos
+metadados de cache por usuário, Profile e arquivo. A camada de tema apenas
+apresenta o valor, sem ler User/Profile.
 
 Em dev.86, a projeção SQL derivada mantém `slug → UID` com índice único; Profile continua como fonte de verdade. No rebuild 10013, o Profile não vazio mais recentemente alterado decide o apelido de cada UID e o valor é sincronizado nos demais Profiles de papel; timestamp empatado usa o maior ID como desempate estável. Colisões entre UIDs e valores inválidos bloqueiam o rebuild antes de substituir claims. O Kernel `NicknameRegistryKernelTest` passou 10/88 em MariaDB dedicado, incluindo disputa de claims, rollback, criação/reconciliação pelo update hook e preservação de claims em conflito entre UIDs. Instalação efêmera completa ainda pendente; nenhum update foi aplicado ao Runtime. Em dev.82, a colisão automática de apelidos pode exibir `nome#2`, com slug canônico `/u/nome-2`. O formato terminal `#N` também pode ser informado manualmente; o formulário só valida disponibilidade e não escolhe sufixo pelo usuário. `nome-2` e `nome#2` compartilham o mesmo slug. Em dev.81, `-gr` foi reservado à autoria Growroom no Fórum; autores legados continuam sem User/Profile ou rota individual, e referências internas seguem por UID.
 
@@ -54,6 +67,11 @@ Registros P0/P2-A abaixo são históricos.
 
 Submódulo do ACULTA Portal para integrações de perfil, participação e experiência
 de usuário. O Drupal User e Profile continuam como fontes de verdade.
+
+**Rotas de edição vigentes:** o Studio expõe o perfil privado do titular em
+`/meu-perfil` e seus formulários em `/meu-perfil/*`, no purpose `account`.
+`aculta_user` continua dono dos dados, Form API, regras de visibilidade e
+validação; não há rota pública definida por esse path.
 
 ## Situação STUDIO-P2-A (2026-10-24) — uso dos serviços User pelo Studio
 

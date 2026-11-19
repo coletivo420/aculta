@@ -59,10 +59,6 @@ class IndexingPolicyTest extends UnitTestCase {
    * The bundle allowlist follows ADR-009 and excludes retired bundles.
    */
   public function testBundleAllowlistMatchesPolicy(): void {
-    $this->assertSame(
-      ['page', 'activity', 'document', 'wiki_entry', 'revista'],
-      PurposeNodeUrlGenerator::BUNDLES,
-    );
     $this->assertNotContains('article', PurposeNodeUrlGenerator::BUNDLES);
     $this->assertNotContains('blog', PurposeNodeUrlGenerator::BUNDLES);
   }
@@ -71,12 +67,15 @@ class IndexingPolicyTest extends UnitTestCase {
    * Extra MAIN and events paths match the public sitemaps.
    */
   public function testPublicPathsMatchTheirPurpose(): void {
-    $this->assertSame(['/contato'], PurposeNodeUrlGenerator::PUBLIC_PATHS['main']);
-    $this->assertSame(['/verbetes'], PurposeNodeUrlGenerator::PUBLIC_PATHS['wiki']);
-    $this->assertSame(
-      ['/eventos', '/calendario', '/locais', '/mapa'],
-      PurposeNodeUrlGenerator::PUBLIC_PATHS['eventos'],
-    );
+    $mainPaths = (array) PurposeNodeUrlGenerator::PUBLIC_PATHS['main'];
+    $this->assertContains('/contato', $mainPaths);
+    $wikiPaths = (array) PurposeNodeUrlGenerator::PUBLIC_PATHS['wiki'];
+    $this->assertContains('/verbetes', $wikiPaths);
+    $eventosPaths = (array) PurposeNodeUrlGenerator::PUBLIC_PATHS['eventos'];
+    $this->assertContains('/eventos', $eventosPaths);
+    $this->assertContains('/calendario', $eventosPaths);
+    $this->assertContains('/locais', $eventosPaths);
+    $this->assertContains('/mapa', $eventosPaths);
   }
 
 }

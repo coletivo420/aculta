@@ -1,0 +1,62 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Envelope de e-mail
+description: Composição visual HTML para o corpo de e-mails ACULTA com cores dinâmicas e conteúdo fornecido pelo módulo.
+status: stable
+group: E-mail
+props:
+  type: object
+  additionalProperties: false
+  required: [logo, colors]
+  properties:
+    logo:
+      type: string
+      format: uri-reference
+      title: Logo ACULTA
+      description: URL pública da imagem de marca usada no cabeçalho.
+    show_footer:
+      type: boolean
+      default: true
+      title: Exibir rodapé
+      description: Omite o rodapé quando o corpo já contém o rodapé institucional.
+    colors:
+      type: object
+      additionalProperties: false
+      title: Cores do e-mail
+      description: Cores resolvidas pelo tema para o estilo inline padrão.
+      required: [light]
+      properties:
+        light:
+          type: object
+          additionalProperties: false
+          title: Paleta clara
+          description: Cores aplicadas como padrão em clientes de e-mail.
+          required: [page, card, text, header, footer, footer_text]
+          properties:
+            page:
+              type: string
+              title: Fundo da página
+              description: Cor de fundo da área externa do e-mail.
+            card:
+              type: string
+              title: Fundo do cartão
+              description: Cor da superfície que contém a mensagem.
+            text:
+              type: string
+              title: Texto do corpo
+              description: Cor principal do texto da mensagem.
+            header:
+              type: string
+              title: Fundo do cabeçalho
+              description: Cor da faixa atrás da marca.
+            footer:
+              type: string
+              title: Fundo do rodapé
+              description: Cor da superfície do rodapé institucional.
+            footer_text:
+              type: string
+              title: Texto do rodapé
+              description: Cor do texto do rodapé institucional.
+slots:
+  body:
+    title: Corpo do e-mail
+    description: HTML renderizado pelo módulo proprietário da mensagem.

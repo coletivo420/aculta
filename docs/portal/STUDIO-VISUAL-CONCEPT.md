@@ -50,7 +50,7 @@ Os nomes acima não afirmam implementação. Componentes não consultam Entity, 
 ## 7. Acessibilidade e qualidade
 - WCAG 2.2 AA como alvo: teclado, ordem de foco, estado atual, contraste, rótulos de botões só-ícone, erros vinculados a campos, regiões anunciadas, toque >= 24×24 CSS px (preferir 44×44 em alvos primários), `prefers-reduced-motion`, sem dependência exclusiva de hover ou cor.
 - Modos claro/escuro idênticos estruturalmente; respeitar preferências persistentes do sistema ACULTA420/conta quando existentes, sem novo controle concorrente.
-- Testes em 320, 360, 390, 768, 1024, 1280 e 1440 px; teclado, zoom 200%, zoom/reflow 400%, portrait/landscape, sem JavaScript, AJAX, back/forward, roles distintos e dados longos. Ver `tests/browser/aculta-studio/`.
+- Testes em 320, 360, 390, 768, 1024, 1280 e 1440 px; teclado, zoom 200%, zoom/reflow 400%, portrait/landscape, sem JavaScript, AJAX, back/forward, roles distintos e dados longos. Ver `tests/browser/studio/geral/`.
 - Não afirmar conclusão sem screenshot de Runtime real e testes de acesso por usuário/domínio.
 
 ## 8. Execução incremental (design, sem mexer no roadmap funcional)

@@ -1,0 +1,16 @@
+{% set preset = theme_preset|default('classic')|clean_class %}
+<section class="social-links-page social-links-page--{{ preset }}" aria-labelledby="social-links-page-title">
+  {{ include('aculta420_v2:heading', {
+    text: title,
+    level: 1,
+    style: 'stripe',
+    attributes: create_attribute({ 'id': 'social-links-page-title' })
+  }, with_context = false) }}
+  {% if description %}<div class="social-links-page__description">{{ description }}</div>{% endif %}
+  {% if owner_identity %}<div class="social-links-page__owner">{{ owner_identity }}</div>{% endif %}
+  {% if has_links %}
+    <div class="social-links-page__links">{{ links }}</div>
+  {% else %}
+    <p class="social-links-page__empty">{{ 'Esta página ainda não tem links publicados.'|t }}</p>
+  {% endif %}
+</section>

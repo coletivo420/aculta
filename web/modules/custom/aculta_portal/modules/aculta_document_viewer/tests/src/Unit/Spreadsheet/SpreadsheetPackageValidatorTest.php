@@ -66,7 +66,7 @@ final class SpreadsheetPackageValidatorTest extends UnitTestCase {
       'xl/workbook.xml' => '<workbook/>',
     ]);
     DocxPackageValidator::forXlsx()->validate($path);
-    $this->assertTrue(TRUE);
+    $this->expectNotToPerformAssertions();
   }
 
   /**

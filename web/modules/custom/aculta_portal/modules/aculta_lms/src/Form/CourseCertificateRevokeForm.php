@@ -13,15 +13,25 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Lets a course educator revoke a certificate while preserving its record. */
+/**
+ * Lets a course educator revoke a certificate while preserving its record. */
 final class CourseCertificateRevokeForm extends FormBase {
 
   public function __construct(
-    private readonly CurrentRouteMatch $certificateRouteMatch,
-    private readonly CourseCertificateManagerInterface $certificates,
-    private readonly AccountProxyInterface $account,
+    protected readonly CurrentRouteMatch $certificateRouteMatch,
+    protected readonly CourseCertificateManagerInterface $certificates,
+    protected readonly AccountProxyInterface $account,
   ) {}
 
+  /**
+   * Cria a instância do formulário com os serviços necessários.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Instância do formulário.
+   */
   public static function create(ContainerInterface $container): static {
     $form = new static(
       $container->get('current_route_match'),
@@ -33,10 +43,27 @@ final class CourseCertificateRevokeForm extends FormBase {
     return $form;
   }
 
+  /**
+   * Devolve o ID do formulário.
+   *
+   * @return string
+   *   ID do formulário.
+   */
   public function getFormId(): string {
     return 'aculta_lms_course_certificate_revoke';
   }
 
+  /**
+   * Monta o formulário de revogação do certificado.
+   *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   *
+   * @return array
+   *   Estrutura do formulário.
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $certificate = $this->certificateRouteMatch->getParameter('certificate');
     if (!$certificate instanceof CourseCertificate || $certificate->get('state')->value !== 'active') {
@@ -63,19 +90,38 @@ final class CourseCertificateRevokeForm extends FormBase {
       '#value' => $this->t('Revogar certificado'),
     ];
     $form['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Cancelar'),
-      '#url' => Url::fromRoute('aculta_lms.certificate_issue', ['group' => $this->certificateRouteMatch->getParameter('group')->id()]),
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => (string) $this->t('Cancelar'),
+        'url' => Url::fromRoute('aculta_lms.certificate_issue', ['group' => $this->certificateRouteMatch->getParameter('group')->id()])->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     return $form;
   }
 
+  /**
+   * Exige o motivo da revogação.
+   *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     if (trim((string) $form_state->getValue('reason')) === '') {
       $form_state->setErrorByName('reason', $this->t('Informe o motivo para manter o histórico da revogação.'));
     }
   }
 
+  /**
+   * Revoga o certificado preservando o registro e a verificação pública.
+   *
+   * @param array $form
+   *   Estrutura do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado atual do formulário.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $certificate = $this->certificateRouteMatch->getParameter('certificate');
     $group = $this->certificateRouteMatch->getParameter('group');

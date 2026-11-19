@@ -16,7 +16,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
  */
 final class AdministrativeLocalTaskHooks {
 
-  /** Abas de Pessoas migradas para Configurações > Pessoas. */
+  /**
+   * Abas de Pessoas migradas para Configurações > Pessoas. */
   private const MIGRADAS = [
     'entity.user_role.collection',
     'user.admin_permissions',
@@ -25,6 +26,12 @@ final class AdministrativeLocalTaskHooks {
     'flood_control.flood_unblock_task',
   ];
 
+  /**
+   * Remove das abas de Pessoas o que foi migrado para Configurações.
+   *
+   * @param array $local_tasks
+   *   Abas locais descobertas, indexadas pelo ID.
+   */
   #[Hook('local_tasks_alter')]
   public function localTasksAlter(array &$local_tasks): void {
     foreach (self::MIGRADAS as $id) {

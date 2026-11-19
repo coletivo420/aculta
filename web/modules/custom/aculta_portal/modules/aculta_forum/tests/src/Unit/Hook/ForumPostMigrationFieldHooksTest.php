@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit\Hook;
 
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\Field\FieldTypePluginManagerInterface;
 use Drupal\aculta_forum\Hook\ForumPostMigrationFieldHooks;
 use Drupal\Tests\UnitTestCase;
@@ -53,7 +54,9 @@ final class ForumPostMigrationFieldHooksTest extends UnitTestCase {
     self::assertArrayHasKey('legacy_author', $fields);
     self::assertSame('entity_reference', $fields['legacy_author']->getType());
     self::assertSame('aculta_legado_autor', $fields['legacy_author']->getSetting('target_type'));
-    self::assertTrue($fields['legacy_author']->isRevisionable());
+    $legacyAuthor = $fields['legacy_author'];
+    self::assertInstanceOf(BaseFieldDefinition::class, $legacyAuthor);
+    self::assertTrue($legacyAuthor->isRevisionable());
     self::assertTrue($fields['legacy_author']->isReadOnly());
   }
 

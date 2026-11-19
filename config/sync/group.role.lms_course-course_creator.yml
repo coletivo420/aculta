@@ -6,7 +6,7 @@ dependencies:
     - group.type.lms_course
     - group.relationship_type.lms_course-3abb8caf7f7d526ecedee
   module:
-    - aculta_forum_lms
+    - aculta_lms
 id: lms_course-course_creator
 label: 'Criador do curso'
 weight: 22

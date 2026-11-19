@@ -39,8 +39,9 @@ function aculta_commerce_post_update_migrate_shipping_methods(array &$sandbox): 
 }
 
 /**
- * Reaponta commerce_order.shipments para aculta_shipment. Cada remessa é copiada antes de a original sair, e o pedido
- * passa a apontar para a cópia.
+ * Reaponta commerce_order.shipments para aculta_shipment.
+ *
+ * Cada remessa é copiada antes de a original sair, e o pedido passa a apontar para a cópia.
  */
 function aculta_commerce_post_update_retarget_shipments(array &$sandbox): string {
   $r = \Drupal::service('aculta_commerce.legacy_shipping_cutover')->retargetShipments();

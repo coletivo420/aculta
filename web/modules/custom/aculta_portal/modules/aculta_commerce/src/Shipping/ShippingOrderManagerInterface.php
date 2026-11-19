@@ -16,6 +16,11 @@ interface ShippingOrderManagerInterface {
 
   /**
    * Creates a shipping profile for the given order.
+   *
+   * @param \Drupal\commerce_order\Entity\OrderInterface $order
+   *   The order.
+   * @param array<string, mixed> $values
+   *   Initial profile values.
    */
   public function createProfile(OrderInterface $order, array $values = []): ProfileInterface;
 

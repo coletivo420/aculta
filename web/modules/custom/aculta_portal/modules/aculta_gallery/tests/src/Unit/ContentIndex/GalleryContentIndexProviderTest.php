@@ -69,7 +69,7 @@ final class GalleryContentIndexProviderTest extends UnitTestCase {
     $gallery = $this->createMock(MediaGalleryInterface::class);
     $gallery->method('bundle')->willReturn('media_gallery');
 
-    self::assertSame('magazine', (new GalleryContentIndexProvider())->getAccessPurpose($gallery));
+    self::assertSame('magazine', (new GalleryContentIndexProvider())->getAccessSiteKey($gallery));
   }
 
 }

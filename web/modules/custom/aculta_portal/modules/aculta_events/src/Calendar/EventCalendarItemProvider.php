@@ -11,6 +11,7 @@ use Drupal\aculta_events\Agenda\EventFilter;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Session\AnonymousUserSession;
@@ -57,7 +58,7 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
         continue;
       }
       $evento = $data->get('field_evento')->entity;
-      if ($evento === NULL || !in_array((string) $evento->get('field_status')->value, ['publicado', 'cancelado'], TRUE)) {
+      if (!$evento instanceof Event || !in_array((string) $evento->get('field_status')->value, ['publicado', 'cancelado'], TRUE)) {
         continue;
       }
       // Events linked to LMS classes are private to enrolled members; the LMS
@@ -130,11 +131,17 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
     ?EventLocation $local = NULL,
     ?AccountInterface $locationViewer = NULL,
   ): ?CalendarItem {
-    $evento ??= $data->get('field_evento')->entity;
+    if ($evento === NULL) {
+      $loadedEvent = $data->get('field_evento')->entity;
+      $evento = $loadedEvent instanceof Event ? $loadedEvent : NULL;
+    }
     if ($evento === NULL) {
       return NULL;
     }
-    $local ??= $data->get('field_local')->entity;
+    if ($local === NULL) {
+      $loadedLocal = $data->get('field_local')->entity;
+      $local = $loadedLocal instanceof EventLocation ? $loadedLocal : NULL;
+    }
     if ($local instanceof EventLocation && !$local->access('view', $locationViewer ?? new AnonymousUserSession())) {
       $local = NULL;
     }
@@ -188,6 +195,9 @@ final class EventCalendarItemProvider implements CalendarItemProviderInterface {
     $canceladas = [];
     $reagendadas = [];
     foreach ($storage->loadMultiple($ids) as $excecao) {
+      if (!$excecao instanceof ContentEntityInterface) {
+        continue;
+      }
       $original = (new \DateTimeImmutable((string) $excecao->get('field_inicio_original')->value, $utc))->setTimezone($fuso);
       if ($excecao->get('field_inicio')->isEmpty()) {
         $canceladas[] = $original;

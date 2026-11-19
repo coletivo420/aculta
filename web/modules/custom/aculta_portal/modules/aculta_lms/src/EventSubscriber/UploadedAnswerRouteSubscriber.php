@@ -7,10 +7,17 @@ namespace Drupal\aculta_lms\EventSubscriber;
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\RouteCollection;
 
-/** Adds the current-enrollment check to private LMS answer downloads. */
+/**
+ * Adds the ACULTA enrollment check to a legacy file-download route.
+ *
+ * The route is optional: `lms_file_upload` is no longer a dependency of
+ * `aculta_lms`, but old installations may still expose the route while they
+ * complete their migration. Its absence must not affect route rebuilding.
+ */
 final class UploadedAnswerRouteSubscriber extends RouteSubscriberBase {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   protected function alterRoutes(RouteCollection $collection): void {
     $route = $collection->get('lms_file_upload.answer_file_download');
     if ($route !== NULL) {

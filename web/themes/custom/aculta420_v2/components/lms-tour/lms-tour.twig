@@ -1,0 +1,25 @@
+<div class="lms-tour-wrapper" id="{{ id }}-wrapper">
+  {% embed 'aculta420_v2:dialog' with {
+    id: id,
+    title: title,
+    trigger_label: trigger_label,
+    trigger_url: trigger_url,
+    variant: 'default'
+  } %}
+    {% block content %}
+      <div class="lms-tour-body">
+        <div class="lms-tour-step-indicator" aria-live="polite">
+          <span class="lms-tour-badge">{{ current_step }} / {{ total_steps }}</span>
+        </div>
+        <div class="lms-tour-content-inner">
+          {{ content }}
+        </div>
+      </div>
+    {% endblock %}
+    {% block actions %}
+      <div class="lms-tour-actions-inner">
+        {{ actions }}
+      </div>
+    {% endblock %}
+  {% endembed %}
+</div>

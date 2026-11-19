@@ -11,6 +11,9 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * Resolvedor de variante de cartão de autor por contexto de host.
+ */
 #[CoversClass(\Drupal\aculta_user\Identity\AuthorCardVariantResolver::class)]
 #[Group('aculta_user')]
 final class AuthorCardVariantResolverTest extends TestCase {

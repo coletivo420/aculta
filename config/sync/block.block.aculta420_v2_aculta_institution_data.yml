@@ -1,0 +1,33 @@
+uuid: b96f201d-e0fe-4306-a23e-3d0186270d0b
+langcode: pt-br
+status: true
+dependencies:
+  content:
+    - 'block_content:aculta_institution:80f3fc02-39b5-4386-8a32-78301b635007'
+  module:
+    - aculta_portal
+    - block_content
+    - system
+  theme:
+    - aculta420_v2
+id: aculta420_v2_aculta_institution_data
+theme: aculta420_v2
+region: content
+weight: 90
+provider: null
+plugin: 'block_content:80f3fc02-39b5-4386-8a32-78301b635007'
+settings:
+  id: 'block_content:80f3fc02-39b5-4386-8a32-78301b635007'
+  label: 'INFORMAÇÕES INSTITUCIONAIS'
+  label_display: visible
+  provider: block_content
+  view_mode: home
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '<front>'
+  aculta_domain_site:
+    id: aculta_domain_site
+    site_key: main
+    negate: false

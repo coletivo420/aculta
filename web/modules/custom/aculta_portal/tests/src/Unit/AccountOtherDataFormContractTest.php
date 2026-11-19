@@ -26,6 +26,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 #[Group('aculta_portal')]
 final class AccountOtherDataFormContractTest extends UnitTestCase {
 
+  /**
+   * {@inheritdoc}
+   */
   protected function setUp(): void {
     parent::setUp();
     $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
@@ -148,6 +151,12 @@ final class AccountOtherDataFormContractTest extends UnitTestCase {
     $this->form($documents)->validateForm($form, $state);
   }
 
+  /**
+   * Cria um mock de estado de formulário.
+   *
+   * @return \Drupal\Core\Form\FormStateInterface
+   *   Mock do estado de formulário.
+   */
   private function state(): FormStateInterface {
     return $this->createMock(FormStateInterface::class);
   }

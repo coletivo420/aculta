@@ -26,5 +26,5 @@ aculta_pagamentos_mercadopago.studio_plans:
     _custom_access: 'aculta_pagamentos_mercadopago.plan_access:access'
     _user_is_logged_in: 'TRUE'
   options:
-    _aculta_domain_purpose: account
+    _aculta_site_key: account
     no_cache: TRUE

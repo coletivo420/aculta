@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Form;
 
 use Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -24,11 +25,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class CourseCertificateIssueForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly CourseCertificateManagerInterface $certificates,
-    private readonly CurrentRouteMatch $certificateRouteMatch,
-    private readonly AccountProxyInterface $account,
-    private readonly DateFormatterInterface $dateFormatter,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly CourseCertificateManagerInterface $certificates,
+    protected readonly CurrentRouteMatch $certificateRouteMatch,
+    protected readonly AccountProxyInterface $account,
+    protected readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /**
@@ -92,9 +93,12 @@ final class CourseCertificateIssueForm extends FormBase {
     else {
       $certificates = [];
     }
-    if ($certificates !== [] && $course !== NULL) {
+    if ($certificates !== []) {
       $rows = [];
       foreach ($certificates as $certificate) {
+        if (!$certificate instanceof ContentEntityInterface) {
+          continue;
+        }
         $rows[] = [
           'student' => ['data' => ['#plain_text' => (string) $certificate->get('certificate_name')->value]],
           'course' => ['data' => ['#plain_text' => (string) $certificate->get('course_title')->value]],

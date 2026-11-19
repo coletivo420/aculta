@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_activity\Unit\Hook;
 
 use Drupal\aculta_activity\Hook\ActivityHooks;
+use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
@@ -25,18 +27,8 @@ final class ActivityHooksTest extends UnitTestCase {
   public function testActivityFormIsGroupedAndUsesOwnerCallback(): void {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('activity');
-    $formObject = new class($node) {
-
-      public function __construct(private readonly NodeInterface $node) {}
-
-      /**
-       * Devolve a entidade de teste.
-       */
-      public function getEntity(): NodeInterface {
-        return $this->node;
-      }
-
-    };
+    $formObject = $this->createMock(EntityFormInterface::class);
+    $formObject->method('getEntity')->willReturn($node);
     $formState = $this->createMock(FormStateInterface::class);
     $formState->method('getFormObject')->willReturn($formObject);
     $translation = $this->createMock(TranslationInterface::class);
@@ -53,14 +45,14 @@ final class ActivityHooksTest extends UnitTestCase {
       'author' => [],
       'options' => [],
     ];
-    $hooks = new ActivityHooks($translation);
+    $hooks = new ActivityHooks($translation, $this->createMock(AccountProxyInterface::class));
     $hooks->formNodeFormAlter($form, $formState, 'node_activity_form');
 
-    self::assertSame('editorial_content', $form['title']['#group']);
-    self::assertSame('editorial_content', $form['field_event_location']['#group']);
-    self::assertSame('editorial_image', $form['field_media_image']['#group']);
-    self::assertSame('editorial_relations', $form['field_related_activity']['#group']);
-    self::assertSame('editorial_seo', $form['field_meta_tags']['#group']);
+    self::assertSame('editorial_content', self::grupoDoCampo($form, 'title'));
+    self::assertSame('editorial_content', self::grupoDoCampo($form, 'field_event_location'));
+    self::assertSame('editorial_image', self::grupoDoCampo($form, 'field_media_image'));
+    self::assertSame('editorial_relations', self::grupoDoCampo($form, 'field_related_activity'));
+    self::assertSame('editorial_seo', self::grupoDoCampo($form, 'field_meta_tags'));
     self::assertSame(['aculta_activity.form_callbacks:validateActivity'], $form['#validate']);
   }
 
@@ -70,26 +62,32 @@ final class ActivityHooksTest extends UnitTestCase {
   public function testOtherBundlesAreUnaffected(): void {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('revista');
-    $formObject = new class($node) {
-
-      public function __construct(private readonly NodeInterface $node) {}
-
-      /**
-       * Devolve a entidade de teste.
-       */
-      public function getEntity(): NodeInterface {
-        return $this->node;
-      }
-
-    };
+    $formObject = $this->createMock(EntityFormInterface::class);
+    $formObject->method('getEntity')->willReturn($node);
     $formState = $this->createMock(FormStateInterface::class);
     $formState->method('getFormObject')->willReturn($formObject);
     $translation = $this->createMock(TranslationInterface::class);
 
     $form = ['title' => []];
-    (new ActivityHooks($translation))->formNodeFormAlter($form, $formState, 'node_revisa_form');
+    (new ActivityHooks($translation, $this->createMock(AccountProxyInterface::class)))->formNodeFormAlter($form, $formState, 'node_revisa_form');
 
     self::assertSame(['title' => []], $form);
+  }
+
+  /**
+   * Lê o grupo editorial de um campo do formulário.
+   *
+   * @param array<mixed> $form
+   *   Formulário montado pelo hook.
+   * @param string $campo
+   *   Nome do campo.
+   *
+   * @return mixed
+   *   Grupo do campo, ou NULL quando ausente.
+   */
+  private static function grupoDoCampo(array $form, string $campo): mixed {
+    $item = $form[$campo] ?? [];
+    return is_array($item) ? ($item['#group'] ?? NULL) : NULL;
   }
 
 }

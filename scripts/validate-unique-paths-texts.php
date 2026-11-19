@@ -3,6 +3,12 @@
 declare(strict_types=1);
 
 /**
+ * @file
+ */
+
+use Symfony\Component\Yaml\Yaml;
+
+/**
  * Barreira até a versão 1.0: sem caminho de rota duplicado, sem título de menu duplicado e sem texto aposentado
  * no código, nos testes ou na documentação atual. Regra em docs/operations/RELEASES.md
  * (seção "Caminhos e textos únicos até a 1.0"). Lista de textos aposentados: scripts/institution/RETIRED-TEXTS.json.
@@ -72,9 +78,10 @@ if ($failures !== []) {
 }
 echo "UNIQUE PATHS AND TEXTS GATE: PASS\n";
 
-/** Lê YAML de rotas e menus sem depender de extensão: usa o parser do Symfony do vendor. */
+/**
+ * Lê YAML de rotas e menus sem depender de extensão: usa o parser do Symfony do vendor. */
 function yaml_parse_file_safe(string $file): array {
   require_once dirname(__DIR__) . '/vendor/autoload.php';
-  $data = \Symfony\Component\Yaml\Yaml::parseFile($file);
+  $data = Yaml::parseFile($file);
   return is_array($data) ? $data : [];
 }

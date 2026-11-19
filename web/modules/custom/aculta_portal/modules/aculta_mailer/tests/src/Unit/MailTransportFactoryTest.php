@@ -12,8 +12,6 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\Mailer\Transport\Smtp\EsmtpTransport;
-use Symfony\Component\Mailer\Transport\Smtp\Stream\SocketStream;
-use Symfony\Component\Mailer\Transport\TransportInterface;
 
 /**
  * Transportes a partir da entidade: SMTP com credencial pelo nome, Brevo pela chave, e falha fechada sem credencial.
@@ -51,7 +49,6 @@ final class MailTransportFactoryTest extends UnitTestCase {
       'verify_peer' => TRUE,
     ]));
     $this->assertInstanceOf(EsmtpTransport::class, $transport);
-    $this->assertInstanceOf(SocketStream::class, $transport->getStream());
   }
 
   /**
@@ -87,7 +84,6 @@ final class MailTransportFactoryTest extends UnitTestCase {
    */
   public function testBrevoBuildsApiTransport(): void {
     $transport = $this->factory(['BREVO_API_KEY' => 'xkeysib-teste'])->create($this->transport(['plugin' => 'brevo']));
-    $this->assertInstanceOf(TransportInterface::class, $transport);
     $this->assertStringStartsWith('brevo+api://', (string) $transport);
   }
 

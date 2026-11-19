@@ -417,7 +417,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
 
     return [
       'name' => 'drupal',
-      'version' => \DRUPAL::VERSION,
+      'version' => \Drupal::VERSION,
       'h5pVersion' => $h5p_info['version'] ?? NULL,
     ];
   }
@@ -679,7 +679,7 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
    *   Whether H5P development mode is enabled.
    */
   public function isInDevMode() {
-    $$h5p_dev_mode = $this->getOption('development_mode', FALSE);
+    $h5p_dev_mode = $this->getOption('development_mode', FALSE);
     return (bool) $h5p_dev_mode;
   }
 
@@ -1523,12 +1523,68 @@ class aculta_H5PDrupal implements \H5PFrameworkInterface {
   /**
    * Implements getNumContent.
    *
+   * @param int[]|null $skip
+   *   Content IDs to exclude. A comma-separated list is accepted for legacy callers.
+   *
    * @return int
    *   Number of content entities using the requested library.
    */
   public function getNumContent($library_id, $skip = NULL) {
-    $skip_query = empty($skip) ? '' : " AND id NOT IN ($skip)";
-    return intval($this->database->query('SELECT COUNT(id) FROM {h5p_content} WHERE library_id = :id' . $skip_query, [':id' => $library_id])->fetchField());
+    $skip_ids = $this->normalizeContentIds($skip);
+
+    $query = $this->database->select('h5p_content', 'h5p');
+    $query->addExpression('COUNT(h5p.id)');
+    $query->condition('h5p.library_id', $library_id);
+    if ($skip_ids !== []) {
+      $query->condition('h5p.id', $skip_ids, 'NOT IN');
+    }
+
+    return (int) $query->execute()->fetchField();
+  }
+
+  /**
+   * Normalizes and validates IDs excluded from the H5P content count.
+   *
+   * @param mixed $skip
+   *   H5P content IDs. A comma-separated list is accepted for legacy callers.
+   *
+   * @return int[]
+   *   Positive, unique content IDs.
+   */
+  private function normalizeContentIds(mixed $skip): array {
+    if (empty($skip)) {
+      return [];
+    }
+
+    if (is_string($skip)) {
+      $skip = trim($skip);
+      if ($skip === '') {
+        return [];
+      }
+      if (preg_match('/\A\d+(?:\s*,\s*\d+)*\z/D', $skip) !== 1) {
+        throw new \InvalidArgumentException('A lista de IDs H5P precisa conter somente números inteiros.');
+      }
+      $skip = preg_split('/\s*,\s*/', $skip) ?: [];
+    }
+    elseif (is_int($skip)) {
+      $skip = [$skip];
+    }
+    elseif (!is_array($skip)) {
+      throw new \InvalidArgumentException('A lista de IDs H5P tem formato inválido.');
+    }
+
+    $ids = [];
+    foreach ($skip as $id) {
+      if (is_string($id) && ctype_digit($id)) {
+        $id = (int) $id;
+      }
+      if (!is_int($id) || $id < 1) {
+        throw new \InvalidArgumentException('A lista de IDs H5P precisa conter somente IDs positivos.');
+      }
+      $ids[] = $id;
+    }
+
+    return array_values(array_unique($ids));
   }
 
   /**

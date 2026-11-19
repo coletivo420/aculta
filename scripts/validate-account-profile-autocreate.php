@@ -1,19 +1,26 @@
 <?php
 
 /**
- * Gate: perfil participante é criado automaticamente na criação da conta (aculta_user).
+ * @file
+ * Gate: perfil participante é criado automaticamente na conta.
  *
- * Regra do responsável (2026-10-14): ao criar o usuário, o perfil participante nasce no hook
- * user_insert, com apelido inicial. Nenhum outro caminho pode criar perfil participante para uma
- * conta sem antes verificar se ele já existe, senão uma conta acaba com perfis duplicados.
+ * O perfil nasce na criação da conta (aculta_user).
+ *
+ * Regra do responsável (2026-10-14): ao criar o usuário, o perfil
+ * participante nasce no hook user_insert, com apelido inicial. Nenhum
+ * outro caminho pode criar perfil participante para uma conta sem antes
+ * verificar se ele já existe, senão uma conta acaba com perfis duplicados.
  *
  * Verifica no código-fonte (sem Runtime):
- * 1. AccountCreationHooks::userInsert() é #[Hook('user_insert')] e chama createProfile();
- * 2. createProfile() faz a guarda loadByUser($account, 'participante') antes de criar;
+ * 1. AccountCreationHooks::userInsert() é #[Hook('user_insert')] e
+ *    chama createProfile();
+ * 2. createProfile() faz a guarda loadByUser($account, 'participante')
+ *    antes de criar;
  * 3. todo outro arquivo de src/ que cria perfil participante faz get-or-create
  *    (loadByUser antes do create), e não cria às cegas.
  *
- * Duplicidade no banco é coberta pelo teste de Kernel ProfileAutocreateKernelTest.
+ * Duplicidade no banco é coberta pelo teste de Kernel
+ * ProfileAutocreateKernelTest.
  * Só lê arquivos. Não importa configuração nem consulta o Runtime.
  */
 
@@ -40,7 +47,8 @@ else {
   }
   else {
     $body = $c[1];
-    // Um tipo de perfil por função (PerfilDoPapel): a guarda procura o perfil do papel antes de criar.
+    // Um tipo de perfil por função (PerfilDoPapel): a guarda procura o
+    // perfil do papel antes de criar.
     $guard = strpos($body, 'PerfilDoPapel::principal(');
     $create = strpos($body, '->create(');
     if ($guard === FALSE) {
@@ -74,7 +82,8 @@ foreach ($iterator as $file) {
   if (!preg_match("/create\\(\\s*\\[\\s*['\"]type['\"]\\s*=>\\s*(?:['\"]participante['\"]|PerfilDoPapel::tipoDaConta\\()/s", $text, $creation, PREG_OFFSET_CAPTURE)) {
     continue;
   }
-  // Busca de existência aceita: loadByUser() ou consulta por tipo participante, sempre antes do create.
+  // Busca de existência aceita: loadByUser() ou consulta por tipo
+  // participante, sempre antes do create.
   $before = substr($text, 0, $creation[0][1]);
   $hasLookup = str_contains($before, 'loadByUser(')
     || str_contains($before, 'PerfilDoPapel::principal(')

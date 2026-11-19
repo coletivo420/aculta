@@ -22,9 +22,9 @@ weight: 0
 flag_type: 'entity:aculta_forum_post'
 link_type: reload
 flagTypeConfig:
-  show_in_links: { }
+  show_in_links: {  }
   show_as_field: true
   show_on_form: false
   show_contextual_link: false
-  extra_permissions: { }
-linkTypeConfig: { }
+  extra_permissions: {  }
+linkTypeConfig: {  }

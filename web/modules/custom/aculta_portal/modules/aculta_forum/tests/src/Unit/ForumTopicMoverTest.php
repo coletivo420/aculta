@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Service\ForumTopicMover;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -18,6 +19,7 @@ use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -53,6 +55,7 @@ final class ForumTopicMoverTest extends UnitTestCase {
 
     $result = $mover->access($node, $account);
     self::assertTrue($result->isAllowed());
+    self::assertInstanceOf(CacheableDependencyInterface::class, $result);
     self::assertContains('user.permissions', $result->getCacheContexts());
   }
 
@@ -77,7 +80,7 @@ final class ForumTopicMoverTest extends UnitTestCase {
   /**
    * Creates a movable public topic or an immutable historic topic.
    *
-   * @return array{\Drupal\aculta_forum\Service\ForumTopicMover, \Drupal\node\NodeInterface, \Drupal\Core\Session\AccountInterface}
+   * @return array{ForumTopicMover, NodeInterface&MockObject, AccountInterface&MockObject}
    *   The service, node and account under test.
    */
   private function subject(bool $isPublic, bool $canMove = TRUE): array {
@@ -131,7 +134,7 @@ final class ForumTopicMoverTest extends UnitTestCase {
       ['taxonomy_term', $term_storage],
       ['node', $node_storage],
     ]);
-    $purpose = new DomainPurposeManager(
+    $purpose = new DomainSiteManager(
       $manager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

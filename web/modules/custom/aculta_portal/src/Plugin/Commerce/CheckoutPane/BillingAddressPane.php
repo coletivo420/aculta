@@ -6,7 +6,9 @@ namespace Drupal\aculta_portal\Plugin\Commerce\CheckoutPane;
 
 use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_portal\Account\StreetNumberField;
+use Drupal\address\AddressInterface;
 use Drupal\commerce\InlineFormManager;
+use Drupal\commerce\Plugin\Commerce\InlineForm\EntityInlineFormInterface;
 use Drupal\commerce_checkout\Attribute\CommerceCheckoutPane;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowInterface;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\CheckoutPaneBase;
@@ -14,6 +16,8 @@ use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\CheckoutPaneInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\profile\ProfileStorageInterface;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,7 +26,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Fonte única: o perfil customer do cliente (o de Meus Dados > Endereço). O Commerce não aceita o perfil do cliente
  * como perfil de cobrança do pedido (Order::preSave passa o perfil de cobrança para o dono 0), então o pedido guarda
  * uma cópia. A cópia é atualizada a partir do perfil do cliente em todo resumo de rascunho, e a edição no checkout
- * grava no perfil do cliente e na cópia. O Mercado Pago lê a cópia (RedirectCheckoutForm). Ver docs/portal/CHECKOUT-BILLING.md.
+ * grava no perfil do cliente e na cópia. O Mercado Pago lê a cópia (RedirectCheckoutForm). Ver
+ * docs/portal/CHECKOUT-BILLING.md.
  *
  * Número: o perfil guarda o número no logradouro ("Avenida Paulista, 1000"). O formulário mostra a rua e o campo
  * Número recebe o número. Ao gravar, rua e número são juntados de novo. Ver StreetNumberField.
@@ -35,30 +40,70 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 )]
 final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneInterface {
 
-  private InlineFormManager $inlineFormManager;
+  /**
+   * Gerenciador de formulários inline do Commerce.
+   *
+   * @var \Drupal\commerce\InlineFormManager
+   */
+  protected InlineFormManager $inlineFormManager;
 
+  /**
+   * Cria a instância do pane com o gerenciador de formulários inline.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   * @param array<string, mixed> $configuration
+   *   Configuração do plugin.
+   * @param string $plugin_id
+   *   ID do plugin.
+   * @param mixed $plugin_definition
+   *   Definição do plugin.
+   * @param \Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowInterface|null $checkout_flow
+   *   Fluxo de checkout, ou NULL.
+   *
+   * @return static
+   *   Instância do pane.
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition, $checkout_flow);
     $instance->inlineFormManager = $container->get('plugin.manager.commerce_inline_form');
     return $instance;
   }
 
-  /** {@inheritdoc} */
-  public function buildPaneSummary() {
+  /**
+   * {@inheritdoc}
+   *
+   * @return array<mixed>
+   */
+  public function buildPaneSummary(): array {
     if (!$profile = $this->billingCopy()) {
       return [];
     }
     return $this->entityTypeManager->getViewBuilder('profile')->view($profile, 'default');
   }
 
-  /** {@inheritdoc} */
-  public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
-    $profile = $this->customerProfile() ?? $this->entityTypeManager->getStorage('profile')->create([
-      'type' => 'authenticated',
-      'uid' => (int) $this->order->getCustomerId(),
-      'status' => TRUE,
-      'is_default' => TRUE,
-    ]);
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $pane_form
+   * @param array<string, mixed> $complete_form
+   *
+   * @return array<string, mixed>
+   */
+  public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form): array {
+    $profile = $this->customerProfile();
+    if ($profile === NULL) {
+      $created = $this->entityTypeManager->getStorage('profile')->create([
+        'type' => 'authenticated',
+        'uid' => (int) $this->order->getCustomerId(),
+        'status' => TRUE,
+        'is_default' => TRUE,
+      ]);
+      if (!$created instanceof ProfileInterface) {
+        throw new \LogicException('The profile storage returned an unexpected entity.');
+      }
+      $profile = $created;
+    }
     // Liga a cópia de cobrança ao pedido antes do pane de pagamento. Sem isso,
     // o PaymentInformation do Commerce, em pedido de saldo zero, cria um perfil
     // do tipo `customer`, que o site não tem. A cópia é do tipo authenticated.
@@ -69,13 +114,19 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     if ($parts['number'] !== '' || $parts['sn']) {
       $editable = clone $profile;
       $address = $editable->get('field_address')->first();
-      $value = $address->getValue();
-      $value['address_line1'] = $parts['street'];
-      $address->setValue($value);
+      if ($address !== null) {
+        $value = $address->getValue();
+        if (is_array($value)) {
+          $value['address_line1'] = $parts['street'];
+          $address->setValue($value);
+        }
+      }
     }
     // O endereço fica sempre em edição no checkout: o resumo do Commerce tinha um "Editar" que não abria o formulário
     // em todos os casos. O formulário lê o perfil de Meus Dados e salva nele; número, S/N e bairro são validados aqui.
-    $form_state->set(array_merge($pane_form['#parents'], ['profile', 'render']), FALSE);
+    /** @var array<array-key, string> $parents */
+    $parents = is_array($pane_form['#parents'] ?? null) ? $pane_form['#parents'] : [];
+    $form_state->set(array_merge($parents, ['profile', 'render']), FALSE);
     $inline_form = $this->inlineFormManager->createInstance('customer_profile', [
       'profile_scope' => 'billing',
       'available_countries' => ['BR'],
@@ -84,59 +135,104 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     ], $editable);
 
     $pane_form['profile'] = [
-      '#parents' => array_merge($pane_form['#parents'], ['profile']),
+      '#parents' => array_merge($parents, ['profile']),
       '#inline_form' => $inline_form,
     ];
     $pane_form['profile'] = $inline_form->buildInlineForm($pane_form['profile'], $form_state);
     // Mesmo formulário de Meus Dados (AccountAddressForm): país fixo, rótulos, Número e S/N como subcampo do endereço.
     AccountAddressForm::apply($pane_form['profile'], $parts['number'], $parts['sn']);
-    // Anexado ao formulário da página: o Commerce não leva a biblioteca do pane (#attached) até a página.
-    $complete_form['#attached']['library'][] = AccountAddressForm::LIBRARY;
+    $complete_attached = $complete_form['#attached'] ?? [];
+    if (is_array($complete_attached)) {
+      $library = $complete_attached['library'] ?? [];
+      if (is_array($library)) {
+        $library[] = AccountAddressForm::LIBRARY;
+        $complete_attached['library'] = $library;
+      }
+      else {
+        $complete_attached['library'] = [AccountAddressForm::LIBRARY];
+      }
+      $complete_form['#attached'] = $complete_attached;
+    }
 
     return $pane_form;
   }
 
   /**
-   * Número obrigatório também quando o campo não veio no envio (resumo do endereço): a validação do campo só roda
-   * quando o formulário está em edição. Sem número nem S/N, o pedido não avança e a etapa reabre em edição.
+   * Valida o número, o S/N e o bairro do endereço de cobrança.
+   *
+   * O número é obrigatório também quando o campo não veio no envio (resumo
+   * do endereço): a validação do campo só roda quando o formulário está em
+   * edição. Sem número nem S/N, o pedido não avança e a etapa reabre em
+   * edição.
+   *
+   * @param array<string, mixed> $pane_form
+   * @param array<string, mixed> $complete_form
    */
-  public function validatePaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form) {
-    if (!isset($pane_form['profile']['#inline_form'])) {
+  public function validatePaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form): void {
+    $profileElement = $pane_form['profile'] ?? null;
+    if (!is_array($profileElement) || !isset($profileElement['#inline_form'])) {
       return;
     }
     // Campo de número enviado (modo edição): a validação do próprio campo já rodou.
-    $submitted = $form_state->getValue(array_merge($pane_form['#parents'], ['profile', 'field_address', 0, 'address']));
+    /** @var array<array-key, string> $parents */
+    $parents = is_array($pane_form['#parents'] ?? null) ? $pane_form['#parents'] : [];
+    $submitted = $form_state->getValue(array_merge($parents, ['profile', 'field_address', 0, 'address']));
     if (is_array($submitted) && array_key_exists('street_number', $submitted)) {
       return;
     }
-    $profile = $pane_form['profile']['#inline_form']->getEntity();
+    $inlineForm = $profileElement['#inline_form'];
+    if (!$inlineForm instanceof EntityInlineFormInterface) {
+      return;
+    }
+    $profile = $inlineForm->getEntity();
+    if (!$profile instanceof ProfileInterface) {
+      return;
+    }
     $parts = $this->savedParts($profile);
     if ($profile->hasField('field_address') && !$profile->get('field_address')->isEmpty()) {
       $address = $profile->get('field_address')->first();
-      if ($address && $address->getCountryCode() !== 'BR') {
-        $form_state->setError($pane_form['profile'], $this->t('O país de cobrança deve ser exclusivamente Brasil (BR).'));
+      if ($address instanceof AddressInterface && $address->getCountryCode() !== 'BR') {
+        $form_state->setError($profileElement, $this->t('O país de cobrança deve ser exclusivamente Brasil (BR).'));
       }
     }
     if ($parts['number'] === '' && !$parts['sn']) {
-      $form_state->setError($pane_form['profile'], $this->t('Informe o número ou marque S/N.'));
+      $form_state->setError($profileElement, $this->t('Informe o número ou marque S/N.'));
     }
     if (!$this->hasNeighborhood($profile)) {
-      $form_state->setError($pane_form['profile'], $this->t('O campo Bairro é obrigatório.'));
+      $form_state->setError($profileElement, $this->t('O campo Bairro é obrigatório.'));
     }
   }
 
-  /** {@inheritdoc} */
-  public function submitPaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form) {
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $pane_form
+   * @param array<string, mixed> $complete_form
+   */
+  public function submitPaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form): void {
+    $profileElement = $pane_form['profile'] ?? null;
+    if (!is_array($profileElement) || !isset($profileElement['#inline_form'])) {
+      return;
+    }
     /** @var \Drupal\commerce\Plugin\Commerce\InlineForm\EntityInlineFormInterface $inline_form */
-    $inline_form = $pane_form['profile']['#inline_form'];
+    $inline_form = $profileElement['#inline_form'];
     $profile = $inline_form->getEntity();
+    if (!$profile instanceof ProfileInterface) {
+      throw new \LogicException('The billing inline form returned an unexpected entity.');
+    }
     [$number, $sn] = StreetNumberField::values($pane_form, $form_state);
+    $numberStr = is_string($number) ? $number : (is_numeric($number) ? (string) $number : '');
     if ($profile->hasField('field_address') && !$profile->get('field_address')->isEmpty()) {
       $address = $profile->get('field_address')->first();
-      $value = $address->getValue();
-      $value['address_line1'] = StreetNumberField::join((string) $address->getAddressLine1(), $number, $sn);
-      $value['country_code'] = 'BR';
-      $address->setValue($value);
+      if ($address !== null) {
+        $value = $address->getValue();
+        if (is_array($value)) {
+          $line1 = isset($value['address_line1']) && is_scalar($value['address_line1']) ? (string) $value['address_line1'] : '';
+          $value['address_line1'] = StreetNumberField::join($line1, $numberStr, (bool) $sn);
+          $value['country_code'] = 'BR';
+          $address->setValue($value);
+        }
+      }
     }
     $profile->set('uid', (int) $this->order->getCustomerId());
     $profile->set('is_default', TRUE);
@@ -145,18 +241,27 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     $this->order->setBillingProfile($this->syncBillingCopy($profile));
   }
 
-  /** Perfil do cliente do pedido (Meus Dados > Endereço, tipo authenticated), ou NULL. */
+  /**
+   * Perfil do cliente do pedido (Meus Dados > Endereço, tipo authenticated), ou NULL. */
   private function customerProfile(): ?ProfileInterface {
     if ((int) $this->order->getCustomerId() <= 0) {
       return NULL;
     }
     $account = $this->entityTypeManager->getStorage('user')->load($this->order->getCustomerId());
-    return $account ? $this->entityTypeManager->getStorage('profile')->loadByUser($account, 'authenticated') : NULL;
+    $storage = $this->entityTypeManager->getStorage('profile');
+    if (!$account instanceof UserInterface || !$storage instanceof ProfileStorageInterface) {
+      return NULL;
+    }
+    $profile = $storage->loadByUser($account, 'authenticated');
+    return $profile instanceof ProfileInterface ? $profile : NULL;
   }
 
   /**
-   * Endereço de cobrança do pedido. Rascunho: cópia atualizada a partir do perfil do cliente. Pedido concluído: o
-   * perfil gravado no fechamento. Público para o pane de envio usar o mesmo endereço (ver
+   * Devolve o endereço de cobrança do pedido.
+   *
+   * Rascunho: cópia atualizada a partir do perfil do cliente. Pedido
+   * concluído: o perfil gravado no fechamento. Público para o pane de envio
+   * usar o mesmo endereço (ver
    * \Drupal\aculta_commerce\Plugin\Commerce\CheckoutPane\AcultaShippingInformation).
    */
   public function billingCopy(): ?ProfileInterface {
@@ -167,10 +272,21 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     return $customer ? $this->syncBillingCopy($customer) : $this->order->getBillingProfile();
   }
 
-  /** Copia o endereço do perfil do cliente para o perfil de cobrança (salvo se trocou); o pedido só é ligado em memória. */
+  /**
+   * Copia o endereço do perfil do cliente para o perfil de cobrança (salvo se trocou); o pedido só é ligado em memória. */
   private function syncBillingCopy(ProfileInterface $customer): ProfileInterface {
     $storage = $this->entityTypeManager->getStorage('profile');
-    $billing = $this->order->getBillingProfile() ?? $storage->create(['type' => 'authenticated', 'uid' => 0]);
+    if (!$storage instanceof ProfileStorageInterface) {
+      throw new \LogicException('The profile storage is unavailable.');
+    }
+    $billing = $this->order->getBillingProfile();
+    if ($billing === NULL) {
+      $created = $storage->create(['type' => 'authenticated', 'uid' => 0]);
+      if (!$created instanceof ProfileInterface) {
+        throw new \LogicException('The profile storage returned an unexpected entity.');
+      }
+      $billing = $created;
+    }
     $address = $customer->get('field_address')->getValue();
     // O CustomerProfile do Commerce lê o campo base `address`; o pane do Portal
     // usa `field_address`. Mantém os dois iguais na cópia de cobrança para o
@@ -191,20 +307,41 @@ final class BillingAddressPane extends CheckoutPaneBase implements CheckoutPaneI
     return $billing;
   }
 
-  /** Bairro (dependent_locality) obrigatório: o endereço salvo precisa ter bairro preenchido. */
-  private function hasNeighborhood($profile): bool {
+  /**
+   * Bairro (dependent_locality) obrigatório: o endereço salvo precisa ter bairro preenchido.
+   */
+  private function hasNeighborhood(?ProfileInterface $profile): bool {
     if (!$profile || !$profile->hasField('field_address') || $profile->get('field_address')->isEmpty()) {
       return FALSE;
     }
-    return trim((string) $profile->get('field_address')->first()->getDependentLocality()) !== '';
+    $address = $profile->get('field_address')->first();
+    if ($address instanceof AddressInterface) {
+      return trim((string) $address->getDependentLocality()) !== '';
+    }
+    return FALSE;
   }
 
-  /** Rua, número e S/N salvos no logradouro (para preencher o formulário ao voltar à etapa). */
-  private function savedParts($profile): array {
+  /**
+   * Rua, número e S/N salvos no logradouro (para preencher o formulário ao voltar à etapa).
+   *
+   * @return array{street: string, number: string, sn: bool}
+   */
+  private function savedParts(?ProfileInterface $profile): array {
     if (!$profile || !$profile->hasField('field_address') || $profile->get('field_address')->isEmpty()) {
       return ['street' => '', 'number' => '', 'sn' => FALSE];
     }
-    return StreetNumberField::split((string) $profile->get('field_address')->first()->getAddressLine1());
+    $address = $profile->get('field_address')->first();
+    if ($address instanceof AddressInterface) {
+      $split = StreetNumberField::split((string) $address->getAddressLine1());
+      $street = isset($split['street']) && is_scalar($split['street']) ? (string) $split['street'] : '';
+      $number = isset($split['number']) && is_scalar($split['number']) ? (string) $split['number'] : '';
+      return [
+        'street' => $street,
+        'number' => $number,
+        'sn' => (bool) ($split['sn'] ?? FALSE),
+      ];
+    }
+    return ['street' => '', 'number' => '', 'sn' => FALSE];
   }
 
 }

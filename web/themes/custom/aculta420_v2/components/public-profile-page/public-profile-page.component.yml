@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página de perfil público
+description: Apresentação do perfil público resolvido e autorizado pelo Portal.
+status: stable
+group: Conta
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Perfil
+    description: Render array autorizado do perfil público, com cache e ações originais.
+assets:
+  css:
+    component:
+      public-profile-page.css: {}

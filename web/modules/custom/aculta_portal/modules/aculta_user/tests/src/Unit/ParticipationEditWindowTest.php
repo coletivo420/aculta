@@ -8,7 +8,6 @@ use Drupal\aculta_user\EditWindowExemptionInterface;
 use Drupal\aculta_user\ParticipationEditWindow;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
@@ -127,7 +126,7 @@ final class ParticipationEditWindowTest extends TestCase {
    */
   public function testEmptyPublicationMarkerFallsBackToCreationTime(): void {
     $window = $this->window(['aculta_forum.settings' => 10], 1000);
-    $comment = $this->comment(17, 'aculta_forum_topic', 0, 950, TRUE, TRUE);
+    $comment = $this->comment(17, 'aculta_forum_topic', 0, 950, TRUE);
 
     $result = $window->access($comment, 'update', $this->account(17));
     self::assertTrue($result->isNeutral());
@@ -498,13 +497,18 @@ final class ParticipationEditWindowTest extends TestCase {
 
 /**
  * Minimal field list exposing a timestamp and emptiness.
+ *
+ * @extends FieldItemList<\Drupal\Core\Field\FieldItemInterface>
  */
 final class ParticipationEditWindowFieldList extends FieldItemList {
 
-  public function __construct(private readonly int $timestamp, private readonly bool $empty = FALSE) {}
+  public function __construct(protected readonly int $timestamp, protected readonly bool $empty = FALSE) {}
 
   /**
    * {@inheritdoc}
+   */
+  /**
+   * @param string $property_name
    */
   public function __get($property_name): mixed {
     return $property_name === 'value' ? $this->timestamp : parent::__get($property_name);
@@ -527,7 +531,7 @@ final class ParticipationEditWindowThrowingExemptionStub implements EditWindowEx
   /**
    * {@inheritdoc}
    */
-  public function access(EntityInterface $entity, AccountInterface $account): AccessResultInterface {
+  public function access(EntityInterface $entity, AccountInterface $account): AccessResult {
     throw new \RuntimeException('Exemption service unavailable.');
   }
 
@@ -545,10 +549,13 @@ final class ParticipationEditWindowExemptionStub implements EditWindowExemptionI
    */
   private ?array $cacheability = NULL;
 
-  public function __construct(private readonly AccessResultInterface $result) {}
+  public function __construct(private readonly AccessResult $result) {}
 
   /**
    * Declares cacheability to merge into the exemption result.
+   *
+   * @param list<string> $contexts
+   * @param list<string> $tags
    */
   public function withCacheability(array $contexts, array $tags): self {
     $this->cacheability = ['cacheContexts' => $contexts, 'cacheTags' => $tags];
@@ -558,7 +565,7 @@ final class ParticipationEditWindowExemptionStub implements EditWindowExemptionI
   /**
    * {@inheritdoc}
    */
-  public function access(EntityInterface $entity, AccountInterface $account): AccessResultInterface {
+  public function access(EntityInterface $entity, AccountInterface $account): AccessResult {
     if ($this->cacheability === NULL) {
       return $this->result;
     }

@@ -17,10 +17,18 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class LegacyAuthorAccessControlHandler extends EntityAccessControlHandler {
 
+  /**
+   * {@inheritdoc}
+   */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
     return AccessResult::allowedIfHasPermission($account, 'administer aculta legado');
   }
 
+  /**
+   * {@inheritdoc}
+   * @param array<array-key, mixed> $context
+   *   Dados recebidos.
+   */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     return AccessResult::allowedIfHasPermission($account, 'administer aculta legado');
   }

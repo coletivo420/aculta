@@ -33,7 +33,7 @@ final class ForumUnreadContentFilterTest extends TestCase {
 
     $filter->query();
 
-    self::assertSame([[0, '1 = 0', []]], $captured);
+    self::assertSame([['0', '1 = 0', []]], $captured);
   }
 
   /**
@@ -76,7 +76,7 @@ final class ForumUnreadContentFilterTest extends TestCase {
   /**
    * Builds a query plugin that records added where expressions.
    *
-   * @param array<int, array{0: int|string, 1: string, 2: array}> $captured
+   * @param list<array{0: int|string, 1: string, 2: array<array-key, mixed>}> $captured
    *   Captured arguments, by reference.
    */
   private function query(array &$captured): Sql {

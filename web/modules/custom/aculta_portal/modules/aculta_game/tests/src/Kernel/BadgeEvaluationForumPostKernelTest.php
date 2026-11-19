@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_game\Kernel;
 use Drupal\aculta_game\ForumParticipationPolicy;
 use Drupal\aculta_game\Hook\BadgeEvaluationHooks;
 use Drupal\aculta_forum\Entity\ForumPost;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Badge\AchievementDefinitions;
 use Drupal\aculta_user\Badge\BadgeCatalog;
 use Drupal\aculta_user\Badge\BadgeService;
@@ -165,7 +165,7 @@ final class BadgeEvaluationForumPostKernelTest extends KernelTestBase {
       $this->createMock(FileUsageInterface::class),
     );
     $badges = new BadgeService($entities, $lock, $database, $time, $definitions);
-    $purpose = new DomainPurposeManager(
+    $purpose = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->createMock(DomainNegotiatorInterface::class),
       $configFactory,

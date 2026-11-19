@@ -67,8 +67,8 @@ final class ActivityContentIndexProviderTest extends UnitTestCase {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('activity');
 
-    self::assertSame('main', $provider->getAccessPurpose($node));
-    self::assertNull($provider->getAccessPurpose($this->createMock(ContentEntityInterface::class)));
+    self::assertSame('main', $provider->getAccessSiteKey($node));
+    self::assertNull($provider->getAccessSiteKey($this->createMock(ContentEntityInterface::class)));
   }
 
 }

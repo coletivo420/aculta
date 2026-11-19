@@ -1,0 +1,11 @@
+{% if items %}
+  {% set links = [] %}
+  {% if items.first %}{% set links = links|merge([{ url: items.first.href, label: 'First'|t }]) %}{% endif %}
+  {% if items.previous %}{% set links = links|merge([{ url: items.previous.href, label: 'Previous'|t }]) %}{% endif %}
+  {% for key, item in items.pages %}
+    {% set links = links|merge([{ url: item.href, label: key ~ '', is_current: current == key }]) %}
+  {% endfor %}
+  {% if items.next %}{% set links = links|merge([{ url: items.next.href, label: 'Next'|t }]) %}{% endif %}
+  {% if items.last %}{% set links = links|merge([{ url: items.last.href, label: 'Last'|t }]) %}{% endif %}
+  {{ include('aculta420_v2:pagination', { current_page: current|default(1), total_pages: null, links: links }, with_context = false) }}
+{% endif %}

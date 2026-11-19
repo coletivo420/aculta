@@ -106,6 +106,38 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
   }
 
   /**
+   * Verifies library listing and detail queries return valid editor data.
+   */
+  public function testEditorStorageListsLibrariesAndTheirDetails(): void {
+    $this->container->get('database')->insert('h5p_libraries')
+      ->fields([
+        'machine_name' => 'H5P.KernelTest',
+        'title' => 'Kernel test library',
+        'major_version' => 1,
+        'minor_version' => 2,
+        'patch_version' => 0,
+        'runnable' => 1,
+        'restricted' => 0,
+        'semantics' => '[{"name":"text","type":"text"}]',
+      ])
+      ->execute();
+
+    $storage = $this->container->get('aculta_lms_h5p.editor_storage');
+    $libraries = $storage->getLibraries();
+    self::assertCount(1, $libraries);
+    self::assertSame('H5P.KernelTest', $libraries[0]->name);
+
+    $details = $storage->getLibraries([(object) [
+      'name' => 'H5P.KernelTest',
+      'majorVersion' => 1,
+      'minorVersion' => 2,
+    ]]);
+    self::assertCount(1, $details);
+    self::assertSame('Kernel test library', $details[0]->title);
+    self::assertSame('1', $details[0]->runnable);
+  }
+
+  /**
    * Verifies a valid package installs private, managed library files. */
   public function testInstallsValidatedLibrariesAndTracksManagedAssets(): void {
     $package = $this->createPackage([
@@ -205,11 +237,11 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
     }
 
     $zip = new \ZipArchive();
-    self::assertSame(TRUE, $zip->open($package, \ZipArchive::CREATE | \ZipArchive::EXCL));
+    self::assertTrue($zip->open($package, \ZipArchive::CREATE | \ZipArchive::EXCL));
     self::assertTrue($zip->addFile($payload, 'large-random.bin'));
     self::assertTrue($zip->close());
     $zip = new \ZipArchive();
-    self::assertSame(TRUE, $zip->open($package, \ZipArchive::RDONLY));
+    self::assertTrue($zip->open($package, \ZipArchive::RDONLY));
     $entry = $zip->statName('large-random.bin');
     $zip->close();
     self::assertGreaterThan(32 * 1024 * 1024, $entry['size']);
@@ -235,7 +267,7 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
       'high-ratio.txt' => str_repeat('A', 2 * 1024 * 1024),
     ]);
     $zip = new \ZipArchive();
-    self::assertSame(TRUE, $zip->open($package, \ZipArchive::RDONLY));
+    self::assertTrue($zip->open($package, \ZipArchive::RDONLY));
     $entry = $zip->statName('high-ratio.txt');
     $zip->close();
     self::assertGreaterThan(1024 * 1024, $entry['size']);
@@ -439,7 +471,7 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
   private function createPackage(array $entries): string {
     $path = $this->siteDirectory . '/library-' . bin2hex(random_bytes(6)) . '.h5p';
     $zip = new \ZipArchive();
-    self::assertSame(TRUE, $zip->open($path, \ZipArchive::CREATE | \ZipArchive::EXCL));
+    self::assertTrue($zip->open($path, \ZipArchive::CREATE | \ZipArchive::EXCL));
     foreach ($entries as $name => $contents) {
       self::assertTrue($zip->addFromString($name, $contents));
     }
@@ -448,7 +480,7 @@ final class AcultaH5PLibraryPackageInstallerTest extends KernelTestBase {
   }
 
   /**
-   * Installs the archive through the real service and proves rejection precedes extraction.
+   * Rejects the archive through the real service before extraction.
    */
   private function assertPackageIsRejectedBeforeExtraction(string $package, string $expectedMessage): void {
     try {

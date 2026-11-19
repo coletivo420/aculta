@@ -1,0 +1,22 @@
+.layout-two-columns {
+  display: grid;
+  gap: var(--spacing-lg);
+  grid-template-columns: minmax(0, 1fr);
+  min-inline-size: 0;
+}
+
+.layout-two-columns__primary,
+.layout-two-columns__secondary {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 60rem) {
+  .layout-two-columns--equal {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .layout-two-columns--wide {
+    grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr);
+  }
+}

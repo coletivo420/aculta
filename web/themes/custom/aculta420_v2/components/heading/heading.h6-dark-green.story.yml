@@ -1,0 +1,7 @@
+name: Título H6 com destaque verde-escuro
+description: Metadado ou rótulo com barra lateral verde-escuro.
+component: aculta420_v2:heading
+props:
+  text: Rede de Organizações
+  level: 6
+  accent: dark-green

@@ -20,6 +20,9 @@ final class DigestBlockingTestMailer extends TestMailCollector {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $message
+   *   Mensagem de e-mail.
    */
   public function mail(array $message): bool {
     $barrierDirectory = getenv('ACULTA_DIGEST_BARRIER_DIR');

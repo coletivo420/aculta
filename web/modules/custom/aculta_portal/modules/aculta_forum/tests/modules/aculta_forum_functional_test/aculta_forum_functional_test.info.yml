@@ -1,0 +1,8 @@
+name: 'ACULTA Forum functional test'
+type: profile
+description: 'Install profile for the Forum browser route tests.'
+core_version_requirement: ^11 || ^12
+dependencies:
+  - drupal:text_with_summary
+  - aculta_portal:aculta_editor
+  - ui_patterns:ui_patterns_views

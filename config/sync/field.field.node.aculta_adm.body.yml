@@ -7,7 +7,7 @@ dependencies:
     - filter.format.full_html
     - node.type.aculta_adm
   module:
-    - text
+    - text_with_summary
 id: node.aculta_adm.body
 field_name: body
 entity_type: node
@@ -24,4 +24,3 @@ settings:
   allowed_formats:
     full_html: full_html
 field_type: text_with_summary
-

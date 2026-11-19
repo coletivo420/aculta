@@ -28,6 +28,9 @@ final class ForumTopicMoveHooks {
 
   /**
    * Implements hook_entity_operation().
+   *
+   * @return array<mixed>
+   *   Operações adicionadas.
    */
   #[Hook('entity_operation')]
   public function entityOperation(EntityInterface $entity, CacheableMetadata $cacheability): array {

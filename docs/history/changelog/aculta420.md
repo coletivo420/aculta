@@ -92,7 +92,7 @@ Classificação: PATCH (token novo e regra de linha de ações; sem mudança nos
 
 - O SDC `content/author-card` exibe designation, bio e redes sociais autorizadas
   pelo `aculta_user`; Magazine não replica a estrutura de identidade.
-- A presença do avatar usa prop explícita, então slot vazio mostra a inicial.
+- A presença do avatar usa prop explícita, então slot vazio mostra a inicial. *(Correção 2026-11-04: a inicial do nome nunca é usada como avatar; sem foto, o acervo é o último fallback obrigatório. Ver `docs/architecture/avatar.md`.)*
   Firefox ESR/X11 no Runtime de teste: cartão conferido em 1270 e 500 CSS px,
   nos modos claro e escuro; cartão contido e foco/link legíveis. A página de
   fixture tem 9 px de overflow no preview PDF, fora da caixa de autoria; o Firefox
@@ -468,7 +468,7 @@ Classificação: PATCH de apresentação. Autorizado na solicitação de portage
 
 ## 0.6.0-dev.91 — cartão de autoria experimental — 2026-10-19
 
-- Novo SDC `content/author-card`, com variações visuais inline e empilhada, avatar/nome/link em slots e fallback por inicial; estilos usam tokens semânticos e suportam os modos de cor do tema.
+- Novo SDC `content/author-card`, com variações visuais inline e empilhada, avatar/nome/link em slots e fallback de avatar (Correção 2026-11-04: o fallback é o acervo, nunca a inicial do nome; ver `docs/architecture/avatar.md`); estilos usam tokens semânticos e suportam os modos de cor do tema.
 - Variantes funcionais são distintas por contexto (`author_forum`, `author_comment`, `author_editorial`, `author_lms`, `author_wiki`) e a autoria histórica se chama `author_growroom_historico`; o SDC compartilha o shell visual e não recebe dados de entidade.
 - Contraparte Twig do tema chama o componente via o theme hook neutro declarado por `aculta_user`; CSS, estrutura e identidade visual permanecem no ACULTA420.
 - Gate de Foundation alinhado à versão. Validação Runtime/visual não executada nesta etapa; estado: NÃO VALIDADO, RUNTIME STATUS: DEFERRED.

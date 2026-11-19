@@ -13,7 +13,7 @@ use Drupal\views\ViewExecutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Keeps the album slideshow rows identical to the access-filtered thumbnails. */
+ * Keeps gallery View rows limited to Media the current account can view. */
 final class AlbumSlidesAccessHooks {
 
   public function __construct(
@@ -22,7 +22,7 @@ final class AlbumSlidesAccessHooks {
   ) {}
 
   /**
-   * Implements hook_views_query_alter() for the album slideshow.
+   * Implements hook_views_query_alter() for gallery image Views.
    */
   #[Hook('views_query_alter')]
   public function filterAlbumSlides(ViewExecutable $view, QueryPluginBase $query): void {

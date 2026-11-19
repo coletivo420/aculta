@@ -1,0 +1,26 @@
+{% set preset = preset|default('custom') %}
+{% set preset_widths = {
+  'cards-compact': '12rem',
+  'cards-standard': '16rem',
+  'cards-wide': '20rem'
+} %}
+{% if preset in preset_widths|keys %}
+  {% set min_item_width = preset_widths[preset] %}
+  {% set max_columns = 0 %}
+{% else %}
+  {% set min_item_width = min_item_width|default('16rem') %}
+{% endif %}
+{% if min_item_width not in ['12rem', '16rem', '20rem'] %}
+  {% set min_item_width = '16rem' %}
+{% endif %}
+{% set max_columns = max_columns|default(0) + 0 %}
+{% if max_columns not in [0, 2, 3, 4] %}
+  {% set max_columns = 0 %}
+{% endif %}
+{% set classes = ['layout-grid', 'layout-grid--min-' ~ min_item_width|replace({'rem': ''})] %}
+{% if max_columns > 0 %}
+  {% set classes = classes|merge(['layout-grid--max-' ~ max_columns]) %}
+{% endif %}
+<div{{ attributes.addClass(classes) }}>
+  {{ content }}
+</div>

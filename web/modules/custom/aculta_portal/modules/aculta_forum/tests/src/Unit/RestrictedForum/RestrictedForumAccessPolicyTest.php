@@ -7,7 +7,9 @@ namespace Drupal\Tests\aculta_forum\Unit\RestrictedForum;
 use Drupal\aculta_forum\RestrictedForum\RestrictedForumAccessPolicy;
 use Drupal\aculta_forum\RestrictedForum\RestrictedForumGroupResolverInterface;
 use Drupal\aculta_user\Associado\ActiveAssociateInterface;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembershipInterface;
@@ -101,6 +103,7 @@ final class RestrictedForumAccessPolicyTest extends TestCase {
     );
     $result = $policy->access($this->topic(), $this->account(5), 'view');
     self::assertTrue($result->isForbidden());
+    self::assertInstanceOf(CacheableDependencyInterface::class, $result);
     self::assertSame(0, $result->getCacheMaxAge());
   }
 
@@ -118,19 +121,20 @@ final class RestrictedForumAccessPolicyTest extends TestCase {
     );
     $result = $policy->access($this->topic(), $this->account(5), 'view');
     self::assertTrue($result->isForbidden());
+    self::assertInstanceOf(CacheableDependencyInterface::class, $result);
     self::assertSame(0, $result->getCacheMaxAge());
   }
 
   /**
    * Builds the access policy with stubbed collaborators.
    *
-   * @param int[] $restrictedGroupIds
+   * @param list<int> $restrictedGroupIds
    *   Groups that restrict the topic.
    * @param bool $active
    *   Situação ativa da conta.
-   * @param int[] $memberGroupIds
+   * @param list<int> $memberGroupIds
    *   Groups em que a conta é membro.
-   * @param int[]|null $groupsOfTypeIds
+   * @param list<int>|null $groupsOfTypeIds
    *   Groups existentes do tipo configurado; padrão: união dos demais.
    */
   private function policy(array $restrictedGroupIds, bool $active, array $memberGroupIds, ?array $groupsOfTypeIds = NULL): RestrictedForumAccessPolicy {
@@ -143,10 +147,16 @@ final class RestrictedForumAccessPolicyTest extends TestCase {
 
   /**
    * Returns a resolver yielding topic groups and membership fixtures.
+   *
+   * @param list<int> $restrictedGroupIds
+   * @param list<int> $memberGroupIds
+   * @param list<int>|null $groupsOfTypeIds
    */
   private function resolver(array $restrictedGroupIds, array $memberGroupIds, ?array $groupsOfTypeIds = NULL): RestrictedForumGroupResolverInterface {
     $groups = [];
-    foreach ($groupsOfTypeIds ?? array_unique(array_merge($restrictedGroupIds, $memberGroupIds)) as $gid) {
+    /** @var list<int> $allGids */
+    $allGids = $groupsOfTypeIds ?? array_values(array_unique(array_merge($restrictedGroupIds, $memberGroupIds)));
+    foreach ($allGids as $gid) {
       $groups[$gid] = $this->group($gid, in_array($gid, $memberGroupIds, TRUE));
     }
     $resolver = $this->createMock(RestrictedForumGroupResolverInterface::class);

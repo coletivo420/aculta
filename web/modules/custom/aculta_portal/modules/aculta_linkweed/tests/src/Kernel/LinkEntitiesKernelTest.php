@@ -12,13 +12,12 @@ use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\ContentEntityForm;
 use Drupal\Core\Form\FormState;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_linkweed\Entity\Link;
 use Drupal\aculta_linkweed\Entity\LinkItem;
 use Drupal\aculta_linkweed\Entity\LinkPage;
 use Drupal\aculta_linkweed\Form\LinkPageItemAddForm;
 use Drupal\aculta_linkweed\Form\LinkPageEditorForm;
-use Drupal\aculta_linkweed\Service\LinkAnalytics;
 use Drupal\aculta_statistics\Storage\DailyAggregateStorage;
 use Symfony\Component\HttpFoundation\Request;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
@@ -60,7 +59,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     // Portal integration is an external contract in this isolated Kernel test.
-    $container->register('aculta_portal.domain_purpose')
+    $container->register('aculta_portal.domain_site')
       ->setSynthetic(TRUE)
       ->setPublic(TRUE);
     $container->register('aculta_user.author_identity_resolver')
@@ -73,9 +72,9 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $domain_purpose = (new \ReflectionClass(DomainPurposeManager::class))
+    $domain_site = (new \ReflectionClass(DomainSiteManager::class))
       ->newInstanceWithoutConstructor();
-    $this->container->set('aculta_portal.domain_purpose', $domain_purpose);
+    $this->container->set('aculta_portal.domain_site', $domain_site);
     $identity_resolver = (new \ReflectionClass(AuthorIdentityResolver::class))
       ->newInstanceWithoutConstructor();
     $this->container->set('aculta_user.author_identity_resolver', $identity_resolver);
@@ -101,14 +100,14 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     self::assertTrue($dashboard_route->getOption('_admin_route'));
     $public_route = $route_provider->getRouteByName('aculta_linkweed.page_public');
     self::assertSame('/pagina/{slug}', $public_route->getPath());
-    self::assertSame('links', $public_route->getOption('_aculta_domain_purpose'));
+    self::assertSame('links', $public_route->getOption('_aculta_site_key'));
     $short_redirect_route = $route_provider->getRouteByName('aculta_linkweed.short_redirect');
     self::assertSame('/redirecionar/{codigo}', $short_redirect_route->getPath());
-    self::assertSame('links', $short_redirect_route->getOption('_aculta_domain_purpose'));
+    self::assertSame('links', $short_redirect_route->getOption('_aculta_site_key'));
     self::assertSame(['GET', 'HEAD'], $short_redirect_route->getMethods());
     $short_qr_route = $route_provider->getRouteByName('aculta_linkweed.short_qr_code');
     self::assertSame('/redirecionar/{codigo}/codigo-qr.svg', $short_qr_route->getPath());
-    self::assertSame('links', $short_qr_route->getOption('_aculta_domain_purpose'));
+    self::assertSame('links', $short_qr_route->getOption('_aculta_site_key'));
     self::assertSame(['GET', 'HEAD'], $short_qr_route->getMethods());
     $page_add_route = $route_provider->getRouteByName('entity.aculta_linkweed_page.add_form');
     self::assertSame('/painel-administrativo/linkweed/pagina/adicionar', $page_add_route->getPath());
@@ -127,10 +126,10 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     self::assertSame('aculta_linkweed_page.update', $page_item_add_route->getRequirement('_entity_access'));
     $preview_route = $route_provider->getRouteByName('aculta_linkweed.page_preview');
     self::assertSame('/pagina/{slug}/previa', $preview_route->getPath());
-    self::assertSame('links', $preview_route->getOption('_aculta_domain_purpose'));
+    self::assertSame('links', $preview_route->getOption('_aculta_site_key'));
     $landing_route = $route_provider->getRouteByName('aculta_linkweed.landing');
     self::assertSame('/redes-sociais', $landing_route->getPath());
-    self::assertSame('links', $landing_route->getOption('_aculta_domain_purpose'));
+    self::assertSame('links', $landing_route->getOption('_aculta_site_key'));
     $social_settings_route = $route_provider->getRouteByName('aculta_linkweed.social_links_settings');
     self::assertSame('/painel-administrativo/aculta/redes-sociais', $social_settings_route->getPath());
     self::assertTrue($social_settings_route->getOption('_admin_route'));
@@ -423,7 +422,7 @@ final class LinkEntitiesKernelTest extends KernelTestBase {
     $editor = new LinkPageEditorForm(
       $this->container->get('entity_type.manager'),
       $this->container->get('current_user'),
-      $this->container->get('aculta_portal.domain_purpose'),
+      $this->container->get('aculta_portal.domain_site'),
     );
     $display_page = clone $page;
     $display_page->set('slug', 'slug inválido');

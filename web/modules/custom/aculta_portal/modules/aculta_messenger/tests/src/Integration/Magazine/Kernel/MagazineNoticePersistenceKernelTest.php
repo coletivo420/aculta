@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Integration\Magazine\Kernel;
 
+use Drupal\aculta_portal\Domain\SiteKey;
+
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Integration\Magazine\MagazineNoticeManager;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisherInterface;
 use Drupal\aculta_magazine\Hook\MagazineNoticeEventPublisher;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -180,7 +182,7 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
     $time->method('getRequestTime')->willReturn(1_793_000_000);
     $producer = new MagazineNoticeEventPublisher(
       $flags,
-      $this->domainPurposeManager(),
+      $this->siteManager(),
       $this->container->get('entity_type.manager'),
       $publisher,
       $settingsFactory,
@@ -218,10 +220,10 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
     self::assertSame('draft', $node->getOriginal()?->get('moderation_state')->value);
     self::assertSame('review', $node->get('moderation_state')->value);
     self::assertTrue($node->access('view', $author, TRUE)->isAllowed());
-    $domainPurposes = $this->domainPurposeManager();
-    $url = $domainPurposes->routeUrl('magazine', 'entity.node.latest_version', ['node' => $node->id()]);
+    $siteManagers = $this->siteManager();
+    $url = $siteManagers->routeUrl(SiteKey::Magazine, 'entity.node.latest_version', ['node' => $node->id()]);
     self::assertNotNull($url);
-    $revisionAccess = $domainPurposes->runInPurpose('magazine', static fn() => $url->access($author, TRUE));
+    $revisionAccess = $siteManagers->runInSite('magazine', static fn() => $url->access($author, TRUE));
     self::assertTrue($revisionAccess->isAllowed());
 
     $this->editorialProducer($author, 'review_submitted')->entityUpdate($node);
@@ -374,7 +376,7 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
     $lock->method('acquire')->willReturn(TRUE);
     return new MagazineNoticeManager(
       $this->container->get('entity_type.manager'),
-      $this->domainPurposeManager(),
+      $this->siteManager(),
       $preferences,
       $queueFactory ?? $this->createMock(QueueFactory::class),
       $lock,
@@ -410,7 +412,7 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
     $time->method('getRequestTime')->willReturn(1_793_000_000);
     return new MagazineNoticeEventPublisher(
       $flags,
-      $this->domainPurposeManager(),
+      $this->siteManager(),
       $this->container->get('entity_type.manager'),
       $publisher,
       $settingsFactory,
@@ -420,7 +422,7 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
 
   /**
    * Builds Domain Purpose context without enabling the Domain module. */
-  private function domainPurposeManager(): DomainPurposeManager {
+  private function siteManager(): DomainSiteManager {
     $domain = $this->createMock(DomainInterface::class);
     $domainStorage = $this->createMock(EntityStorageInterface::class);
     $domainStorage->method('load')->with('revista420_aculta_org')->willReturn($domain);
@@ -428,7 +430,7 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
     $entities->method('getStorage')->with('domain')->willReturn($domainStorage);
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn(NULL);
-    return new DomainPurposeManager(
+    return new DomainSiteManager(
       $entities,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -505,7 +507,15 @@ final class MagazineNoticePersistenceKernelTest extends KernelTestBase {
   }
 
   /**
-   * Installs one field and its instance on the notice Message bundle. */
+   * Installs one field and its instance on the notice Message bundle.
+   *
+   * @param string $name
+   *   O valor informado para $name.
+   * @param string $type
+   *   O valor informado para $type.
+   * @param array<array-key, mixed> $settings
+   *   O valor informado para $settings.
+   */
   private function installMessageField(string $name, string $type, array $settings = []): void {
     FieldStorageConfig::create([
       'entity_type' => 'message',

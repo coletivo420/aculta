@@ -1,0 +1,9 @@
+<article{{ attributes.addClass('map-popup') }}>
+  {% if thumbnail %}<div class="map-popup__thumbnail">{{ thumbnail }}</div>{% endif %}
+  <div class="map-popup__body">
+    {% if category %}<div class="map-popup__category">{{ include('aculta420_v2:badge', { label: category, variant: 'primary' }, with_context = false) }}</div>{% endif %}
+    <h2 class="map-popup__title">{% if url %}<a href="{{ url }}">{{ title }}</a>{% else %}{{ title }}{% endif %}</h2>
+    {% if address %}<p class="map-popup__address">{{ address }}</p>{% endif %}
+    {% if route_url %}<a class="map-popup__route" href="{{ route_url }}" target="_blank" rel="noopener noreferrer">{{ 'Ver rota'|t }}</a>{% endif %}
+  </div>
+</article>

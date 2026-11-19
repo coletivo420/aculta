@@ -36,6 +36,9 @@ final class aculta_H5PContentHubMetadataTest extends UnitTestCase {
 
       /**
        * {@inheritdoc}
+       *
+       * @return array<string, mixed>
+       *   Os metadados serializados.
        */
       public function jsonSerialize(): array {
         return ['libraries' => [['name' => 'H5P.Example']]];

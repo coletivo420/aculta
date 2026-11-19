@@ -1,0 +1,12 @@
+<div class="document-card">
+  {% if category %}
+    <div class="document-card__category">{{ category }}</div>
+  {% endif %}
+  <h3 class="document-card__title"><a href="{{ url }}">{{ title }}</a></h3>
+  {% if summary %}
+    <div class="document-card__summary">{{ summary }}</div>
+  {% endif %}
+  {% if attachment %}
+    <div class="document-card__attachment">{{ attachment }}</div>
+  {% endif %}
+</div>

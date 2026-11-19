@@ -20,7 +20,7 @@ final class MissionSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $configFactory,
     TypedConfigManagerInterface $typedConfigManager,
-    private readonly MissionProgress $missions,
+    protected readonly MissionProgress $missions,
   ) {
     parent::__construct($configFactory, $typedConfigManager);
   }

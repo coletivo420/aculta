@@ -1,0 +1,95 @@
+/**
+ * @file
+ * Estilos da página de Conexões do Studio (/conta/conexoes).
+ */
+
+.aculta-studio-connections-page {
+  display: grid;
+  gap: var(--spacing-lg);
+  grid-template-columns: 1fr;
+  inline-size: 100%;
+  margin-block-start: var(--spacing-md);
+}
+
+.aculta-studio-connections-page .htmx-indicator {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.aculta-studio-connections-page .htmx-request .htmx-indicator,
+.aculta-studio-connections-page .htmx-request.htmx-indicator {
+  visibility: visible;
+  transition: opacity var(--motion-slow) ease-in;
+  opacity: 1;
+}
+
+@media (min-width: 60rem) {
+  .aculta-studio-connections-page {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.aculta-connections-box {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: var(--spacing-lg);
+  border: 1px solid var(--color-border);
+  border-block-start: 4px solid var(--studio-stripe);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.aculta-connections-box__header {
+  margin-block-end: var(--spacing-md);
+  padding-block-end: var(--spacing-sm);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.aculta-connections-box__title {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-family: var(--font-display, inherit);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+}
+
+.aculta-connections-box__search-bar {
+  position: relative;
+  margin-block-end: var(--spacing-md);
+}
+
+.aculta-connections-box__search-bar .form-text {
+  inline-size: 100%;
+}
+
+.aculta-connections-box__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+  min-block-size: 8rem;
+}
+
+.aculta-connections-box__empty,
+.aculta-connections-box__hint {
+  margin: 0;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  padding-block: var(--spacing-lg);
+}
+
+/* Itens da lista de conexões e de busca */
+
+.aculta-connection-row__avatar .aculta-avatar {
+  object-fit: cover;
+  border-radius: var(--radius-full, 50%);
+  block-size: 3rem;
+  inline-size: 3rem;
+}
+
+.aculta-connection-row__avatar .aculta-avatar--fallback {
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-raised);
+}

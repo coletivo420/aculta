@@ -6,7 +6,7 @@ namespace Drupal\aculta_studio\Controller;
 
 use Drupal\aculta_studio\Experience\StudioExperienceManager;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -19,7 +19,7 @@ final class AccountController {
   public function __construct(
     private readonly StudioExperienceManager $experiences,
     private readonly AccountInterface $account,
-    private readonly DomainPurposeManager $domains,
+    private readonly DomainSiteManager $domains,
   ) {}
 
   /**
@@ -37,12 +37,15 @@ final class AccountController {
       throw new AccessDeniedHttpException();
     }
     $build = $provider->build();
-    $build['suites']['#items'] = $this->experiences->buildEntries(
+    $build['#experiences'] = $this->experienceCards($this->experiences->buildEntries(
       $this->account,
       $this->domains,
       ['conta', 'perfil', 'salvos', 'mercado_pago_plans'],
-    );
+    ));
     $cache = CacheableMetadata::createFromRenderArray($build);
+    foreach ($build['#experiences'] as $card) {
+      $cache->addCacheableDependency($card);
+    }
     foreach ($this->experiences->all() as $candidate) {
       if (!in_array($candidate->id(), ['conta', 'perfil', 'salvos', 'mercado_pago_plans'], TRUE)) {
         $cache->addCacheableDependency($candidate->access($this->account));
@@ -50,6 +53,80 @@ final class AccountController {
     }
     $cache->applyTo($build);
     return $build;
+  }
+
+  /**
+   * Descriptive metadata for the account experience cards, keyed by provider id.
+   */
+  private const CARD_META = [
+    'marley' => [
+      'icon' => 'book-open',
+      'description' => 'Criação e moderação da Revista, moderação do Fórum e Galerias.',
+    ],
+    'ganjalab' => ['icon' => 'flask', 'description' => 'Aprendizagem: painel e interface do estudante.'],
+    'we_sativa' => ['icon' => 'plant', 'description' => 'Área integrada de contribuição à Wiki.'],
+    'culturas' => ['icon' => 'users-three', 'description' => 'Eventos e organizações culturais da ACULTA.'],
+  ];
+
+  /**
+   * Faixa de largura total para experiências integradas (Green Stash).
+   */
+  private const STRIP_META = [
+    'green_stash' => [
+      'icon' => 'archive',
+      'description' => 'Área integrada de gestão comercial da Loja. A operação fica com o Commerce.',
+    ],
+  ];
+
+  /**
+   * Turns the account experience links into neutral card data.
+   *
+   * @param array<int, array<string, mixed>> $items
+   *   Link render arrays from StudioExperienceManager::buildEntries().
+   *
+   * @return array<int, array<string, mixed>>
+   *   SDC render arrays for available account experiences.
+   */
+  private function experienceCards(array $items): array {
+    $cards = [];
+    foreach ($items as $item) {
+      $id = (string) ($item['#attributes']['data-experience'] ?? '');
+      $cache = $item['#cache'] ?? [];
+      $title = $item['#title'] ?? NULL;
+      if (isset(self::STRIP_META[$id])) {
+        $meta = self::STRIP_META[$id];
+        $cards[] = [
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:account-experience-card',
+          '#props' => [
+            'id' => $id,
+            'kind' => 'strip',
+            'icon' => $meta['icon'],
+            'title' => (string) $title,
+            'description' => $meta['description'],
+            'tag' => 'Acesso integrado',
+          ],
+          '#cache' => $cache,
+        ];
+        continue;
+      }
+      $meta = self::CARD_META[$id] ?? ['icon' => 'user', 'description' => ''];
+      $cards[] = [
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:account-experience-card',
+        '#props' => [
+          'id' => $id,
+          'kind' => 'card',
+          'icon' => $meta['icon'],
+          'title' => (string) $title,
+          'description' => $meta['description'],
+          'url' => isset($item['#url']) ? $item['#url']->toString() : NULL,
+          'action_label' => 'Acessar',
+        ],
+        '#cache' => $cache,
+      ];
+    }
+    return $cards;
   }
 
 }

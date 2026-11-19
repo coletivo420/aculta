@@ -9,6 +9,7 @@ use Drupal\aculta_messenger\Entity\Aviso;
 use Drupal\aculta_messenger\Database\ForumCommentNoticeSchema;
 use Drupal\aculta_messenger\Database\ForumNoticeEventSchema;
 use Drupal\Core\Database\IntegrityConstraintViolationException;
+use Drupal\Core\Field\FieldStorageDefinitionInterface;
 
 /**
  * Moves Private Message email preferences into Messenger ownership.
@@ -130,6 +131,9 @@ function aculta_messenger_post_update_forum_post_watermark(array &$sandbox): str
 
   $entity_type = \Drupal::entityTypeManager()->getDefinition('aculta_aviso');
   $field = Aviso::baseFieldDefinitions($entity_type)['ultimo_post'];
+  if (!$field instanceof FieldStorageDefinitionInterface) {
+    throw new \LogicException('The Forum post watermark must be a field storage definition.');
+  }
   $manager->installFieldStorageDefinition(
     'ultimo_post',
     'aculta_aviso',

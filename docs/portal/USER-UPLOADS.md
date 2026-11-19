@@ -84,9 +84,9 @@ depende do tema.
 O LMS é o segundo consumidor (0.4.0-dev.252). Suas respostas do tipo File Upload
 têm uma aba própria, `lms`, no mesmo formulário central, com herança da política
 global ou override. Como a atividade é configurada pelo educador, a política LMS
-funciona como teto: `UserUploadPolicy::restrictValidators()` remove extensões
+funciona como teto: `ConsumerUploadPolicy::restrictValidators()` remove extensões
 fora da allowlist do consumidor e só reduz o limite de tamanho. Para o texto de
-ajuda do campo, `UserUploadPolicy::acceptedExtensions()` devolve a interseção
+ajuda do campo, `ConsumerUploadPolicy::acceptedExtensions()` devolve a interseção
 efetiva — as extensões da atividade dentro do teto — e não o teto inteiro. O
 validador
 `AcultaLmsSubmissionImage` do `aculta_image` continua aplicado às imagens. O LMS
@@ -98,7 +98,7 @@ sem copiar validadores ou criar limites locais sem necessidade documentada.
 
 ## Validação automatizada
 
-`tests/src/Kernel/Upload/UserUploadPolicyKernelTest.php` cobre política global e
+O teste Kernel `UserUploadPolicyKernelTest` foi removido com a classe duplicada `UserUploadPolicy`. Porte pendente (DEFERRED) para `ConsumerUploadPolicy`. Ele cobria política global e
 herança, override e fallback de configuração inválida, validadores Drupal 11,
 estrutura das abas administrativas, inspeção real de bytes por `aculta_image`,
 estado não publicado de Media/Gallery e a regra contextual de `aculta_gallery`.

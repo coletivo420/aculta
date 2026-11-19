@@ -50,8 +50,9 @@ $assert($modules->moduleExists('aculta_pagamentos_mercadopago'), 'The project-ow
 $assert(!$modules->moduleExists('aculta_apoio'), 'Former standalone aculta_apoio is not enabled.');
 $assert(!$modules->moduleExists('aculta_editorial'), 'Consolidated aculta_editorial is not enabled.');
 $assert(!is_dir(DRUPAL_ROOT . '/modules/custom/aculta_editorial'), 'Consolidated aculta_editorial directory has been removed.');
-$assert(!\Drupal::entityTypeManager()->hasDefinition('aculta_contribution'), 'Legacy aculta_contribution entity definition is absent.');
-$assert(!\Drupal::database()->schema()->tableExists('aculta_contribution'), 'Legacy contribution storage table is absent.');
+$contribution_definition = \Drupal::entityTypeManager()->getDefinition('aculta_contribution', FALSE);
+$assert($modules->moduleExists('aculta_cgu') && $contribution_definition !== NULL && $contribution_definition->getProvider() === 'aculta_cgu', 'The consolidated CGU module owns the contribution entity.');
+$assert($contribution_definition !== NULL && $contribution_definition->isRevisionable() && \Drupal::database()->schema()->tableExists($contribution_definition->getBaseTable()) && \Drupal::database()->schema()->tableExists($contribution_definition->getRevisionTable()), 'The consolidated contribution entity keeps its revisionable storage.');
 $assert(!\Drupal::database()->schema()->tableExists('aculta_apoio_webhook'), 'Legacy webhook receipt table is absent.');
 $assert(!is_dir(DRUPAL_ROOT . '/modules/custom/aculta_apoio'), 'No duplicate standalone support module remains in custom code.');
 $assert(!is_dir(DRUPAL_ROOT . '/modules/custom/aculta_mercadopago'), 'No custom Mercado Pago gateway module exists.');
@@ -64,9 +65,9 @@ $assert(!$modules->moduleExists('user_registrationpassword'), 'Incompatible user
 $assert($modules->moduleExists('username_enumeration_prevention'), 'Username Enumeration Prevention remains enabled.');
 $assert(!$modules->moduleExists('honeypot'), 'Honeypot is not enabled.');
 $assert($modules->moduleExists('login_emailusername'), 'The existing Login Email or Username module is enabled.');
-$assert($modules->moduleExists('aculta_mail_confirmer') && $modules->moduleExists('aculta_mail_confirmer_user'), 'ACULTA Mail Confirmer and its user integration are enabled.');
+$assert($modules->moduleExists('aculta_mail_confirmer'), 'ACULTA Mail Confirmer is enabled.');
 $assert($modules->moduleExists('aculta_user') && !$modules->moduleExists('change_mail_page'), 'ACULTA User supplies the canonical new-address form; the contrib Change Mail Page is retired.');
-$assert(\Drupal::config('aculta_mail_confirmer_user.settings')->get('user_email_change.enabled') === TRUE, 'ACULTA Mail Confirmer intercepts user email changes.');
+$assert(\Drupal::config('aculta_mail_confirmer.settings')->get('user_email_change.enabled') === TRUE, 'ACULTA Mail Confirmer intercepts user email changes.');
 // A camada de envio E-Mails ACULTA controla o envio: o transporte padrão
 // (smtp_hostinger) precisa de usuário e de
 // senha, e a senha tem de estar no arquivo de segredos (nenhuma Key, nenhuma
@@ -129,8 +130,8 @@ $account_switcher->switchTo($route_current);
 try {
   $own_edit_event = $make_account_event('entity.user.edit_form', $route_current);
   $account_route_subscriber->onKernelRequest($own_edit_event);
-  $domain_purpose = \Drupal::service('aculta_portal.domain_purpose');
-  $security_url = $domain_purpose->routeUrl('account', 'aculta_portal.security')?->toString();
+  $domain_site = \Drupal::service('aculta_portal.domain_site');
+  $security_url = $domain_site->routeUrl('account', 'aculta_portal.security')?->toString();
   $assert($own_edit_event->hasResponse() && $own_edit_event->getResponse()->getStatusCode() === 302 && $own_edit_event->getResponse()->headers->get('Location') === $security_url, 'A regular user is redirected from own generic user edit to Portal Security.');
   $raw_edit_event = $make_account_event('entity.user.edit_form');
   $raw_edit_event->getRequest()->attributes->set('_raw_variables', new ParameterBag(['user' => '999991']));
@@ -138,7 +139,7 @@ try {
   $assert($raw_edit_event->hasResponse() && $raw_edit_event->getResponse()->getStatusCode() === 302, 'The route guard redirects the own edit page when the ID is still in Drupal raw route parameters.');
   $own_profile_event = $make_account_event('entity.user.canonical', $route_current);
   $account_route_subscriber->onKernelRequest($own_profile_event);
-  $account_home_url = $domain_purpose->pathUrl('account', '/')?->toString();
+  $account_home_url = $domain_site->pathUrl('account', '/')?->toString();
   $assert($own_profile_event->hasResponse() && $own_profile_event->getResponse()->headers->get('Location') === $account_home_url, 'A regular user is redirected from a public own-account profile to the Account Domain root.');
   $other_profile_event = $make_account_event('entity.user.canonical', $route_other);
   $account_route_subscriber->onKernelRequest($other_profile_event);
@@ -493,7 +494,8 @@ $support_html = (string) \Drupal::service('renderer')->renderRoot($support_form)
 // O aviso de indisponibilidade acompanha o estado real do gateway: desligado
 // → aviso e sem /apoiar; ligado → sem aviso.
 $support_notice = str_contains($support_html, 'apoio financeiro está temporariamente indisponível');
-$gateway_enabled = (bool) \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->load('mercado_pago')?->status();
+$gateway = \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->load('mercado_pago');
+$gateway_enabled = $gateway instanceof \Drupal\commerce_payment\Entity\PaymentGatewayInterface && $gateway->status();
 $assert($gateway_enabled ? !$support_notice : ($support_notice && !str_contains($support_html, '/apoiar')), 'The public support page matches the Mercado Pago gateway state (notice only while disabled).');
 
 // Exercise the amount guard and Form API number minimum with values kept only
@@ -929,27 +931,18 @@ $other_gateway_event = new RequestEvent($kernel, $other_gateway_request, HttpKer
 $subscriber->onKernelRequest($other_gateway_event);
 $assert(!$other_gateway_event->hasResponse() && $other_gateway_request->query->has('data_id'), 'Other Commerce gateways pass through untouched.');
 
-// O teste precisa do gateway desligado. Desliga-se só durante o teste, sem
-// chamar a API externa, e restaura-se o estado original.
-$mp_config = \Drupal::configFactory()->getEditable('commerce_payment.commerce_payment_gateway.mercado_pago');
-$mp_original_status = $mp_config->get('status');
-try {
-  $mp_config->set('status', FALSE)->save();
-  \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->resetCache(['mercado_pago']);
-  $disabled_gateway_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], [
-    'type' => 'payment',
-    'data' => ['id' => $webhook_data_id],
-  ], $valid_signature, $webhook_request_id);
-  $disabled_gateway_request->attributes->set('_route', 'commerce_payment.notify');
-  $disabled_gateway_request->attributes->set('commerce_payment_gateway', 'mercado_pago');
-  $disabled_gateway_event = new RequestEvent($kernel, $disabled_gateway_request, HttpKernelInterface::MAIN_REQUEST);
-  $subscriber->onKernelRequest($disabled_gateway_event);
-  $assert($disabled_gateway_event->hasResponse() && $disabled_gateway_event->getResponse()->getStatusCode() === 503, 'The live native-route subscriber blocks notify while the Mercado Pago gateway entity is disabled.');
-}
-finally {
-  \Drupal::configFactory()->getEditable('commerce_payment.commerce_payment_gateway.mercado_pago')->set('status', $mp_original_status)->save();
-  \Drupal::entityTypeManager()->getStorage('commerce_payment_gateway')->resetCache(['mercado_pago']);
-}
+// Validação de segurança read-only: testa o bloqueio com gateway desligado
+// pelo WebhookGuard sem mutar o estado persistente de configuração no banco.
+$disabled_gateway_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], [
+  'type' => 'payment',
+  'data' => ['id' => $webhook_data_id],
+], $valid_signature, $webhook_request_id);
+$disabled_gateway_request->attributes->set('_route', 'commerce_payment.notify');
+$disabled_gateway_request->attributes->set('commerce_payment_gateway', 'mercado_pago');
+/** @var \Drupal\aculta_pagamentos_mercadopago\Commerce\MercadoPago\WebhookGuard $webhook_guard */
+$webhook_guard = \Drupal::service('aculta_pagamentos_mercadopago.webhook_guard');
+$disabled_gateway_response = $webhook_guard->validateAndNormalize($disabled_gateway_request, FALSE, NULL);
+$assert($disabled_gateway_response instanceof \Symfony\Component\HttpFoundation\Response && $disabled_gateway_response->getStatusCode() === 503, 'The live native-route subscriber blocks notify while the Mercado Pago gateway entity is disabled.');
 $assert($subscriber::getSubscribedEvents()[KernelEvents::REQUEST][1] === 29, 'Webhook guard runs after Drupal routing at the audited request event priority.');
 
 $other_route_request = $make_webhook_request(['data.id' => $webhook_data_id, 'type' => 'payment'], [

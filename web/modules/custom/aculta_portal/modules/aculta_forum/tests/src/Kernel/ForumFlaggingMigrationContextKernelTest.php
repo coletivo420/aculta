@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Migration\ForumFlaggingMigrationContext;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Tests\CommentTestTrait;
@@ -200,7 +200,10 @@ final class ForumFlaggingMigrationContextKernelTest extends KernelTestBase {
       },
     );
 
-    self::assertGreaterThan(0, (int) reset($saved));
+    self::assertIsArray($saved);
+    $firstSaved = reset($saved);
+    self::assertIsInt($firstSaved);
+    self::assertGreaterThan(0, $firstSaved);
     self::assertFalse($context->authorizes($flagging));
     $stored = $this->container->get('entity_type.manager')
       ->getStorage('flagging')
@@ -269,7 +272,7 @@ final class ForumFlaggingMigrationContextKernelTest extends KernelTestBase {
     try {
       (new ForumFlaggingMigrationContext(
         $this->container->get('entity_type.manager'),
-        new DomainPurposeManager(
+        new DomainSiteManager(
           $this->container->get('entity_type.manager'),
           $this->container->get('domain.negotiator'),
           $this->container->get('config.factory'),
@@ -376,7 +379,7 @@ final class ForumFlaggingMigrationContextKernelTest extends KernelTestBase {
   private function context(): ForumFlaggingMigrationContext {
     return new ForumFlaggingMigrationContext(
       $this->container->get('entity_type.manager'),
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $this->container->get('entity_type.manager'),
         $this->container->get('domain.negotiator'),
         $this->container->get('config.factory'),

@@ -24,13 +24,18 @@ final class AccountAddressHooks {
 
   /**
    * Loja, equipe e locais de evento usam endereço BR com o mesmo formulário.
+   *
+   * @param array<mixed> $form
    */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     if ($formId === 'system_regional_settings') {
-      if (isset($form['locale']['site_default_country'])) {
-        $form['locale']['site_default_country']['#default_value'] = 'BR';
-        $form['locale']['site_default_country']['#disabled'] = TRUE;
+      if (isset($form['locale']) && is_array($form['locale'])) {
+        $locale = &$form['locale'];
+        if (isset($locale['site_default_country']) && is_array($locale['site_default_country'])) {
+          $locale['site_default_country']['#default_value'] = 'BR';
+          $locale['site_default_country']['#disabled'] = TRUE;
+        }
       }
       return;
     }
@@ -40,22 +45,36 @@ final class AccountAddressHooks {
       return;
     }
     $entity = $formObject->getEntity();
-    if ($entity->getEntityTypeId() === 'commerce_store' && isset($form['billing_countries'])) {
-      $form['billing_countries']['#access'] = FALSE;
-      if (isset($form['billing_countries']['widget'])) {
-        $form['billing_countries']['widget']['#default_value'] = ['BR'];
+    if (!$entity instanceof EntityInterface) {
+      return;
+    }
+    if ($entity->getEntityTypeId() === 'commerce_store' && isset($form['billing_countries']) && is_array($form['billing_countries'])) {
+      $billingCountries = &$form['billing_countries'];
+      $billingCountries['#access'] = FALSE;
+      if (isset($billingCountries['widget']) && is_array($billingCountries['widget'])) {
+        $billingCountries['widget']['#default_value'] = ['BR'];
       }
     }
     $field = AccountAddressForm::fieldOf($entity);
-    if ($field === NULL || !isset($form[$field])) {
+    if ($field === NULL || !isset($form[$field]) || !is_array($form[$field])) {
       return;
     }
-    $saved = $entity->isNew() ? NULL : $this->entityTypeManager->getStorage($entity->getEntityTypeId())->load($entity->id());
+    $entityId = $entity->id();
+    $saved = $entity->isNew() || $entityId === NULL ? NULL : $this->entityTypeManager->getStorage($entity->getEntityTypeId())->load($entityId);
     $parts = AccountAddressForm::savedParts($saved, $field);
     if (!AccountAddressForm::apply($form[$field], $parts['number'], $parts['sn'])) {
       return;
     }
+    if (!isset($form['#attached']) || !is_array($form['#attached'])) {
+      $form['#attached'] = [];
+    }
+    if (!isset($form['#attached']['library']) || !is_array($form['#attached']['library'])) {
+      $form['#attached']['library'] = [];
+    }
     $form['#attached']['library'][] = AccountAddressForm::LIBRARY;
+    if (!isset($form['#entity_builders']) || !is_array($form['#entity_builders'])) {
+      $form['#entity_builders'] = [];
+    }
     $form['#entity_builders'][] = [AccountAddressForm::class, 'buildStreetNumber'];
   }
 
@@ -76,8 +95,8 @@ final class AccountAddressHooks {
       : ($entity->hasField('address') ? 'address' : NULL)));
     if ($field !== NULL && $entity->hasField($field) && !$entity->get($field)->isEmpty()) {
       foreach ($entity->get($field) as $item) {
-        if ($item->country_code !== 'BR') {
-          $item->country_code = 'BR';
+        if ($item->get('country_code')->getString() !== 'BR') {
+          $item->set('country_code', 'BR');
         }
       }
     }
@@ -85,19 +104,35 @@ final class AccountAddressHooks {
 
   /**
    * Garante que elementos de endereço usem BR e validem no servidor.
+   *
+   * @param array<mixed> $types
    */
   #[Hook('element_info_alter')]
   public function elementInfoAlter(array &$types): void {
-    if (isset($types['address'])) {
-      $types['address']['#available_countries'] = ['BR'];
-      $types['address']['#process'][] = [AccountAddressForm::class, 'finish'];
-      $types['address']['#element_validate'][] = [AccountAddressForm::class, 'validateAddressElement'];
+    if (isset($types['address']) && is_array($types['address'])) {
+      $address = &$types['address'];
+      $address['#available_countries'] = ['BR'];
+      if (!isset($address['#process']) || !is_array($address['#process'])) {
+        $address['#process'] = [];
+      }
+      $address['#process'][] = [AccountAddressForm::class, 'finish'];
+      if (!isset($address['#element_validate']) || !is_array($address['#element_validate'])) {
+        $address['#element_validate'] = [];
+      }
+      $address['#element_validate'][] = [AccountAddressForm::class, 'validateAddressElement'];
     }
-    if (isset($types['address_country'])) {
-      $types['address_country']['#available_countries'] = ['BR'];
-      $types['address_country']['#default_value'] = 'BR';
-      $types['address_country']['#process'][] = [AccountAddressForm::class, 'finishCountryElement'];
-      $types['address_country']['#element_validate'][] = [AccountAddressForm::class, 'validateCountryCode'];
+    if (isset($types['address_country']) && is_array($types['address_country'])) {
+      $addressCountry = &$types['address_country'];
+      $addressCountry['#available_countries'] = ['BR'];
+      $addressCountry['#default_value'] = 'BR';
+      if (!isset($addressCountry['#process']) || !is_array($addressCountry['#process'])) {
+        $addressCountry['#process'] = [];
+      }
+      $addressCountry['#process'][] = [AccountAddressForm::class, 'finishCountryElement'];
+      if (!isset($addressCountry['#element_validate']) || !is_array($addressCountry['#element_validate'])) {
+        $addressCountry['#element_validate'] = [];
+      }
+      $addressCountry['#element_validate'][] = [AccountAddressForm::class, 'validateCountryCode'];
     }
   }
 

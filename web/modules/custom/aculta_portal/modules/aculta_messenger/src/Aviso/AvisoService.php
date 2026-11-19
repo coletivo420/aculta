@@ -6,8 +6,9 @@ namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\IntegrityConstraintViolationException;
@@ -105,7 +106,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       return 0;
     }
     $atualizados = 0;
-    $authorUid = method_exists($topico, 'getRevisionUserId') ? (int) $topico->getRevisionUserId() : 0;
+    $authorUid = (int) $topico->getRevisionUserId();
     foreach ($this->flagService->getEntityFlaggings($flag, $topico) as $flagging) {
       $uid = (int) $flagging->getOwnerId();
       if ($uid <= 0 || ($recipientUid !== NULL && $uid !== $recipientUid)
@@ -228,6 +229,9 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
         ->condition('assunto_nid', $nid)
         ->execute()
     ) as $aviso) {
+      if (!$aviso instanceof ContentEntityInterface) {
+        continue;
+      }
       $total += (int) $aviso->get('contador_site')->value;
     }
     return $total;
@@ -250,6 +254,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       ->execute();
     $topicIds = [];
     foreach ($this->entityTypeManager->getStorage('aculta_aviso')->loadMultiple($ids) as $aviso) {
+      assert($aviso instanceof ContentEntityInterface);
       $topicIds[(int) $aviso->get('assunto_nid')->value] = TRUE;
     }
     $topics = $this->entityTypeManager->getStorage('node')->loadMultiple(array_keys($topicIds));
@@ -283,7 +288,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       return 0;
     }
     $topico = $comment->getCommentedEntity();
-    if ($topico === NULL || !$this->accessPolicy->supportsTopic($topico)) {
+    if (!$topico instanceof NodeInterface || !$this->accessPolicy->supportsTopic($topico)) {
       return 0;
     }
     $flag = $this->flagService->getFlagById('seguir_topico');
@@ -320,7 +325,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
    */
   public function registrarPost(ForumPost $post, ?int $recipientUid = NULL): int {
     if (!$post->isPublished() || !$post->isDefaultRevision()
-      || ($post instanceof SynchronizableInterface && $post->isSyncing())
+      || $post->isSyncing()
       || !$post->hasField('topic') || $post->get('topic')->isEmpty()) {
       return 0;
     }
@@ -384,6 +389,7 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
     $moved = 0;
     $movedUids = [];
     foreach ($storage->loadMultiple($ids) as $source) {
+      assert($source instanceof ContentEntityInterface);
       $uid = (int) $source->get('uid')->target_id;
       if ($uid <= 0 || !$this->accessPolicy->canViewTopic($destination, $uid)) {
         continue;
@@ -391,6 +397,9 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       $target_ids = $this->query($uid, $destinationNid, Aviso::TIPO_RESPOSTA);
       if ($target_ids !== []) {
         $target = $storage->load(reset($target_ids));
+        if (!$target instanceof ContentEntityInterface) {
+          continue;
+        }
         $target->set('contador_site', (int) $target->get('contador_site')->value
           + (int) $source->get('contador_site')->value);
         $target->set('contador_email', (int) $target->get('contador_email')->value
@@ -468,6 +477,9 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       ->condition('assunto_nid', $nid)
       ->execute();
     foreach ($this->entityTypeManager->getStorage('aculta_aviso')->loadMultiple($ids) as $aviso) {
+      if (!$aviso instanceof ContentEntityInterface || !$aviso instanceof EntityChangedInterface) {
+        continue;
+      }
       if ((int) $aviso->get('contador_site')->value > 0) {
         // Reading changes delivery state, not the activity's recency. Keep
         // older notices from jumping ahead of newer activity in the list.
@@ -704,9 +716,12 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
     $ids = $this->query($uid, $nid, $tipo);
     $storage = $this->entityTypeManager->getStorage('aculta_aviso');
     if ($ids !== []) {
-      return $storage->load(reset($ids));
+      $aviso = $storage->load(reset($ids));
+      if ($aviso instanceof Aviso) {
+        return $aviso;
+      }
     }
-    return $storage->create([
+    $created = $storage->create([
       'uid' => $uid,
       'tipo' => $tipo,
       'assunto_nid' => $nid,
@@ -717,6 +732,10 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
       'ultimo_post' => 0,
       'ultimo_evento' => 0,
     ]);
+    if (!$created instanceof Aviso) {
+      throw new \LogicException('The notice storage returned an unexpected entity.');
+    }
+    return $created;
   }
 
   /**
@@ -740,13 +759,14 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
    *   Matching notice entity IDs.
    */
   private function query(int $uid, int $nid, string $tipo = Aviso::TIPO_RESPOSTA): array {
-    return $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
+    $ids = $this->entityTypeManager->getStorage('aculta_aviso')->getQuery()
       ->accessCheck(FALSE)
       ->condition('uid', $uid)
       ->condition('tipo', $tipo)
       ->condition('assunto_nid', $nid)
       ->range(0, 1)
       ->execute();
+    return array_map('intval', array_values($ids));
   }
 
 }

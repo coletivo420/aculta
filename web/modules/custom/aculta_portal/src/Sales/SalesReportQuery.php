@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Sales;
 
+use Drupal\Core\Database\Statement\FetchAs;
+use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -51,6 +53,7 @@ class SalesReportQuery {
    * Vendas de produto por variação e moeda, ordenadas pela quantidade.
    *
    * @return array<int, array{variacao_id: int, produto: string, variacao: string, quantidade: string, total: string, moeda: string}>
+   *   Linhas agregadas por variação e moeda.
    */
   public function porVariacao(SalesReportFilters $filtros): array {
     $consulta = $this->itens($filtros, self::ESCOPO_PRODUTO);
@@ -63,7 +66,7 @@ class SalesReportQuery {
     $consulta->groupBy('variacao_id');
     $consulta->groupBy('moeda');
     $consulta->orderBy('quantidade', 'DESC');
-    $linhas = $consulta->execute()->fetchAll(\PDO::FETCH_ASSOC);
+    $linhas = DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $consulta->execute()->fetchAll(FetchAs::Associative), fn() => $consulta->execute()->fetchAll(\PDO::FETCH_ASSOC));
 
     // Nome do produto e da variação vêm das entidades, para não depender de joins em tabelas de tradução.
     $variacoes = $this->entityTypeManager->getStorage('commerce_product_variation')
@@ -89,6 +92,7 @@ class SalesReportQuery {
    * Pedidos e valor por período e moeda, para o escopo informado.
    *
    * @return array<int, array{periodo: string, pedidos: int, total: string, moeda: string}>
+   *   Linhas agregadas por período e moeda.
    */
   public function porPeriodo(SalesReportFilters $filtros, string $escopo = self::ESCOPO_PRODUTO): array {
     $formato = self::FORMATOS[$filtros->granularidade] ?? self::FORMATOS['dia'];
@@ -108,13 +112,14 @@ class SalesReportQuery {
       'pedidos' => (int) $l['pedidos'],
       'total' => (string) $l['total'],
       'moeda' => (string) $l['moeda'],
-    ], $consulta->execute()->fetchAll(\PDO::FETCH_ASSOC));
+    ], DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => $consulta->execute()->fetchAll(FetchAs::Associative), fn() => $consulta->execute()->fetchAll(\PDO::FETCH_ASSOC)));
   }
 
   /**
    * IDs dos pedidos com itens do escopo no intervalo, do mais recente ao mais antigo, com paginação.
    *
    * @return array{ids: int[], total: int}
+   *   IDs dos pedidos da página e total de pedidos.
    */
   public function pedidos(SalesReportFilters $filtros, string $escopo, int $pagina, int $porPagina): array {
     // A contagem é uma consulta separada: fetchField() lê a primeira coluna, então não pode herdar o campo de id.

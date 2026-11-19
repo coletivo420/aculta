@@ -7,9 +7,10 @@ namespace Drupal\aculta_events\Form;
 use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Adapter\LocationContributionAdapter;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -37,7 +38,7 @@ final class EventLocationForm extends ContentEntityForm {
     EntityRepositoryInterface $entity_repository,
     EntityTypeBundleInfoInterface $entity_type_bundle_info,
     TimeInterface $time,
-    private readonly EventPermissionPolicy $permissionPolicy,
+    protected readonly EventPermissionPolicy $permissionPolicy,
   ) {
     parent::__construct($entity_repository, $entity_type_bundle_info, $time);
   }
@@ -52,8 +53,8 @@ final class EventLocationForm extends ContentEntityForm {
       $container->get('datetime.time'),
       $container->get('aculta_events.permission_policy'),
     );
-    $form->contributions = $container->has('aculta_contributions.lifecycle')
-      ? $container->get('aculta_contributions.lifecycle')
+    $form->contributions = $container->has('aculta_cgu.contribution_lifecycle')
+      ? $container->get('aculta_cgu.contribution_lifecycle')
       : NULL;
     $form->locationAdapter = $container->has('aculta_events.location_contribution_adapter')
       ? $container->get('aculta_events.location_contribution_adapter')
@@ -120,8 +121,17 @@ final class EventLocationForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state): void {
-    parent::validateForm($form, $form_state);
+  public function validateForm(array &$form, FormStateInterface $form_state): ContentEntityInterface {
+    $entity = parent::validateForm($form, $form_state);
+    $site = trim((string) ($form_state->getValue(['field_site', 0, 'uri']) ?? ''));
+    if ($site !== '') {
+      $scheme = parse_url($site, PHP_URL_SCHEME);
+      if (!is_string($scheme) || !in_array(strtolower($scheme), ['http', 'https'], TRUE)
+        || preg_match('/[\x00-\x20<\x22\x3e\x7f]/', $site) === 1
+        || filter_var($site, FILTER_VALIDATE_URL) === FALSE) {
+        $form_state->setErrorByName('field_site', (string) $this->t('O site do Local precisa ser uma URL HTTP ou HTTPS válida.'));
+      }
+    }
     $values = $form_state->getValue('field_endereco');
     if (is_array($values)) {
       foreach ($values as $item) {
@@ -131,6 +141,7 @@ final class EventLocationForm extends ContentEntityForm {
         }
       }
     }
+    return $entity;
   }
 
   /**

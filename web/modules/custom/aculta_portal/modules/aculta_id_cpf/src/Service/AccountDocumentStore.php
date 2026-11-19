@@ -29,7 +29,7 @@ final class AccountDocumentStore implements AccountDocumentInterface {
   /**
    * Cached field definitions for the participant profile.
    *
-   * @var array<string, mixed>|null
+   * @var array<\Drupal\Core\Field\FieldDefinitionInterface>|null
    */
   private ?array $profileFields = NULL;
 
@@ -97,7 +97,9 @@ final class AccountDocumentStore implements AccountDocumentInterface {
     if ($profile->get(self::FIELD)->isEmpty()) {
       return NULL;
     }
-    $plain = $this->cipher->decrypt((string) $profile->get(self::FIELD)->value);
+    $fieldVal = $profile->get(self::FIELD)->value;
+    $fieldStr = is_scalar($fieldVal) ? (string) $fieldVal : '';
+    $plain = $this->cipher->decrypt($fieldStr);
     return $this->formatter->partial($plain, $this->validator->detectType($plain));
   }
 
@@ -166,7 +168,9 @@ final class AccountDocumentStore implements AccountDocumentInterface {
     if (!$profile->hasField(self::INDEX_FIELD) || !$this->canSave()) {
       throw new \RuntimeException('Document storage is unavailable.');
     }
-    $plain = $this->cipher->decrypt((string) $profile->get(self::FIELD)->value);
+    $fieldVal = $profile->get(self::FIELD)->value;
+    $fieldStr = is_scalar($fieldVal) ? (string) $fieldVal : '';
+    $plain = $this->cipher->decrypt($fieldStr);
     $type = $this->validator->detectType($plain);
     $index = $this->fingerprint->fingerprint($plain, $type);
     if ($this->indexInUseByOther($index, (int) $profile->getOwnerId())) {
@@ -180,7 +184,7 @@ final class AccountDocumentStore implements AccountDocumentInterface {
   /**
    * Returns the participant profile's field definitions, cached per request.
    *
-   * @return array<string, mixed>
+   * @return array<\Drupal\Core\Field\FieldDefinitionInterface>
    *   Field definitions keyed by machine name.
    */
   private function profileFields(): array {
@@ -236,7 +240,11 @@ final class AccountDocumentStore implements AccountDocumentInterface {
       ->sort('profile_id', 'DESC')
       ->range(0, 1)
       ->execute();
-    return $ids ? $storage->load(reset($ids)) : NULL;
+    if (empty($ids)) {
+      return NULL;
+    }
+    $profile = $storage->load(reset($ids));
+    return $profile instanceof ProfileInterface ? $profile : NULL;
   }
 
   /**
@@ -249,12 +257,16 @@ final class AccountDocumentStore implements AccountDocumentInterface {
    *   The unsaved participant profile.
    */
   private function createParticipantProfile(UserInterface $account): ProfileInterface {
-    return $this->entities->getStorage('profile')->create([
+    $profile = $this->entities->getStorage('profile')->create([
       'type' => 'associado',
       'uid' => $account->id(),
       'status' => TRUE,
       'is_default' => TRUE,
     ]);
+    if (!$profile instanceof ProfileInterface) {
+      throw new \RuntimeException('Failed to instantiate participant profile entity.');
+    }
+    return $profile;
   }
 
 }

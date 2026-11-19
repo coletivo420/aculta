@@ -95,7 +95,7 @@ class ReadableMime {
 
     $units = ['B', 'KB', 'MB', 'GB', 'TB'];
     $i = (int) floor(log($bytes, 1024));
-    $i = min($i, count($units) - 1);
+    $i = max(0, min($i, count($units) - 1));
 
     if ($i === 0) {
       return $bytes . ' B';

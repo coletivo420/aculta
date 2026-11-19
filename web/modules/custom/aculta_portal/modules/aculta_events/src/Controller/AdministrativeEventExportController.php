@@ -59,7 +59,7 @@ final class AdministrativeEventExportController extends ControllerBase {
     $query = new CalendarQuery($from, $to->setTime(23, 59, 59), $now);
     $rows = [];
     foreach ($this->source->items($query) as $item) {
-      if (!$item instanceof CalendarItem || $item->origem !== 'aculta_events') {
+      if ($item->origem !== 'aculta_events') {
         continue;
       }
       foreach ($this->occurrences->expandir($item, $query) as $occurrence) {

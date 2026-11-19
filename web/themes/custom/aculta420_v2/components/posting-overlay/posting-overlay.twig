@@ -1,0 +1,13 @@
+{#
+/**
+ * @file
+ * Aviso "Aguarde" do envio: começa oculto (hidden); o script de resposta alterna a visibilidade.
+ */
+#}
+<div class="aculta-posting-overlay" role="status" aria-live="polite" hidden>
+  <div class="aculta-posting-overlay__card">
+    <span class="aculta-posting-overlay__spinner" aria-hidden="true"></span>
+    <p class="aculta-posting-overlay__title">{{ title }}</p>
+    <p class="aculta-posting-overlay__text">{{ text }}</p>
+  </div>
+</div>

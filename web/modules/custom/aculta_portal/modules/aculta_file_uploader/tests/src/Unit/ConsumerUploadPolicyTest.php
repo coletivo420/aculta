@@ -31,6 +31,11 @@ final class ConsumerUploadPolicyTest extends UnitTestCase {
    *
    * @param array<string, mixed> $values
    *   Valores de aculta_file_uploader.settings, com chaves pontilhadas.
+   * @param string|null $realpath
+   *   Caminho físico devolvido pelo sistema de arquivos.
+   *
+   * @return \Drupal\aculta_file_uploader\ConsumerUploadPolicy
+   *   Política de upload configurada para o teste.
    */
   private function policy(array $values, ?string $realpath = NULL): ConsumerUploadPolicy {
     $config = $this->createMock(ImmutableConfig::class);
@@ -178,7 +183,8 @@ final class ConsumerUploadPolicyTest extends UnitTestCase {
       'Extra' => [],
     ], 'lms');
     self::assertSame('png pdf', $policy->acceptedExtensions($validators));
-    self::assertSame(2 * 1024 * 1024, $validators['FileSizeLimit']['fileLimit']);
+    $limite = $validators['FileSizeLimit'];
+    self::assertSame(2 * 1024 * 1024, is_array($limite) ? ($limite['fileLimit'] ?? NULL) : NULL);
     self::assertArrayHasKey('Extra', $validators);
   }
 

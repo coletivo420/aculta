@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\node\NodeInterface;
@@ -16,8 +17,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class WikiEntryDomainHooks {
 
   public function __construct(
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposes,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManagers,
   ) {}
 
   /**
@@ -31,7 +32,7 @@ final class WikiEntryDomainHooks {
       return;
     }
 
-    $domain = $this->domainPurposes->getDomain('wiki');
+    $domain = $this->siteManagers->getDomain(SiteKey::Wiki);
     if ($domain !== NULL) {
       $entity->set('field_domain_source', ['target_id' => $domain->id()]);
     }

@@ -183,9 +183,9 @@ quando houver benefício e compatibilidade.
 
 ## SHOP
 
-Quando o storefront for implementado:
+O catálogo público `/produtos` está ativo no domínio shop e foi verificado no
+Runtime de desenvolvimento em 2026-11-11. Para as demais rotas:
 
-- `/produtos`;
 - `/produto/<titulo>`;
 - `/categorias/<termo>`;
 - `/carrinho`;

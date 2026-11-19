@@ -1,0 +1,8 @@
+name: Canais sociais
+description: Rodapé compacto de micropágina com canais configurados pelo Portal.
+component: aculta420_v2:site-footer
+props:
+  variant: social-links
+slots:
+  content:
+    markup: '<div data-portal-ui="social-links-footer-inner"><p>ACULTA - Associação Cultural Antiproibicionista</p><ul data-portal-ui="social-links-list"><li><a data-portal-ui="social-links-channel" href="/" aria-label="Página inicial da ACULTA">ACULTA</a></li></ul></div>'

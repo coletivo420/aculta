@@ -1,0 +1,35 @@
+{#
+/**
+ * @file
+ * Override ui-patterns-stories-full to pass hydrated story props and slots.
+ */
+#}
+<div class="ui_patterns_component__stories">
+  {% for story_id, story in component.stories %}
+    {{ _self.render_story(component.id, story_id, story, component.variants) }}
+  {% endfor %}
+</div>
+{% macro render_story(component_id, story_id, story, variants) %}
+  <div class="ui_patterns_story">
+    <h2 class="ui_patterns_story__name">{{ story.name }}</h2>
+    {% if story.description %}<p class="ui_patterns_story__description">{{ story.description }}</p>{% endif %}
+    <div class="ui_patterns_story__story">
+      {% if variants and not story.props.variant %}
+        {% for variant_id, variant in variants %}
+          {{ _self.render_variant(component_id, story_id, variant_id, variant, story) }}
+        {% endfor %}
+      {% else %}
+        {{ component_story(component_id, story_id, story.slots|default({}), story.props|default({}), true) }}
+      {% endif %}
+    </div>
+  </div>
+{% endmacro %}
+{% macro render_variant(component_id, story_id, variant_id, variant, story) %}
+  <div class="ui_patterns_variant">
+    <h3 class="ui_patterns_variant__title">
+      {{ variant.title }} (<code>{{ variant_id }}</code>)
+    </h3>
+    {% if variant.description %}<p class="ui_patterns_variant__description">{{ variant.description }}</p>{% endif %}
+    {{ component_story(component_id, story_id, story.slots|default({}), story.props|default({})|merge({variant: variant_id}), true) }}
+  </div>
+{% endmacro %}

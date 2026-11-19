@@ -33,3 +33,20 @@ entity.aculta_mail_confirmer.resend:
     parameters:
       confirmation:
         type: entity:aculta_mail_confirmer
+
+aculta_mail_confirmer_user.settings:
+  path: '/painel-administrativo/aculta/confirmacao-de-email/usuario'
+  defaults:
+    _form: '\Drupal\aculta_mail_confirmer\Form\AcultaMailConfirmerUserSettingsForm'
+    _title:  'User email confirmation settings'
+  requirements:
+    _permission: 'administer site configuration'
+
+aculta_mail_confirmer_user.cancel_email_change:
+  path: '/usuario/{user}/troca-de-email/cancelar'
+  defaults:
+    _entity_form: 'user.cancel_email_change'
+    _title:  'Cancel email change'
+  requirements:
+    _aculta_mail_confirmer_user_email_pending_change: 'TRUE'
+    user: \d+

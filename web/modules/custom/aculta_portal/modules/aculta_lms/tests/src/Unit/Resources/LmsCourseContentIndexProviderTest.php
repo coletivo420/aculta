@@ -1,0 +1,226 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\Tests\aculta_lms\Unit\Resources;
+
+use Drupal\aculta_lms\Resources\ContentIndex\LmsCourseContentIndexProvider;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Language\LanguageInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\domain\DomainInterface;
+use Drupal\domain\DomainNegotiatorInterface;
+use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
+use Drupal\group\Entity\GroupInterface;
+use Drupal\media\MediaInterface;
+use Drupal\media_gallery\MediaGalleryInterface;
+use Drupal\node\NodeInterface;
+use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\HttpFoundation\RequestStack;
+
+/**
+ * Tests the allowlisted LMS course and resource projection.
+ */
+#[Group('aculta_lms')]
+final class LmsCourseContentIndexProviderTest extends UnitTestCase {
+
+  /**
+   * Ensures only supported editorial relations are projected.
+   */
+  public function testCourseProjectionContainsOnlyExplicitResourceRelations(): void {
+    $magazine = $this->createMock(NodeInterface::class);
+    $magazine->method('bundle')->willReturn('revista');
+    $magazine->method('id')->willReturn('17');
+    $wiki = $this->createMock(NodeInterface::class);
+    $wiki->method('bundle')->willReturn('wiki_entry');
+    $wiki->method('id')->willReturn('21');
+    $otherNode = $this->createMock(NodeInterface::class);
+    $otherNode->method('bundle')->willReturn('page');
+    $otherNode->method('id')->willReturn('22');
+    $gallery = $this->createMock(MediaGalleryInterface::class);
+    $gallery->method('bundle')->willReturn('media_gallery');
+    $gallery->method('id')->willReturn('31');
+
+    $readings = $this->createMock(EntityReferenceFieldItemListInterface::class);
+    $readings->method('isEmpty')->willReturn(FALSE);
+    $readings->method('referencedEntities')->willReturn([$magazine, $wiki, $otherNode]);
+    $galleries = $this->createMock(EntityReferenceFieldItemListInterface::class);
+    $galleries->method('isEmpty')->willReturn(FALSE);
+    $galleries->method('referencedEntities')->willReturn([$gallery]);
+
+    $documents = $this->createMock(MediaInterface::class);
+    $documents->method('bundle')->willReturn('course_document');
+    $documents->method('id')->willReturn('41');
+    $wrongDocument = $this->createMock(MediaInterface::class);
+    $wrongDocument->method('bundle')->willReturn('document');
+    $wrongDocument->method('id')->willReturn('42');
+    $video = $this->createMock(MediaInterface::class);
+    $video->method('bundle')->willReturn('remote_video');
+    $video->method('id')->willReturn('51');
+    $wrongVideo = $this->createMock(MediaInterface::class);
+    $wrongVideo->method('bundle')->willReturn('image');
+    $wrongVideo->method('id')->willReturn('52');
+    $videos = $this->createMock(EntityReferenceFieldItemListInterface::class);
+    $videos->method('isEmpty')->willReturn(FALSE);
+    $videos->method('referencedEntities')->willReturn([$video, $wrongVideo]);
+    $course = $this->createCourse($readings, $galleries, [$documents, $wrongDocument], $videos);
+    $relationManager = $this->createMock(GroupRelationTypeManagerInterface::class);
+    $relationManager->method('hasDefinition')->with('aculta_document_viewer:course_document')->willReturn(TRUE);
+    $course->method('getRelatedEntities')
+      ->with('aculta_document_viewer:course_document')
+      ->willReturn([$documents, $wrongDocument]);
+    $projection = $this->createProvider($relationManager)->project($course);
+    self::assertSame(4, $this->createProvider($relationManager)->getProjectionVersion());
+
+    self::assertNotNull($projection);
+    self::assertSame('group', $projection->entityTypeId);
+    self::assertSame('lms_course', $projection->bundle);
+    self::assertSame('cursos_aculta_org', $projection->domainId);
+    self::assertSame(['course_reading', 'course_reading', 'course_gallery', 'course_document', 'course_video'], array_map(
+      static fn ($relation): string => $relation->type,
+      $projection->relations,
+    ));
+    self::assertSame(['17', '21', '31', '41', '51'], array_map(
+      static fn ($relation): string => $relation->targetEntityId,
+      $projection->relations,
+    ));
+  }
+
+  /**
+   * An absent optional relation plugin does not expose document edges.
+   */
+  public function testDocumentRelationIsOptionalWhenPluginIsAbsent(): void {
+    $course = $this->createCourse();
+    $course->expects(self::never())->method('getRelatedEntities');
+    $manager = $this->createMock(GroupRelationTypeManagerInterface::class);
+    $manager->method('hasDefinition')->willReturn(FALSE);
+
+    $projection = $this->createProvider($manager)->project($course);
+
+    self::assertNotNull($projection);
+    self::assertSame(3, $this->createProvider($manager)->getProjectionVersion());
+    self::assertSame([], $projection->relations);
+  }
+
+  /**
+   * Ensures provider ownership, canonical purpose and educator access.
+   */
+  public function testProviderDeclaresCanonicalPurposeAndCourseAccess(): void {
+    $provider = $this->createProvider();
+    $course = $this->createCourse();
+    $account = $this->createMock(AccountInterface::class);
+
+    self::assertSame('courses', $provider->getAccessSiteKey($course));
+    self::assertSame(['group' => ['lms_course']], $provider->getSupportedEntityTypes());
+
+    $course->method('hasPermission')->willReturnMap([
+      ['take course', $account, FALSE],
+      ['administer members', $account, FALSE],
+      ['grade students', $account, TRUE],
+    ]);
+    self::assertTrue($provider->checkAccess($course, $account)->isAllowed());
+  }
+
+  /**
+   * Ensures student access is honored and unrelated Group bundles are rejected.
+   */
+  public function testStudentTakeAccessIsAcceptedAndUnrelatedBundleIsRejected(): void {
+    $provider = $this->createProvider();
+    $course = $this->createCourse();
+    $account = $this->createMock(AccountInterface::class);
+    $course->method('hasPermission')->willReturnMap([
+      ['take course', $account, TRUE],
+      ['administer members', $account, FALSE],
+      ['grade students', $account, FALSE],
+    ]);
+    self::assertTrue($provider->checkAccess($course, $account)->isAllowed());
+
+    $unrelated = $this->createMock(GroupInterface::class);
+    $unrelated->method('bundle')->willReturn('lms_class');
+    self::assertNull($provider->project($unrelated));
+    self::assertFalse($provider->checkAccess($unrelated, $account)->isAllowed());
+  }
+
+  /**
+   * Creates a course fixture with optional resource field lists.
+   *
+   * @param \Drupal\Core\Field\EntityReferenceFieldItemListInterface<\Drupal\Core\Entity\EntityInterface>|null $readings
+   *   Optional reading references.
+   * @param \Drupal\Core\Field\EntityReferenceFieldItemListInterface<\Drupal\Core\Entity\EntityInterface>|null $galleries
+   *   Optional gallery references.
+   * @param list<\Drupal\media\MediaInterface> $documents
+   *   Course document references.
+   * @param \Drupal\Core\Field\EntityReferenceFieldItemListInterface<\Drupal\Core\Entity\EntityInterface>|null $videos
+   *   Optional video references.
+   *
+   * @return \Drupal\group\Entity\GroupInterface&MockObject
+   *   The course Group mock.
+   */
+  private function createCourse(
+    ?EntityReferenceFieldItemListInterface $readings = NULL,
+    ?EntityReferenceFieldItemListInterface $galleries = NULL,
+    array $documents = [],
+    ?EntityReferenceFieldItemListInterface $videos = NULL,
+  ): GroupInterface&MockObject {
+    $language = $this->createMock(LanguageInterface::class);
+    $language->method('getId')->willReturn('pt-br');
+    $course = $this->createMock(GroupInterface::class);
+    $course->method('getEntityTypeId')->willReturn('group');
+    $course->method('bundle')->willReturn('lms_course');
+    $course->method('id')->willReturn('8');
+    $course->method('uuid')->willReturn('course-uuid');
+    $course->method('label')->willReturn('Curso demonstrativo');
+    $course->method('language')->willReturn($language);
+    $course->method('isPublished')->willReturn(TRUE);
+    $course->method('getCreatedTime')->willReturn(100);
+    $course->method('getChangedTime')->willReturn(200);
+    $course->method('getCacheContexts')->willReturn([]);
+    $course->method('getCacheTags')->willReturn([]);
+    $course->method('getCacheMaxAge')->willReturn(-1);
+    if ($documents !== []) {
+      $course->method('getRelatedEntities')->with('aculta_document_viewer:course_document')->willReturn($documents);
+    }
+    $course->method('hasField')->willReturnMap([
+      ['field_lms_readings', $readings !== NULL],
+      ['field_lms_galleries', $galleries !== NULL],
+      ['field_lms_videos', $videos !== NULL],
+    ]);
+    $course->method('get')->willReturnMap([
+      ['field_lms_readings', $readings],
+      ['field_lms_galleries', $galleries],
+      ['field_lms_videos', $videos],
+    ]);
+    return $course;
+  }
+
+  /**
+   * Creates the provider with a canonical courses Domain fixture.
+   *
+   * @param (\Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface&MockObject)|null $relationTypeManager
+   *   Optional relation type manager mock.
+   */
+  private function createProvider(?GroupRelationTypeManagerInterface $relationTypeManager = NULL): LmsCourseContentIndexProvider {
+    $domain = $this->createMock(DomainInterface::class);
+    $domain->method('id')->willReturn('cursos_aculta_org');
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('load')->with('cursos_aculta_org')->willReturn($domain);
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->with('domain')->willReturn($storage);
+    $siteManager = new DomainSiteManager(
+      $entityTypeManager,
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+    $relationTypeManager ??= $this->createMock(GroupRelationTypeManagerInterface::class);
+    $relationTypeManager->method('hasDefinition')->willReturn(FALSE);
+    return new LmsCourseContentIndexProvider($siteManager, $relationTypeManager);
+  }
+
+}

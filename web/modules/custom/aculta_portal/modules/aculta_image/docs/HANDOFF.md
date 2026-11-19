@@ -2,7 +2,7 @@
 
 Data da passagem: 2026-10-20. Versão registrada nesta passagem: 0.1.0-dev.27. Classificação: **Dev**; pendências operacionais e de integração continuam abertas. `preRC` foi aposentado. O ciclo vigente é Dev → RC (tudo pronto, inclusive revisão visual pré-deploy) → deploy/validação Alpha no servidor de desenvolvimento → produção. Leia este documento antes de qualquer alteração no submódulo.
 
-Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas configurações exportadas de Views e modos de exibição. O `aculta_gallery` também usa VVJS no álbum e na galeria de produto; a sequência do álbum filtra mídia pela permissão `view` e agrega cacheabilidade do álbum, Media, File e `AccessResult`. Ver [arquitetura da Gallery](../../aculta_gallery/docs/ARQUITETURA.md) e o changelog do submódulo.
+Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas configurações exportadas de Views e modos de exibição. O `aculta_gallery` migrou as Views editorial, Fórum e produto para UI Patterns `layout-grid`; a sequência editorial filtra mídia pela permissão `view` e agrega cacheabilidade do álbum, Media, File e `AccessResult`. O exemplo upstream `vvjs_example` continua separado no inventário. Ver [arquitetura da Gallery](../../aculta_gallery/docs/ARQUITETURA.md) e o changelog do submódulo.
 
 ## 1. Resumo em cinco linhas
 
@@ -20,7 +20,7 @@ Atualização: o gate R9 agora valida `image_style` e estilos PhotoSwipe nas con
 - A remoção invalida derivados do Image Style e apaga metadados de auditoria/origem/quarentena do FID removido.
 - Derivados públicos gerados por processadores opcionais podem ser registrados como arquivos temporários via `aculta_file_uploader.generated_file` e renderizados via `aculta_image.render`; a limpeza existente remove os sem uso após `system.file:temporary_maximum_age`.
 - Painel em `/painel-administrativo/imagens`, abas de relatório, limpeza e quarentena. A permissão existente `administer aculta images` protege todas as rotas; nenhuma configuração de contas ou papéis foi alterada.
-- Validação: PHP lint, parse YAML, `validate-aculta-image.php` e `validate-aculta-portal-drupal11.php` passaram. O primeiro `drush status` usou URI padrão; depois o status explícito confirmou `https://aculta.toca.net.br` e o banco `aculta_runtime`. Cache reconstruído e as quatro rotas administrativas confirmadas pelo Drush. Nenhuma configuração de contas ou papéis foi alterada.
+- Validação: PHP lint, parse YAML, `validate-aculta-image.php` e `validate-aculta-portal-drupal12.php` passaram. O primeiro `drush status` usou URI padrão; depois o status explícito confirmou `https://aculta.toca.net.br` e o banco `aculta_runtime`. Cache reconstruído e as quatro rotas administrativas confirmadas pelo Drush. Nenhuma configuração de contas ou papéis foi alterada.
 
 ## Hierarquia atual e o seletor de texto
 

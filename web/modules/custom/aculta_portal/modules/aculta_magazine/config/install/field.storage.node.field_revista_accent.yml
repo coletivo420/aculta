@@ -1,0 +1,21 @@
+uuid: ef5374f0-4f2e-40dd-a5fe-ba1135105ea0
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_revista_accent
+field_name: field_revista_accent
+entity_type: node
+type: string
+settings:
+  max_length: 64
+  case_sensitive: true
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: false
+indexes: {}
+persist_with_no_fields: false
+custom_storage: false

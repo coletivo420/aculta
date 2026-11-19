@@ -8,7 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Site\Settings;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_index\Integrity\ContentIndexIntegrityChecker;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
@@ -24,8 +24,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Opt-in benchmark for provider-backed rebuild and incremental audit.
  */
-#[Group('aculta_index')]
-#[Group('performance')]
 #[Group('aculta_index')]
 #[Group('performance')]
 #[RunTestsInSeparateProcesses]
@@ -74,7 +72,7 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -86,6 +84,11 @@ final class ContentIndexMaintenanceBenchmarkTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
+    // Opt-in guard runs before the database check and parent::setUp() so a
+    // normal run never boots the kernel or touches the database.
+    if (getenv('ACULTA_INDEX_MAINTENANCE_BENCHMARK') !== '1') {
+      self::markTestSkipped('Set ACULTA_INDEX_MAINTENANCE_BENCHMARK=1 to run the rebuild and audit benchmark.');
+    }
     $databaseUrl = getenv('SIMPLETEST_DB') ?: '';
     $databaseParts = parse_url($databaseUrl);
     if (!is_array($databaseParts)

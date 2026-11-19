@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_studio;
 
 use Drupal\Component\Plugin\PluginBase;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -28,7 +29,7 @@ abstract class MarleyTabBase extends PluginBase implements MarleyTabInterface, C
     mixed $plugin_definition,
     protected readonly ModuleHandlerInterface $moduleHandler,
     TranslationInterface $stringTranslation,
-    protected readonly DomainPurposeManager $domainPurposes,
+    protected readonly DomainSiteManager $siteManagers,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
@@ -39,7 +40,7 @@ abstract class MarleyTabBase extends PluginBase implements MarleyTabInterface, C
    * An action that goes to the owner's route.
    *
    * Without a purpose, the route is on this host. With a purpose, the link is the owner's domain (routeUrl) and
-   * the access is the owner's route access evaluated in that domain (runInPurpose), never a copy of the rule.
+   * the access is the owner's route access evaluated in that domain (runInSite), never a copy of the rule.
    *
    * @return array{title: \Stringable|string, url: \Drupal\Core\Url, access: bool}
    *   The action item for the tab.
@@ -49,11 +50,11 @@ abstract class MarleyTabBase extends PluginBase implements MarleyTabInterface, C
       $url = Url::fromRoute($route, $params);
       return ['title' => $title, 'url' => $url, 'access' => $url->access($account)];
     }
-    $url = $this->domainPurposes->routeUrl($purpose, $route, $params);
+    $url = $this->siteManagers->routeUrl($purpose, $route, $params);
     if ($url === NULL) {
       return ['title' => $title, 'url' => Url::fromRoute('<front>'), 'access' => FALSE];
     }
-    $access = $this->domainPurposes->runInPurpose($purpose, static fn (): bool => Url::fromRoute($route, $params)->access($account));
+    $access = $this->siteManagers->runInSite($purpose, static fn (): bool => Url::fromRoute($route, $params)->access($account));
     return ['title' => $title, 'url' => $url, 'access' => (bool) $access];
   }
 
@@ -67,7 +68,7 @@ abstract class MarleyTabBase extends PluginBase implements MarleyTabInterface, C
       $plugin_definition,
       $container->get('module_handler'),
       $container->get('string_translation'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('entity_type.manager'),
     );
   }

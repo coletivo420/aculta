@@ -1,0 +1,82 @@
+/**
+ * Estilos do seletor de emojis Fluent do CKEditor 5.
+ *
+ * Só a interface administrativa do editor. O emoji renderizado no conteúdo
+ * usa as classes do componente reaction-emoji do tema aculta420_v2.
+ */
+
+.ck-aculta-fluent-emoji-panel {
+  box-sizing: border-box;
+  inline-size: 20rem;
+  max-inline-size: min(20rem, 90vw);
+  padding: 0.5rem;
+}
+
+.ck-aculta-fluent-emoji-search {
+  box-sizing: border-box;
+  inline-size: 100%;
+  margin-block-end: 0.5rem;
+  padding: 0.375rem 0.5rem;
+  border: 1px solid var(--ck-color-base-border, #c4c4c4);
+  border-radius: var(--ck-border-radius, 2px);
+  font: inherit;
+}
+
+.ck-aculta-fluent-emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.25rem;
+  max-block-size: 15rem;
+  overflow-block: auto;
+}
+
+.ck-aculta-fluent-emoji-category {
+  grid-column: 1 / -1;
+  margin-block-start: 0.25rem;
+  color: var(--ck-color-text, #333);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/*
+ * O CSS de botões do CKEditor 5 também define display; por isso o hidden do
+ * filtro de busca precisa vencer a cascata.
+ */
+.ck-aculta-fluent-emoji-category[hidden],
+.ck-aculta-fluent-emoji-item[hidden],
+.ck-aculta-fluent-emoji-empty[hidden] {
+  display: none !important;
+}
+
+.ck-aculta-fluent-emoji-item {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 2rem;
+  padding: 0.25rem;
+  border: 1px solid transparent;
+  border-radius: var(--ck-border-radius, 2px);
+  background: transparent;
+  cursor: pointer;
+}
+
+.ck-aculta-fluent-emoji-item:hover,
+.ck-aculta-fluent-emoji-item:focus-visible {
+  border-color: var(--ck-color-focus-border, #1a73e8);
+  background: var(--ck-color-base-foreground, #f7f7f7);
+  outline: none;
+}
+
+.ck-aculta-fluent-emoji-item img {
+  display: block;
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+}
+
+.ck-aculta-fluent-emoji-empty {
+  margin: 0.5rem 0 0;
+  color: var(--ck-color-text, #333);
+  font-size: 0.875rem;
+}

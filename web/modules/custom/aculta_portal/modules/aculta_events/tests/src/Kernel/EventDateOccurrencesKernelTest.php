@@ -99,8 +99,10 @@ final class EventDateOccurrencesKernelTest extends KernelTestBase {
     ])->save();
 
     $servico = $this->container->get('aculta_events.occurrences');
+    $evento = EventDate::load($data->id());
+    self::assertInstanceOf(EventDate::class, $evento);
     $ocorrencias = $servico->expandir(
-      EventDate::load($data->id()),
+      $evento,
       new \DateTimeImmutable('2026-10-01 00:00:00', new \DateTimeZone('America/Sao_Paulo')),
       new \DateTimeImmutable('2027-06-30 23:59:59', new \DateTimeZone('America/Sao_Paulo')),
       new \DateTimeImmutable('2026-10-28 00:00:00', new \DateTimeZone('America/Sao_Paulo')),

@@ -11,6 +11,11 @@ use Drupal\Tests\BrowserTestBase;
 use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\user\UserInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
+use Behat\Mink\Driver\BrowserKitDriver;
+use Behat\Mink\Element\NodeElement;
+use Drupal\Core\Entity\EntityStorageInterface;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
@@ -63,16 +68,16 @@ final class MessengerModuleInstallTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function prepareSettings() {
+  protected function prepareSettings(): void {
     parent::prepareSettings();
     $file = DRUPAL_ROOT . '/' . $this->siteDirectory . '/settings.php';
-    file_put_contents($file, "\n\$settings['aculta_domain_purpose_test_relaxed'] = TRUE;\n", FILE_APPEND);
+    file_put_contents($file, "\n\$settings['aculta_site_key_test_relaxed'] = TRUE;\n", FILE_APPEND);
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function initSettings() {
+  protected function initSettings(): void {
     parent::initSettings();
     $file = DRUPAL_ROOT . '/' . $this->siteDirectory . '/settings.php';
     $permissions = fileperms($file) & 0777;
@@ -133,8 +138,6 @@ PHP, FILE_APPEND);
       $this->container->get(PublicMemberIdentityInterface::class)
         ->publicDisplayName($recipient),
     );
-    self::assertInstanceOf(UserInterface::class, $member);
-    self::assertInstanceOf(UserInterface::class, $recipient);
     $this->loginAs($member);
 
     $this->drupalGet('/mensagens/nova');
@@ -154,7 +157,9 @@ PHP, FILE_APPEND);
     $this->assertSession()->pageTextContains('membro-' . $recipient->id());
     $body = 'Mensagem funcional inicial do ACULTA Messenger.';
     $this->getSession()->getPage()->fillField('message', $body);
-    $this->getSession()->getPage()->find('css', 'form[data-aculta-new-conversation-form] input[type="submit"]')->click();
+    $submit = $this->getSession()->getPage()->find('css', 'form[data-aculta-new-conversation-form] input[type="submit"], button[type="submit"]');
+    self::assertInstanceOf(NodeElement::class, $submit);
+    $submit->click();
 
     $threadIdsAfter = array_keys($threadStorage->loadMultiple());
     $newThreadIds = array_values(array_diff($threadIdsAfter, $threadIdsBefore));
@@ -163,7 +168,7 @@ PHP, FILE_APPEND);
       $this->getSession()->getStatusCode(),
       mb_substr($this->getSession()->getPage()->getText(), 0, 400),
     ));
-    $thread = $threadStorage->load(reset($newThreadIds));
+    $thread = $this->loadThread($threadStorage, reset($newThreadIds));
     $newMessageIds = array_values(array_diff(array_keys($messageStorage->loadMultiple()), $messageIdsBefore));
     self::assertCount(1, $newMessageIds, sprintf(
       'The HTTP submission persists one private message; status=%d, response=%s',
@@ -172,11 +177,12 @@ PHP, FILE_APPEND);
     ));
     self::assertSame(
       [(int) $member->id(), (int) $recipient->id()],
-      array_map('intval', $thread->getMembersId()),
+      $thread->getMembersId(),
     );
     $messages = $thread->getMessages(TRUE);
     self::assertCount(1, $messages);
-    self::assertSame($body, reset($messages)->getMessage());
+    $createdMessage = reset($messages);
+    self::assertSame($body, $this->privateMessageText($createdMessage));
 
     $this->drupalGet(Url::fromRoute('aculta_messenger.drawer_conversation', [
       'private_message_thread' => $thread->id(),
@@ -207,11 +213,13 @@ PHP, FILE_APPEND);
       'http_errors' => FALSE,
     ]);
     self::assertSame(200, $response->getStatusCode(), (string) $response->getBody());
-    $threadStorage->resetCache([$thread->id()]);
-    $thread = $threadStorage->loadUnchanged($thread->id());
+    $threadId = $this->threadId($thread);
+    $threadStorage->resetCache([$threadId]);
+    $thread = $this->loadThread($threadStorage, $threadId);
     $messages = $thread->getMessages(TRUE);
     self::assertCount(2, $messages, (string) $response->getBody());
-    self::assertSame($replyBody, end($messages)->getMessage());
+    $lastMessage = end($messages);
+    self::assertSame($replyBody, $this->privateMessageText($lastMessage));
     self::assertStringContainsString($replyBody, (string) $response->getBody());
 
     $this->assertNoJavaScriptGroupComposition($recipient, $recipientTwo);
@@ -237,16 +245,20 @@ PHP, FILE_APPEND);
     $this->assertSession()->pageTextContains('membro-' . $firstRecipient->id());
 
     $searchForm = $this->getSession()->getPage()->find('css', 'form[data-aculta-nojs-search]');
-    self::assertNotNull($searchForm, 'The native GET search is available without JavaScript.');
-    $searchForm->find('css', 'input[name="q"]')->setValue('membro-' . $secondRecipient->id());
-    $searchForm->find('css', 'input[type="submit"]')->click();
+    self::assertInstanceOf(NodeElement::class, $searchForm, 'The native GET search is available without JavaScript.');
+    $query = $searchForm->find('css', 'input[name="q"]');
+    self::assertInstanceOf(NodeElement::class, $query);
+    $query->setValue('membro-' . $secondRecipient->id());
+    $searchSubmit = $searchForm->find('css', 'input[type="submit"], button[type="submit"]');
+    self::assertInstanceOf(NodeElement::class, $searchSubmit);
+    $searchSubmit->click();
     $this->assertSession()->statusCodeEquals(200);
     $this->assertSession()->linkExists('membro-' . $secondRecipient->id());
     $this->clickLink('membro-' . $secondRecipient->id());
     $this->assertSession()->statusCodeEquals(200);
 
     $form = $this->getSession()->getPage()->find('css', 'form[data-aculta-new-conversation-form]');
-    self::assertNotNull($form);
+    self::assertInstanceOf(NodeElement::class, $form);
     $selectedMembers = $form->findAll('css', 'input[name="members[]"]');
     self::assertCount(2, $selectedMembers);
     self::assertSame(
@@ -258,21 +270,25 @@ PHP, FILE_APPEND);
 
     $body = 'Mensagem funcional de grupo sem JavaScript.';
     $this->getSession()->getPage()->fillField('message', $body);
-    $form->find('css', 'input[type="submit"]')->click();
+    $submit = $form->find('css', 'input[type="submit"], button[type="submit"]');
+    self::assertInstanceOf(NodeElement::class, $submit);
+    $submit->click();
 
     $threadIdsAfter = array_keys($threadStorage->loadMultiple());
     $newThreadIds = array_values(array_diff($threadIdsAfter, $threadIdsBefore));
     self::assertCount(1, $newThreadIds);
-    $thread = $threadStorage->load(reset($newThreadIds));
+    $thread = $this->loadThread($threadStorage, reset($newThreadIds));
+    self::assertNotFalse($this->loggedInUser);
     self::assertSame(
       [(int) $this->loggedInUser->id(), (int) $firstRecipient->id(), (int) $secondRecipient->id()],
-      array_map('intval', $thread->getMembersId()),
+      $thread->getMembersId(),
     );
     $newMessageIds = array_values(array_diff(array_keys($messageStorage->loadMultiple()), $messageIdsBefore));
     self::assertCount(1, $newMessageIds);
     $messages = $thread->getMessages(TRUE);
     self::assertCount(1, $messages);
-    self::assertSame($body, reset($messages)->getMessage());
+    $createdMessage = reset($messages);
+    self::assertSame($body, $this->privateMessageText($createdMessage));
 
     $messageCount = count($messages);
     $outsider = $this->drupalCreateUser([
@@ -280,16 +296,39 @@ PHP, FILE_APPEND);
       'use private messaging system',
     ]);
     $this->drupalResetSession();
-    $this->getSession()->getDriver()->getClient()->restart();
+    $driver = $this->getSession()->getDriver();
+    self::assertInstanceOf(BrowserKitDriver::class, $driver);
+    $driver->getClient()->restart();
     $this->drupalLogin($outsider);
     $this->drupalGet(Url::fromRoute('aculta_messenger.drawer_conversation', [
       'private_message_thread' => $thread->id(),
     ]), [], ['X-Requested-With' => 'XMLHttpRequest']);
     self::assertContains($this->getSession()->getStatusCode(), [403, 404]);
     self::assertStringNotContainsString($body, $this->getSession()->getPage()->getText());
-    $threadStorage->resetCache([$thread->id()]);
-    $thread = $threadStorage->loadUnchanged($thread->id());
+    $threadId = $this->threadId($thread);
+    $threadStorage->resetCache([$threadId]);
+    $thread = $this->loadThread($threadStorage, $threadId);
     self::assertCount($messageCount, $thread->getMessages(TRUE));
+  }
+
+  private function loadThread(EntityStorageInterface $storage, int|string|false|null $id): PrivateMessageThreadInterface {
+    self::assertNotFalse($id);
+    self::assertNotNull($id);
+    $thread = $storage->load($id);
+    self::assertInstanceOf(PrivateMessageThreadInterface::class, $thread);
+    return $thread;
+  }
+
+  private function threadId(PrivateMessageThreadInterface $thread): int|string {
+    $id = $thread->id();
+    self::assertNotNull($id);
+    return $id;
+  }
+
+  private function privateMessageText(PrivateMessageInterface $message): string {
+    $text = $message->get('message')->value;
+    self::assertIsString($text);
+    return $text;
   }
 
   /**

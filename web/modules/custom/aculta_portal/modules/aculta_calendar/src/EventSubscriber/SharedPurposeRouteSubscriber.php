@@ -34,10 +34,10 @@ final class SharedPurposeRouteSubscriber extends RouteSubscriberBase {
   protected function alterRoutes(RouteCollection $collection): void {
     foreach (self::ROUTES as $routeName) {
       $route = $collection->get($routeName);
-      if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'eventos') {
+      if ($route === NULL || $route->getOption('_aculta_site_key') !== 'eventos') {
         continue;
       }
-      $route->setOption('_aculta_domain_purposes', ['eventos', 'main']);
+      $route->setOption('_aculta_site_keys', ['eventos', 'main']);
       $route->setOption('_aculta_canonical_purpose', 'eventos');
     }
   }

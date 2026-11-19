@@ -1,0 +1,8 @@
+name: Mensagem dispensável do carrinho
+description: Confirmação do carrinho com ação de fechamento fornecida pelo Portal.
+component: aculta420_v2:status-messages
+props:
+  type: status
+  role: alert
+  dismissible: true
+  close_label: Fechar aviso do carrinho

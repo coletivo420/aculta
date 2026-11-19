@@ -8,7 +8,7 @@ use Drupal\Core\Access\AccessResultInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_messenger\Integration\Wiki\WikiNoticeManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -148,7 +148,7 @@ final class WikiNoticeManagerTest extends UnitTestCase {
       'domain' => $domainStorage,
       default => throw new \InvalidArgumentException('Unexpected storage: ' . $type),
     });
-    $domainPurposes = new DomainPurposeManager(
+    $siteManagers = new DomainSiteManager(
       $entities,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -156,7 +156,7 @@ final class WikiNoticeManagerTest extends UnitTestCase {
     );
     $manager = new WikiNoticeManager(
       $entities,
-      $domainPurposes,
+      $siteManagers,
       $this->createMock(AvisoPreferenciasInterface::class),
       $this->createMock(QueueFactory::class),
       $this->lock(),
@@ -179,7 +179,7 @@ final class WikiNoticeManagerTest extends UnitTestCase {
     AvisoPreferenciasInterface $preferences,
     QueueFactory $queueFactory,
   ): WikiNoticeManager {
-    $domainPurposes = new DomainPurposeManager(
+    $siteManagers = new DomainSiteManager(
       $entities,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -187,7 +187,7 @@ final class WikiNoticeManagerTest extends UnitTestCase {
     );
     $manager = new WikiNoticeManager(
       $entities,
-      $domainPurposes,
+      $siteManagers,
       $preferences,
       $queueFactory,
       $this->lock(),

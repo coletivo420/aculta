@@ -1,0 +1,19 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Avatar
+status: stable
+description: Apresenta a mídia do sistema de avatar do ACULTA (acervo, via AvatarResolver). Sem mídia, a forma fica vazia; não há ícone, inicial ou letra gerada do nome.
+group: Elementos básicos
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    size:
+      type: string
+      title: Tamanho
+      description: Escala visual do contêiner da mídia do avatar.
+      enum: [xs, sm, md, lg, xl]
+      default: md
+slots:
+  media:
+    title: Mídia do avatar
+    description: Render array fornecido pelo módulo proprietário; deve preservar o texto alternativo da imagem.

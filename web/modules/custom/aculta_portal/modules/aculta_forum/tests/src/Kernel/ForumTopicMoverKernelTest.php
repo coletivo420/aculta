@@ -7,13 +7,15 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 use Drupal\aculta_forum\Form\ForumTopicMoveForm;
 use Drupal\aculta_forum\Plugin\Action\MoveForumTopicsAction;
 use Drupal\aculta_forum\Service\ForumTopicMover;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
 use Drupal\comment\Tests\CommentTestTrait;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
@@ -54,6 +56,7 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     'path_alias',
     'options',
     'domain',
+    'aculta_forum_test_routes',
   ];
 
   /**
@@ -112,7 +115,7 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     $this->account->method('isAnonymous')->willReturn(FALSE);
     $this->account->method('isAuthenticated')->willReturn(TRUE);
     $manager = $this->container->get('entity_type.manager');
-    $purposes = new DomainPurposeManager(
+    $purposes = new DomainSiteManager(
       $manager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -160,7 +163,7 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     $cid = (int) $comment->id();
     $statistics = $this->container->get('comment.statistics')->read([$nid => $node], 'node');
     self::assertCount(1, $statistics);
-    self::assertSame(1, (int) $statistics[0]->comment_count, 'Core statistics count the published reply.');
+    $this->assertCommentCount($statistics, 1, 'Core statistics count the published reply.');
 
     $pending_comment = Comment::create([
       'entity_type' => 'node',
@@ -173,7 +176,7 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     ]);
     $pending_comment->save();
     $statistics = $this->container->get('comment.statistics')->read([$nid => $node], 'node');
-    self::assertSame(1, (int) $statistics[0]->comment_count, 'Unpublished replies do not enter public statistics.');
+    $this->assertCommentCount($statistics, 1, 'Unpublished replies do not enter public statistics.');
 
     $access = $this->mover->access($node, $this->account);
     self::assertTrue($access->isAllowed());
@@ -229,8 +232,10 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     $action->setContext($selection);
     $results = $action->executeMultiple([$node, $second_node]);
     self::assertCount(2, $results, 'VBO reports one result for each selected topic.');
-    self::assertArrayHasKey('message', $results[0]);
-    self::assertSame('status', $results[0]['type'] ?? 'status');
+    $firstResult = $results[0];
+    self::assertIsArray($firstResult);
+    self::assertArrayHasKey('message', $firstResult);
+    self::assertSame('status', $firstResult['type'] ?? 'status');
     $moved = Node::load($nid);
     self::assertNotNull($moved);
     $moved_second = Node::load((int) $second_node->id());
@@ -253,8 +258,11 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     ];
     $action->setContext($oversized_selection);
     $oversized_results = $action->executeMultiple([$oversized_node]);
-    self::assertSame('error', $oversized_results[0]['type']);
-    self::assertSame((int) $source->id(), (int) Node::load($oversized_node->id())->get('field_aculta_categories')->target_id);
+    $oversizedResult = $oversized_results[0];
+    self::assertIsArray($oversizedResult);
+    self::assertSame('error', $oversizedResult['type']);
+    $oversizedReloaded = $this->loadNode($oversized_node->id());
+    self::assertSame((int) $source->id(), (int) $oversizedReloaded->get('field_aculta_categories')->target_id);
 
     self::assertSame($nid, (int) $moved->id());
     self::assertSame($uuid, $moved->uuid());
@@ -266,7 +274,7 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     self::assertSame($nid, (int) $reloaded_comment->getCommentedEntityId());
     self::assertSame('Reply body', $reloaded_comment->get('comment_body')->value);
     $statistics = $this->container->get('comment.statistics')->read([$nid => $moved], 'node');
-    self::assertSame(1, (int) $statistics[0]->comment_count, 'Category movement preserves Core reply statistics.');
+    $this->assertCommentCount($statistics, 1, 'Category movement preserves Core reply statistics.');
   }
 
   /**
@@ -293,20 +301,20 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     ]);
     $pending->save();
     $statistics = $this->container->get('comment.statistics')->read([(int) $node->id() => $node], 'node');
-    self::assertSame(0, (int) $statistics[0]->comment_count, 'Pending replies are excluded from public totals.');
+    $this->assertCommentCount($statistics, 0, 'Pending replies are excluded from public totals.');
 
     $pending->setPublished()->save();
     $statistics = $this->container->get('comment.statistics')->read([(int) $node->id() => $node], 'node');
-    self::assertSame(1, (int) $statistics[0]->comment_count, 'Approval adds a reply to public totals.');
+    $this->assertCommentCount($statistics, 1, 'Approval adds a reply to public totals.');
 
     $pending->setUnpublished()->save();
     $statistics = $this->container->get('comment.statistics')->read([(int) $node->id() => $node], 'node');
-    self::assertSame(0, (int) $statistics[0]->comment_count, 'Unpublishing removes a reply from public totals.');
+    $this->assertCommentCount($statistics, 0, 'Unpublishing removes a reply from public totals.');
 
     $pending->setPublished()->save();
     $pending->delete();
     $statistics = $this->container->get('comment.statistics')->read([(int) $node->id() => $node], 'node');
-    self::assertSame(0, (int) $statistics[0]->comment_count, 'Deleting a published reply removes it from public totals.');
+    $this->assertCommentCount($statistics, 0, 'Deleting a published reply removes it from public totals.');
   }
 
   /**
@@ -336,15 +344,33 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     $build = $form->buildForm([], $state, $node);
 
     self::assertSame((int) $node->id(), $state->get('topic_id'));
-    self::assertSame('select', $build['destination']['#type']);
-    self::assertTrue($build['destination']['#required']);
-    self::assertArrayNotHasKey($source->id(), $build['destination']['#options'], 'A categoria atual não é destino.');
-    self::assertArrayHasKey($destination->id(), $build['destination']['#options']);
-    self::assertSame('Destino', $build['destination']['#options'][$destination->id()]);
-    self::assertSame('checkbox', $build['confirm_move']['#type']);
-    self::assertTrue($build['confirm_move']['#required']);
-    self::assertSame('aculta_forum.admin', $build['actions']['cancel']['#url']->getRouteName());
-    self::assertSame('Mover tópico', (string) $build['actions']['submit']['#value']);
+    $destinationElement = $build['destination'];
+    self::assertIsArray($destinationElement);
+    self::assertSame('select', $destinationElement['#type']);
+    self::assertTrue($destinationElement['#required']);
+    $options = $destinationElement['#options'];
+    self::assertIsArray($options);
+    self::assertArrayNotHasKey($source->id(), $options, 'A categoria atual não é destino.');
+    self::assertArrayHasKey($destination->id(), $options);
+    self::assertSame('Destino', $options[$destination->id()]);
+    $confirmElement = $build['confirm_move'];
+    self::assertIsArray($confirmElement);
+    self::assertSame('checkbox', $confirmElement['#type']);
+    self::assertTrue($confirmElement['#required']);
+    $actions = $build['actions'];
+    self::assertIsArray($actions);
+    $cancel = $actions['cancel'];
+    self::assertIsArray($cancel);
+    $cancelProperties = $cancel['#props'];
+    self::assertIsArray($cancelProperties);
+    self::assertSame(
+      Url::fromRoute('aculta_forum.admin')->toString(),
+      $cancelProperties['url'],
+    );
+    $submit = $actions['submit'];
+    self::assertIsArray($submit);
+    self::assertInstanceOf(TranslatableMarkup::class, $submit['#value']);
+    self::assertSame('Mover tópico', (string) $submit['#value']);
 
     // The move requires both a numeric destination and explicit consent.
     $invalid = new FormState();
@@ -387,13 +413,13 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     self::assertTrue($action->access($node, $this->account, TRUE)->isForbidden());
     $action_result = $action->execute($node);
     self::assertSame('warning', $action_result['type']);
-    self::assertSame($original_category, (int) Node::load($node->id())->get('field_aculta_categories')->target_id);
+    self::assertSame($original_category, (int) $this->loadNode($node->id())->get('field_aculta_categories')->target_id);
     try {
       $this->mover->move((int) $node->id(), (int) $destination->id(), $this->account);
       self::fail('Historical topics must not be moved, including by administrators.');
     }
     catch (\InvalidArgumentException) {
-      self::assertSame($original_category, (int) Node::load($node->id())->get('field_aculta_categories')->target_id);
+      self::assertSame($original_category, (int) $this->loadNode($node->id())->get('field_aculta_categories')->target_id);
     }
 
     $form = new ForumTopicMoveForm(
@@ -406,12 +432,59 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
       self::fail('The topic move form must deny historical topics to administrators.');
     }
     catch (AccessDeniedHttpException) {
-      self::assertSame($original_category, (int) Node::load($node->id())->get('field_aculta_categories')->target_id);
+      self::assertSame($original_category, (int) $this->loadNode($node->id())->get('field_aculta_categories')->target_id);
     }
   }
 
   /**
+   * Asserts the public reply count returned by Comment Statistics.
+   *
+   * @param object[] $statistics
+   *   The records returned by Comment Statistics.
+   * @param int $expected
+   *   The expected public reply count.
+   * @param string $message
+   *   The assertion message.
+   */
+  private function assertCommentCount(array $statistics, int $expected, string $message): void {
+    self::assertNotEmpty($statistics);
+    $record = $statistics[0];
+    $properties = get_object_vars($record);
+    self::assertArrayHasKey('comment_count', $properties);
+    $count = $properties['comment_count'];
+    if (is_int($count)) {
+      self::assertSame($expected, $count, $message);
+      return;
+    }
+    self::assertIsString($count);
+    self::assertMatchesRegularExpression('/^[0-9]+$/', $count);
+    $parsedCount = filter_var($count, FILTER_VALIDATE_INT);
+    self::assertIsInt($parsedCount);
+    self::assertSame($expected, $parsedCount, $message);
+  }
+
+  /**
+   * Loads a topic and fails with an assertion if it no longer exists.
+   */
+  private function loadNode(int|string|null $id): Node {
+    $node = Node::load($id);
+    self::assertInstanceOf(Node::class, $node);
+    return $node;
+  }
+
+  /**
    * Creates a field storage and bundle instance for the test topic.
+   *
+   * @param string $type
+   *   The field type.
+   * @param string $name
+   *   The field name.
+   * @param array<string, mixed> $settings
+   *   The field storage settings.
+   * @param string $entityType
+   *   The entity type.
+   * @param string $bundle
+   *   The entity bundle.
    */
   private function addField(string $type, string $name, array $settings, string $entityType, string $bundle): void {
     FieldStorageConfig::create([

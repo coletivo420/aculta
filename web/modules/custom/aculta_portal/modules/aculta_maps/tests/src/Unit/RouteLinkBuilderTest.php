@@ -27,8 +27,10 @@ final class RouteLinkBuilderTest extends UnitTestCase {
     $url = (new RouteLinkBuilder($config))->build('Rua 10, Goiânia/GO');
 
     $this->assertSame('https://www.google.com/maps/dir/?api=1&destination=Rua%2010%2C%20Goi%C3%A2nia%2FGO', $url->getUri());
-    $this->assertSame('_blank', $url->getOption('attributes')['target']);
-    $this->assertSame('noopener noreferrer', $url->getOption('attributes')['rel']);
+    $attributes = $url->getOption('attributes');
+    $this->assertIsArray($attributes);
+    $this->assertSame('_blank', $attributes['target'] ?? NULL);
+    $this->assertSame('noopener noreferrer', $attributes['rel'] ?? NULL);
   }
 
   /**

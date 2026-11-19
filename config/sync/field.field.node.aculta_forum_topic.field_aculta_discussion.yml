@@ -7,8 +7,6 @@ dependencies:
     - node.type.aculta_forum_topic
   module:
     - comment
-_core:
-  default_config_hash: JPmjWkhSLYzW7cAbyCXEumrMj_jmnyy2gkWQD7G86l8
 id: node.aculta_forum_topic.field_aculta_discussion
 field_name: field_aculta_discussion
 entity_type: node
@@ -28,9 +26,8 @@ default_value:
 default_value_callback: ''
 settings:
   default_mode: 1
-  per_page: 50
+  per_page: 10
   anonymous: 0
   form_location: true
   preview: 1
 field_type: comment
-

@@ -35,7 +35,11 @@ final class ConsumerUploadPolicy {
   /**
    * Extensões de imagem permitidas para a integração, na ordem do catálogo.
    *
+   * @param string|null $consumer
+   *   Identificador da integração, ou NULL para a política global.
+   *
    * @return string[]
+   *   Extensões de imagem permitidas.
    */
   public function imageExtensions(?string $consumer = NULL): array {
     return $this->catalogExtensions($consumer, UploadPolicy::EXTENSIONS);
@@ -44,7 +48,11 @@ final class ConsumerUploadPolicy {
   /**
    * Extensões de documento permitidas para a integração, na ordem do catálogo.
    *
+   * @param string|null $consumer
+   *   Identificador da integração, ou NULL para a política global.
+   *
    * @return string[]
+   *   Extensões de documento permitidas.
    */
   public function documentExtensions(?string $consumer = NULL): array {
     return $this->catalogExtensions($consumer, UploadPolicy::DOCUMENT_EXTENSIONS);
@@ -76,7 +84,11 @@ final class ConsumerUploadPolicy {
   /**
    * Validadores do Managed File API para imagens, ou [] se a lista estiver vazia.
    *
+   * @param string|null $consumer
+   *   Identificador da integração, ou NULL para a política global.
+   *
    * @return array<string, array<string, int|string>>
+   *   Validadores de upload de imagem, ou lista vazia.
    */
   public function imageValidators(?string $consumer = NULL): array {
     $extensions = $this->imageExtensions($consumer);
@@ -89,7 +101,11 @@ final class ConsumerUploadPolicy {
   /**
    * Validadores do Managed File API para documentos, ou [] se a lista estiver vazia.
    *
+   * @param string|null $consumer
+   *   Identificador da integração, ou NULL para a política global.
+   *
    * @return array<string, array<string, int|string>>
+   *   Validadores de upload de documento, ou lista vazia.
    */
   public function documentValidators(?string $consumer = NULL): array {
     $extensions = $this->documentExtensions($consumer);
@@ -100,6 +116,21 @@ final class ConsumerUploadPolicy {
   }
 
   /**
+   * Validador FileExtension com imagens e documentos da integração, sem limite de tamanho.
+   *
+   * Para campos que aceitam os dois tipos (ex.: resposta de atividade do LMS).
+   *
+   * @param string|null $consumer
+   *   Identificador da integração, ou NULL para a política global.
+   *
+   * @return array<string, array<string, string>>
+   *   Validador de extensão com imagens e documentos.
+   */
+  public function extensionValidators(?string $consumer = NULL): array {
+    return ['FileExtension' => ['extensions' => implode(' ', array_merge($this->imageExtensions($consumer), $this->documentExtensions($consumer)))]];
+  }
+
+  /**
    * Restringe validadores de uma atividade à política da integração.
    *
    * A integração pode só estreitar: extensões fora da lista dela são removidas
@@ -107,8 +138,11 @@ final class ConsumerUploadPolicy {
    *
    * @param array<string, mixed> $validators
    *   Validadores do Managed File API pedidos pela atividade.
+   * @param string|null $consumer
+   *   Identificador da integração, ou NULL para a política global.
    *
    * @return array<string, mixed>
+   *   Validadores ajustados à política da integração.
    */
   public function restrictValidators(array $validators, ?string $consumer = NULL): array {
     $allowed = array_merge($this->imageExtensions($consumer), $this->documentExtensions($consumer));
@@ -124,6 +158,10 @@ final class ConsumerUploadPolicy {
    * Extensões que um conjunto de validadores aceita, para texto de ajuda.
    *
    * @param array<string, mixed> $validators
+   *   Validadores do Managed File API.
+   *
+   * @return string
+   *   Extensões aceitas separadas por espaço.
    */
   public function acceptedExtensions(array $validators): string {
     $extensions = (string) ($validators['FileExtension']['extensions'] ?? '');
@@ -133,7 +171,13 @@ final class ConsumerUploadPolicy {
   /**
    * Interseção entre a configuração da integração e um catálogo central.
    *
+   * @param string|null $consumer
+   *   Identificador da integração, ou NULL para a política global.
+   * @param string $catalog
+   *   Catálogo central de extensões separado por espaço.
+   *
    * @return string[]
+   *   Extensões da interseção entre a integração e o catálogo.
    */
   private function catalogExtensions(?string $consumer, string $catalog): array {
     $configured = (string) ($this->settings($consumer)['allowed_extensions'] ?? '');
@@ -144,7 +188,17 @@ final class ConsumerUploadPolicy {
   /**
    * Valida um arquivo contra a lista de extensões, tamanho e conteúdo.
    *
+   * @param \Drupal\file\FileInterface $file
+   *   Arquivo a validar.
    * @param string[] $extensions
+   *   Extensões permitidas.
+   * @param string|null $consumer
+   *   Identificador da integração, ou NULL para a política global.
+   * @param bool $raster
+   *   Indica se o arquivo precisa ser uma imagem com dimensões válidas.
+   *
+   * @return bool
+   *   TRUE se o arquivo atender à política.
    */
   private function isValidFile(FileInterface $file, array $extensions, ?string $consumer, bool $raster): bool {
     $extension = strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION));
@@ -173,7 +227,11 @@ final class ConsumerUploadPolicy {
   /**
    * Resolve a integração, com fallback para a política global.
    *
+   * @param string|null $consumer
+   *   Identificador da integração, ou NULL para a política global.
+   *
    * @return array<string, mixed>
+   *   Configuração efetiva da integração.
    */
   private function settings(?string $consumer): array {
     $config = $this->configFactory->get('aculta_file_uploader.settings');

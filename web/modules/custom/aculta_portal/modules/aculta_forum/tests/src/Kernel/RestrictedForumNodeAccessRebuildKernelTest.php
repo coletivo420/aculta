@@ -76,12 +76,12 @@ final class RestrictedForumNodeAccessRebuildKernelTest extends KernelTestBase {
 
     // NodeAccessControlHandler::access() exige "access content" antes de
     // consultar grants; sem isso o anônimo é barrado pelo Core, não pelo Fórum.
-    Role::load(RoleInterface::ANONYMOUS_ID)
-      ->grantPermission('access content')
-      ->save();
-    Role::load(RoleInterface::AUTHENTICATED_ID)
-      ->grantPermission('access content')
-      ->save();
+    $anonRole = Role::load(RoleInterface::ANONYMOUS_ID);
+    self::assertNotNull($anonRole);
+    $anonRole->grantPermission('access content')->save();
+    $authRole = Role::load(RoleInterface::AUTHENTICATED_ID);
+    self::assertNotNull($authRole);
+    $authRole->grantPermission('access content')->save();
 
     NodeType::create([
       'type' => 'aculta_forum_topic',
@@ -104,9 +104,11 @@ final class RestrictedForumNodeAccessRebuildKernelTest extends KernelTestBase {
     $relationship_type_storage = $this->container->get('entity_type.manager')
       ->getStorage('group_relationship_type');
     self::assertInstanceOf(GroupRelationshipTypeStorageInterface::class, $relationship_type_storage);
+    $groupType = $group_type_storage->load(self::GROUP_TYPE);
+    self::assertInstanceOf(\Drupal\group\Entity\GroupTypeInterface::class, $groupType);
     $relationship_type_storage->save(
       $relationship_type_storage->createFromPlugin(
-        $group_type_storage->load(self::GROUP_TYPE),
+        $groupType,
         'group_node:aculta_forum_topic',
       ),
     );
@@ -245,11 +247,11 @@ final class RestrictedForumNodeAccessRebuildKernelTest extends KernelTestBase {
     $topic = $this->createTopic('Tópico', $owner);
 
     $this->rebuild();
-    self::assertSame('all', $this->grantsFor($topic)[0]['realm']);
+    $firstGrant = $this->grantsFor($topic)[0] ?? [];
+    self::assertSame('all', $firstGrant['realm'] ?? NULL);
 
     $this->restrictTopic($topic, $group);
     $rebuilder = $this->container->get('aculta_forum_restricted_test.grant_rebuilder');
-    self::assertInstanceOf(RestrictedForumGrantRebuilder::class, $rebuilder);
     self::assertTrue($rebuilder->rebuildForTopic($topic));
 
     self::assertSame([
@@ -288,29 +290,41 @@ final class RestrictedForumNodeAccessRebuildKernelTest extends KernelTestBase {
    */
   private function rebuild(): void {
     $rebuild = $this->container->get(NodeAccessRebuild::class);
-    self::assertInstanceOf(NodeAccessRebuild::class, $rebuild);
     $rebuild->rebuild();
   }
 
   /**
    * Devolve as linhas de node_access do tópico, ordenadas.
+   *
+   * @return list<array{realm: string, gid: int, grant_view: int, grant_update: int, grant_delete: int}>
    */
   private function grantsFor(NodeInterface $topic): array {
-    $query = $this->container->get('database')->select('node_access', 'na');
+    $database = $this->container->get('database');
+    $query = $database->select('node_access', 'na');
     $query->fields('na', ['realm', 'gid', 'grant_view', 'grant_update', 'grant_delete']);
     $query->condition('nid', $topic->id());
     $query->orderBy('realm');
     $query->orderBy('gid');
-    return array_map(
-      static fn (array $row): array => [
-        'realm' => (string) $row['realm'],
-        'gid' => (int) $row['gid'],
-        'grant_view' => (int) $row['grant_view'],
-        'grant_update' => (int) $row['grant_update'],
-        'grant_delete' => (int) $row['grant_delete'],
-      ],
-      $query->execute()->fetchAll(FetchAs::Associative),
-    );
+    $stmt = $query->execute();
+    $rows = $stmt ? $stmt->fetchAll(FetchAs::Associative) : [];
+    $result = [];
+    foreach ($rows as $row) {
+      if (is_array($row)) {
+        $gid = $row['gid'] ?? 0;
+        $gv = $row['grant_view'] ?? 0;
+        $gu = $row['grant_update'] ?? 0;
+        $gd = $row['grant_delete'] ?? 0;
+        $realm = $row['realm'] ?? '';
+        $result[] = [
+          'realm' => is_scalar($realm) || $realm instanceof \Stringable ? (string) $realm : '',
+          'gid' => is_numeric($gid) ? (int) $gid : 0,
+          'grant_view' => is_numeric($gv) ? (int) $gv : 0,
+          'grant_update' => is_numeric($gu) ? (int) $gu : 0,
+          'grant_delete' => is_numeric($gd) ? (int) $gd : 0,
+        ];
+      }
+    }
+    return $result;
   }
 
   /**
@@ -320,11 +334,14 @@ final class RestrictedForumNodeAccessRebuildKernelTest extends KernelTestBase {
    *   IDs dos nós visíveis na consulta.
    */
   private function visibleNids(AccountInterface $account): array {
-    $query = $this->container->get('database')->select('node', 'n');
+    $database = $this->container->get('database');
+    $query = $database->select('node', 'n');
     $query->fields('n', ['nid']);
     $query->addTag('node_access');
     $query->addMetaData('account', $account);
-    return array_map('intval', $query->execute()->fetchCol());
+    $stmt = $query->execute();
+    $col = $stmt ? $stmt->fetchCol() : [];
+    return array_map(static fn (mixed $id): int => is_numeric($id) ? (int) $id : 0, $col);
   }
 
   /**
@@ -365,6 +382,7 @@ final class RestrictedForumNodeAccessRebuildKernelTest extends KernelTestBase {
         'label' => $label,
         'uid' => $owner->id(),
       ]);
+    self::assertInstanceOf(GroupInterface::class, $group);
     $group->save();
     return $group;
   }
@@ -403,6 +421,7 @@ final class RestrictedForumNodeAccessRebuildKernelTest extends KernelTestBase {
       return;
     }
     $marker = $storage->load(reset($ids));
+    self::assertInstanceOf(\Drupal\Core\Entity\FieldableEntityInterface::class, $marker);
     $marker->set('situacao', $situation);
     $marker->save();
   }

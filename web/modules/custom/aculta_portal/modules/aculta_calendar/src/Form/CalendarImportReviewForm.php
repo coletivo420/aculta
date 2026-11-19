@@ -19,20 +19,22 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class CalendarImportReviewForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly MessengerInterface $importMessenger,
-    private readonly CalendarImportRepository $repository,
-    private readonly DateFormatterInterface $dateFormatter,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly MessengerInterface $importMessenger,
+    protected readonly CalendarImportRepository $repository,
+    protected readonly DateFormatterInterface $dateFormatter,
   ) {}
 
   /**
    * Creates the form instance from the Drupal service container.
    */
   public static function create(ContainerInterface $container): static {
+    /** @var \Drupal\aculta_calendar\Import\CalendarImportRepository $repository */
+    $repository = $container->get('aculta_calendar.import_repository');
     return new static(
       $container->get('entity_type.manager'),
       $container->get('messenger'),
-      $container->get('aculta_calendar.import_repository'),
+      $repository,
       $container->get('date.formatter'),
     );
   }
@@ -46,6 +48,11 @@ final class CalendarImportReviewForm extends FormBase {
 
   /**
    * Describes the buildForm value.
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['items'] = [
@@ -71,20 +78,29 @@ final class CalendarImportReviewForm extends FormBase {
         // A dangling source reference must not take down the whole queue.
         continue;
       }
-      $latest = $this->repository->findLatest($source, $item->get('external_uid')->value) ?? $item;
+      $externalUid = is_string($item->get('external_uid')->value) ? $item->get('external_uid')->value : '';
+      $latest = $this->repository->findLatest($source, $externalUid) ?? $item;
       if ($latest->get('import_state')->value === 'publicado') {
         continue;
       }
       $key = (string) $item->id();
-      $form['items'][$key]['title'] = ['#plain_text' => $latest->get('title')->value];
-      $form['items'][$key]['uid'] = ['#plain_text' => $latest->get('external_uid')->value];
-      $form['items'][$key]['start'] = [
-        '#plain_text' => $this->dateFormatter->format((int) $latest->get('start')->value, 'custom', 'd/m/Y H:i'),
+      $startVal = $latest->get('start')->value;
+      $startTs = is_numeric($startVal) ? (int) $startVal : 0;
+      $titleVal = $latest->get('title')->value;
+      $uidVal = $latest->get('external_uid')->value;
+      $stateVal = $latest->get('import_state')->value;
+      $presenceVal = $item->get('source_presence')->value;
+
+      $row = [];
+      $row['title'] = ['#plain_text' => is_string($titleVal) ? $titleVal : ''];
+      $row['uid'] = ['#plain_text' => is_string($uidVal) ? $uidVal : ''];
+      $row['start'] = [
+        '#plain_text' => $this->dateFormatter->format($startTs, 'custom', 'd/m/Y H:i'),
       ];
-      $form['items'][$key]['state'] = ['#plain_text' => $latest->get('import_state')->value];
-      $form['items'][$key]['presence'] = ['#plain_text' => $item->get('source_presence')->value];
-      $is_cancellation = $latest->get('import_state')->value === 'cancelado';
-      $form['items'][$key]['publish'] = [
+      $row['state'] = ['#plain_text' => is_string($stateVal) ? $stateVal : ''];
+      $row['presence'] = ['#plain_text' => is_string($presenceVal) ? $presenceVal : ''];
+      $is_cancellation = $stateVal === 'cancelado';
+      $row['publish'] = [
         '#type' => 'submit',
         '#value' => $is_cancellation ? $this->t('Publicar cancelamento') : $this->t('Publicar'),
         '#name' => 'publish_' . $key,
@@ -92,7 +108,7 @@ final class CalendarImportReviewForm extends FormBase {
         '#item_id' => $key,
         '#limit_validation_errors' => [],
       ];
-      $form['items'][$key]['keep_draft'] = [
+      $row['keep_draft'] = [
         '#type' => 'submit',
         '#value' => $this->t('Manter rascunho'),
         '#name' => 'draft_' . $key,
@@ -100,20 +116,29 @@ final class CalendarImportReviewForm extends FormBase {
         '#item_id' => $key,
         '#limit_validation_errors' => [],
       ];
+      $form['items'][$key] = $row;
     }
     return $form;
   }
 
   /**
    * Describes the submitForm value.
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
   /**
    * Describes the publishItem value.
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function publishItem(array &$form, FormStateInterface $form_state): void {
-    $item = $this->latestItem((string) $form_state->getTriggeringElement()['#item_id']);
+    $trigger = $form_state->getTriggeringElement();
+    $itemId = isset($trigger['#item_id']) && is_string($trigger['#item_id']) ? $trigger['#item_id'] : '';
+    $item = $this->latestItem($itemId);
     if ($item->get('import_state')->value === 'cancelado') {
       $this->importMessenger->addError($this->t('Este item é um cancelamento; use “Publicar cancelamento” para exibir o aviso.'));
       $form_state->setRedirect('aculta_calendar.import_review');
@@ -130,9 +155,14 @@ final class CalendarImportReviewForm extends FormBase {
 
   /**
    * Publishes a cancellation notice without presenting it as an active event.
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function publishCancellation(array &$form, FormStateInterface $form_state): void {
-    $item = $this->latestItem((string) $form_state->getTriggeringElement()['#item_id']);
+    $trigger = $form_state->getTriggeringElement();
+    $itemId = isset($trigger['#item_id']) && is_string($trigger['#item_id']) ? $trigger['#item_id'] : '';
+    $item = $this->latestItem($itemId);
     if ($item->get('import_state')->value !== 'cancelado') {
       $this->importMessenger->addError($this->t('Este item não está marcado como cancelado.'));
       $form_state->setRedirect('aculta_calendar.import_review');
@@ -150,9 +180,14 @@ final class CalendarImportReviewForm extends FormBase {
 
   /**
    * Describes the keepDraft value.
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function keepDraft(array &$form, FormStateInterface $form_state): void {
-    $item = $this->latestItem((string) $form_state->getTriggeringElement()['#item_id']);
+    $trigger = $form_state->getTriggeringElement();
+    $itemId = isset($trigger['#item_id']) && is_string($trigger['#item_id']) ? $trigger['#item_id'] : '';
+    $item = $this->latestItem($itemId);
     if ($item->get('import_state')->value !== 'rascunho') {
       $item->setImportState('rascunho');
       $item->setNewRevision(TRUE);
@@ -171,7 +206,12 @@ final class CalendarImportReviewForm extends FormBase {
     if (!$entity instanceof CalendarImportedItem) {
       throw new \InvalidArgumentException('Item importado não encontrado.');
     }
-    return $this->repository->findLatest($entity->get('source')->entity, $entity->get('external_uid')->value) ?? $entity;
+    $source = $entity->get('source')->entity;
+    if (!$source instanceof CalendarImportSource) {
+      return $entity;
+    }
+    $externalUid = is_string($entity->get('external_uid')->value) ? $entity->get('external_uid')->value : '';
+    return $this->repository->findLatest($source, $externalUid) ?? $entity;
   }
 
 }

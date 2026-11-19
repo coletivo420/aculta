@@ -14,6 +14,10 @@ use Drupal\Core\Cache\CacheableMetadata;
  */
 final class AuthorIdentity implements CacheableDependencyInterface {
 
+  /**
+   * @param array<array-key, mixed>|null $avatar
+   * @param array<array-key, mixed> $socialLinks
+   */
   public function __construct(
     private readonly string $variant,
     private readonly ?string $displayName,
@@ -23,13 +27,18 @@ final class AuthorIdentity implements CacheableDependencyInterface {
     private readonly CacheableMetadata $cacheability,
     private readonly ?string $bio = NULL,
     private readonly array $socialLinks = [],
+    private readonly int $reactionsReceived = 0,
+    private readonly int $reactionsGiven = 0,
   ) {}
 
   /**
    * Exporta somente os dados neutros permitidos para apresentação.
    *
-   * @return array{variant: string, display_name: ?string, profile_url: ?string, avatar: ?array, member_since: ?string, bio: ?string, social_links: array}
+   * @return array{variant: string, display_name: ?string, profile_url: ?string, avatar: ?array, member_since: ?string, bio: ?string, social_links: array, reactions_received: int, reactions_given: int}
    *   Identidade pública preparada para apresentação.
+   */
+  /**
+   * @return array<array-key, mixed>
    */
   public function toArray(): array {
     return [
@@ -40,6 +49,8 @@ final class AuthorIdentity implements CacheableDependencyInterface {
       'member_since' => $this->memberSince,
       'bio' => $this->bio,
       'social_links' => $this->socialLinks,
+      'reactions_received' => $this->reactionsReceived,
+      'reactions_given' => $this->reactionsGiven,
     ];
   }
 

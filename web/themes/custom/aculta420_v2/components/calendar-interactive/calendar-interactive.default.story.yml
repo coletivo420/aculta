@@ -1,0 +1,5 @@
+name: Visão interativa com alternativa
+component: aculta420_v2:calendar-interactive
+slots:
+  content:
+    '#markup': <p data-portal-ui="calendar-interactive-notice">Use os controles para navegar pelo calendário.</p><div data-portal-ui="calendar-interactive-controls"><button type="button">Alto contraste</button></div><div id="aculta-calendar-interactive" role="region" aria-label="Calendário de eventos" data-portal-ui="calendar-interactive"></div><p data-portal-ui="calendar-interactive-alternative"><a href="#agenda">Ver a agenda em lista</a></p><div id="aculta-calendar-agenda" data-portal-ui="calendar-interactive-agenda"><h2 id="agenda">Agenda</h2></div>

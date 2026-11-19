@@ -27,8 +27,10 @@ hidden:
   entity_print_view_epub: true
   entity_print_view_pdf: true
   entity_print_view_word_docx: true
+  field_aculta_mailer_managed: true
   field_aculta_messenger_attempts: true
   field_aculta_messenger_source_pm: true
   field_aculta_msg_delivery: true
+  field_aculta_pm_digest_sent: true
   partial_1: true
   search_api_excerpt: true

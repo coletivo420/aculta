@@ -1,0 +1,4 @@
+[data-portal-ui="social-links-settings-button"] {
+  display: grid;
+  gap: .5rem;
+}

@@ -1,0 +1,25 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de álbum da Revista
+description: Capa, título, data e créditos do álbum preparados pela View.
+status: stable
+group: Revista
+props:
+  type: object
+  additionalProperties: false
+slots:
+  cover:
+    title: Capa
+    description: Mídia de capa renderizada com acesso e cache do Drupal.
+  title:
+    title: Título
+    description: Título e link de entidade renderizados pelo campo da View.
+  published_at:
+    title: Data
+    description: Data de publicação formatada pelo campo da View.
+  credits:
+    title: Créditos
+    description: Créditos editoriais renderizados pelo campo da View.
+assets:
+  css:
+    component:
+      revista-album-card.css: {  }

@@ -29,75 +29,116 @@ dependencies:
     - field.field.block_content.aculta_institution.field_street_address
     - field.field.block_content.aculta_institution.field_trade_name
   module:
+    - layout_builder
     - link
+third_party_settings:
+  layout_builder:
+    enabled: true
+    allow_custom: false
+    sections:
+      -
+        layout_id: 'ui_patterns:aculta420_v2:site_footer'
+        layout_settings:
+          label: ''
+          context_mapping:
+            entity: layout_builder.entity
+          ui_patterns:
+            component_id: 'aculta420_v2:site-footer'
+            variant_id: null
+            props: {  }
+            slots: {  }
+        components:
+          0a84d0a6-e36b-42ab-ac3e-a39de45f88b0:
+            uuid: 0a84d0a6-e36b-42ab-ac3e-a39de45f88b0
+            region: nav
+            configuration:
+              id: 'system_menu_block:aculta-footer-legal'
+              label: 'Rodapé legal'
+              label_display: '0'
+              provider: system
+              context_mapping: {  }
+              level: 1
+              depth: 1
+              expand_all_items: false
+            weight: 0
+            additional: {  }
+          80b67eab-2f77-4fe7-9cd7-5ce2f94938d2:
+            uuid: 80b67eab-2f77-4fe7-9cd7-5ce2f94938d2
+            region: brand
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_org_name'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: hidden
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 0
+            additional: {  }
+          ae598612-b35d-4054-8dd8-3c2a55db25c9:
+            uuid: ae598612-b35d-4054-8dd8-3c2a55db25c9
+            region: brand
+            configuration:
+              id: 'field_block:block_content:aculta_institution:field_cnpj'
+              label_display: '0'
+              context_mapping:
+                entity: layout_builder.entity
+              formatter:
+                type: string
+                label: inline
+                settings:
+                  link_to_entity: false
+                  link_rel: canonical
+                third_party_settings: {  }
+            weight: 1
+            additional: {  }
+          f3acf056-e991-4923-9d48-f0e0cdca32de:
+            uuid: f3acf056-e991-4923-9d48-f0e0cdca32de
+            region: legal
+            configuration:
+              id: aculta_footer_build_info
+              label: 'Rodapé: copyright e versão'
+              label_display: '0'
+              provider: aculta_portal
+              context_mapping: {  }
+            weight: 0
+            additional: {  }
+        third_party_settings: {  }
 id: block_content.aculta_institution.footer
 targetEntityType: block_content
 bundle: aculta_institution
 mode: footer
-content:
-  field_cnpj:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 2
-    region: content
-  field_headquarters:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 3
-    region: content
-  field_org_description:
-    type: basic_string
-    label: hidden
-    settings: {  }
-    third_party_settings: {  }
-    weight: 1
-    region: content
-  field_org_name:
-    type: string
-    label: hidden
-    settings:
-      link_to_entity: false
-      link_rel: canonical
-    third_party_settings: {  }
-    weight: 0
-    region: content
-  field_site:
-    type: link
-    label: hidden
-    settings:
-      trim_length: 80
-      url_only: false
-      url_plain: false
-      rel: ''
-      target: ''
-    third_party_settings: {  }
-    weight: 4
-    region: content
+content: {  }
 hidden:
+  entity_print_view_epub: true
+  entity_print_view_pdf: true
+  entity_print_view_word_docx: true
   field_address: true
   field_address_region: true
+  field_cnpj: true
   field_country: true
   field_email: true
   field_governance: true
+  field_headquarters: true
   field_legal_code: true
   field_legal_nature: true
   field_locality: true
   field_main_activity: true
   field_nonprofit_description: true
   field_opening_date: true
+  field_org_description: true
+  field_org_name: true
   field_phone: true
   field_postal_code: true
   field_registration_status: true
   field_schema_phone: true
   field_secondary_activity: true
+  field_site: true
   field_street_address: true
   field_trade_name: true
   langcode: true
+  search_api_excerpt: true

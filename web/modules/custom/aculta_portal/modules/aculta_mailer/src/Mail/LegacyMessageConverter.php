@@ -8,7 +8,6 @@ use Drupal\aculta_mailer\Webhook\BrevoWebhook;
 use Symfony\Component\Mailer\Header\TagHeader;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
-use Symfony\Component\Mime\Part\DataPart;
 
 /**
  * Converte a mensagem do Core (array de hook_mail) em e-mail do Symfony, para a camada de envio E-Mails ACULTA (F15).

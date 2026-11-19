@@ -1,0 +1,10 @@
+services:
+  aculta_forum_post_test.post_entity_test_hooks:
+    class: Drupal\aculta_forum_post_test\Hook\ForumPostEntityTestHooks
+    arguments:
+      - '@entity_type.manager'
+      - '@config.factory'
+      - '@request_stack'
+      - '@module_handler'
+      - '@?aculta_portal.domain_site'
+      - '@?domain.negotiator'

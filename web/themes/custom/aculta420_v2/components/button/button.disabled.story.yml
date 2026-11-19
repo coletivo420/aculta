@@ -1,0 +1,6 @@
+name: Desativado
+description: Estado desativado, com opacidade reduzida e sem interação.
+props:
+  text: Enviar
+  variant: primary
+  disabled: true

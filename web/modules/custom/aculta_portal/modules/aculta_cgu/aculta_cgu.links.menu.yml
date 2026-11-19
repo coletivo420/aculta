@@ -1,0 +1,6 @@
+aculta_cgu.admin_reports:
+  title: 'Fila de denúncias'
+  description: 'Painel central de denúncias e moderação de conteúdo gerado por usuários (CGU).'
+  route_name: aculta_cgu.admin_reports
+  parent: aculta_portal.admin
+  weight: 8

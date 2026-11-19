@@ -1,6 +1,6 @@
 # Política de confirmação de e-mail
 
-Status dos componentes que implementam a política: [aculta_portal](../operations/status/aculta_portal.yml), [aculta_mail_confirmer](../operations/status/aculta_mail_confirmer.yml) e [aculta_mail_confirmer_user](../operations/status/aculta_mail_confirmer_user.yml). Pendências operacionais estão no [registro de dívidas](../operations/DEBT-REGISTER.md).
+Status dos componentes que implementam a política: [aculta_portal](../operations/status/aculta_portal.yml) e [aculta_mail_confirmer](../operations/status/aculta_mail_confirmer.yml). Pendências operacionais estão no [registro de dívidas](../operations/DEBT-REGISTER.md).
 
 ## 1. Regra
 
@@ -117,7 +117,7 @@ de conta do Core não oferece o campo de e-mail (`EmailChangeHooks`).
 
 ## 9. Aplicação atual no site (2026-10-16)
 
-Verificada no código e na configuração do Runtime de teste. Itens marcados como "a confirmar" não têm verificação
+Verificada no código e na configuração do Runtime de desenvolvimento. Itens marcados como "a confirmar" não têm verificação
 própria e não devem ser tratados como garantia.
 
 | Área | Regra | Situação | Onde |

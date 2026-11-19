@@ -6,11 +6,16 @@ namespace Drupal\aculta_forum_cleanup_test\Hook;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\State\StateInterface;
 
 /**
  * Blocks Forum attachment deletion while the test flag is enabled.
  */
 final class CleanupFailureTestHooks {
+
+  public function __construct(
+    private readonly StateInterface $state,
+  ) {}
 
   /**
    * State key that enables the simulated failure.
@@ -24,7 +29,7 @@ final class CleanupFailureTestHooks {
   public function entityPredelete(EntityInterface $entity): void {
     if ($entity->getEntityTypeId() === 'media'
       && $entity->bundle() === 'forum_attachment'
-      && (bool) \Drupal::state()->get(self::STATE_KEY, FALSE)) {
+      && (bool) $this->state->get(self::STATE_KEY, FALSE)) {
       throw new \RuntimeException('Simulated Forum attachment deletion failure.');
     }
   }

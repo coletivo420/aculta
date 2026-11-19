@@ -13,12 +13,17 @@ namespace Drupal\aculta_paths\Service;
 final class DnsClassificador {
 
   /**
+   * Classifica o DNS de um subdomínio em relação ao host principal.
+   *
+   * @param string $principal
+   *   Host principal usado na comparação.
    * @param array{ips: string[], cnames: string[]} $alvo
    *   Registros do host principal.
    * @param array{ips: string[], cnames: string[]} $sub
    *   Registros do subdomínio.
    *
    * @return array{classe: string, codigo: string, destino?: string}
+   *   Classe, código e destino opcional do resultado da classificação.
    */
   public static function classificar(string $principal, array $alvo, array $sub): array {
     if ($alvo['ips'] === [] && $alvo['cnames'] === []) {

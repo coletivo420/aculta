@@ -81,7 +81,10 @@ final class PublicTopicCommentCountViewKernelTest extends KernelTestBase {
       (int) $topics['three']->id(),
       (int) $topics['one']->id(),
       (int) $topics['zero']->id(),
-    ], array_map(static fn (object $row): int => (int) $row->nid, $view->result));
+    ], array_map(static function (object $row): int {
+      $nid = property_exists($row, 'nid') && is_numeric($row->nid) ? (int) $row->nid : 0;
+      return $nid;
+    }, $view->result));
   }
 
   /**

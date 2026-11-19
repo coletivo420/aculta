@@ -1,0 +1,90 @@
+{
+  "metodo": "Firefox visible via WebDriver BiDi; inert primary/outline button fixtures",
+  "motor": "Firefox ESR",
+  "viewport": [
+    320,
+    1440
+  ],
+  "modo": [
+    "claro",
+    "escuro"
+  ],
+  "url_relativa": "/ em cada host de purpose do deploy.json (ambiente test)",
+  "resultados": {
+    "purposes": [
+      "main",
+      "account",
+      "support",
+      "magazine",
+      "wiki",
+      "shop",
+      "courses",
+      "forum",
+      "links",
+      "eventos"
+    ],
+    "casos": 40,
+    "verificacoes": 360,
+    "passaram": 360,
+    "falharam": 0,
+    "falhas": [],
+    "verificacoes_estaticas": {
+      "passaram": 4,
+      "total": 4,
+      "assertions": {
+        "button_tokens_present": "PASS",
+        "no_purpose_tokens": "PASS",
+        "no_brand_highlight": "PASS",
+        "no_brightness_filter": "PASS"
+      }
+    },
+    "assertions": {
+      "purpose": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "configured_scheme": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "mode": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "viewport": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "palette_accent_resolved": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "primary_uses_button_tokens": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "outline_uses_button_tokens": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "no_filter": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      },
+      "no_overflow": {
+        "passaram": 40,
+        "total": 40,
+        "resultado": "PASS"
+      }
+    }
+  },
+  "hash_commit_testado_runtime": "28ab46508817036b7dbcbd4636b39fdd7358b38b"
+}

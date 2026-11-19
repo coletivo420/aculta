@@ -47,7 +47,7 @@ Decisão tomada (D-67): **B, LRS próprio no Drupal**. Isso difere da recomenda�
 | F1 | Validador puro de declaração xAPI 2.0 (campos obrigatórios, tipos, tamanho), com testes. **Concluída em código (dev.114), 20/20 no shim.** | ADR aceito. |
 | F2 | Derivação de estado e pontuação a partir de declarações, pura, com testes. **Concluída em código (dev.115), 16/16 no shim, com controle de mutação. Status e nota pela `AttemptRule`.** | F1. |
 | F3 | **Concluída em `aculta_lms` 0.1.0-dev.124:** token vinculado à tentativa, endpoint POST autenticado, validação/idempotência e Flood por token; retenção mensal em lotes com log. PHPUnit Unit 65/99; Kernel 2/22; gate MAIN PASS. | F1 e F2; credencial aprovada. |
-| F4 | **Concluída no Homelab:** Firefox ESR com `DISPLAY=:0` enviou uma declaração de teste aceita e persistida em ACULTA420 e Olivero; formulário restrito ao MAIN (404 em `cursos`); Flood confirmou 60/minuto e 429 no 61º envio. | Ambiente de teste disponível para o agente. |
+| F4 | **Concluída no Homelab:** Firefox ESR com `DISPLAY=:0` enviou uma declaração de teste aceita e persistida em ACULTA420; formulário restrito ao MAIN (404 em `cursos`); Flood confirmou 60/minuto e 429 no 61º envio. | Ambiente de teste disponível para o agente. |
 
 Cada fase vira um commit separado, como manda o processo do projeto.
 

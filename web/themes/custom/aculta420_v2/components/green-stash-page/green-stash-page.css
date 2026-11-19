@@ -1,0 +1,194 @@
+.studio.aculta-green-stash {
+  display: grid;
+  min-width: 0;
+  gap: var(--spacing-lg);
+}
+
+.aculta-green-stash > h2 {
+  margin-block: 0;
+  padding-block-end: .5rem;
+  border-block-end: 1px solid var(--color-border);
+}
+
+.aculta-green-stash > p {
+  margin: 0;
+  padding: .875rem 1rem;
+  overflow-wrap: anywhere;
+  color: var(--color-text-primary);
+  border-inline-start: .25rem solid var(--color-primary);
+  background: var(--color-canvas);
+}
+
+.aculta-green-stash__navigation {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: .25rem .75rem;
+  min-width: 0;
+  margin-block-end: 1rem;
+}
+
+.aculta-green-stash__navigation-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 3rem;
+  padding: .5rem .25rem;
+  text-align: center;
+  text-decoration: none;
+  color: var(--color-link-editorial);
+  border-block-end: 1px solid var(--color-border);
+  overflow-wrap: anywhere;
+}
+
+.aculta-green-stash__navigation-link[aria-current="page"] {
+  color: var(--color-text-primary);
+  border-block-end: 3px solid var(--color-primary);
+  font-weight: 700;
+}
+
+.aculta-green-stash__navigation-link:is(:hover, :focus-visible) {
+  color: var(--color-primary);
+  border-block-end: 3px solid var(--color-primary);
+}
+
+.aculta-green-stash__navigation-link:focus-visible,
+.aculta-green-stash a:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+.aculta-green-stash__products form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: .75rem;
+  margin: 0 0 1rem;
+  padding: 1rem;
+  color: var(--color-text-primary);
+  background: var(--color-canvas);
+}
+
+.aculta-green-stash__products form label {
+  margin: 0;
+}
+
+.aculta-green-stash__products form button {
+  justify-self: start;
+  min-height: 2.75rem;
+  margin: 0;
+  padding: .5rem 1.5rem;
+  cursor: pointer;
+  color: var(--color-on-primary);
+  border: 2px solid var(--color-primary);
+  border-radius: .25rem;
+  background: var(--color-primary);
+  font: inherit;
+  font-weight: 700;
+}
+
+.aculta-green-stash__products form input[type="search"] {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.75rem;
+  padding: .5rem 1rem;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-color: var(--color-border) var(--color-border) var(--color-border);
+  border-radius: 0;
+  background: var(--color-surface-raised);
+  font: inherit;
+}
+
+.aculta-green-stash__products form input[type="search"]:focus-visible,
+.aculta-green-stash__products form button:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+}
+
+.aculta-green-stash__products > div:has(> h3),
+.aculta-green-stash__shipments > div:has(> div > h3) {
+  min-width: 0;
+  margin-block: .75rem;
+  padding: 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: .25rem;
+  background: var(--color-surface-raised);
+}
+
+.aculta-green-stash__products h3,
+.aculta-green-stash__shipments h3 {
+  margin-block-start: 0;
+  overflow-wrap: anywhere;
+}
+
+.aculta-green-stash__products > div:has(> h3) a,
+.aculta-green-stash__shipments a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
+.aculta-green-stash > a {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  min-height: 2.75rem;
+  overflow-wrap: anywhere;
+  margin-block: .25rem .5rem;
+}
+
+.aculta-green-stash__product-create {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.aculta-green-stash__product-detail {
+  display: grid;
+  min-width: 0;
+  gap: .75rem;
+  margin-block: .75rem;
+  padding: 1rem;
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: .25rem;
+  background: var(--color-surface-raised);
+}
+
+.aculta-green-stash__product-detail > p {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.aculta-green-stash__product-detail > p:first-child {
+  color: var(--color-text-muted);
+  font-size: .875rem;
+}
+
+.aculta-green-stash__product-detail > p + p {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  min-height: 2.75rem;
+  padding: .5rem .75rem;
+  border: 1px solid var(--color-border);
+  border-radius: .25rem;
+  background: var(--color-canvas);
+  font-weight: 700;
+}
+
+@media (min-width: 48rem) {
+  .aculta-green-stash__products form {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+  }
+
+  .aculta-green-stash__products form label {
+    grid-column: 1 / -1;
+  }
+}

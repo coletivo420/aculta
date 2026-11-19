@@ -7,7 +7,7 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\comment\CommentInterface;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Migration\ForumFlaggingMigrationContext;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -37,7 +37,7 @@ final class HistoricForumFlagAccessHooks {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
-    private readonly ?DomainPurposeManager $domainPurposeManager = NULL,
+    private readonly ?DomainSiteManager $siteManager = NULL,
     private readonly ?ForumFlaggingMigrationContext $flaggingMigrationContext = NULL,
   ) {}
 
@@ -127,7 +127,7 @@ final class HistoricForumFlagAccessHooks {
       throw new AccessDeniedHttpException('A conta não pode denunciar conteúdo do Fórum público.');
     }
     if ($flagging->getFlagId() === self::POST_FLAG
-      && ($this->domainPurposeManager === NULL || $this->domainPurposeManager->getCurrentPurpose() !== 'forum')) {
+      && ($this->siteManager === NULL || $this->siteManager->getCurrentSiteKey()?->value !== 'forum')) {
       throw new AccessDeniedHttpException('Denúncias de publicações só são aceitas no purpose Fórum.');
     }
 
@@ -177,7 +177,7 @@ final class HistoricForumFlagAccessHooks {
     if ($this->hasHistoricAuthor($entity)) {
       return TRUE;
     }
-    $host = $entity->getCommentedEntity();
+    $host = $entity instanceof CommentInterface ? $entity->getCommentedEntity() : NULL;
     return $host instanceof NodeInterface
       && $host->bundle() === 'aculta_forum_topic'
       && $this->hasHistoricAuthor($host);
@@ -215,7 +215,7 @@ final class HistoricForumFlagAccessHooks {
     if (!$this->isForumComment($entity)) {
       return FALSE;
     }
-    $host = $entity->getCommentedEntity();
+    $host = $entity instanceof CommentInterface ? $entity->getCommentedEntity() : NULL;
     return $host instanceof NodeInterface && $host->isPublished();
   }
 
@@ -233,26 +233,32 @@ final class HistoricForumFlagAccessHooks {
       && $topic->isPublished()
       && $topic->hasField('field_domain_source')
       && !$topic->get('field_domain_source')->isEmpty()
-      && $this->domainPurposeManager?->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
+      && $this->siteManager?->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
   }
 
   /**
    * Returns cacheable access for viewing and flagging one Forum post.
    */
   private function forumPostAccess(EntityInterface $entity, AccountInterface $account): AccessResultInterface {
-    if (!$this->isPublicForumPost($entity) || $this->domainPurposeManager?->getCurrentPurpose() !== 'forum') {
+    if (!$this->isPublicForumPost($entity) || $this->siteManager?->getCurrentSiteKey()?->value !== 'forum') {
       return AccessResult::forbidden()
         ->addCacheableDependency($entity)
         ->addCacheContexts(['domain']);
     }
-    assert($entity instanceof ForumPost);
+    if (!$entity instanceof ForumPost) {
+      return AccessResult::forbidden()->addCacheContexts(['domain']);
+    }
     $topic = $entity->get('topic')->entity;
-    assert($topic instanceof NodeInterface);
-    return $entity->access('view', $account, TRUE)
-      ->andIf($topic->access('view', $account, TRUE))
+    if (!$topic instanceof NodeInterface) {
+      return AccessResult::forbidden()->addCacheContexts(['domain']);
+    }
+    $dependency = AccessResult::neutral()
       ->addCacheableDependency($entity)
       ->addCacheableDependency($topic)
       ->addCacheContexts(['domain']);
+    return $entity->access('view', $account, TRUE)
+      ->andIf($topic->access('view', $account, TRUE))
+      ->andIf($dependency);
   }
 
   /**

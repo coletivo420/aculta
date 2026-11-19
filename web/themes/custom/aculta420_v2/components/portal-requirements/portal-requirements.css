@@ -1,0 +1,10 @@
+.portal-requirements,
+.portal-requirements .aculta-portal-requirements__cep,
+.portal-requirements .aculta-portal-requirements__cep-table,
+.portal-requirements .aculta-portal-requirements__indexing,
+.portal-requirements .aculta-portal-requirements__indexing-table,
+.portal-requirements .aculta-portal-requirements__legend,
+.portal-requirements .aculta-portal-requirements__php-extensions {
+  display: grid;
+  gap: .5rem;
+}

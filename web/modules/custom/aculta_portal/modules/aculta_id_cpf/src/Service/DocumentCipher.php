@@ -77,7 +77,8 @@ final class DocumentCipher {
     if (!is_string($hex) || strlen($hex) !== 2 * SODIUM_CRYPTO_SECRETBOX_KEYBYTES || !ctype_xdigit($hex)) {
       return NULL;
     }
-    return hex2bin($hex);
+    $binary = hex2bin($hex);
+    return is_string($binary) ? $binary : NULL;
   }
 
 }

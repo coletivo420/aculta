@@ -7,7 +7,7 @@ dependencies:
     - filter.format.aculta_editorial
     - node.type.aculta_faq
   module:
-    - text
+    - text_with_summary
 _core:
   default_config_hash: 0kr1Jn74epfE-Bt5JvDUlYMMj99zN3jWEhlsMDSfxuI
 id: node.aculta_faq.body

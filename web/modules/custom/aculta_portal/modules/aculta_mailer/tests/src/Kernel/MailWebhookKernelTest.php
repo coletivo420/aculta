@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_mailer\Kernel;
 
 use Drupal\aculta_mailer\Controller\MailWebhookController;
-use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\aculta_mailer\Entity\MailLog;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -26,7 +26,7 @@ final class MailWebhookKernelTest extends KernelTestBase {
    *
    * @var string[]
    */
-  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_mailer_test'];
+  protected static $modules = ['system', 'user', 'aculta_mailer', 'aculta_mailer_test', 'aculta_file_uploader', 'file' ];
 
   /**
    * Correlation ID da mensagem de teste.
@@ -126,9 +126,11 @@ final class MailWebhookKernelTest extends KernelTestBase {
   /**
    * Registro da mensagem de teste.
    */
-  private function log(): ContentEntityInterface {
+  private function log(): MailLog {
     $logs = $this->container->get('entity_type.manager')->getStorage('aculta_mail_log')->loadByProperties(['correlation_id' => self::CORRELATION]);
-    return reset($logs);
+    $log = reset($logs);
+    $this->assertInstanceOf(MailLog::class, $log);
+    return $log;
   }
 
 }

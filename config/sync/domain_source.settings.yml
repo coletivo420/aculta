@@ -1,3 +1,5 @@
 _core:
   default_config_hash: mqVsLCNF_WfM-XDhZ0nuTWd7bjvrqR5a6K_-vd0bwjU
 exclude_routes: {  }
+excluded_route_names:
+  - entity.node.edit_form

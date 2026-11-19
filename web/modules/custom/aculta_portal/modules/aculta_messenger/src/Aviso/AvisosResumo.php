@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Aviso;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Database\Connection;
@@ -134,6 +135,9 @@ final class AvisosResumo {
       }
       $lastNoticeId = max(array_map('intval', array_values($ids)));
       foreach ($storage->loadMultiple($ids) as $aviso) {
+        if (!$aviso instanceof ContentEntityInterface) {
+          continue;
+        }
         $porUsuario[(int) $aviso->get('uid')->target_id] = TRUE;
       }
     } while (count($ids) === self::RECIPIENT_SCAN_BATCH_SIZE);
@@ -305,11 +309,8 @@ final class AvisosResumo {
     $providersWithRows = [];
     $providerLookupFailed = $recipientLookupFailed;
     foreach ($this->uniqueDigestProviders() as $provider) {
-      if (!$provider instanceof AvisoDigestProviderInterface) {
-        continue;
-      }
       try {
-        $providerRows = $provider->digestRowsFor($uid);
+        $providerRows = $this->providerRows($provider, $uid);
       }
       catch (\Throwable $exception) {
         // Providers whose pending-row query fails stay retryable and do not
@@ -423,7 +424,7 @@ final class AvisosResumo {
         'provider_id' => $this->digestProviderId($provider),
         'manifest_rows' => array_merge(...array_map(static fn(array $group): array => array_map(
           static fn(int $deliveryId): array => [
-            'tipo' => (string) ($group['row']['tipo'] ?? ''),
+            'tipo' => (string) $group['row']['tipo'],
             'delivery_id' => $deliveryId,
             'quantidade' => 1,
           ],
@@ -711,7 +712,23 @@ final class AvisosResumo {
       ->condition('uid', $uid)
       ->condition('contador_email', 0, '>')
       ->execute();
-    return array_values($storage->loadMultiple($ids));
+    return array_values(array_filter(
+      $storage->loadMultiple($ids),
+      static fn ($aviso): bool => $aviso instanceof Aviso,
+    ));
+  }
+
+  /**
+   * Reads a digest provider's rows as untrusted input.
+   *
+   * Provider rows are validated below because third-party providers can break
+   * the documented shape and a malformed row must never bypass email policy.
+   *
+   * @return array<mixed>
+   *   Provider rows, validated defensively by the caller.
+   */
+  private function providerRows(AvisoDigestProviderInterface $provider, int $uid): array {
+    return $provider->digestRowsFor($uid);
   }
 
   /**

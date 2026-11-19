@@ -1,0 +1,10 @@
+name: Carrinho vazio
+description: Estado vazio de um carrinho atualizado fora de banda pelo HTMX.
+component: aculta420_v2:cart-offcanvas-body
+props:
+  empty: true
+  url: /loja/carrinho
+  total: ''
+  checkout_url: ''
+  htmx_oob: true
+  sites: []

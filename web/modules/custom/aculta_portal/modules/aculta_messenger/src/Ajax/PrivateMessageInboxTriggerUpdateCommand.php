@@ -1,0 +1,26 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_messenger\Ajax;
+
+use Drupal\Core\Ajax\CommandInterface;
+
+/**
+ * Ajax command to trigger an update of the private message inbox block.
+ */
+class PrivateMessageInboxTriggerUpdateCommand implements CommandInterface {
+
+  /**
+   * {@inheritdoc}
+   *
+   * @return array<string, mixed>
+   *   A lista com os valores resultantes.
+   */
+  public function render(): array {
+    return [
+      'command' => 'privateMessageTriggerInboxUpdate',
+    ];
+  }
+
+}

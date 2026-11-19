@@ -94,7 +94,7 @@ final class OpenStreetMapApiClient {
   /**
    * Submits reviewed tags after rechecking the selected element version.
    *
-   * @param array{type: string, id: string, version: string} $element
+   * @param array<string, mixed> $element
    *   Element identity and version returned by find().
    * @param array<string, string> $changes
    *   Reviewed tag values. Empty values remove only the corresponding tag.
@@ -105,9 +105,12 @@ final class OpenStreetMapApiClient {
    *   OSM changeset and new element version.
    */
   public function update(array $element, array $changes, string $comment): array {
-    $type = $element['type'] ?? '';
-    $id = $element['id'] ?? '';
-    $version = $element['version'] ?? '';
+    $rawType = $element['type'] ?? '';
+    $rawId = $element['id'] ?? '';
+    $rawVersion = $element['version'] ?? '';
+    $type = is_scalar($rawType) ? (string) $rawType : '';
+    $id = is_scalar($rawId) ? (string) $rawId : '';
+    $version = is_scalar($rawVersion) ? (string) $rawVersion : '';
     $this->validateIdentity($type, $id);
     if (!preg_match('/^[1-9][0-9]*$/', $version) || trim($comment) === '' || mb_strlen($comment) > 255
       || $this->environment->environment() === NULL || !$this->credentials->clientId((string) $this->environment->environment())
@@ -119,7 +122,7 @@ final class OpenStreetMapApiClient {
       throw new OpenStreetMapOAuthException('Connect OpenStreetMap before sending changes.');
     }
     foreach ($changes as $key => $value) {
-      if (!in_array($key, self::TAGS, TRUE) || !is_string($value) || mb_strlen($value) > 255 || preg_match('/[\x00-\x1F\x7F]/u', $value)) {
+      if (!in_array($key, self::TAGS, TRUE) || mb_strlen($value) > 255 || preg_match('/[\x00-\x1F\x7F]/u', $value)) {
         throw new OpenStreetMapOAuthException('The reviewed OpenStreetMap data is invalid.');
       }
     }
@@ -139,7 +142,10 @@ final class OpenStreetMapApiClient {
   }
 
   /**
-   * Parses only the expected element and safe OSM tags from XML. */
+   * Parses only the expected element and safe OSM tags from XML.
+   *
+   * @return array{type: string, id: string, version: string, lat: float, lon: float, tags: array<string, string>}
+   */
   private function parseElement(string $body, string $type, string $id): array {
     if ($body === '' || strlen($body) > 2 * 1024 * 1024 || str_contains($body, '<!DOCTYPE')) {
       throw new OpenStreetMapOAuthException('The OpenStreetMap response was invalid.');
@@ -150,8 +156,13 @@ final class OpenStreetMapApiClient {
     if (!@$document->loadXML($body, LIBXML_NONET | LIBXML_NOBLANKS)) {
       throw new OpenStreetMapOAuthException('The OpenStreetMap response was invalid.');
     }
-    $nodes = (new \DOMXPath($document))->query('/*[local-name()="osm"]/*[local-name()="' . $type . '"][@id="' . $id . '"]');
-    $element = $nodes?->item(0);
+    $xpath = new \DOMXPath($document);
+    $query = '/*[local-name()="osm"]/*[local-name()="' . $type . '"][@id="' . $id . '"]';
+    $nodes = $xpath->query($query);
+    if ($nodes === FALSE || $nodes->length === 0) {
+      throw new OpenStreetMapOAuthException('The OpenStreetMap element was not found in its response.');
+    }
+    $element = $nodes->item(0);
     if (!$element instanceof \DOMElement || !$element->hasAttribute('version')) {
       throw new OpenStreetMapOAuthException('The OpenStreetMap element was not found in its response.');
     }
@@ -173,7 +184,10 @@ final class OpenStreetMapApiClient {
   }
 
   /**
-   * Gets a node coordinate or an arithmetic center for a way/relation. */
+   * Gets a node coordinate or an arithmetic center for a way/relation.
+   *
+   * @return array{0: float, 1: float}
+   */
   private function coordinates(\DOMDocument $document, \DOMElement $element, string $type): array {
     if ($type === 'node') {
       $lat = $element->getAttribute('lat');
@@ -221,7 +235,9 @@ final class OpenStreetMapApiClient {
     }
     $osm->appendChild($changeset);
     $document->appendChild($osm);
-    $response = $this->write($token, 'PUT', '/changeset/create', $document->saveXML());
+    $xml = $document->saveXML();
+    $body = is_string($xml) ? $xml : '';
+    $response = $this->write($token, 'PUT', '/changeset/create', $body);
     $id = trim((string) $response->getBody());
     if ($response->getStatusCode() !== 200 || !preg_match('/^[1-9][0-9]*$/', $id)) {
       throw new OpenStreetMapOAuthException('OpenStreetMap did not create the changeset.');
@@ -230,7 +246,11 @@ final class OpenStreetMapApiClient {
   }
 
   /**
-   * Updates tags while preserving element geometry and unrelated tags. */
+   * Updates tags while preserving element geometry and unrelated tags.
+   *
+   * @param array{type: string, id: string, version: string, lat?: float, lon?: float, tags?: array<string, string>} $current
+   * @param array<string, string> $changes
+   */
   private function putElement(string $token, array $current, string $changesetId, array $changes): string {
     $type = $current['type'];
     $id = $current['id'];
@@ -238,7 +258,8 @@ final class OpenStreetMapApiClient {
     if ($base === NULL) {
       throw new OpenStreetMapOAuthException('OpenStreetMap API is unavailable for this environment.');
     }
-    $response = $this->http->request('GET', $base . '/' . $type . '/' . $id . (in_array($type, ['way', 'relation'], TRUE) ? '/full' : ''), [
+    $suffix = in_array($type, ['way', 'relation'], TRUE) ? '/full' : '';
+    $response = $this->http->request('GET', $base . '/' . $type . '/' . $id . $suffix, [
       'headers' => ['Accept' => 'application/xml', 'User-Agent' => 'ACULTA Events OpenStreetMap/0.1.0'],
       'connect_timeout' => 5,
       'timeout' => 15,
@@ -252,11 +273,16 @@ final class OpenStreetMapApiClient {
     $document->resolveExternals = FALSE;
     $document->substituteEntities = FALSE;
     $xml = (string) $response->getBody();
-    if (str_contains($xml, '<!DOCTYPE') || !@$document->loadXML($xml, LIBXML_NONET | LIBXML_NOBLANKS)) {
+    if ($xml === '' || str_contains($xml, '<!DOCTYPE') || !@$document->loadXML($xml, LIBXML_NONET | LIBXML_NOBLANKS)) {
       throw new OpenStreetMapOAuthException('The OpenStreetMap response was invalid.');
     }
-    $elements = (new \DOMXPath($document))->query('/*[local-name()="osm"]/*[local-name()="' . $type . '"][@id="' . $id . '"]');
-    $element = $elements?->item(0);
+    $xpath = new \DOMXPath($document);
+    $query = '/*[local-name()="osm"]/*[local-name()="' . $type . '"][@id="' . $id . '"]';
+    $elements = $xpath->query($query);
+    if ($elements === FALSE || $elements->length === 0) {
+      throw new OpenStreetMapOAuthException('The OpenStreetMap element changed during review. Find it again before sending.');
+    }
+    $element = $elements->item(0);
     if (!$element instanceof \DOMElement || $element->getAttribute('version') !== $current['version']) {
       throw new OpenStreetMapOAuthException('The OpenStreetMap element changed during review. Find it again before sending.');
     }
@@ -289,7 +315,9 @@ final class OpenStreetMapApiClient {
     $root->setAttribute('version', '0.6');
     $root->appendChild($payload->importNode($element, TRUE));
     $payload->appendChild($root);
-    $updated = $this->write($token, 'PUT', '/' . $type . '/' . $id, $payload->saveXML());
+    $payloadXml = $payload->saveXML();
+    $payloadBody = is_string($payloadXml) ? $payloadXml : '';
+    $updated = $this->write($token, 'PUT', '/' . $type . '/' . $id, $payloadBody);
     $newVersion = trim((string) $updated->getBody());
     if ($updated->getStatusCode() !== 200 || !preg_match('/^[1-9][0-9]*$/', $newVersion)) {
       throw new OpenStreetMapOAuthException('OpenStreetMap did not accept the reviewed changes.');

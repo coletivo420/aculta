@@ -1,0 +1,10 @@
+name: Autoria do Fórum com reações
+description: Identidade pública com contagens separadas de reações recebidas e dadas.
+component: aculta420_v2:author-card
+props:
+  variant: author_forum
+  size: md
+  display_name: Participante de exemplo
+  member_since: '2022'
+  reactions_received: 18
+  reactions_given: 27

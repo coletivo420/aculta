@@ -51,7 +51,7 @@ final class Provision {
    *
    * @param string[] $missingSecrets
    *   Segredos que faltam e serão gerados.
-   * @param array|null $webhook
+   * @param array<mixed>|null $webhook
    *   Webhook já cadastrado com a URL do ambiente (ou NULL).
    * @param bool $tokenChanged
    *   TRUE quando o token novo exige atualizar o cadastro existente.

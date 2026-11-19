@@ -24,8 +24,11 @@ final class AccountPageTitle {
   ) {}
 
   /**
-   * Contrato neutro: aculta_head_title = texto do <title>. O tema aplica no preprocess_html (o Metatag roda antes do
-   * tema e sobrescreveria um valor definido no módulo).
+   * Define o título neutro da página de visão geral da conta.
+   *
+   * Contrato neutro: aculta_head_title = texto do <title>. O tema aplica no
+   * preprocess_html (o Metatag roda antes do tema e sobrescreveria um valor
+   * definido no módulo).
    */
   public function applyHeadTitle(array &$variables): void {
     if ($this->routeMatch->getRouteName() !== 'aculta_portal.dashboard') {

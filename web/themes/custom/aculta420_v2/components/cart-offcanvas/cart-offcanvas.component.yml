@@ -1,0 +1,73 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Carrinho ACULTA
+status: stable
+description: Gatilho de carrinho e painel lateral nativo do shell institucional.
+group: Commerce
+libraryOverrides:
+  dependencies:
+    - aculta420_v2/utility-drawers
+    - core/components.aculta420_v2--cart-offcanvas-body
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    count:
+      title: Quantidade total de itens
+      type: integer
+      description: Quantidade exibida no indicador e no nome acessível do gatilho do carrinho.
+      minimum: 0
+      default: 0
+    empty:
+      title: Carrinho sem itens
+      type: boolean
+      description: Seleciona o estado vazio ou a lista de itens no corpo do carrinho.
+      default: true
+    url:
+      title: Endereço do carrinho
+      type: string
+      description: Destino opcional do link para ver o carrinho completo.
+      default: ''
+    total:
+      title: Valor total do carrinho
+      type: string
+      description: Total formatado pelo módulo de carrinho e exibido no resumo preenchido.
+      default: ''
+    sites:
+      title: Carrinhos separados por site
+      type: array
+      description: Grupos de carrinho e respectivos itens preparados pelo CartUtility.
+      default: []
+      items:
+        type: object
+        description: Grupo de itens de um site da loja.
+        additionalProperties: false
+        required: [key, label, total, items]
+        properties:
+          key: { type: string, description: 'Chave do site; a chave assinatura usa a seção própria do template.' }
+          label: { type: string, description: Nome visível do grupo de carrinho. }
+          count: { type: integer, minimum: 0, default: 0, description: Quantidade de itens no grupo. }
+          empty: { type: boolean, default: true, description: Indica se o grupo não contém itens. }
+          total: { type: string, description: Total do grupo já formatado pelo módulo. }
+          checkout_url: { type: string, default: '', description: Destino de checkout fornecido para este grupo. }
+          items:
+            type: array
+            description: Itens do grupo, já preparados pelo módulo.
+            items:
+              type: object
+              description: Linha de item exibida no resumo do carrinho.
+              additionalProperties: false
+              required: [title, quantity, total]
+              properties:
+                title: { type: string, description: Título do item. }
+                quantity: { type: string, description: Quantidade formatada para exibição. }
+                total: { type: string, description: Valor da linha já formatado pelo módulo. }
+    checkout_url:
+      title: Endereço para finalizar a compra
+      type: string
+      description: Destino geral de checkout fornecido pelo módulo quando disponível.
+      default: ''
+    banner:
+      title: Mensagem de apoio à compra
+      type: string
+      description: Mensagem estática exibida no rodapé do drawer.
+      default: 'Compre na loja e apoie a luta antiproibicionista!'

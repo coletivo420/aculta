@@ -6,12 +6,18 @@ namespace Drupal\aculta_forum_counter_test\Hook;
 
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\State\StateInterface;
+use Drupal\views\Plugin\views\query\Sql;
 use Drupal\views\ViewExecutable;
 
 /**
  * Provides the restricted Forum grant realm for counter coverage.
  */
 final class CounterGrantsTestHooks {
+
+  public function __construct(
+    private readonly StateInterface $state,
+  ) {}
 
   /**
    * Realm used by the fixture's node_access records.
@@ -31,14 +37,18 @@ final class CounterGrantsTestHooks {
    */
   #[Hook('views_query_alter')]
   public function viewsQueryAlter(ViewExecutable $view): void {
+    $query = $view->getQuery();
     if ($view->id() === 'test_forum_category_counter'
-      && (bool) \Drupal::state()->get(self::ADD_TAG_STATE, FALSE)) {
-      $view->getQuery()->addTag('node_access');
+      && (bool) $this->state->get(self::ADD_TAG_STATE, FALSE)
+      && $query instanceof Sql) {
+      $query->addTag('node_access');
     }
   }
 
   /**
    * Implements hook_node_grants().
+   *
+   * @return array<string, list<int>>
    */
   #[Hook('node_grants')]
   public function nodeGrants(AccountInterface $account, string $op): array {

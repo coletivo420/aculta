@@ -1,3 +1,68 @@
+## Não versionado — transferência segura de mensagens do popup HTMX
+
+- Mensagens Drupal capturadas da resposta HTMX são clonadas do documento parseado
+  e anexadas como nós DOM, sem converter o conteúdo em string HTML.
+
+## Não versionado — style UI Patterns nas categorias do Fórum
+
+- `page_categories` usa o style UI Patterns Views com o SDC `layout-grid` e
+  mantém `forum-category` como componente de cada row. O agrupamento por
+  categoria-pai foi retirado; o nome da categoria-pai continua visível em cada
+  cartão.
+- Config Sync e configuração de instalação estão alinhados. Os templates de
+  compatibilidade permanecem até o Runtime receber a configuração e validar
+  filtros, acesso, cache, paginação e composição visual.
+
+## Não versionado — migração SDC da View de categorias (2026-11-10)
+
+- A página pública e o bloco de categorias passam a mapear campos da View ao
+  SDC `forum-category`, mantendo wrappers, filtros, agrupamento, ordenação,
+  acesso, cache e paginação.
+- Removidos os dois templates de campos e os wrappers específicos de página e
+  bloco: o row plugin UI Patterns entrega o SDC e o renderer padrão mantém as
+  regiões de View, cabeçalho, paginação e elementos auxiliares.
+- Sync e defaults de instalação já declaram esses row plugins. A configuração
+  ativa e a comparação visual no Runtime permanecem DEFERRED até importação
+  autorizada.
+
+## 0.2.0-dev.4 — escopo analítico e idempotência do Fórum (2026-11-10)
+
+- `ForumAnalyticsScopeResolver` classifica tópico público, restrito por Group
+  direto ou herdado da categoria, Revista, Wiki, LMS e desconhecido; falha
+  fechada e não depende da conta.
+- Reações gravam `is_public_context` pelo escopo real e decrementam pelo escopo
+  gravado; contadores públicos de autor e painel excluem Group.
+- Ledger `aculta_forum_analytics_ledger` garante um evento por publicação
+  lógica, sobrevivendo a replay, concorrência e republicação; update 9008.
+- Reconciliação `aculta-forum:reconcile-reactions` com dry-run padrão.
+- Busca emite apenas a contagem de resultados; coleta no Statistics desligada
+  por padrão.
+- Unit 250/1857 e Kernel focal 26/505 passaram.
+
+## 0.2.0-dev.2 — saneamento da base de comentários e desacoplamento (2026-11-08)
+
+- C02-01: WikiDiscussionContextProvider movido para aculta_forum/src/Context/Provider e registrado centralmente em aculta_forum.services.yml. Isolamento e contratos provados sem dependência da Wiki.
+- C02-02: templates comment--field-aculta-discussion e comment--comments repassam attributes, classes e acessibilidade do pai; DiscussionCommentPermalinkBuilder e DiscussionCommentPermalinkHooks implementam permalinks apontando para o hospedeiro canônico (com âncora e pager) sob D-65.
+- Saneamento COM-02/03/07: forum-quote.js deixa de realizar manipulação insegura de innerText e de forçar pid no cliente sem formulário contextual validado pelo servidor. Seletores globais substituídos por escopo contextual de thread.
+- Saneamento COM-08/10/11: ForumQuoteHooks desacoplado de aculta420_v2:button, gerando render array neutro com data-action e data-quote-id dentro de #links['comment-quote'], compatível com Link::preRenderLinks.
+- Saneamento COM-09: citação revalida getWriteAccess() da discussão além de getReadAccess(), impedindo citação em discussões fechadas ou para contas sem permissão de escrita.
+- Handoff registrado em docs/HANDOFF-AGENTE-1-SANEAMENTO-0.2.0.md para o Agente 2 conduzir C02-03 a C02-08.
+
+## 0.2.0-dev.1 - abertura do ciclo de comentários compartilhados (2026-11-08)
+
+- Inventário de Revista, Wiki, LMS e Growroom420; pontos de resposta Comment e ForumPost.
+- Plano C02-00 a C02-08: providers registrados centralmente pelo aculta_forum,
+  compositor Form API/HTMX, SDC, citação, atributos, permalinks e URLs em português.
+- Pesquisa adicional sobre destination, POST/render cache, lazy builders, ciclo do
+  editor e concorrência incorporada ao plano com fontes primárias.
+- Achados estáticos classificados; implementação e reprodução HTTP pendentes.
+- README, roadmap, TODO, status, manifesto e índice raiz sincronizados.
+
+Verificação desta entrega: revisão documental e consistência focal de versão/
+links/índice. Gates PHP, PHPUnit, navegador e sincronização do Runtime DEFERRED:
+ambiente desta sessão sem checkout executável, vendor ou acesso ao Homelab.
+Nenhum comportamento funcional, schema, dependência ou configuração foi alterado.
+
 ## 0.1.0-dev.339 — diálogos de anexo e galeria sobrevivem ao cache de formulário
 
 - As dependências de `ForumAttachmentUploadDialogForm` e `ForumGalleryUploadDialogForm` passam a `protected readonly`: o `DependencySerializationTrait` do FormBase não serializa propriedades privadas da subclasse, então o upload em dois passos devolvia 500 ("typed property must not be accessed before initialization").
@@ -517,3 +582,25 @@ migração ou alteração de Runtime foi executada.
 - Focal: 2 testes / 4 assertions PASS; PHP lint e PHPCS Drupal/DrupalPractice
   PASS. Nenhuma escrita Runtime.
 
+
+## [0.2.0-dev.4] - 2026-11-09
+
+### Sistema de Reações por Emojis estilo Discourse
+- Implementado schema de reações (`aculta_discussion_reaction` e tabela de contadores `aculta_discussion_reaction_user_stats`) via `aculta_forum_update_9006()`.
+- Criado catálogo de reações configurável em `aculta_forum.settings` com formulário administrativo (`ForumSettingsForm`).
+- Concedida permissão `react to aculta discussions` para o papel `email_confirmed`.
+- Criado motor de reações backend (`DiscussionReactionAccess`, `DiscussionReactionManager`, `DiscussionReactionBuilder`).
+- Criado endpoint seguro com slug em português `/discussoes/reagir/{entity_type}/{entity_id}` com validação CSRF, suporte a HTMX fragment e fallback para requisições convencionais.
+- Integradas estatísticas públicas de reações recebidas e dadas ao `AuthorIdentity` (`aculta_user`), `author-card` e `/u/{apelido}` (`ForumProfileReactionHooks`).
+- Criados componentes SDC `reaction-emoji` e `discussion-reaction-bar` no tema V2 com SVGs locais da biblioteca Microsoft Fluent Emoji (`web/libraries/fluentui-emoji/`).
+- Integrado o slot de reações `reactions_slot` nos templates `comment--field-aculta-discussion.html.twig`, `comment--comments.html.twig` e no componente `forum-post-card`.
+
+## [0.2.0-dev.3] - 2026-11-08
+
+### Conclusão do ciclo de comentários compartilhados inline (C02-03 a C02-08)
+- Implementado backend neutro de resposta inline (`DiscussionReplyAccess`, `DiscussionReplyUrlBuilder`, `DiscussionReplyFormBuilder` e `DiscussionReplyLazyBuilder`).
+- Criado endpoint interno em português `/discussoes/compositor/{entity_type}/{entity_id}` com renderização HTMX do Core (`options: _htmx_route: true`).
+- Criado componente SDC `discussion-reply-composer` no tema V2 com schema estrito, tokens semânticos e story funcional (`discussion-reply-composer.default.story.yml`).
+- Implementado gerenciador de idempotência contra duplo envio e concorrência (`DiscussionReplyIdempotencyManager`).
+- Unificadas ações inline em `#links['comment-reply']` e `#links['comment-quote']` em conformidade com o contrato Drupal Core de `Link::preRenderLinks`.
+- Fechados achados COM-01 a COM-12 e gerada documentação de homologação em `HOMOLOGACAO-COMENTARIOS-0.2.0.md`.

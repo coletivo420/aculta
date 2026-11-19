@@ -62,7 +62,7 @@ responsável decidiu copiar esse método.
 | --- | --- |
 | Google Maps como padrão (ADR-014) | Conta de cobrança obrigatória e envio de IP ao Google; decisão do responsável foi revista |
 | Tiles próprios (PMTiles) já na v1 | Exige gerar o recorte e servir o arquivo. Fica como caminho para quando o tráfego crescer |
-| Photon próprio | Exige RAM acima da disponível no servidor de testes (o Photon indica 64 GB para o planeta) |
+| Photon próprio | Exige RAM acima da disponível no servidor de desenvolvimento (o Photon indica 64 GB para o planeta) |
 
 ## Relação com outras regras
 
@@ -102,7 +102,7 @@ técnica publicada em `58359728f`.
 O código aceita Google Maps JavaScript somente quando selecionado e quando a chave pública restrita está disponível;
 sem chave ou diante de falha de carregamento, volta a Leaflet/OSM e informa administradores. Geocoding usa uma chave
 separada `GOOGLE_GEOCODING_API_KEY`, restrita para uso de servidor.
-O Google é código opcional e não está selecionado no Runtime de teste. A política pública ainda não descreve os
+O Google é código opcional e não está selecionado no Runtime de desenvolvimento. A política pública ainda não descreve os
 provedores e o responsável decidiu não informar IP; essa pendência de transparência deste ADR continua registrada.
 
 **Atualização D-46 (2026-10-28):** a implementação original de MP4 passou a usar Nominatim para qualquer engine.
@@ -116,7 +116,7 @@ Evidência: `33b638ccf`.
 
 MP6 arredonda coordenadas de locais aproximados antes de anexá-las ao render array. A página `/mapa` mostra aviso e
 link para a política pública. MP7 documenta a API e o Firefox ESR confirmou layout em 1280 px, viewport real de
-320 px e modo escuro, sem overflow (`fd5c96526`). `aculta_maps` foi ativado no Runtime de teste por ordem explícita, com OSM
+320 px e modo escuro, sem overflow (`fd5c96526`). `aculta_maps` foi ativado no Runtime de desenvolvimento por ordem explícita, com OSM
 padrão; não houve updatedb nem import global. A política continua sem a informação de IP conforme decisão do
 responsável, e a pendência editorial permanece registrada.
 

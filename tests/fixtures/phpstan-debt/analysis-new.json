@@ -1,0 +1,47 @@
+{
+  "totals": {
+    "errors": 4,
+    "file_errors": 4
+  },
+  "files": {
+    "web/modules/custom/mod_a/src/A.php": {
+      "errors": 2,
+      "messages": [
+        {
+          "message": "A message.",
+          "line": 1,
+          "ignorable": true,
+          "identifier": "argument.type"
+        },
+        {
+          "message": "A message.",
+          "line": 1,
+          "ignorable": true,
+          "identifier": "argument.type"
+        }
+      ]
+    },
+    "web/modules/custom/mod_b/src/B.php": {
+      "errors": 1,
+      "messages": [
+        {
+          "message": "B message.",
+          "line": 1,
+          "ignorable": true,
+          "identifier": "return.type"
+        }
+      ]
+    },
+    "web/modules/custom/mod_c/src/C.php": {
+      "errors": 1,
+      "messages": [
+        {
+          "message": "C message.",
+          "line": 1,
+          "ignorable": true,
+          "identifier": "method.notFound"
+        }
+      ]
+    }
+  }
+}

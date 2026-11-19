@@ -8,7 +8,7 @@ Status: referência vigente da linha 0.1.x. Complementa `ARQUITETURA.md` (decis�
 | --- | --- | --- |
 | — | — | Visualização e listagem não têm hooks de restrição por purpose; permissões e status publicados do Media Gallery controlam o acesso. |
 | — | — | A listagem `/albuns` não aplica filtro de purpose; entidades publicadas ficam disponíveis em todos os purposes. |
-| `media_gallery_view` (OOP `#[Hook]`) | `Hook/GalleryViewHooks` | Monta o palco do álbum (`album_stage`): slideshow VVJS da view `aculta_album_fotos` e painel de miniaturas. Roda em `default` e `full`. |
+| `media_gallery_view` (OOP `#[Hook]`) | `Hook/GalleryViewHooks` | Monta a View UI Patterns/PhotoSwipe apropriada à finalidade editorial ou Fórum. Roda em `default` e `full`. |
 | `entity_type_alter` (OOP `#[Hook]`) | `Hook/GalleryListBuilderHooks` | Troca o list builder de `media_gallery` pela classe do submódulo. |
 | Classe `ListBuilder/AcultaGalleryListBuilder` (estende `MediaGalleryListBuilder`) | `ListBuilder/AcultaGalleryListBuilder` | Coleção administrativa: o título usa o alias local em português. Edição e exclusão seguem no MAIN. |
 | `media_gallery_presave` (OOP `#[Hook]`) | `Hook/GalleryCoverHooks` | Mantém a capa entre as imagens da própria galeria. Sem imagens, a capa fica vazia. |
@@ -20,11 +20,9 @@ Classes de marcação do palco (contrato `data-*` completo em [FRONTEIRA-MODULO-
 
 | Atributo / classe | Quem põe | Função |
 | --- | --- | --- |
-| `data-aculta-album-stage` | módulo (`GalleryViewHooks::mediaGalleryView`) | Contêiner do palco (slideshow + painel). |
-| `data-aculta-album-thumbs` | módulo (`GalleryViewHooks::thumbs`) | Painel de miniaturas. |
-| `data-aculta-album-thumb="N"` | módulo | Botão da miniatura N; corresponde ao slide N. |
-| `data-aculta-album-toggle` | tema (`js/album-slideshow.js`) | Botão do celular que recolhe o painel. |
-| `vvjs-slideshow`, `.vvjs-item`, `.vvjs-inner` | contrib (`views_vvjs`) | Marcação do VVJS, estilizada pelo tema dentro do palco. Miniaturas usam `goToSlide()` e o evento público `vvj:slideChanged`. |
+| `photoswipe-gallery` | módulo (`GalleryViewHooks`) | Agrupa as imagens PhotoSwipe do álbum editorial; classe funcional exigida pelo contrib. |
+| `layout-grid` | UI Patterns Views | SDC editorial `aculta420_v2:layout-grid`; recebe rows sem entidades em props. |
+
 | `photoswipe`, `photoswipe-gallery` | contrib (`photoswipe`) | Lightbox das fotos. |
 
 Regras:
@@ -34,15 +32,15 @@ Regras:
 
 ## 2. Marcação que a galeria entrega ao tema
 
-**Palco do álbum (página `/albuns/...`):** o módulo entrega o contêiner `data-aculta-album-stage` com o slideshow VVJS e o painel `data-aculta-album-thumbs` (miniaturas `data-aculta-album-thumb="N"`). A aparência é do tema. Contrato completo, donos e pendências: [FRONTEIRA-MODULO-TEMA.md](FRONTEIRA-MODULO-TEMA.md).
+**Álbum editorial (página `/albuns/...`):** `GalleryViewHooks` monta wrapper `photoswipe-gallery`; a View `aculta_album_fotos` compõe suas rows com o SDC `layout-grid`, e o formatter PhotoSwipe fornece a imagem e o lightbox. Não há slideshow nem miniaturas VVJS nesse caminho.
+
+**Galeria contextual do Fórum:** `aculta_forum_gallery_slides` agora compõe `layout-grid` com PhotoSwipe. O Runtime não tem galeria Fórum publicada; aceite visual com conteúdo real segue pendente. Contrato: [FRONTEIRA-MODULO-TEMA.md](FRONTEIRA-MODULO-TEMA.md).
 
 Nas listagens e no corpo das notícias, a galeria usa o markup do PhotoSwipe (contrib) e as classes do Bootstrap que o tema já carrega:
 
-No palco do álbum, `AlbumSlidesAccessHooks` filtra a View pelos IDs de Media com acesso `view` permitido e File de imagem
-presente, ordenados pela ordem `delta` do campo `images`. `GalleryViewHooks` agrega metadados de cache do álbum, Media, File e resultado de
-acesso no contêiner `album_stage`; o conjunto/índice de slides corresponde ao painel de miniaturas. A View de produto
-(`galeria_produto`) usa VVJS com modo `produto_galeria`, enquanto a apresentação visual continua sendo responsabilidade
-do ACULTA420.
+Nas duas galerias, `AlbumSlidesAccessHooks` filtra a View pelos IDs de Media com acesso `view` permitido e File de imagem
+presente, ordenados pela ordem `delta` do campo `images`. `GalleryViewHooks` agrega metadados de cache do álbum, Media,
+File e resultado de acesso no contêiner pai. A View `galeria_produto` usa UI Patterns `layout-grid`; o hook de produto continua entregando o render array.
 
 | Classe | Onde aparece | Uso |
 | --- | --- | --- |

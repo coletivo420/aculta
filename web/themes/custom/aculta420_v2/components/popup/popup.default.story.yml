@@ -1,0 +1,7 @@
+name: Popup vazio (padrão)
+description: Caixa vazia com faixas tricolores, título e X. Modelo para os popups do site.
+props:
+  id: popup-exemplo
+  title: Título do popup
+  trigger_label: Abrir popup
+  trigger_url: '#popup-exemplo'

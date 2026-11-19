@@ -19,7 +19,8 @@ final class SurfaceConfigReader {
 
   public const MODOS = ['subdominio', 'diretorio', 'desativado'];
 
-  /** Títulos padrão por purpose (rótulos do formulário). */
+  /**
+   * Títulos padrão por purpose (rótulos do formulário). */
   public const TITULOS = [
     'main' => 'Principal',
     'account' => 'Conta',
@@ -33,13 +34,32 @@ final class SurfaceConfigReader {
     'eventos' => 'Eventos',
   ];
 
-  /** Slugs que não podem ser usados por superfície. */
-  public const RESERVADOS = ['painel-administrativo', 'integracoes', 'studio', 'conta-legada', 'minha-conta', 'node', 'user'];
+  /**
+   * Slugs que não podem ser usados por superfície. */
+  public const RESERVADOS = [
+    'painel-administrativo',
+    'integracoes',
+    'studio',
+    'conta-legada',
+    'minha-conta',
+    'node',
+    'user',
+  ];
 
   /**
    * Superfícies que podem ir para diretório (Fase 3.5). MAIN fica de fora.
    */
-  public const DIRETORIO_PERMITIDO = ['courses', 'magazine', 'account', 'wiki', 'shop', 'forum', 'support', 'links', 'eventos'];
+  public const DIRETORIO_PERMITIDO = [
+    'courses',
+    'magazine',
+    'account',
+    'wiki',
+    'shop',
+    'forum',
+    'support',
+    'links',
+    'eventos',
+  ];
 
   public const PADRAO_SLUG = '/^[a-z0-9]+(-[a-z0-9]+)*$/';
 
@@ -94,18 +114,19 @@ final class SurfaceConfigReader {
    * Superfícies por purpose, com padrões onde a configuração não define.
    *
    * @return array<string, array{modo: string, ativa: bool, slug: string, titulo: string}>
+   *   Superfícies por purpose, com os padrões aplicados.
    */
   public function superficies(): array {
     $gravado = $this->configFactory->get(self::CONFIG_NAME)->get('superficies') ?? [];
     $saida = [];
     foreach (array_keys(DomainSurfaceMap::DOMAIN_IDS) as $purpose) {
       $linha = is_array($gravado[$purpose] ?? NULL) ? $gravado[$purpose] : [];
-      $modo = (string) ($linha['modo'] ?? 'subdominio');
+      $modo = is_string($linha['modo'] ?? NULL) ? $linha['modo'] : 'subdominio';
       $saida[$purpose] = [
         'modo' => in_array($modo, self::MODOS, TRUE) ? $modo : 'subdominio',
         'ativa' => (bool) ($linha['ativa'] ?? TRUE),
-        'slug' => (string) ($linha['slug'] ?? ''),
-        'titulo' => (string) ($linha['titulo'] ?? self::TITULOS[$purpose] ?? $purpose),
+        'slug' => is_string($linha['slug'] ?? NULL) ? $linha['slug'] : '',
+        'titulo' => is_string($linha['titulo'] ?? NULL) ? $linha['titulo'] : '',
       ];
     }
     return $saida;
@@ -115,8 +136,10 @@ final class SurfaceConfigReader {
    * Regras que a configuração precisa cumprir. Retorna erros por purpose.
    *
    * @param array<string, array{modo: string, ativa: bool, slug: string, titulo: string}> $superficies
+   *   Superfícies a validar, indexadas por purpose.
    *
    * @return array<string, string>
+   *   Mensagens de erro por purpose.
    */
   public static function validar(array $superficies): array {
     $erros = [];

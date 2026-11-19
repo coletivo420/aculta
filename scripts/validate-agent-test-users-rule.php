@@ -1,10 +1,14 @@
 <?php
 
 /**
- * Gate: regra de usuários de teste de agentes existe e está operacional (docs/portal/GUARDRAILS.md).
+ * @file
+ * Gate: regra de usuários de teste de agentes existe e está operacional.
  *
- * Verifica no repositório (sem Runtime): a seção da regra, o prefixo e o domínio exigidos, a exclusão de
- * contas permanentes citadas na regra, e a existência do script de limpeza com o critério duplo.
+ * (docs/portal/GUARDRAILS.md).
+ *
+ * Verifica no repositório (sem Runtime): a seção da regra, o prefixo e
+ * o domínio exigidos, a exclusão de contas permanentes citadas na regra,
+ * e a existência do script de limpeza com o critério duplo.
  */
 
 declare(strict_types=1);
@@ -39,7 +43,12 @@ if (!is_file($cleanup)) {
 }
 else {
   $code = file_get_contents($cleanup);
-  foreach (["str_starts_with(\$name, 'agente-teste-')", "str_ends_with(\$mail, '@testuser.invalid')", '$account->id() <= 1', "'--apply'"] as $needle) {
+  foreach ([
+    "str_starts_with(\$name, 'agente-teste-')",
+    "str_ends_with(\$mail, '@testuser.invalid')",
+    '$account->id() <= 1',
+    "'--apply'",
+  ] as $needle) {
     if (!str_contains($code, $needle)) {
       $errors[] = "cleanup sem o critério '$needle'";
     }

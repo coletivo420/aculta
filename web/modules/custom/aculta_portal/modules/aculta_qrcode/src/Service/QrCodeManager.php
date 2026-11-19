@@ -69,6 +69,9 @@ final class QrCodeManager {
       'valid_until' => self::toStorage($validUntil),
       'status' => TRUE,
     ]);
+    if (!$entity instanceof QrCode) {
+      throw new \RuntimeException('Failed to instantiate QrCode entity.');
+    }
     return $this->save($entity, $log);
   }
 

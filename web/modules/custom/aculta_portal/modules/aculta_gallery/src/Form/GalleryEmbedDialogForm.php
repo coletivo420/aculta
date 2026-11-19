@@ -58,8 +58,8 @@ final class GalleryEmbedDialogForm extends FormBase {
     EntityTypeManagerInterface $entity_type_manager,
     WidgetPluginManager $widget_manager,
     AccountProxyInterface $current_user,
-    private readonly ConsumerUploadPolicy $uploadPolicy,
-    private readonly RecentUploads $recentUploads,
+    protected readonly ConsumerUploadPolicy $uploadPolicy,
+    protected readonly RecentUploads $recentUploads,
   ) {
     $this->entityTypeManager = $entity_type_manager;
     $this->widgetManager = $widget_manager;
@@ -94,6 +94,7 @@ final class GalleryEmbedDialogForm extends FormBase {
     $form['#prefix'] = '<div id="aculta-gallery-dialog-form" data-portal-ui="gallery-dialog">';
     $form['#suffix'] = '</div>';
     $form['#attached']['library'][] = 'editor/drupal.editor.dialog';
+    $form['#attached']['library'][] = 'aculta_gallery/embed-dialog';
 
     $form['title'] = [
       '#type' => 'textfield',
@@ -165,6 +166,7 @@ final class GalleryEmbedDialogForm extends FormBase {
    * IDs de imagens escolhidas da lista do Studio.
    *
    * @return int[]
+   *   IDs das imagens escolhidas na lista do Studio.
    */
   private function studioPicks(FormStateInterface $form_state): array {
     return array_values(array_map('intval', array_keys(array_filter((array) $form_state->getValue('studio_images')))));

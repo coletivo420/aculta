@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_studio\Hook;
 
-use Drupal\aculta_learning_contracts\Learning\CourseJourneyReaderInterface;
+use Drupal\aculta_lms\Learning\CourseJourneyReaderInterface;
 use Drupal\aculta_studio\Learning\CourseJourneyComposer;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -50,17 +50,22 @@ final class CourseJourneyPresentationHooks {
       return;
     }
 
-    $build['aculta_learning_journey'] = $this->composer->build($journey);
-    $build['aculta_learning_journey']['#weight'] = -20;
+    $build['aculta_learning_journey'] = [
+      '#theme' => 'aculta_portal_component',
+      '#name' => 'lms-learning-journey',
+      '#props' => [],
+      '#slots' => ['content' => $this->composer->build($journey)],
+      '#weight' => -20,
+    ];
   }
 
   /**
-   * Wraps the native LMS activity form in the Studio learning-room shell.
+   * Wraps the ACULTA answer form in the Studio learning-room shell.
    */
   #[Hook('preprocess_page')]
   public function preprocessLearningRoom(array &$variables): void {
     if ($this->journeys === NULL
-      || $this->routeMatch->getRouteName() !== 'lms.group.answer_form'
+      || $this->routeMatch->getRouteName() !== 'aculta_lms.answer_submission'
       || !isset($variables['page']['content'])
       || !is_array($variables['page']['content'])) {
       return;

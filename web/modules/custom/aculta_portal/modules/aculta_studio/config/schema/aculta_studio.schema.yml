@@ -1,0 +1,19 @@
+aculta_studio.account_presentation:
+  type: config_object
+  label: 'Apresentação da Conta ACULTA'
+  mapping:
+    experiences_title:
+      type: label
+      label: 'Título das experiências'
+    experiences_description:
+      type: text
+      label: 'Descrição das experiências'
+    account_link_title:
+      type: label
+      label: 'Título do atalho Minha conta'
+    account_link_description:
+      type: label
+      label: 'Descrição do atalho Minha conta'
+    account_link_label:
+      type: label
+      label: 'Nome acessível do atalho Minha conta'

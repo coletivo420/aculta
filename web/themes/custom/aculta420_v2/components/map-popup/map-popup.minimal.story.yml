@@ -1,0 +1,5 @@
+name: Popup de local sem endereço
+description: Popup só com título, sem categoria, endereço, detalhes ou rota (local sem endereço público).
+component: aculta420_v2:map-popup
+props:
+  title: Espaço de exemplo

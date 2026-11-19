@@ -1,16 +1,21 @@
 <?php
 
 /**
+ * @file
  * Static gate for the module x theme map (docs/portal/MAPA-MODULO-TEMA.md).
  *
  * Checks that:
- * - every custom module (*.info.yml under web/modules/custom) has its path in backticks in the map;
- * - every enabled contrib module (config/sync/core.extension.yml, directory under web/modules/contrib) has its
- *   machine name in backticks in the map;
- * - every repository path cited in backticks (web/...) and every theme path cited in backticks
- *   (css/, js/, templates/, components/ under the aculta420 theme) exists.
+ * - every custom module (*.info.yml under web/modules/custom) has its
+ *   path in backticks in the map;
+ * - every enabled contrib module (config/sync/core.extension.yml,
+ *   directory under web/modules/contrib) has its machine name in
+ *   backticks in the map;
+ * - every repository path cited in backticks (web/...) and every theme
+ *   path cited in backticks (css/, js/, templates/, components/ under
+ *   the aculta420 theme) exists.
  *
- * Templates with placeholders (<name>, {a,b}, *) and paths with spaces are documentation syntax and are skipped.
+ * Templates with placeholders (<name>, {a,b}, *) and paths with spaces
+ * are documentation syntax and are skipped.
  * The gate does not bootstrap Drupal, so it runs in any checkout.
  */
 
@@ -37,7 +42,8 @@ if (!str_contains($doc, '## Módulos contrib habilitados')) {
   $failures[] = 'the map has no "Módulos contrib habilitados" section.';
 }
 
-// 1. Custom modules: every module directory must be cited by its full repository path.
+// 1. Custom modules: every module directory must be cited by its full
+//    repository path.
 $customInfo = array_merge(
   glob($root . '/web/modules/custom/*/*.info.yml') ?: [],
   glob($root . '/web/modules/custom/*/modules/*/*.info.yml') ?: [],

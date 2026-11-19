@@ -6,9 +6,9 @@ namespace Drupal\aculta_portal\Hook;
 
 use Drupal\aculta_portal\Email\AccountMailRouter;
 use Drupal\aculta_portal\Mail\TestMailRedirect;
-use Drupal\Core\DependencyInjection\Attribute\Autowire;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Site\Settings;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Ajustes de e-mail do Portal.

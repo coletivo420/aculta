@@ -1,0 +1,6 @@
+name: Cancelar
+description: Ação secundária que fecha o popup ou desfaz a edição, sem enviar o formulário. Mesmo visual de Limpar e do Cancelar dos compositores.
+props:
+  text: Cancelar
+  variant: secondary
+  is_submit: false

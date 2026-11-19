@@ -15,12 +15,24 @@ dependencies:
   module:
     - link
     - path
-    - text
+    - text_with_summary
+    - ui_icons_field
+    - ui_icons_popover
 id: node.wiki_entry.default
 targetEntityType: node
 bundle: wiki_entry
 mode: default
 content:
+  aculta_coauthors:
+    type: entity_reference_autocomplete_tags
+    weight: 17
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
   body:
     type: text_textarea_with_summary
     weight: 2
@@ -30,16 +42,6 @@ content:
       summary_rows: 3
       placeholder: ''
       show_summary: false
-    third_party_settings: {  }
-  co_authors:
-    type: entity_reference_autocomplete_tags
-    weight: 17
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
     third_party_settings: {  }
   created:
     type: datetime_timestamp
@@ -74,12 +76,22 @@ content:
       placeholder: ''
     third_party_settings: {  }
   field_wiki_references:
-    type: link_default
+    type: icon_link_widget
     weight: 5
     region: content
     settings:
       placeholder_url: 'https://'
       placeholder_title: 'Título da fonte'
+      allowed_icon_pack:
+        - aculta_phosphor_regular
+        - aculta_phosphor_duotone
+        - aculta_brocolis
+      show_settings: false
+      icon_required: false
+      icon_position: false
+      icon_selector: icon_popover
+      result_format: grid
+      max_result: 20
     third_party_settings: {  }
   field_wiki_related:
     type: entity_reference_autocomplete
@@ -157,3 +169,4 @@ hidden:
   field_aculta_discussion: true
   promote: true
   sticky: true
+

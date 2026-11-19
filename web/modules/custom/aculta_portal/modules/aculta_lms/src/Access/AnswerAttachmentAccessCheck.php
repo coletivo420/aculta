@@ -9,8 +9,8 @@ use Drupal\aculta_lms\Learning\CourseAnswer;
 use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\file\FileInterface;
 use Drupal\group\Entity\GroupInterface;
@@ -28,7 +28,7 @@ final class AnswerAttachmentAccessCheck {
   /**
    * Allows an enrolled answer owner or a current course grader to download.
    */
-  public function access(EntityInterface $answer, AccountInterface $account): AccessResultInterface {
+  public function access(FieldableEntityInterface $answer, AccountInterface $account): AccessResultInterface {
     $denied = AccessResult::forbidden()->cachePerUser()->addCacheableDependency($answer);
     if ($answer->getEntityTypeId() !== 'aculta_lms_answer' || !$account->isAuthenticated()) {
       return $denied;
@@ -48,7 +48,7 @@ final class AnswerAttachmentAccessCheck {
     }
 
     $activity = $this->entityTypeManager->getStorage('aculta_lms_activity')->load((int) $answer->get('activity_id')->value);
-    if (!$activity instanceof EntityInterface) {
+    if (!$activity instanceof FieldableEntityInterface) {
       return $denied->addCacheableDependency($student);
     }
     if ((string) $activity->get('type')->value !== 'file_upload') {
@@ -81,6 +81,9 @@ final class AnswerAttachmentAccessCheck {
         ->addCacheableDependency($file);
     }
 
+    $enrollmentCacheTags = $this->eligibility->courseEnrollmentCacheTags($course);
+    $denied->addCacheTags($enrollmentCacheTags);
+
     $owner = (string) $account->id() === (string) $uid;
     $allowed = $owner
       ? $this->eligibility->hasCurrentEnrollment($course, $student)
@@ -93,7 +96,7 @@ final class AnswerAttachmentAccessCheck {
       ->addCacheableDependency($activity)
       ->addCacheableDependency($file)
       ->addCacheableDependency($course)
-      ->addCacheTags(['group_relationship_list:plugin:lms_classes:group:' . $course->id()]);
+      ->addCacheTags($enrollmentCacheTags);
   }
 
 }

@@ -18,7 +18,11 @@ interface DonationNoticeManagerInterface extends PaginatedPersonalNoticeAdapterI
   public function record(MessengerNoticeEvent $event): ?MessageInterface;
 
   /**
-   * Resolves an owned Donation notice against its current source access. */
+   * Resolves an owned Donation notice against its current source access.
+   *
+   * @return array<mixed>
+   *   Avisos resolvidos.
+   */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;
 
   /**

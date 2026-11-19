@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Controller;
 
+use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -58,16 +59,19 @@ final class EventOrganizationAdminController extends ControllerBase {
       $query->condition('reivindicacao_status', 'confirmada');
     }
 
-    if ($filterDenuncias === '1' && $this->entities->hasDefinition('aculta_ugc_report')) {
-      $reportQuery = $this->entities->getStorage('aculta_ugc_report')->getQuery()
+    if ($filterDenuncias === '1' && $this->entities->hasDefinition('aculta_cgu_report')) {
+      $reportQuery = $this->entities->getStorage('aculta_cgu_report')->getQuery()
         ->accessCheck(FALSE)
         ->condition('target_type', 'aculta_event_organization')
         ->condition('status', ['pending', 'assigned'], 'IN');
       $reportedIds = $reportQuery->execute();
       if (!empty($reportedIds)) {
-        $reports = $this->entities->getStorage('aculta_ugc_report')->loadMultiple($reportedIds);
+        $reports = $this->entities->getStorage('aculta_cgu_report')->loadMultiple($reportedIds);
         $targetOrgIds = [];
         foreach ($reports as $rep) {
+          if (!$rep instanceof CguReport) {
+            continue;
+          }
           $targetOrgIds[] = (int) $rep->get('target_id')->value;
         }
         $targetOrgIds = array_unique(array_filter($targetOrgIds));
@@ -146,8 +150,8 @@ final class EventOrganizationAdminController extends ControllerBase {
         }
 
         // Checar denúncias abertas.
-        if ($this->entities->hasDefinition('aculta_ugc_report')) {
-          $ugcCount = (int) $this->entities->getStorage('aculta_ugc_report')->getQuery()
+        if ($this->entities->hasDefinition('aculta_cgu_report')) {
+          $ugcCount = (int) $this->entities->getStorage('aculta_cgu_report')->getQuery()
             ->accessCheck(FALSE)
             ->condition('target_type', 'aculta_event_organization')
             ->condition('target_id', (int) $org->id())
@@ -209,7 +213,7 @@ final class EventOrganizationAdminController extends ControllerBase {
         if (isset($ugcCount) && $ugcCount > 0) {
           $operations['reports'] = [
             'title' => $this->t('Ver denúncias'),
-            'url' => Url::fromRoute('aculta_ugc.moderation_dashboard', [], [
+            'url' => Url::fromRoute('aculta_cgu.admin_reports', [], [
               'query' => ['target_type' => 'aculta_event_organization'],
             ]),
           ];
@@ -218,7 +222,7 @@ final class EventOrganizationAdminController extends ControllerBase {
         $rows[] = [
           'title' => [
             'data' => [
-              '#markup' => '<strong>' . htmlspecialchars((string) $org->label(), ENT_QUOTES, 'UTF-8') . '</strong><br><small class="text-muted">Slug: ' . htmlspecialchars($org->getSlug(), ENT_QUOTES, 'UTF-8') . '</small>',
+              '#markup' => '<strong>' . htmlspecialchars((string) $org->label(), ENT_QUOTES, 'UTF-8') . '</strong><br><small>Slug: ' . htmlspecialchars($org->getSlug(), ENT_QUOTES, 'UTF-8') . '</small>',
             ],
           ],
           'titular' => $titularName,
@@ -240,10 +244,12 @@ final class EventOrganizationAdminController extends ControllerBase {
       'header_actions' => [
         '#type' => 'actions',
         'add' => [
-          '#type' => 'link',
-          '#title' => $this->t('+ Cadastrar organização'),
-          '#url' => Url::fromRoute('aculta_events.admin_organization_add'),
-          '#attributes' => ['data-portal-ui' => 'event-organization-add-action'],
+          '#type' => 'aculta_portal_button',
+          '#props' => [
+            'text' => (string) $this->t('+ Cadastrar organização'),
+            'url' => Url::fromRoute('aculta_events.admin_organization_add')->toString(),
+            'variant' => 'primary',
+          ],
         ],
       ],
       'filters' => [
@@ -301,16 +307,19 @@ final class EventOrganizationAdminController extends ControllerBase {
               '#attributes' => ['data-portal-ui' => 'button'],
             ],
             'reset' => [
-              '#type' => 'link',
-              '#title' => $this->t('Limpar'),
-              '#url' => Url::fromRoute('aculta_events.admin_organizations'),
-              '#attributes' => ['data-portal-ui' => 'button'],
+              '#type' => 'aculta_portal_button',
+              '#props' => [
+                'text' => (string) $this->t('Limpar'),
+                'url' => Url::fromRoute('aculta_events.admin_organizations')->toString(),
+                'variant' => 'secondary',
+              ],
             ],
           ],
         ],
       ],
       'table' => [
         '#type' => 'table',
+        '#attributes' => ['data-portal-ui' => 'events-organization-admin-table'],
         '#header' => [
           $this->t('Organização'),
           $this->t('Titular'),
@@ -332,9 +341,11 @@ final class EventOrganizationAdminController extends ControllerBase {
       'aculta_event_organization_list',
       'aculta_org_member_list',
       'aculta_ownership_claim_list',
-      'aculta_ugc_report_list',
+      'aculta_cgu_report_list',
     ]);
     $cacheMetadata->applyTo($build);
+
+    $build['#attached']['library'][] = 'aculta_events/events-portal-ui';
 
     return $build;
   }

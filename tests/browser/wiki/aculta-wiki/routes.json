@@ -1,0 +1,10 @@
+{
+  "front": "aculta-wiki",
+  "purpose": "wiki",
+  "origin_env": "WIKI_BASE",
+  "source": "tests/browser/wiki/aculta-wiki/README.md (WIKI_HOME_URL, navegação e GETs sem login)",
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "notes": "/we-sativa/inicio, /we-sativa e /we-sativa/verbetes/novo exigem login de teste e ficam no script we-sativa.py (em tests/browser/studio/we-sativa). Defina WIKI_BASE=https://wiki420.aculta.toca.net.br."
+}

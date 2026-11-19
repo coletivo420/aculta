@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_messenger\Kernel;
 use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
+use Drupal\aculta_mailer\Entity\MailLog;
 use Drupal\aculta_mailer\Api\AcultaMailerInterface;
 use Drupal\aculta_messenger_aviso_test\Kernel\DigestRecoveryProvider;
 use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
@@ -43,6 +44,13 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     'aculta_forum_post_test',
     'aculta_messenger_aviso_test',
     'aculta_mailer',
+    'aculta_mail_confirmer',
+    'aculta_file_uploader',
+    'file',
+    'token',
+    'image',
+    'crop',
+    'image_widget_crop',
   ];
 
   /**
@@ -127,18 +135,17 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     $mailLogStorage = $this->container->get('entity_type.manager')->getStorage('aculta_mail_log');
     $logs = $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]);
     self::assertCount(1, $logs);
-    self::assertSame(MailStatus::Sent->value, reset($logs)->get('status')->value);
+    $log = reset($logs);
+    self::assertInstanceOf(MailLog::class, $log);
+    self::assertSame(MailStatus::Sent->value, $this->stringField($log, 'status'));
     $mails = $this->collectedMails();
     self::assertCount(1, $mails);
-    self::assertSame('digest-recovery@example.test', $mails[0]['to']);
-    self::assertSame('Resumo de avisos', $mails[0]['subject']);
-    self::assertStringContainsString('Revisão publicada', (string) $mails[0]['body']);
+    $mail = $this->collectedMail(0);
+    self::assertSame('digest-recovery@example.test', $mail['to']);
+    self::assertSame('Resumo de avisos', $mail['subject']);
+    self::assertStringContainsString('Revisão publicada', $mail['body']);
 
-    self::assertSame(0, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
-      ->fields('digest', ['acknowledged'])
-      ->condition('id', 1)
-      ->execute()
-      ->fetchField(), 'The failed acknowledgement transaction rolls back provider state.');
+    self::assertSame(0, $this->acknowledgedValue(), 'The failed acknowledgement transaction rolls back provider state.');
 
     // Simulate normal Mail Log retention before a disabled adapter returns.
     // The persisted Messenger snapshot must remain enough to recover safely.
@@ -198,11 +205,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       }
     }
 
-    self::assertSame(1, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
-      ->fields('digest', ['acknowledged'])
-      ->condition('id', 1)
-      ->execute()
-      ->fetchField());
+    self::assertSame(1, $this->acknowledgedValue());
     self::assertCount(1, $this->collectedMails());
     self::assertSame([], $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
     self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
@@ -267,15 +270,11 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       [$provider],
     );
 
-    $GLOBALS['config']['system.mail']['interface']['default'] = 'aculta_digest_retry_test';
+    $this->setMailBackend('aculta_digest_retry_test');
     $this->container->get('config.factory')->reset('system.mail');
     self::assertSame(0, $summary->enviarResumos());
-    self::assertSame(0, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
-      ->fields('digest', ['acknowledged'])
-      ->condition('id', 1)
-      ->execute()
-      ->fetchField(), 'A temporary SMTP failure must leave the site notice pending.');
-    self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_ultimo'));
+    self::assertSame(0, $this->acknowledgedValue(), 'A temporary SMTP failure must leave the site notice pending.');
+    self::assertNull($this->userDataValue($userData, $uid, 'avisos_resumo_ultimo'));
 
     $userState = $userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
     self::assertIsArray($userState);
@@ -284,8 +283,10 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       ->getStorage('aculta_mail_log')
       ->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]);
     self::assertCount(1, $logs);
-    self::assertSame('failed', reset($logs)->get('status')->value);
-    self::assertSame('smtp_421', reset($logs)->get('error_code')->value);
+    $log = reset($logs);
+    self::assertInstanceOf(MailLog::class, $log);
+    self::assertSame('failed', $this->stringField($log, 'status'));
+    self::assertSame('smtp_421', $this->stringField($log, 'error_code'));
 
     // Let the in-flight safety window expire before the next cron retry.
     $now += 181;
@@ -293,21 +294,26 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
 
     $state = $this->container->get('state');
     $correlations = $state->get('aculta_messenger_aviso_test.digest_retry_correlations');
+    self::assertIsArray($correlations);
     self::assertCount(2, $correlations);
+    self::assertIsString($correlations[0] ?? NULL);
+    self::assertIsString($correlations[1] ?? NULL);
     self::assertNotSame('', $correlations[0]);
     self::assertSame($correlations[0], $correlations[1], 'An unchanged pending manifest must reuse its correlation.');
-    self::assertSame(1, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
-      ->fields('digest', ['acknowledged'])
-      ->condition('id', 1)
-      ->execute()
-      ->fetchField());
-    self::assertSame(2, (int) $state->get('aculta_messenger_aviso_test.digest_retry_attempts'));
+    self::assertSame(1, $this->acknowledgedValue());
+    $attempts = $state->get('aculta_messenger_aviso_test.digest_retry_attempts');
+    self::assertIsNumeric($attempts);
+    self::assertSame(2, (int) $attempts);
     $updatedLogs = $this->container->get('entity_type.manager')
       ->getStorage('aculta_mail_log')
       ->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]);
     self::assertCount(1, $updatedLogs, 'The Mailer updates the failed correlation instead of creating a duplicate log row.');
-    self::assertSame('sent', reset($updatedLogs)->get('status')->value);
-    self::assertSame($now, (int) $userData->get('aculta_messenger', $uid, 'avisos_resumo_ultimo'));
+    $updatedLog = reset($updatedLogs);
+    self::assertInstanceOf(MailLog::class, $updatedLog);
+    self::assertSame('sent', $this->stringField($updatedLog, 'status'));
+    $lastSent = $this->userDataValue($userData, $uid, 'avisos_resumo_ultimo');
+    self::assertIsNumeric($lastSent);
+    self::assertSame($now, (int) $lastSent);
     self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
   }
 
@@ -406,11 +412,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
 
     self::assertSame(0, $summary->enviarResumos(), 'Retry reconciles the Mailer log instead of transporting the digest again.');
     self::assertCount(1, $this->collectedMails());
-    self::assertSame(1, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
-      ->fields('digest', ['acknowledged'])
-      ->condition('id', 1)
-      ->execute()
-      ->fetchField());
+    self::assertSame(1, $this->acknowledgedValue());
     self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
     self::assertCount(1, $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
   }
@@ -492,7 +494,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       while (!is_file($acceptedMarker)) {
         $status = proc_get_status($process);
         if (!$status['running']) {
-          [$stdout, $stderr, $exitCode] = $this->collectWorkerProcess($process, $pipes);
+          [$stdout, $stderr] = $this->collectWorkerProcess($process, $pipes);
           $process = NULL;
           throw new \RuntimeException('Digest worker exited before transport acceptance: ' . trim($stderr . "\n" . $stdout));
         }
@@ -522,11 +524,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       [$stdout, $stderr, $exitCode] = $this->collectWorkerProcess($process, $pipes);
       $process = NULL;
       self::assertSame(0, $exitCode, 'The resumed worker must defer acknowledgement after losing its lease: ' . trim($stderr . "\n" . $stdout));
-      self::assertSame(0, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
-        ->fields('digest', ['acknowledged'])
-        ->condition('id', 1)
-        ->execute()
-        ->fetchField(), 'The stale worker must not acknowledge while another worker owns the recipient lease.');
+      self::assertSame(0, $this->acknowledgedValue(), 'The stale worker must not acknowledge while another worker owns the recipient lease.');
       $snapshot = $userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
       self::assertIsArray($snapshot);
       self::assertArrayNotHasKey('accepted_at', $snapshot);
@@ -562,11 +560,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       );
 
       self::assertSame(0, $summary->enviarResumos(), 'The accepted manifest is reconciled without a second transport.');
-      self::assertSame(1, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
-        ->fields('digest', ['acknowledged'])
-        ->condition('id', 1)
-        ->execute()
-        ->fetchField());
+      self::assertSame(1, $this->acknowledgedValue());
       self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
       self::assertSame("sent\n", file_get_contents($transportCountMarker));
       self::assertCount(1, $entityTypeManager->getStorage('aculta_mail_log')
@@ -677,18 +671,16 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       $mailLogStorage = $this->container->get('entity_type.manager')->getStorage('aculta_mail_log');
       $acceptedLogs = $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]);
       self::assertCount(1, $acceptedLogs, 'The real Mailer acceptance must be durable before the worker is killed. ' . trim($stderr . "\n" . $stdout));
-      self::assertSame('sent', reset($acceptedLogs)->get('status')->value);
+      $acceptedLog = reset($acceptedLogs);
+      self::assertInstanceOf(MailLog::class, $acceptedLog);
+      self::assertSame('sent', $this->stringField($acceptedLog, 'status'));
       $snapshot = $userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento');
       self::assertIsArray($snapshot);
       self::assertArrayNotHasKey('accepted_at', $snapshot, 'The worker died before writing its acceptance marker.');
-      self::assertSame(0, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
-        ->fields('digest', ['acknowledged'])
-        ->condition('id', 1)
-        ->execute()
-        ->fetchField());
+      self::assertSame(0, $this->acknowledgedValue());
       self::assertSame("sent\n", file_get_contents($transportCountMarker));
 
-      $GLOBALS['config']['system.mail']['interface']['default'] = 'aculta_digest_crash_test';
+      $this->setMailBackend('aculta_digest_crash_test');
       $this->container->get('config.factory')->reset('system.mail');
 
       // SIGKILL leaves the persistent recipient lease behind. Expire only this
@@ -724,11 +716,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
       );
 
       self::assertSame(0, $summary->enviarResumos(), 'Recovery acknowledges the accepted manifest without sending a new email.');
-      self::assertSame(1, (int) $database->select(DigestRecoveryProvider::TABLE, 'digest')
-        ->fields('digest', ['acknowledged'])
-        ->condition('id', 1)
-        ->execute()
-        ->fetchField());
+      self::assertSame(1, $this->acknowledgedValue());
       self::assertNull($userData->get('aculta_messenger', $uid, 'avisos_resumo_em_andamento'));
       self::assertSame("sent\n", file_get_contents($transportCountMarker), 'Recovery must not call the transport twice.');
       self::assertCount(1, $mailLogStorage->loadByProperties(['type' => AvisosResumo::CHAVE_MAIL]));
@@ -781,7 +769,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
 
     // KernelTestBase overrides the default backend globally; replace that
     // test-only override so this case can hold the real Mailer transport.
-    $GLOBALS['config']['system.mail']['interface']['default'] = 'aculta_digest_blocking_test';
+    $this->setMailBackend('aculta_digest_blocking_test');
     $database = $this->container->get('database');
     $provider = new StableKernelDigestProvider($uid);
     $entityTypeManager = $this->container->get('entity_type.manager');
@@ -918,9 +906,70 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
 
   /**
    * Returns messages captured by Drupal's test mail collector.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function collectedMails(): array {
-    return $this->container->get('state')->get('system.test_mail_collector', []);
+    $mails = $this->container->get('state')->get('system.test_mail_collector', []);
+    return is_array($mails) ? $mails : [];
+  }
+
+  /**
+   * Returns one captured mail after checking the collector's public shape.
+   *
+   * @return array{to: string, subject: string, body: string}
+   *   The recipient, subject, and rendered body.
+   */
+  private function collectedMail(int $index): array {
+    $mails = $this->collectedMails();
+    self::assertArrayHasKey($index, $mails);
+    $mail = $mails[$index];
+    self::assertIsArray($mail);
+    self::assertIsString($mail['to'] ?? NULL);
+    self::assertIsString($mail['subject'] ?? NULL);
+    self::assertIsString($mail['body'] ?? NULL);
+    return ['to' => $mail['to'], 'subject' => $mail['subject'], 'body' => $mail['body']];
+  }
+
+  private function acknowledgedValue(): int {
+    $result = $this->container->get('database')->select(DigestRecoveryProvider::TABLE, 'digest')
+      ->fields('digest', ['acknowledged'])
+      ->condition('id', 1)
+      ->execute();
+    self::assertNotNull($result);
+    $value = $result->fetchField();
+    self::assertIsNumeric($value);
+    return (int) $value;
+  }
+
+  private function stringField(MailLog $mailLog, string $field): string {
+    $value = $mailLog->get($field)->value;
+    self::assertIsString($value);
+    return $value;
+  }
+
+  private function userDataValue(\Drupal\user\UserDataInterface $userData, int $uid, string $key): mixed {
+    return $userData->get('aculta_messenger', $uid, $key);
+  }
+
+  private function setMailBackend(string $backend): void {
+    $config = $GLOBALS['config'] ?? [];
+    if (!is_array($config)) {
+      $config = [];
+    }
+    $mailConfig = $config['system.mail'] ?? [];
+    if (!is_array($mailConfig)) {
+      $mailConfig = [];
+    }
+    $interface = $mailConfig['interface'] ?? [];
+    if (!is_array($interface)) {
+      $interface = [];
+    }
+    $interface['default'] = $backend;
+    $mailConfig['interface'] = $interface;
+    $config['system.mail'] = $mailConfig;
+    $GLOBALS['config'] = $config;
   }
 
   /**
@@ -962,7 +1011,7 @@ final class AvisosResumoMailerKernelTest extends KernelTestBase {
     }
     $pipes = [];
     $closeCode = proc_close($process);
-    return [$stdout, $stderr, is_int($exitCode) && $exitCode >= 0 ? $exitCode : $closeCode];
+    return [$stdout, $stderr, $exitCode >= 0 ? $exitCode : $closeCode];
   }
 
 }

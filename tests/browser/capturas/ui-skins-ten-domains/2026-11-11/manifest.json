@@ -1,0 +1,365 @@
+{
+  "schema_version": 1,
+  "front": "ui-skins-ten-domains",
+  "date": "2026-11-11",
+  "environment": "development",
+  "runner": "tests/browser/transversal/aculta-theme-mobile-first/purpose-shell-color-modes.py",
+  "method": "Firefox ESR visible X11; anonymous requests; browser-controlled light/dark mode.",
+  "domains": {
+    "main": {
+      "site_key": "main",
+      "skin": "skunk"
+    },
+    "account": {
+      "site_key": "account",
+      "skin": "skunk"
+    },
+    "support": {
+      "site_key": "support",
+      "skin": "skunk"
+    },
+    "magazine": {
+      "site_key": "magazine",
+      "skin": "skunk"
+    },
+    "wiki": {
+      "site_key": "wiki",
+      "skin": "skunk"
+    },
+    "shop": {
+      "site_key": "shop",
+      "skin": "skunk"
+    },
+    "courses": {
+      "site_key": "courses",
+      "skin": "skunk"
+    },
+    "forum": {
+      "site_key": "forum",
+      "skin": "skunk"
+    },
+    "links": {
+      "site_key": "links",
+      "skin": "ruderalis"
+    },
+    "eventos": {
+      "site_key": "eventos",
+      "skin": "skunk"
+    }
+  },
+  "viewports_css_px": [
+    320,
+    390,
+    768,
+    1024,
+    1440
+  ],
+  "color_modes": [
+    "light",
+    "dark"
+  ],
+  "checks": {
+    "passed": 300,
+    "failed": 0
+  },
+  "minimum_text_contrast_ratio": 7.16,
+  "assertions": [
+    "UI skin/site_key and computed mode tokens",
+    "reduced-motion preference",
+    "one institution bar, one main and one H1",
+    "zero page horizontal overflow",
+    "no duplicate domain header",
+    "all measured textual shell/content links meet contrast AA"
+  ],
+  "presentation_contract": "Domain home may use zero or one shared .page__header; only unique institution/main/H1 are mandatory. LinkWeed uses its standalone social-links-page SDC and its main content links are contrast-tested.",
+  "limitations": [
+    "No browser zoom 200%",
+    "No keyboard-only interaction run",
+    "No cache-hit, reversed host-order or preference persistence run in this matrix",
+    "No human visual sign-off",
+    "Does not validate authenticated/editor/admin profiles"
+  ],
+  "screenshots": [
+    {
+      "file": "main-light-320.png",
+      "domain": "main",
+      "mode": "light",
+      "viewport_css_px": 320,
+      "sha256": "a13d4384d1c4e4b265a31e02a9bf7e15715b6867d365ad13ae3bb26c064c40d7"
+    },
+    {
+      "file": "main-light-1440.png",
+      "domain": "main",
+      "mode": "light",
+      "viewport_css_px": 1440,
+      "sha256": "b5e730d75137b8f216df4a1bfd76c07100f1445dd4da54a5022b9906f2cae9d9"
+    },
+    {
+      "file": "main-dark-320.png",
+      "domain": "main",
+      "mode": "dark",
+      "viewport_css_px": 320,
+      "sha256": "f84d08b8632cbbe9a19760794f66f5449943ee2e19510cfc196573064c81f074"
+    },
+    {
+      "file": "main-dark-1440.png",
+      "domain": "main",
+      "mode": "dark",
+      "viewport_css_px": 1440,
+      "sha256": "335de19fe0f4969b3c303514447cea7675a5ad8270bb54e2181103f9d09eec51"
+    },
+    {
+      "file": "account-light-320.png",
+      "domain": "account",
+      "mode": "light",
+      "viewport_css_px": 320,
+      "sha256": "2036631986bdc5e9996b835328c882a50efe59f093b760bf719405090ad37a37"
+    },
+    {
+      "file": "account-light-1440.png",
+      "domain": "account",
+      "mode": "light",
+      "viewport_css_px": 1440,
+      "sha256": "228a5bd5fc9166af1d22e8fcb4acd9fca6bf58ba9eb195f1ec80d3f7787a10a8"
+    },
+    {
+      "file": "account-dark-320.png",
+      "domain": "account",
+      "mode": "dark",
+      "viewport_css_px": 320,
+      "sha256": "bf0f49bc3606c1c0582848728278bb9b2dac89dbd5067d053a65efa5aa77890d"
+    },
+    {
+      "file": "account-dark-1440.png",
+      "domain": "account",
+      "mode": "dark",
+      "viewport_css_px": 1440,
+      "sha256": "104dceb01d7a2f59d490587ca44e2ec007d46f0ceb0248684b04d4140c2f1e6a"
+    },
+    {
+      "file": "support-light-320.png",
+      "domain": "support",
+      "mode": "light",
+      "viewport_css_px": 320,
+      "sha256": "69d54006f18d976b7bd868382abcf902251db15aa86adf4b646562f2812c698f"
+    },
+    {
+      "file": "support-light-1440.png",
+      "domain": "support",
+      "mode": "light",
+      "viewport_css_px": 1440,
+      "sha256": "1de0a28444157bb7d2f77cd705d5de7dd9bccce4de59607005224b73927a045b"
+    },
+    {
+      "file": "support-dark-320.png",
+      "domain": "support",
+      "mode": "dark",
+      "viewport_css_px": 320,
+      "sha256": "f8abe3107d3d5e827f85782ee576784252152e0d8ed0263a225afca4bad8d2d6"
+    },
+    {
+      "file": "support-dark-1440.png",
+      "domain": "support",
+      "mode": "dark",
+      "viewport_css_px": 1440,
+      "sha256": "05c06e79ddf89f1066ddcc8c612a25f564ed27b6f88213b0e2c7b735ffccc9c1"
+    },
+    {
+      "file": "magazine-light-320.png",
+      "domain": "magazine",
+      "mode": "light",
+      "viewport_css_px": 320,
+      "sha256": "85d3f9684bca7b66dc5efd17684756b36003eaeca288ff661154c14f9446dad9"
+    },
+    {
+      "file": "magazine-light-1440.png",
+      "domain": "magazine",
+      "mode": "light",
+      "viewport_css_px": 1440,
+      "sha256": "5af87ef04798268990de5fe99d94508839a635d5267648e0fab530fa5ac912a0"
+    },
+    {
+      "file": "magazine-dark-320.png",
+      "domain": "magazine",
+      "mode": "dark",
+      "viewport_css_px": 320,
+      "sha256": "48e57c573dadbac9a3c25a7166e9e5a1e8629759c8362365e4c6a8025987601b"
+    },
+    {
+      "file": "magazine-dark-1440.png",
+      "domain": "magazine",
+      "mode": "dark",
+      "viewport_css_px": 1440,
+      "sha256": "7e6fc074585cda410f8011cd2f5246b1de3be2ff780d3224a98a2d3e65b13f5a"
+    },
+    {
+      "file": "wiki-light-320.png",
+      "domain": "wiki",
+      "mode": "light",
+      "viewport_css_px": 320,
+      "sha256": "10f259ab8aaa50fa5a79054d78dfb8130f4d742b138b0172fa175882e334785f"
+    },
+    {
+      "file": "wiki-light-1440.png",
+      "domain": "wiki",
+      "mode": "light",
+      "viewport_css_px": 1440,
+      "sha256": "7f45d55bd687d7f75e365cb97da7d9b980f10c1d897e8ae67bb8bb3425d0a748"
+    },
+    {
+      "file": "wiki-dark-320.png",
+      "domain": "wiki",
+      "mode": "dark",
+      "viewport_css_px": 320,
+      "sha256": "2c393c35fd22146957f37d940955d42b561e041ae7fe2f10c92173e38876869c"
+    },
+    {
+      "file": "wiki-dark-1440.png",
+      "domain": "wiki",
+      "mode": "dark",
+      "viewport_css_px": 1440,
+      "sha256": "329f5227e04d057d5eebafe265d7d2cb325f3c538317fbd2c69ca419509ab29d"
+    },
+    {
+      "file": "shop-light-320.png",
+      "domain": "shop",
+      "mode": "light",
+      "viewport_css_px": 320,
+      "sha256": "15c2dbf018240eae5ea4fbc2cd0f446bde121aefeb8f3910c98ca648955adc5e"
+    },
+    {
+      "file": "shop-light-1440.png",
+      "domain": "shop",
+      "mode": "light",
+      "viewport_css_px": 1440,
+      "sha256": "263449965eb47054ee16c333f41496b2ffc90c04e3d51387258b67d507bbb06a"
+    },
+    {
+      "file": "shop-dark-320.png",
+      "domain": "shop",
+      "mode": "dark",
+      "viewport_css_px": 320,
+      "sha256": "5c953a411b111877096f3c7f37a2be30331ecb4bb0458fc84476188dc0dfe2a8"
+    },
+    {
+      "file": "shop-dark-1440.png",
+      "domain": "shop",
+      "mode": "dark",
+      "viewport_css_px": 1440,
+      "sha256": "c65477d506ca3865410ab5eac22a3cdaca1a85e5df32bd625beee3c2a5e873c8"
+    },
+    {
+      "file": "courses-light-320.png",
+      "domain": "courses",
+      "mode": "light",
+      "viewport_css_px": 320,
+      "sha256": "dfcc2c7423ccc51a66d911897f49f3dca3ef9bacd7ae7fcba7f89984d5ae80f2"
+    },
+    {
+      "file": "courses-light-1440.png",
+      "domain": "courses",
+      "mode": "light",
+      "viewport_css_px": 1440,
+      "sha256": "da2565da7d5cfd9abf3acd018ff9f24e6fbd2e68ed4798d356ba873d55861789"
+    },
+    {
+      "file": "courses-dark-320.png",
+      "domain": "courses",
+      "mode": "dark",
+      "viewport_css_px": 320,
+      "sha256": "676759d62f579cff246faf4b7ef8ce709fa0cb93926b18302b076edd222e7cce"
+    },
+    {
+      "file": "courses-dark-1440.png",
+      "domain": "courses",
+      "mode": "dark",
+      "viewport_css_px": 1440,
+      "sha256": "2b95c3d23235fcf40662a35a204c3e89e3ed13994ec28b24a37d943adf05b50d"
+    },
+    {
+      "file": "forum-light-320.png",
+      "domain": "forum",
+      "mode": "light",
+      "viewport_css_px": 320,
+      "sha256": "3da24c07b0ef299e27041a8cf01276eee1dc3c1fa5b2086eac02bac8bd6b64d5"
+    },
+    {
+      "file": "forum-light-1440.png",
+      "domain": "forum",
+      "mode": "light",
+      "viewport_css_px": 1440,
+      "sha256": "810b38ea33c0779a72c50bd93fc7d6525aafa709dd221ed6771c169521e1124b"
+    },
+    {
+      "file": "forum-dark-320.png",
+      "domain": "forum",
+      "mode": "dark",
+      "viewport_css_px": 320,
+      "sha256": "5e66e2e990fd742a3e0b87105fa476b49ba1de347341c8ef0a87faa96ef3e0a0"
+    },
+    {
+      "file": "forum-dark-1440.png",
+      "domain": "forum",
+      "mode": "dark",
+      "viewport_css_px": 1440,
+      "sha256": "566f75da8369e55cf7a7a5fce046cfab8c8726061d411784bff7e272d3038bda"
+    },
+    {
+      "file": "links-light-320.png",
+      "domain": "links",
+      "mode": "light",
+      "viewport_css_px": 320,
+      "sha256": "6639da17a529c0321a0a1dc0367fee999337e2f3a76faf58dfa44147bc1c5212"
+    },
+    {
+      "file": "links-light-1440.png",
+      "domain": "links",
+      "mode": "light",
+      "viewport_css_px": 1440,
+      "sha256": "88b87914412aee98c7bbcc8f38890319817158d77c10fac03348ad26aa58af17"
+    },
+    {
+      "file": "links-dark-320.png",
+      "domain": "links",
+      "mode": "dark",
+      "viewport_css_px": 320,
+      "sha256": "46c559499455bcf3b92d8dd91dc5a0c1b253272b3b5ad09900dfdec53480a973"
+    },
+    {
+      "file": "links-dark-1440.png",
+      "domain": "links",
+      "mode": "dark",
+      "viewport_css_px": 1440,
+      "sha256": "1060e76dab9f0ea9fa3b03e0b05d31daa684bd4380b5a2606887d3f144d08158"
+    },
+    {
+      "file": "eventos-light-320.png",
+      "domain": "eventos",
+      "mode": "light",
+      "viewport_css_px": 320,
+      "sha256": "be8970c2ce45f81980dcc755cb194f06894287f558bedac57c908027bbe6f52e"
+    },
+    {
+      "file": "eventos-light-1440.png",
+      "domain": "eventos",
+      "mode": "light",
+      "viewport_css_px": 1440,
+      "sha256": "4e10d81541ff99974df24b50209445fb32f553e788437cc6bda5fb0c0debc8a4"
+    },
+    {
+      "file": "eventos-dark-320.png",
+      "domain": "eventos",
+      "mode": "dark",
+      "viewport_css_px": 320,
+      "sha256": "130116bccb3689c67f2242239616da3464b0562cbb15c652abce4839749f30ad"
+    },
+    {
+      "file": "eventos-dark-1440.png",
+      "domain": "eventos",
+      "mode": "dark",
+      "viewport_css_px": 1440,
+      "sha256": "b3af22720b3efb4e074e8843bcdaca6bea7d6263839707d94d1ff5641818b2d5"
+    }
+  ],
+  "commit_tested": "working tree before evidence commit"
+}

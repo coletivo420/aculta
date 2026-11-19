@@ -74,7 +74,11 @@ final class EventsContributionNoticeEmailWorkerTest extends UnitTestCase {
   }
 
   /**
-   * Creates a scalar field fixture. */
+   * Creates a scalar field fixture.
+   *
+   * @return \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
+   *   Campo simulado.
+   */
   private function field(mixed $value): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('__get')->with('value')->willReturn($value);

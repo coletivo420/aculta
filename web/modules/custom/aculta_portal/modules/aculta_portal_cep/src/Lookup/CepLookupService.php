@@ -77,10 +77,20 @@ final class CepLookupService implements CepLookupInterface {
    *
    * O cache varia por fonte para evitar reutilização entre provedores.
    */
+  /**
+   * Consulta uma fonte externa e guarda somente resultados positivos.
+   *
+   * O cache varia por fonte para evitar reutilização entre provedores.
+   *
+   * @return array<string, string>|null
+   */
   private function external(string $source, string $cep): ?array {
     $cacheId = 'aculta_portal:cep:' . $source . ':' . $cep;
-    if ($cached = $this->cache->get($cacheId)) {
-      return $cached->data;
+    $cached = $this->cache->get($cacheId);
+    if ($cached && is_array($cached->data)) {
+      /** @var array<string, string> $cachedData */
+      $cachedData = $cached->data;
+      return $cachedData;
     }
     $address = $source === 'viacep' ? $this->fromViaCep($cep) : $this->fromBrasilApi($cep);
     if ($address !== NULL) {
@@ -104,10 +114,14 @@ final class CepLookupService implements CepLookupInterface {
           ['timeout' => 5, 'http_errors' => FALSE],
         );
         $raw = json_decode((string) $response->getBody(), TRUE);
-        if (is_array($raw) && empty($raw['erro'])) {
-          return $this->mapped($cep, $raw['logradouro'] ?? '', $raw['bairro'] ?? '', $raw['localidade'] ?? '', $raw['uf'] ?? '');
-        }
-        if (is_array($raw) && !empty($raw['erro'])) {
+        if (is_array($raw)) {
+          if (empty($raw['erro'])) {
+            $logradouro = isset($raw['logradouro']) && is_scalar($raw['logradouro']) ? (string) $raw['logradouro'] : '';
+            $bairro = isset($raw['bairro']) && is_scalar($raw['bairro']) ? (string) $raw['bairro'] : '';
+            $localidade = isset($raw['localidade']) && is_scalar($raw['localidade']) ? (string) $raw['localidade'] : '';
+            $uf = isset($raw['uf']) && is_scalar($raw['uf']) ? (string) $raw['uf'] : '';
+            return $this->mapped($cep, $logradouro, $bairro, $localidade, $uf);
+          }
           return NULL;
         }
       }
@@ -137,7 +151,11 @@ final class CepLookupService implements CepLookupInterface {
       );
       $raw = json_decode((string) $response->getBody(), TRUE);
       if (is_array($raw) && !empty($raw['cep'])) {
-        return $this->mapped($cep, $raw['street'] ?? '', $raw['neighborhood'] ?? '', $raw['city'] ?? '', $raw['state'] ?? '');
+        $street = isset($raw['street']) && is_scalar($raw['street']) ? (string) $raw['street'] : '';
+        $neighborhood = isset($raw['neighborhood']) && is_scalar($raw['neighborhood']) ? (string) $raw['neighborhood'] : '';
+        $city = isset($raw['city']) && is_scalar($raw['city']) ? (string) $raw['city'] : '';
+        $state = isset($raw['state']) && is_scalar($raw['state']) ? (string) $raw['state'] : '';
+        return $this->mapped($cep, $street, $neighborhood, $city, $state);
       }
     }
     catch (\Throwable $exception) {

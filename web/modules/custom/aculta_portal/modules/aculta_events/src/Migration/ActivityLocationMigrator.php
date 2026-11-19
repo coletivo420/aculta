@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Migration;
 
 use Drupal\aculta_events\Entity\EventLocation;
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\State\StateInterface;
@@ -23,7 +22,6 @@ final class ActivityLocationMigrator {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly Connection $database,
     private readonly StateInterface $state,
     private readonly LoggerChannelInterface $logger,
   ) {}
@@ -176,7 +174,7 @@ final class ActivityLocationMigrator {
           $name = trim((string) $existing->label());
           $cep = '';
           if ($existing->hasField('field_endereco') && !$existing->get('field_endereco')->isEmpty()) {
-            $cep = trim((string) $existing->get('field_endereco')->first()?->postal_code);
+            $cep = trim((string) ($existing->get('field_endereco')->first()?->getValue()['postal_code'] ?? ''));
           }
           $key = $this->buildDedupeKey($name, $cep);
           $locationMap[$key] = (int) $existing->id();
@@ -229,7 +227,7 @@ final class ActivityLocationMigrator {
         $createdCount++;
       }
 
-      if (!$dryRun && $locationId !== NULL) {
+      if (!$dryRun) {
         $provenance[$locationId][] = (int) $node->id();
         $provenance[$locationId] = array_values(array_unique($provenance[$locationId]));
 
@@ -284,7 +282,7 @@ final class ActivityLocationMigrator {
       if ($nodeIds !== []) {
         $nodes = $nodeStorage->loadMultiple($nodeIds);
         foreach ($nodes as $node) {
-          if ($node instanceof NodeInterface && $node->hasField('field_event_location')) {
+          if ($node->hasField('field_event_location')) {
             $node->set('field_event_location', NULL);
             $node->save();
             $nodesUnlinked++;

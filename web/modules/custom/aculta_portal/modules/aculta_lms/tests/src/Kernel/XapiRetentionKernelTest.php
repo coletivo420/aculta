@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\aculta_lms\Controller\XapiAttemptTokenController;
 use Drupal\aculta_lms\Controller\XapiStatementsController;
@@ -27,8 +28,8 @@ final class XapiRetentionKernelTest extends KernelTestBase {
    * @var string[]
    */
   protected static $modules = [
-    'system', 'user', 'file', 'image', 'media', 'options', 'text', 'entity_print', 'domain', 'views',
-    'entity', 'flexible_permissions', 'group', 'lms', 'key', 'entity_usage', 'aculta_image', 'aculta_file_uploader',
+    'system', 'user', 'file', 'image', 'media', 'options', 'text', 'filter', 'entity_print', 'domain', 'views',
+    'entity', 'flexible_permissions', 'group', 'key', 'entity_usage', 'aculta_image', 'aculta_file_uploader', 'aculta_lms',
   ];
 
   /**
@@ -97,8 +98,8 @@ final class XapiRetentionKernelTest extends KernelTestBase {
 
     $purger = $this->container->get('aculta_lms.xapi_statement_retention');
     self::assertSame(1, $purger->purge(6));
-    self::assertNull($storage->load($old->id()));
-    self::assertNotNull($storage->load($recent->id()));
+    self::assertNull($storage->load($this->savedId($old)));
+    self::assertNotNull($storage->load($this->savedId($recent)));
     self::assertSame(0, $purger->purge(6));
   }
 
@@ -137,11 +138,20 @@ final class XapiRetentionKernelTest extends KernelTestBase {
     $cron = $this->container->get(XapiRetentionCronHooks::class);
     $cron->cron();
 
-    self::assertNull($storage->load($old->id()));
-    self::assertNotNull($storage->load($recent->id()));
+    self::assertNull($storage->load($this->savedId($old)));
+    self::assertNotNull($storage->load($this->savedId($recent)));
     self::assertSame(gmdate('Y-m'), $this->container->get('state')->get('aculta_lms.xapi.last_completed_retention_month'));
     $cron->cron();
-    self::assertNotNull($storage->load($recent->id()));
+    self::assertNotNull($storage->load($this->savedId($recent)));
+  }
+
+  /**
+   * Returns the id of an entity saved by the test, asserting it exists.
+   */
+  private function savedId(EntityInterface $entity): int|string {
+    $id = $entity->id();
+    self::assertNotNull($id);
+    return $id;
   }
 
 }

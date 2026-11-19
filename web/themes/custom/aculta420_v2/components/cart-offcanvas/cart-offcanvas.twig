@@ -1,0 +1,25 @@
+{% set count = count|default(0) %}
+<button type="button" class="aculta-utility-trigger aculta-cart-trigger"
+  aria-controls="aculta-cart-dialog" aria-expanded="false" aria-haspopup="dialog"
+  aria-label="{{ 'Abrir carrinho (@count itens)'|t({'@count': count}) }}"
+  data-aculta-cart-trigger data-aculta-dialog-trigger>
+  <span class="aculta-utility-trigger__icon">
+    {{ include('aculta420_v2:icon', { name: 'shopping-cart', variant: 'duotone', size: 'xl' }, with_context = false) }}
+    <span class="aculta-unread-count aculta-utility-trigger__count" data-aculta-cart-count data-count="{{ count }}" aria-hidden="true">{{ count > 99 ? '99+' : count }}</span>
+  </span>
+</button>
+
+<dialog class="aculta-utility-dialog aculta-cart-dialog" id="aculta-cart-dialog" aria-labelledby="aculta-cart-dialog-title" data-aculta-utility-drawer>
+  <header class="aculta-utility-dialog__header">
+    <h2 class="aculta-utility-dialog__title" id="aculta-cart-dialog-title">{{ 'Carrinho'|t }}</h2>
+    <button type="button" class="aculta-utility-dialog__close" data-aculta-dialog-close aria-label="{{ 'Fechar carrinho'|t }}">{{ include('aculta420_v2:icon', { name: 'x', variant: 'duotone', size: 'md' }, with_context = false) }}</button>
+  </header>
+  {{ include('aculta420_v2:cart-offcanvas-body', {
+    empty: empty,
+    url: url,
+    total: total,
+    sites: sites,
+    checkout_url: checkout_url
+  }, with_context = false) }}
+  <footer class="aculta-cart-offcanvas__banner">{{ banner }}</footer>
+</dialog>

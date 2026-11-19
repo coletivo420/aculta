@@ -27,8 +27,8 @@ final class MailPayloadCipher {
   /**
    * Cifra a mensagem. Retorna NULL quando não há chave válida.
    *
-   * @param array $payload
-   *   Dados da mensagem (destinatário, assunto, corpo e cabeçalhos).
+   * @param array<mixed> $payload
+   *   Dados de entrada (payload).
    */
   public function encrypt(array $payload): ?string {
     $key = $this->key();
@@ -46,7 +46,12 @@ final class MailPayloadCipher {
   }
 
   /**
-   * Decifra a mensagem guardada. Retorna NULL quando a chave não confere, o valor foi alterado ou o formato não é o atual.
+   * Decifra a mensagem guardada.
+   *
+   * Retorna NULL quando a chave não confere, o valor foi alterado ou o formato não é o atual.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public function decrypt(string $stored): ?array {
     $key = $this->key();

@@ -1,0 +1,7 @@
+name: Formulário do Studio
+description: Skin de formulário aplicada ao Form API dentro da região principal do Studio e LMS.
+component: aculta420_v2:studio-form
+slots:
+  content:
+    type: inline_template
+    template: '<form><fieldset><legend>Perfil</legend><label for="studio-form-title">Título</label><input id="studio-form-title" value="Exemplo"><div class="form-actions"><button class="form-submit">Salvar</button></div></fieldset></form>'

@@ -13,7 +13,8 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Builds the certificate snapshot consistently for browser and PDF output. */
+/**
+ * Builds the certificate snapshot consistently for browser and PDF output. */
 final class CertificateEntityViewHooks {
 
   public function __construct(
@@ -21,6 +22,18 @@ final class CertificateEntityViewHooks {
     private readonly DateFormatterInterface $dateFormatter,
   ) {}
 
+  /**
+   * Monta o snapshot do certificado para a visualização da entidade.
+   *
+   * @param array $build
+   *   Render array da entidade.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entidade exibida.
+   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+   *   Exibição usada.
+   * @param string $viewMode
+   *   Modo de visualização.
+   */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $viewMode): void {
     if (!$entity instanceof CourseCertificate) {

@@ -10,7 +10,7 @@ use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -29,9 +29,9 @@ use Drupal\aculta_mailer\Delivery\SendResult;
 use Drupal\aculta_mailer\Message\MailMessage;
 use Drupal\aculta_mailer\Message\MessageIdFactory;
 use Drupal\aculta_messenger\Mail\PrivateMessageNoticeMailType;
-use Drupal\private_message\Entity\PrivateMessageInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageServiceInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use Drupal\user\UserDataInterface;
@@ -106,7 +106,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
 
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('id')->willReturn('123');
-    $thread->method('getMembersId')->willReturn([1, 2]);
+    $thread->method('getMemberIds')->willReturn([1, 2]);
     $thread->method('access')->with('view', $recipient, TRUE)->willReturn(AccessResult::allowed());
     $messageService = $this->createMock(PrivateMessageServiceInterface::class);
     $messageService->method('getThreadFromMessage')->with($privateMessage)->willReturn($thread);
@@ -167,7 +167,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       $this->conversationWriteLock($entityTypes),
       $notifier,
       $mailer,
-      $this->domainPurposeManager($entityTypes),
+      $this->siteManager($entityTypes),
       $lock,
       $preferences,
       $this->emailPolicy($entityTypes),
@@ -206,7 +206,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $userStorage->method('loadUnchanged')->willReturnCallback(fn(int $uid): UserInterface => $uid === 2 ? $recipient : $sender);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('id')->willReturn('123');
-    $thread->method('getMembersId')->willReturn([1, 2]);
+    $thread->method('getMemberIds')->willReturn([1, 2]);
     $thread->method('access')->with('view', $recipient, TRUE)->willReturn(AccessResult::allowed());
     $thread->method('getLastDeleteTimestamp')->with($recipient)->willReturn(100);
     $messageService = $this->createMock(PrivateMessageServiceInterface::class);
@@ -317,7 +317,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       $worker = new PrivateMessageNotificationWorker(
         [], 'aculta_msg_private_notification', [], $entityTypes, $messageService,
         new ConversationWriteLock($lock, $entityTypes), $legacy, $mailer,
-        $this->domainPurposeManager($entityTypes), $lock,
+        $this->siteManager($entityTypes), $lock,
         $preferences, $this->emailPolicy($entityTypes, $emailConfirmed),
       );
       $worker->processItem(['private_message_id' => 15, 'mailer_managed' => TRUE]);
@@ -371,7 +371,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
    *
    * @param bool $threadAccessible
    *   Whether the recipient can still view the thread.
-   * @param array|null $blockedPair
+   * @param array<int, mixed> $blockedPair
    *   Owner and target IDs for the block that applies, or NULL for no block.
    * @param int|null $lastDeleteTimestamp
    *   The recipient's history cutoff, or NULL when history was not cleared.
@@ -407,13 +407,13 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $userStorage->method('loadUnchanged')->with(2)->willReturn($recipient);
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $thread->method('id')->willReturn('123');
-    $thread->method('getMembersId')->willReturn([1, 2]);
+    $thread->method('getMemberIds')->willReturn([1, 2]);
     $recipientEligible = $recipientActive && $canUsePrivateMessages && $canAccessProfiles;
     $thread->expects($recipientEligible ? self::once() : self::never())
       ->method('access')->with('view', $recipient, TRUE)->willReturn(
       $threadAccessible ? AccessResult::allowed() : AccessResult::forbidden(),
     );
-    $thread->method('getLastDeleteTimestamp')->with($recipient)->willReturn($lastDeleteTimestamp);
+    $thread->method('getLastDeleteTimestamp')->with($recipient)->willReturn($lastDeleteTimestamp ?? 0);
     $privateMessageService = $this->createMock(PrivateMessageServiceInterface::class);
     $privateMessageService->method('getThreadFromMessage')->with($privateMessage)->willReturn($thread);
 
@@ -458,7 +458,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
     $mailer->expects(self::never())->method('deliver');
     $messageNotify = $this->createMock(MessageNotifyInterface::class);
     $messageNotify->expects(self::never())->method('send');
-    $domainPurposes = $this->domainPurposeManager($entities);
+    $siteManagers = $this->siteManager($entities);
     $worker = new PrivateMessageNotificationWorker(
       [],
       'aculta_msg_private_notification',
@@ -468,7 +468,7 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
       $this->conversationWriteLock($entities),
       $messageNotify,
       $mailer,
-      $domainPurposes,
+      $siteManagers,
       $lock,
       $this->createMock(AvisoPreferenciasInterface::class),
       $this->emailPolicy($entities),
@@ -557,8 +557,8 @@ final class PrivateMessageNotificationWorkerTest extends UnitTestCase {
   /**
    * Creates the canonical account URL builder used by this worker.
    */
-  private function domainPurposeManager(EntityTypeManagerInterface $entityTypes): DomainPurposeManager {
-    return new DomainPurposeManager(
+  private function siteManager(EntityTypeManagerInterface $entityTypes): DomainSiteManager {
+    return new DomainSiteManager(
       $entityTypes,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

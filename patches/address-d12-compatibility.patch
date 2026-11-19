@@ -1,0 +1,228 @@
+diff --git a/address.info.yml b/address.info.yml
+index ba7da3268514aa5f0af8838936085618aeffb357..e105feaf64307232128d0cf5aa4809d37ceec963 100644
+--- a/address.info.yml
++++ b/address.info.yml
+@@ -2,7 +2,7 @@ name: Address
+ type: module
+ description: 'Provides functionality for handling postal addresses.'
+ package: Field types
+-core_version_requirement: ^9.5 || ^10 || ^11
++core_version_requirement: ^10.3 || ^11.2 || ^12
+ config: entity.address_format.collection
+ dependencies:
+   - drupal:field
+diff --git a/address.install b/address.install
+index b3d32ddcdfd08ff53af81f9726b91c3050af7808..ce4024e7e1338c44591b86eb43e993b91aece77f 100644
+--- a/address.install
++++ b/address.install
+@@ -6,6 +6,7 @@
+  */
+ 
+ use Drupal\Core\Entity\Sql\SqlContentEntityStorage;
++use Drupal\Core\Extension\Requirement\RequirementSeverity;
+ use Drupal\Core\Utility\UpdateException;
+ 
+ /**
+@@ -17,7 +18,7 @@ function address_requirements($phase) {
+     if (!class_exists('\CommerceGuys\Addressing\AddressFormat\AddressFormatRepository')) {
+       $requirements['addressing_library'] = [
+         'description' => t('Address requires the commerceguys/addressing library.'),
+-        'severity' => REQUIREMENT_ERROR,
++        'severity' => class_exists(RequirementSeverity::class) ? RequirementSeverity::Error : REQUIREMENT_ERROR,
+       ];
+     }
+   }
+diff --git a/address.tokens.inc b/address.tokens.inc
+index e3ef9bc7ce74e916ea39cb5418a21ed892501d16..855757e60c89f20b618fd8c3f18856e967fad22d 100644
+--- a/address.tokens.inc
++++ b/address.tokens.inc
+@@ -6,7 +6,9 @@
+  */
+ 
+ use Drupal\Core\Entity\ContentEntityInterface;
++use Drupal\Core\Hook\Attribute\LegacyHook;
+ use Drupal\Core\Render\BubbleableMetadata;
++use Drupal\address\Hook\AddressTokenHooks;
+ 
+ /**
+  * Implements hook_token_info().
+@@ -50,46 +52,13 @@ function address_token_info() {
+ 
+ /**
+  * Implements hook_tokens().
++ *
++ * On Drupal 11.2+ the OOP implementation in
++ * \Drupal\address\Hook\AddressTokenHooks (which can declare "run last"
++ * ordering) is used and this bridge is ignored. On older cores this function
++ * is invoked as a plain procedural hook.
+  */
++#[LegacyHook]
+ function address_tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
+-  $replacements = [];
+-
+-  if (!empty($data['field_property'])) {
+-    foreach ($tokens as $token => $original) {
+-      $delta = 0;
+-      $parts = explode(':', $token);
+-      if (is_numeric($parts[0])) {
+-        if (count($parts) > 1) {
+-          $delta = $parts[0];
+-          $property_name = $parts[1];
+-        }
+-        else {
+-          continue;
+-        }
+-      }
+-      else {
+-        $property_name = $parts[0];
+-      }
+-      if ($property_name != 'country_name') {
+-        continue;
+-      }
+-      if (!isset($data[$data['field_name']][$delta])) {
+-        continue;
+-      }
+-
+-      $field_item = $data[$data['field_name']][$delta];
+-
+-      $country_name = '';
+-      if ($country_code = $field_item->country_code) {
+-        $country_repository = \Drupal::service('address.country_repository');
+-        $locale = $options['langcode'] ?? NULL;
+-        if ($country = $country_repository->get($country_code, $locale)) {
+-          $country_name = $country->getName();
+-        }
+-      }
+-      $replacements[$original] = $country_name;
+-    }
+-  }
+-
+-  return $replacements;
++  return (new AddressTokenHooks())->tokens($type, $tokens, $data, $options, $bubbleable_metadata);
+ }
+diff --git a/address.views.inc b/address.views.inc
+index 76f1b503020cbbfb0cf9cb40f0b9c23b934cf98e..9722b498ad4b6e4c18c85c66e037918e8af5367b 100644
+--- a/address.views.inc
++++ b/address.views.inc
+@@ -15,7 +15,7 @@ use Drupal\field\FieldStorageConfigInterface;
+  * Views integration for address fields.
+  */
+ function address_field_views_data(FieldStorageConfigInterface $field) {
+-  $data = views_field_default_views_data($field);
++  $data = \Drupal\Component\Utility\DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.2.0', fn() => \Drupal::service(\Drupal\views\FieldViewsDataProvider::class)->defaultFieldImplementation($field), fn() => views_field_default_views_data($field));
+   $field_type = $field->getType();
+   $field_name = $field->getName();
+   if ($field_type == 'address') {
+diff --git a/src/Hook/AddressTokenHooks.php b/src/Hook/AddressTokenHooks.php
+new file mode 100644
+index 0000000000000000000000000000000000000000..d498310600f6e9aed725ede05fa04a7d64febdd8
+--- /dev/null
++++ b/src/Hook/AddressTokenHooks.php
+@@ -0,0 +1,71 @@
++<?php
++
++namespace Drupal\address\Hook;
++
++use Drupal\Core\Hook\Attribute\Hook;
++use Drupal\Core\Hook\Order\Order;
++use Drupal\Core\Render\BubbleableMetadata;
++
++/**
++ * Hook implementations for address.
++ */
++class AddressTokenHooks {
++
++  /**
++   * Implements hook_tokens().
++   *
++   * D12 (change record 3496788): moved from a bare procedural function to
++   * this OOP method so the order: Order::Last parameter actually takes
++   * effect. Core's HookCollectorPass only reads a #[Hook] attribute's order
++   * parameter when it is on a real class method (OOP scan branch); the
++   * procedural-file scan branch never does (see
++   * HookCollectorPass::collectModuleHookImplementations(),
++   * core/lib/Drupal/Core/Hook/HookCollectorPass.php:397-405 vs. 424-466).
++   * The old address_module_implements_alter() procedural reorder in
++   * address.module is left in place as dead code for pre-11.2 BC.
++   */
++  #[Hook('tokens', order: Order::Last)]
++  public function tokens($type, $tokens, array $data, array $options, BubbleableMetadata $bubbleable_metadata) {
++    $replacements = [];
++
++    if (!empty($data['field_property'])) {
++      foreach ($tokens as $token => $original) {
++        $delta = 0;
++        $parts = explode(':', $token);
++        if (is_numeric($parts[0])) {
++          if (count($parts) > 1) {
++            $delta = $parts[0];
++            $property_name = $parts[1];
++          }
++          else {
++            continue;
++          }
++        }
++        else {
++          $property_name = $parts[0];
++        }
++        if ($property_name != 'country_name') {
++          continue;
++        }
++        if (!isset($data[$data['field_name']][$delta])) {
++          continue;
++        }
++
++        $field_item = $data[$data['field_name']][$delta];
++
++        $country_name = '';
++        if ($country_code = $field_item->country_code) {
++          $country_repository = \Drupal::service('address.country_repository');
++          $locale = $options['langcode'] ?? NULL;
++          if ($country = $country_repository->get($country_code, $locale)) {
++            $country_name = $country->getName();
++          }
++        }
++        $replacements[$original] = $country_name;
++      }
++    }
++
++    return $replacements;
++  }
++
++}
+diff --git a/tests/modules/address_test/src/EventSubscriber/AddressTestEventSubscriber.php b/tests/modules/address_test/src/EventSubscriber/AddressTestEventSubscriber.php
+index 863510c818a8c8dbbd8241deddfe2eea35938677..0936b1b88120063fbf6f6c735595df574d017322 100644
+--- a/tests/modules/address_test/src/EventSubscriber/AddressTestEventSubscriber.php
++++ b/tests/modules/address_test/src/EventSubscriber/AddressTestEventSubscriber.php
+@@ -16,7 +16,7 @@ class AddressTestEventSubscriber implements EventSubscriberInterface {
+   /**
+    * {@inheritdoc}
+    */
+-  public static function getSubscribedEvents() {
++  public static function getSubscribedEvents(): array {
+     $events[AddressEvents::AVAILABLE_COUNTRIES][] = ['onAvailableCountries'];
+     return $events;
+   }
+diff --git a/tests/modules/address_test/src/EventSubscriber/GreatBritainEventSubscriber.php b/tests/modules/address_test/src/EventSubscriber/GreatBritainEventSubscriber.php
+index e790f92c77dc4df8f86199785b25b0d53ca87825..8ff61329802a462ebebd9062abfbec295d20b186 100644
+--- a/tests/modules/address_test/src/EventSubscriber/GreatBritainEventSubscriber.php
++++ b/tests/modules/address_test/src/EventSubscriber/GreatBritainEventSubscriber.php
+@@ -19,7 +19,7 @@ class GreatBritainEventSubscriber implements EventSubscriberInterface {
+   /**
+    * {@inheritdoc}
+    */
+-  public static function getSubscribedEvents() {
++  public static function getSubscribedEvents(): array {
+     $events[AddressEvents::ADDRESS_FORMAT][] = ['onAddressFormat'];
+     $events[AddressEvents::SUBDIVISIONS][] = ['onSubdivisions'];
+     return $events;
+diff --git a/address.module b/address.module
+index 4c6174e000000000000000000000000000000000..4c6174e000000000000000000000000000000001 100644
+--- a/address.module
++++ b/address.module
+@@ -84,4 +84,5 @@
+  */
++#[\Drupal\Core\Hook\Attribute\LegacyModuleImplementsAlter]
+ function address_module_implements_alter(&$implementations, $hook) {
+   if ($hook == 'tokens') {
+     $group = $implementations['address'];

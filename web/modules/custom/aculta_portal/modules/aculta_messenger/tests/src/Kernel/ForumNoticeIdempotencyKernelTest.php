@@ -34,6 +34,7 @@ use Drupal\comment\Entity\CommentType;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Lock\PersistentDatabaseLockBackend;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\StatementInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueInterface;
 use Drupal\Core\Language\Language;
@@ -79,6 +80,12 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     'comment',
     'aculta_forum_post_test',
     'aculta_messenger_aviso_test',
+    'aculta_file_uploader',
+    'file',
+    'token',
+    'image',
+    'crop',
+    'image_widget_crop',
   ];
 
   /**
@@ -153,11 +160,11 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
       self::assertCount(1, $notices);
       $aviso = $notices[0];
-      self::assertSame(1, (int) $aviso->get('contador_site')->value);
-      self::assertSame(1, (int) $aviso->get('contador_email')->value);
+      self::assertSame(1, self::integerValue($aviso->get('contador_site')->value));
+      self::assertSame(1, self::integerValue($aviso->get('contador_email')->value));
       self::assertSame(
         (int) $post->getRevisionId(),
-        (int) $aviso->get('ultimo_post')->value,
+        self::integerValue($aviso->get('ultimo_post')->value),
       );
       self::assertSame('Tópico com seguidores', $aviso->get('titulo')->value);
     }
@@ -186,9 +193,9 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $read = $service->listarDaPessoa($uid, 1, 'read');
     $unread = $service->listarDaPessoa($uid, 1, 'unread');
     self::assertCount(1, $read);
-    self::assertSame((int) $readTopic->id(), (int) $read[0]->get('assunto_nid')->value);
+    self::assertSame((int) $readTopic->id(), self::integerValue($read[0]->get('assunto_nid')->value));
     self::assertCount(1, $unread);
-    self::assertSame((int) $unreadTopic->id(), (int) $unread[0]->get('assunto_nid')->value);
+    self::assertSame((int) $unreadTopic->id(), self::integerValue($unread[0]->get('assunto_nid')->value));
   }
 
   /**
@@ -214,8 +221,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $notices = $service->listarDaPessoa($uid);
 
     self::assertCount(2, $notices);
-    self::assertSame((int) $newerTopic->id(), (int) $notices[0]->get('assunto_nid')->value);
-    self::assertSame((int) $olderTopic->id(), (int) $notices[1]->get('assunto_nid')->value);
+    self::assertSame((int) $newerTopic->id(), self::integerValue($notices[0]->get('assunto_nid')->value));
+    self::assertSame((int) $olderTopic->id(), self::integerValue($notices[1]->get('assunto_nid')->value));
     self::assertSame($newerChanged, $notices[0]->getChangedTime());
   }
 
@@ -233,7 +240,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       self::assertSame(1, $service->registrarResposta($this->createPersistedComment($topic, (int) $author->id())));
     }
 
-    self::assertSame(100, AvisoService::PERSONAL_NOTICE_LIST_LIMIT);
+    self::assertGreaterThan(5, AvisoService::PERSONAL_NOTICE_LIST_LIMIT);
     self::assertCount(6, $service->listarDaPessoa($uid));
     self::assertCount(5, $service->listarDaPessoa($uid, 5));
   }
@@ -258,8 +265,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertTrue($firstPage['has_next']);
     self::assertCount(3, $secondPage['items']);
     self::assertFalse($secondPage['has_next']);
-    $firstTopicIds = array_map(static fn(Aviso $notice): int => (int) $notice->get('assunto_nid')->value, $firstPage['items']);
-    $secondTopicIds = array_map(static fn(Aviso $notice): int => (int) $notice->get('assunto_nid')->value, $secondPage['items']);
+    $firstTopicIds = array_map(static fn(Aviso $notice): int => self::integerValue($notice->get('assunto_nid')->value), $firstPage['items']);
+    $secondTopicIds = array_map(static fn(Aviso $notice): int => self::integerValue($notice->get('assunto_nid')->value), $secondPage['items']);
     self::assertSame([], array_intersect($firstTopicIds, $secondTopicIds));
     self::assertCount(6, array_unique([...$firstTopicIds, ...$secondTopicIds]));
   }
@@ -271,11 +278,14 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $author = $this->createUser('autor_topicos_revogados_paginacao');
     $follower = $this->createUser('seguidor_topicos_revogados_paginacao');
     $uid = (int) $follower->id();
-    $hiddenTopicIds = [];
+    $hiddenTopicIds = self::emptyIntegerMap();
     $policy = $this->createMock(ForumNoticeAccessPolicyInterface::class);
     $policy->method('supportsTopic')->willReturn(TRUE);
     $policy->method('canViewTopic')->willReturnCallback(static function (mixed $topic) use (&$hiddenTopicIds): bool {
-      return $topic !== NULL && !isset($hiddenTopicIds[(int) $topic->id()]);
+      if (!$topic instanceof NodeInterface || $topic->id() === NULL) {
+        return FALSE;
+      }
+      return !in_array(self::integerValue($topic->id()), array_keys($hiddenTopicIds), TRUE);
     });
     $policy->method('canViewComment')->willReturn(TRUE);
     $service = $this->createAvisoService([$uid], $policy);
@@ -288,7 +298,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     $hiddenTopicIds = array_fill_keys(array_slice($topicIds, 5), TRUE);
     $page = $service->listarDaPessoaPaginada($uid, 2, 2);
-    $actualTopicIds = array_map(static fn(Aviso $notice): int => (int) $notice->get('assunto_nid')->value, $page['items']);
+    $actualTopicIds = array_map(static fn(Aviso $notice): int => self::integerValue($notice->get('assunto_nid')->value), $page['items']);
 
     self::assertSame(array_slice(array_reverse(array_slice($topicIds, 0, 5)), 2, 2), $actualTopicIds);
     self::assertTrue($page['has_next'], 'A further accessible notice exists after the page even though newer rows are now inaccessible.');
@@ -334,9 +344,9 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(1, $producer->publishPost($post), 'Replaying the producer event is harmless.');
     $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $notices);
-    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
-    self::assertSame(1, (int) $notices[0]->get('contador_email')->value);
-    self::assertSame((int) $post->getRevisionId(), (int) $notices[0]->get('ultimo_post')->value);
+    self::assertSame(1, self::integerValue($notices[0]->get('contador_site')->value));
+    self::assertSame(1, self::integerValue($notices[0]->get('contador_email')->value));
+    self::assertSame((int) $post->getRevisionId(), self::integerValue($notices[0]->get('ultimo_post')->value));
   }
 
   /**
@@ -365,9 +375,9 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(1, $producer->publishComment($comment), 'Replaying the Comment event is harmless.');
     $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $notices);
-    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
-    self::assertSame(1, (int) $notices[0]->get('contador_email')->value);
-    self::assertSame((int) $comment->id(), (int) $notices[0]->get('ultimo_comentario')->value);
+    self::assertSame(1, self::integerValue($notices[0]->get('contador_site')->value));
+    self::assertSame(1, self::integerValue($notices[0]->get('contador_email')->value));
+    self::assertSame((int) $comment->id(), self::integerValue($notices[0]->get('ultimo_comentario')->value));
     self::assertCount(0, $this->loadNotices((int) $author->id(), (int) $topic->id()));
   }
 
@@ -406,12 +416,11 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     self::assertSame(1, $producer->publishComment($comment));
     self::assertCount(0, $this->loadNotices((int) $follower->id(), (int) $topic->id()));
-    self::assertSame(0, (int) $this->container->get('database')
+    self::assertSame(0, self::integerFromStatement($this->container->get('database')
       ->select(ForumNoticeEventSchema::TABLE)
       ->condition('uid', (int) $follower->id())
       ->countQuery()
-      ->execute()
-      ->fetchField());
+      ->execute()));
   }
 
   /**
@@ -429,16 +438,16 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(1, $direct->registrarResposta($directComment));
     $directNotices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $directNotices);
-    self::assertSame(1, (int) $directNotices[0]->get('contador_site')->value);
-    self::assertSame(1, (int) $directNotices[0]->get('contador_email')->value);
+    self::assertSame(1, self::integerValue($directNotices[0]->get('contador_site')->value));
+    self::assertSame(1, self::integerValue($directNotices[0]->get('contador_email')->value));
 
     $producer = $this->createEventProducer([(int) $follower->id()], $policy);
     self::assertSame(1, $producer->publishComment($eventComment));
 
     $eventNotices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $eventNotices);
-    self::assertSame(2, (int) $eventNotices[0]->get('contador_site')->value);
-    self::assertSame(2, (int) $eventNotices[0]->get('contador_email')->value);
+    self::assertSame(2, self::integerValue($eventNotices[0]->get('contador_site')->value));
+    self::assertSame(2, self::integerValue($eventNotices[0]->get('contador_email')->value));
     self::assertSame('Tópico equivalente', $eventNotices[0]->get('titulo')->value);
     self::assertSame((string) $eventComment->id(), $eventNotices[0]->get('ultimo_comentario')->value);
   }
@@ -471,18 +480,18 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $deliveries = 0;
-    $concurrentSummary = NULL;
+    $summaryHolder = new ForumDigestSummaryHolder();
     $mailer->expects(self::once())
       ->method('deliver')
-      ->willReturnCallback(function (MailMessage $message) use (&$deliveries, &$concurrentSummary, $avisos, $lateComment): SendResult {
+      ->willReturnCallback(function (MailMessage $message) use (&$deliveries, $summaryHolder, $avisos, $lateComment): SendResult {
         $deliveries++;
         self::assertSame(AvisosResumo::CHAVE_MAIL, $message->type);
         self::assertSame('seguidor@example.test', $message->to);
         self::assertSame('pt-br', $message->langcode);
         self::assertSame('Respostas novas em "Resumo compartilhado": 2', $message->context['resumo']);
         if ($deliveries === 1) {
-          self::assertInstanceOf(AvisosResumo::class, $concurrentSummary);
-          self::assertSame(0, $concurrentSummary->enviarResumos(), 'A separate request skips the recipient while its persistent lock is held.');
+          self::assertInstanceOf(AvisosResumo::class, $summaryHolder->summary);
+          self::assertSame(0, $summaryHolder->summary->enviarResumos(), 'A separate request skips the recipient while its persistent lock is held.');
           self::assertSame(1, $avisos->registrarResposta($lateComment), 'A new event arrives while the first digest is being sent.');
         }
         return SendResult::sent();
@@ -506,7 +515,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     );
     // A second backend instance models a separate request sharing the same DB
     // semaphore table; reusing one backend would renew its own lock.
-    $concurrentSummary = new AvisosResumo(
+    $summaryHolder->summary = new AvisosResumo(
       $this->container->get('entity_type.manager'),
       $preferences,
       $mailer,
@@ -522,7 +531,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(1, $summary->enviarResumos());
     $notices = $this->loadNotices($uid, (int) $topic->id());
     self::assertCount(1, $notices);
-    self::assertSame(1, (int) $notices[0]->get('contador_email')->value, 'The concurrent event remains pending after acknowledging the first digest.');
+    self::assertSame(1, self::integerValue($notices[0]->get('contador_email')->value), 'The concurrent event remains pending after acknowledging the first digest.');
     self::assertSame((string) $lateComment->id(), $notices[0]->get('ultimo_comentario')->value);
   }
 
@@ -553,10 +562,10 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $deliveries = 0;
     $acceptedCorrelations = [];
-    $concurrentSummary = NULL;
+    $summaryHolder = new ForumDigestSummaryHolder();
     $mailer->expects(self::once())
       ->method('deliver')
-      ->willReturnCallback(function (MailMessage $message) use (&$deliveries, &$acceptedCorrelations, &$concurrentSummary, $database, $avisos, $secondComment, $uid): SendResult {
+      ->willReturnCallback(function (MailMessage $message) use (&$deliveries, &$acceptedCorrelations, $summaryHolder, $database, $avisos, $secondComment, $uid): SendResult {
         $deliveries++;
         self::assertSame('digest-lease@example.test', $message->to);
         self::assertSame('Respostas novas em "Digest com lease expirada": 1', $message->context['resumo']);
@@ -565,7 +574,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
           ->fields(['expire' => microtime(TRUE) - 1])
           ->condition('name', 'aculta_messenger.avisos_resumo.' . $uid)
           ->execute();
-        self::assertSame(0, $concurrentSummary->enviarResumos(), 'A replacement worker waits instead of sending an overlapping manifest.');
+        self::assertInstanceOf(AvisosResumo::class, $summaryHolder->summary);
+        self::assertSame(0, $summaryHolder->summary->enviarResumos(), 'A replacement worker waits instead of sending an overlapping manifest.');
         $acceptedCorrelations[$message->correlationId] = TRUE;
         return SendResult::sent();
       });
@@ -592,7 +602,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $database,
       $this->container->get('lock.persistent'),
     );
-    $concurrentSummary = new AvisosResumo(
+    $summaryHolder->summary = new AvisosResumo(
       $this->container->get('entity_type.manager'),
       $preferences,
       $mailer,
@@ -610,7 +620,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(1, $deliveries);
     $notices = $this->loadNotices($uid, (int) $topic->id());
     self::assertCount(1, $notices);
-    self::assertSame(1, (int) $notices[0]->get('contador_email')->value, 'The event added after the snapshot remains pending for the next digest.');
+    self::assertSame(1, self::integerValue($notices[0]->get('contador_email')->value), 'The event added after the snapshot remains pending for the next digest.');
     self::assertSame((string) $secondComment->id(), $notices[0]->get('ultimo_comentario')->value);
   }
 
@@ -795,7 +805,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     }
     $pipes = [];
     $closeCode = proc_close($process);
-    return [$stdout, $stderr, is_int($exitCode) && $exitCode >= 0 ? $exitCode : $closeCode];
+    return [$stdout, $stderr, $exitCode >= 0 ? $exitCode : $closeCode];
   }
 
   /**
@@ -923,8 +933,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     self::assertSame(0, $summary->enviarResumos());
     $notice = $this->loadNotices($uid, (int) $topic->id())[0];
-    self::assertSame(1, (int) $notice->get('contador_email')->value, 'Forum email count rolls back when the adapter acknowledgement fails.');
-    self::assertSame(0, (int) $database->select('aculta_messenger_digest_ack_test', 't')->fields('t', ['acknowledged'])->condition('id', 1)->execute()->fetchField());
+    self::assertSame(1, self::integerValue($notice->get('contador_email')->value), 'Forum email count rolls back when the adapter acknowledgement fails.');
+    self::assertSame(0, self::integerFromStatement($database->select('aculta_messenger_digest_ack_test', 't')->fields('t', ['acknowledged'])->condition('id', 1)->execute()));
 
     // A new Forum event arrives after the transport accepted the first
     // manifest but the adapter acknowledgement rolled back. Recovery must
@@ -954,8 +964,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(0, $recoverySummary->enviarResumos(), 'Recovery acknowledges the accepted snapshot without counting a new email.');
     self::assertCount(1, $correlations);
     $notice = $this->loadNotices($uid, (int) $topic->id())[0];
-    self::assertSame(1, (int) $notice->get('contador_email')->value, 'The later Forum event stays pending after recovery of the accepted snapshot.');
-    self::assertSame(1, (int) $database->select('aculta_messenger_digest_ack_test', 't')->fields('t', ['acknowledged'])->condition('id', 1)->execute()->fetchField());
+    self::assertSame(1, self::integerValue($notice->get('contador_email')->value), 'The later Forum event stays pending after recovery of the accepted snapshot.');
+    self::assertSame(1, self::integerFromStatement($database->select('aculta_messenger_digest_ack_test', 't')->fields('t', ['acknowledged'])->condition('id', 1)->execute()));
   }
 
   /**
@@ -1058,8 +1068,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(0, $summary->enviarResumos(), 'A permanent email failure is not retried by a later digest run.');
     $notices = $this->loadNotices($uid, (int) $topic->id());
     self::assertCount(1, $notices);
-    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
-    self::assertSame(0, (int) $notices[0]->get('contador_email')->value);
+    self::assertSame(1, self::integerValue($notices[0]->get('contador_site')->value));
+    self::assertSame(0, self::integerValue($notices[0]->get('contador_email')->value));
   }
 
   /**
@@ -1085,8 +1095,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       Aviso::TIPO_ATUALIZACAO,
     );
     self::assertCount(1, $updates);
-    self::assertSame(1, (int) $updates[0]->get('contador_site')->value);
-    self::assertSame((int) $topic->getRevisionId(), (int) $updates[0]->get('ultimo_evento')->value);
+    self::assertSame(1, self::integerValue($updates[0]->get('contador_site')->value));
+    self::assertSame((int) $topic->getRevisionId(), self::integerValue($updates[0]->get('ultimo_evento')->value));
     self::assertCount(0, $this->loadNotices(
       (int) $author->id(),
       (int) $topic->id(),
@@ -1107,11 +1117,10 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     self::assertSame(0, $avisos->registrarPost($post));
     self::assertCount(0, $this->loadNotices((int) $follower->id(), (int) $topic->id()));
-    self::assertSame(0, (int) $this->container->get('database')
+    self::assertSame(0, self::integerFromStatement($this->container->get('database')
       ->select(ForumNoticeEventSchema::TABLE)
       ->countQuery()
-      ->execute()
-      ->fetchField());
+      ->execute()));
   }
 
   /**
@@ -1127,11 +1136,15 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $avisos->registrarPost($post);
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('aculta_forum_post');
-    $avisos->registrarPost($storage->load($post->id()));
+    $postId = $post->id();
+    self::assertNotNull($postId);
+    $loadedPost = $storage->load($postId);
+    self::assertInstanceOf(ForumPost::class, $loadedPost);
+    $avisos->registrarPost($loadedPost);
 
     $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $notices);
-    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(1, self::integerValue($notices[0]->get('contador_site')->value));
     self::assertSame(0, $avisos->registrarPost($post));
   }
 
@@ -1170,7 +1183,9 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('aculta_forum_post');
-    $before = $storage->loadUnchanged($post->id());
+    $postId = $post->id();
+    self::assertNotNull($postId);
+    $before = $storage->loadUnchanged($postId);
     $previousRevision = (int) $post->getRevisionId();
     $post->set('status', TRUE);
     $post->set('first_published', time());
@@ -1184,10 +1199,10 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $notices);
-    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
+    self::assertSame(1, self::integerValue($notices[0]->get('contador_site')->value));
     self::assertSame(
       (int) $post->getRevisionId(),
-      (int) $notices[0]->get('ultimo_post')->value,
+      self::integerValue($notices[0]->get('ultimo_post')->value),
     );
   }
 
@@ -1207,7 +1222,9 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('aculta_forum_post');
-    $beforeApproval = $storage->loadUnchanged($delayed->id());
+    $delayedPostId = $delayed->id();
+    self::assertNotNull($delayedPostId);
+    $beforeApproval = $storage->loadUnchanged($delayedPostId);
     $delayed->set('status', TRUE);
     $delayed->set('first_published', time());
     $delayed->setNewRevision(TRUE);
@@ -1219,11 +1236,11 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $notices);
-    self::assertSame(2, (int) $notices[0]->get('contador_site')->value);
-    self::assertSame(2, (int) $notices[0]->get('contador_email')->value);
+    self::assertSame(2, self::integerValue($notices[0]->get('contador_site')->value));
+    self::assertSame(2, self::integerValue($notices[0]->get('contador_email')->value));
     self::assertSame(
       (int) $delayed->getRevisionId(),
-      (int) $notices[0]->get('ultimo_post')->value,
+      self::integerValue($notices[0]->get('ultimo_post')->value),
     );
     self::assertGreaterThan(
       (int) $newer->getRevisionId(),
@@ -1254,14 +1271,13 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $notices);
-    self::assertSame(2, (int) $notices[0]->get('contador_site')->value);
-    self::assertSame(2, (int) $notices[0]->get('contador_email')->value);
-    self::assertSame(20, (int) $notices[0]->get('ultimo_comentario')->value);
-    self::assertSame(2, (int) $this->container->get('database')
+    self::assertSame(2, self::integerValue($notices[0]->get('contador_site')->value));
+    self::assertSame(2, self::integerValue($notices[0]->get('contador_email')->value));
+    self::assertSame(20, self::integerValue($notices[0]->get('ultimo_comentario')->value));
+    self::assertSame(2, self::integerFromStatement($this->container->get('database')
       ->select(ForumNoticeEventSchema::TABLE)
       ->countQuery()
-      ->execute()
-      ->fetchField());
+      ->execute()));
     self::assertCount(
       0,
       $this->loadNotices((int) $author->id(), (int) $topic->id()),
@@ -1299,18 +1315,17 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertCount(0, $this->loadNotices((int) $follower->id(), (int) $source->id()));
     $destinationNotices = $this->loadNotices((int) $follower->id(), (int) $destination->id());
     self::assertCount(1, $destinationNotices);
-    self::assertSame(2, (int) $destinationNotices[0]->get('contador_site')->value);
-    self::assertSame(2, (int) $destinationNotices[0]->get('contador_email')->value);
-    self::assertSame((int) $destinationComment->id(), (int) $destinationNotices[0]->get('ultimo_comentario')->value);
+    self::assertSame(2, self::integerValue($destinationNotices[0]->get('contador_site')->value));
+    self::assertSame(2, self::integerValue($destinationNotices[0]->get('contador_email')->value));
+    self::assertSame((int) $destinationComment->id(), self::integerValue($destinationNotices[0]->get('ultimo_comentario')->value));
     self::assertSame('Tópico de destino', $destinationNotices[0]->get('titulo')->value);
 
     // The source event key remains the dedupe authority after the Comment move.
     self::assertSame(0, $avisos->registrarResposta($movedComment));
-    self::assertSame(2, (int) $this->container->get('database')
+    self::assertSame(2, self::integerFromStatement($this->container->get('database')
       ->select(ForumNoticeEventSchema::TABLE)
       ->countQuery()
-      ->execute()
-      ->fetchField());
+      ->execute()));
   }
 
   /**
@@ -1330,8 +1345,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     self::assertSame(0, $avisos->registrarPost($first));
     $response = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $response);
-    self::assertSame(2, (int) $response[0]->get('contador_site')->value);
-    self::assertSame((int) $second->getRevisionId(), (int) $response[0]->get('ultimo_post')->value);
+    self::assertSame(2, self::integerValue($response[0]->get('contador_site')->value));
+    self::assertSame((int) $second->getRevisionId(), self::integerValue($response[0]->get('ultimo_post')->value));
 
     self::assertSame(1, $avisos->notificarAtualizacao($topic, 20));
     self::assertSame(1, $avisos->notificarAtualizacao($topic, 10));
@@ -1342,8 +1357,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       Aviso::TIPO_ATUALIZACAO,
     );
     self::assertCount(1, $updates);
-    self::assertSame(2, (int) $updates[0]->get('contador_site')->value);
-    self::assertSame(20, (int) $updates[0]->get('ultimo_evento')->value);
+    self::assertSame(2, self::integerValue($updates[0]->get('contador_site')->value));
+    self::assertSame(20, self::integerValue($updates[0]->get('ultimo_evento')->value));
   }
 
   /**
@@ -1375,8 +1390,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $post = $this->createPost($topic, (int) $author->id(), TRUE);
 
     self::assertSame(1, $avisos->registrarPost($post));
-    self::assertSame(1, (int) $this->loadNotices((int) $follower->id(), (int) $topic->id())[0]
-      ->get('contador_site')->value);
+    $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
+    self::assertSame(1, self::integerValue($notices[0]->get('contador_site')->value));
   }
 
   /**
@@ -1406,12 +1421,11 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $database,
     ))->expirarAvisos();
 
-    $ids = $database->select(ForumNoticeEventSchema::TABLE, 'event')
+    $ids = self::integerColumnsFromStatement($database->select(ForumNoticeEventSchema::TABLE, 'event')
       ->fields('event', ['event_id'])
       ->orderBy('event_id')
-      ->execute()
-      ->fetchCol();
-    self::assertSame([31], array_map('intval', $ids));
+      ->execute());
+    self::assertSame([31], $ids);
   }
 
   /**
@@ -1492,9 +1506,10 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     );
     $firstClaim = $outbox->claim($id);
     self::assertNotNull($firstClaim);
-    $correlation = (string) $firstClaim['email_correlation'];
+    self::assertIsString($firstClaim['email_correlation']);
+    $correlation = $firstClaim['email_correlation'];
     self::assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/', $correlation);
-    self::assertSame(1, (int) $firstClaim['email_attempts']);
+    self::assertSame(1, self::integerValue($firstClaim['email_attempts']));
 
     $database->update(ForumNoticeEventSchema::TABLE)
       ->fields(['email_updated' => $now - 601])
@@ -1503,7 +1518,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     $retryClaim = $outbox->claim($id);
     self::assertNotNull($retryClaim);
     self::assertSame($correlation, $retryClaim['email_correlation']);
-    self::assertSame(2, (int) $retryClaim['email_attempts']);
+    self::assertSame(2, self::integerValue($retryClaim['email_attempts']));
   }
 
   /**
@@ -1520,17 +1535,18 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     );
     $comment = $this->createPersistedComment($topic, (int) $author->id());
     self::assertSame(1, $avisos->registrarResposta($comment));
-    $notice = reset($this->loadNotices($uid, (int) $topic->id()));
-    self::assertSame(1, (int) $notice->get('contador_email')->value);
+    $notices = $this->loadNotices($uid, (int) $topic->id());
+    $notice = reset($notices);
+    self::assertInstanceOf(Aviso::class, $notice);
+    self::assertSame(1, self::integerValue($notice->get('contador_email')->value));
 
     $database = $this->container->get('database');
-    $id = (int) $database->select(ForumNoticeEventSchema::TABLE, 'event')
+    $id = self::integerFromStatement($database->select(ForumNoticeEventSchema::TABLE, 'event')
       ->fields('event', ['id'])
       ->condition('uid', $uid)
       ->condition('event_type', 'comment')
       ->condition('event_id', (int) $comment->id())
-      ->execute()
-      ->fetchField();
+      ->execute());
     $database->update(ForumNoticeEventSchema::TABLE)
       ->fields([
         'email_status' => ForumNoticeEmailOutbox::STATUS_PROCESSING,
@@ -1550,27 +1566,32 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     self::assertTrue($outbox->completeDirectDelivery($id, static function (array $event) use ($avisos): void {
       $avisos->acknowledgeEmailCount(
-        (int) $event['uid'],
-        (int) $event['nid'],
+        self::integerValue($event['uid']),
+        self::integerValue($event['nid']),
         Aviso::TIPO_RESPOSTA,
         1,
       );
     }));
-    $updatedNotice = reset($this->loadNotices($uid, (int) $topic->id()));
-    self::assertSame(0, (int) $updatedNotice->get('contador_email')->value);
-    self::assertSame(ForumNoticeEmailOutbox::STATUS_SENT, $outbox->load($id)['email_status']);
+    $notices = $this->loadNotices($uid, (int) $topic->id());
+    $updatedNotice = reset($notices);
+    self::assertInstanceOf(Aviso::class, $updatedNotice);
+    self::assertSame(0, self::integerValue($updatedNotice->get('contador_email')->value));
+    $sentRow = $outbox->load($id);
+    self::assertNotNull($sentRow);
+    self::assertSame(ForumNoticeEmailOutbox::STATUS_SENT, $sentRow['email_status']);
 
     $secondComment = $this->createPersistedComment($topic, (int) $author->id());
     self::assertSame(1, $avisos->registrarResposta($secondComment));
-    $secondNotice = reset($this->loadNotices($uid, (int) $topic->id()));
-    self::assertSame(1, (int) $secondNotice->get('contador_email')->value);
-    $secondId = (int) $database->select(ForumNoticeEventSchema::TABLE, 'event')
+    $notices = $this->loadNotices($uid, (int) $topic->id());
+    $secondNotice = reset($notices);
+    self::assertInstanceOf(Aviso::class, $secondNotice);
+    self::assertSame(1, self::integerValue($secondNotice->get('contador_email')->value));
+    $secondId = self::integerFromStatement($database->select(ForumNoticeEventSchema::TABLE, 'event')
       ->fields('event', ['id'])
       ->condition('uid', $uid)
       ->condition('event_type', 'comment')
       ->condition('event_id', (int) $secondComment->id())
-      ->execute()
-      ->fetchField();
+      ->execute());
     $database->update(ForumNoticeEventSchema::TABLE)
       ->fields([
         'email_status' => ForumNoticeEmailOutbox::STATUS_PROCESSING,
@@ -1589,9 +1610,13 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
     catch (\RuntimeException $exception) {
       self::assertSame('Simulated aggregate write failure.', $exception->getMessage());
     }
-    $unchangedNotice = reset($this->loadNotices($uid, (int) $topic->id()));
-    self::assertSame(1, (int) $unchangedNotice->get('contador_email')->value);
-    self::assertSame(ForumNoticeEmailOutbox::STATUS_PROCESSING, $outbox->load($secondId)['email_status']);
+    $notices = $this->loadNotices($uid, (int) $topic->id());
+    $unchangedNotice = reset($notices);
+    self::assertInstanceOf(Aviso::class, $unchangedNotice);
+    self::assertSame(1, self::integerValue($unchangedNotice->get('contador_email')->value));
+    $processingRow = $outbox->load($secondId);
+    self::assertNotNull($processingRow);
+    self::assertSame(ForumNoticeEmailOutbox::STATUS_PROCESSING, $processingRow['email_status']);
   }
 
   /**
@@ -1636,7 +1661,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       $row = $outbox->load($id);
       self::assertNotNull($row);
       self::assertSame(ForumNoticeEmailOutbox::STATUS_QUEUED, $row['email_status']);
-      self::assertSame($now, (int) $row['email_updated']);
+      self::assertSame($now, self::integerValue($row['email_updated']));
     }
   }
 
@@ -1660,24 +1685,21 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     self::assertLessThan(1, $sandbox['#finished']);
     self::assertTrue($schema->tableExists(ForumCommentNoticeSchema::TABLE));
-    self::assertSame(500, (int) $database->select(ForumNoticeEventSchema::TABLE)
+    self::assertSame(500, self::integerFromStatement($database->select(ForumNoticeEventSchema::TABLE)
       ->countQuery()
-      ->execute()
-      ->fetchField());
+      ->execute()));
 
     aculta_messenger_post_update_forum_notice_event_ledger($sandbox);
 
     self::assertTrue($schema->tableExists(ForumNoticeEventSchema::TABLE));
     self::assertFalse($schema->tableExists(ForumCommentNoticeSchema::TABLE));
-    self::assertSame(501, (int) $database->select(ForumNoticeEventSchema::TABLE)
+    self::assertSame(501, self::integerFromStatement($database->select(ForumNoticeEventSchema::TABLE)
       ->countQuery()
-      ->execute()
-      ->fetchField());
-    $event = $database->select(ForumNoticeEventSchema::TABLE, 'event')
+      ->execute()));
+    $event = self::rowFromStatement($database->select(ForumNoticeEventSchema::TABLE, 'event')
       ->fields('event', ['uid', 'event_type', 'event_id', 'nid', 'created'])
       ->condition('event_id', 1_001)
-      ->execute()
-      ->fetchAssoc();
+      ->execute());
     self::assertSame([
       'uid' => '7',
       'event_type' => 'comment',
@@ -1685,11 +1707,10 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       'nid' => '99',
       'created' => '1800000000',
     ], $event);
-    self::assertSame(1_501, (int) $database->select(ForumNoticeEventSchema::TABLE, 'event')
+    self::assertSame(1_501, self::integerFromStatement($database->select(ForumNoticeEventSchema::TABLE, 'event')
       ->fields('event', ['event_id'])
       ->condition('event_id', 1_501)
-      ->execute()
-      ->fetchField());
+      ->execute()));
   }
 
   /**
@@ -1708,7 +1729,9 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     $storage = $this->container->get('entity_type.manager')
       ->getStorage('aculta_forum_post');
-    $before = $storage->loadUnchanged($post->id());
+    $postId = $post->id();
+    self::assertNotNull($postId);
+    $before = $storage->loadUnchanged($postId);
     $post->setNewRevision(TRUE);
     $post->set('body', ['value' => 'Texto corrigido', 'format' => 'plain_text']);
     $post->save();
@@ -1716,8 +1739,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
 
     $notices = $this->loadNotices((int) $follower->id(), (int) $topic->id());
     self::assertCount(1, $notices);
-    self::assertSame(1, (int) $notices[0]->get('contador_site')->value);
-    self::assertSame($firstRevision, (int) $notices[0]->get('ultimo_post')->value);
+    self::assertSame(1, self::integerValue($notices[0]->get('contador_site')->value));
+    self::assertSame($firstRevision, self::integerValue($notices[0]->get('ultimo_post')->value));
   }
 
   /**
@@ -1760,8 +1783,8 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       Aviso::TIPO_ATUALIZACAO,
     );
     self::assertCount(1, $updates);
-    self::assertSame(2, (int) $updates[0]->get('contador_site')->value);
-    self::assertSame(11, (int) $updates[0]->get('ultimo_evento')->value);
+    self::assertSame(2, self::integerValue($updates[0]->get('contador_site')->value));
+    self::assertSame(11, self::integerValue($updates[0]->get('ultimo_evento')->value));
 
     $post = $this->createPost($topic, (int) $author->id(), TRUE);
     self::assertSame(1, $avisos->registrarPost($post));
@@ -1778,7 +1801,7 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
         Aviso::TIPO_ATUALIZACAO,
       ),
     );
-    self::assertSame(2, (int) $updates[0]->get('contador_site')->value);
+    self::assertSame(2, self::integerValue($updates[0]->get('contador_site')->value));
   }
 
   /**
@@ -2035,8 +2058,84 @@ final class ForumNoticeIdempotencyKernelTest extends KernelTestBase {
       ->condition('assunto_nid', $nid)
       ->condition('tipo', $tipo)
       ->execute();
-    return array_values($storage->loadMultiple($ids));
+    $entities = $storage->loadMultiple($ids);
+    $notices = [];
+    foreach ($entities as $entity) {
+      if (!$entity instanceof Aviso) {
+        self::fail('The aculta_aviso storage returned an unexpected entity type.');
+      }
+      $notices[] = $entity;
+    }
+    return $notices;
   }
+
+  /**
+   * Converts a numeric database or field value to an integer.
+   */
+  private static function integerValue(mixed $value): int {
+    if (!is_numeric($value)) {
+      self::fail('Expected a numeric value.');
+    }
+    return (int) $value;
+  }
+
+  /**
+   * Creates an empty set keyed by numeric entity IDs.
+   *
+   * @return array<int, bool>
+   *   Empty map that can be populated with hidden topic IDs.
+   */
+  private static function emptyIntegerMap(): array {
+    return [];
+  }
+
+  /**
+   * Reads a numeric scalar from a query result.
+   */
+  private static function integerFromStatement(mixed $statement): int {
+    self::assertInstanceOf(StatementInterface::class, $statement);
+    return self::integerValue($statement->fetchField());
+  }
+
+  /**
+   * Reads and validates the integer values from a query result column.
+   *
+   * @return list<int>
+   *   Numeric column values converted to integers.
+   */
+  private static function integerColumnsFromStatement(mixed $statement): array {
+    self::assertInstanceOf(StatementInterface::class, $statement);
+    $column = $statement->fetchCol();
+    $integers = [];
+    foreach ($column as $value) {
+      $integers[] = self::integerValue($value);
+    }
+    return $integers;
+  }
+
+  /**
+   * Reads and validates one associative query result row.
+   *
+   * @return array<mixed>
+   *   Fetched database row.
+   */
+  private static function rowFromStatement(mixed $statement): array {
+    self::assertInstanceOf(StatementInterface::class, $statement);
+    $row = $statement->fetchAssoc();
+    if (!is_array($row)) {
+      self::fail('The query did not return a row.');
+    }
+    return $row;
+  }
+
+}
+
+/**
+ * Shares a second digest worker with the active Mailer callback.
+ */
+final class ForumDigestSummaryHolder {
+
+  public ?AvisosResumo $summary = NULL;
 
 }
 

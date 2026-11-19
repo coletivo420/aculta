@@ -1,0 +1,34 @@
+{
+  "purpose": "UI Patterns Views style pilot for the Events public catalogue",
+  "date": "2026-11-11",
+  "environment": "development runtime",
+  "browser": "Firefox ESR, visible WebDriver BiDi",
+  "routes": {
+    "listing": "/",
+    "event_detail": "/evento/feira-do-livro-teste"
+  },
+  "configuration": {
+    "view": "eventos_publicos:block_1",
+    "owner_module": "aculta_events",
+    "row_plugin": "fields / aculta_events_catalogue_card",
+    "style_plugin": "ui_patterns / aculta420_v2:layout-grid",
+    "display_plugin": "native block"
+  },
+  "before_after": {
+    "before": "before/",
+    "after": "after/",
+    "view_results": 2,
+    "anonymous_access": "allowed before and after",
+    "visual_matrix": "listing: 320 and 1440 CSS px in light and dark modes",
+    "assertions": [
+      "two card-cultural SDCs are wrapped by layout-grid",
+      "computed layout display is grid",
+      "visible keyboard focus remains inside main",
+      "zero horizontal document overflow"
+    ],
+    "detail_smoke": "one H1, non-empty main content and zero horizontal overflow at the same viewports/modes; separate from View acceptance"
+  },
+  "deferred": ["zoom 200%", "cache-hit variation", "human visual review"],
+  "snapshot_sha256": "37a007b412a411f33d6b39c130ee98083aa3dbe8f836a3f9dd284dcc1c139d23",
+  "tested_commit": "pending commit"
+}

@@ -11,4 +11,3 @@ id: aculta_discussion_post
 label: 'Resposta de discussão ACULTA'
 target_entity_type_id: node
 description: 'Resposta associada ao contexto da entidade Drupal hospedeira.'
-

@@ -13,14 +13,13 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\flag\FlagServiceInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Url;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\aculta_messenger\Service\MessengerCounts;
 use Drupal\aculta_messenger\Service\UnreadThreadCounter;
 use Drupal\aculta_messenger\Support\StorageDateTime;
-use Drupal\site_alert\GetAlertsInterface;
+use Drupal\site_alert\SiteAlertStorageInterface;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -34,16 +33,12 @@ final class MessengerBarHooks {
     private readonly AccountInterface $currentUser,
     #[Autowire(service: 'aculta_messenger.unread_thread_counter')]
     private readonly UnreadThreadCounter $unreadThreadCounter,
-    #[Autowire(service: 'site_alert.get_alerts')]
-    private readonly GetAlertsInterface $siteAlerts,
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'renderer')]
     private readonly RendererInterface $renderer,
     #[Autowire(service: 'datetime.time')]
     private readonly TimeInterface $time,
-    #[Autowire(service: 'flag')]
-    private readonly FlagServiceInterface $flagService,
     #[Autowire(service: 'aculta_user.friendship_manager')]
     private readonly FriendshipManagerInterface $friendshipManager,
     #[Autowire(service: 'aculta_messenger.counts')]
@@ -54,6 +49,9 @@ final class MessengerBarHooks {
 
   /**
    * Adds the Messenger controls for the current account.
+   *
+   * @param array<string, mixed> $variables
+   *   O valor informado para $variables.
    */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
@@ -69,7 +67,7 @@ final class MessengerBarHooks {
       $alertCacheability = (new CacheableMetadata())
         ->addCacheContexts(['active_site_alerts'])
         ->addCacheTags($this->entityTypeManager->getDefinition('site_alert')->getListCacheTags())
-        ->setCacheMaxAge($alertStorage->getCacheMaxAge());
+        ->setCacheMaxAge($alertStorage instanceof SiteAlertStorageInterface ? $alertStorage->getCacheMaxAge() : 0);
       if ($this->currentUser->isAuthenticated()) {
         // The alert badge includes this member's unread Flag state.
         $alertCacheability->addCacheContexts(['user'])->setCacheMaxAge(0);
@@ -122,6 +120,9 @@ final class MessengerBarHooks {
 
   /**
    * Attaches the new-conversation search script to authenticated pages.
+   *
+   * @param array<array-key, mixed> $attachments
+   *   O valor informado para $attachments.
    */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
@@ -136,6 +137,9 @@ final class MessengerBarHooks {
 
   /**
    * Supplies the current member's native thread state as a neutral value.
+   *
+   * @param array<array-key, mixed> $variables
+   *   O valor informado para $variables.
    */
   #[Hook('preprocess_private_message_thread')]
   public function preprocessPrivateMessageThread(array &$variables): void {

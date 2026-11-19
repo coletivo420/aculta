@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\aculta_lms\Hook\AttemptArchiveHooks;
 use Drupal\Component\Serialization\Json;
+use Drupal\Component\Serialization\Yaml;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\Entity\Comment;
 use Drupal\file\Entity\File;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\PermissionScopeInterface;
+use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\Tests\lms\LmsKernelTestTrait;
 use Drupal\Tests\user\Traits\UserCreationTrait;
 use Drupal\aculta_lms\Entity\ActivityEntity;
 use Drupal\aculta_lms\Entity\AnswerEntity;
@@ -31,7 +34,6 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
 
   use AcultaLmsDependencyHarnessTrait;
 
-  use LmsKernelTestTrait;
   use UserCreationTrait;
 
   /**
@@ -56,10 +58,11 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     'views',
     'options',
     'text',
-    'comment',
-    'lms',
-    'lms_answer_comments',
-    'lms_answer_plugins',
+    'editor',
+    'ckeditor5',
+    'node', 'node_storage_body_field', 'text_with_summary', 'gnode',
+    'comment', 'media_library', 'photoswipe', 'media_gallery',
+    'aculta_lms',
   ];
 
   /**
@@ -87,8 +90,29 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->installEntitySchema('comment');
+    $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installConfig(['system', 'comment']);
-    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    foreach ([
+      'group.type.lms_course',
+      'group.relationship_type.lms_course-group_membership',
+      'field.storage.group_relationship.group_roles',
+      'field.field.group_relationship.lms_course-group_membership.group_roles',
+    ] as $config_id) {
+      $path = DRUPAL_ROOT . '/../config/sync/' . $config_id . '.yml';
+      $data = Yaml::decode(file_get_contents($path));
+      // Group 4 no longer defines creator_wizard in its GroupType schema.
+      unset($data['creator_wizard']);
+      $this->container->get('config.factory')->getEditable($config_id)
+        ->setData($data)
+        ->save();
+    }
+    $this->container->get('config.factory')->getEditable('group.type.lms_course')
+      ->set('creator_membership', FALSE)
+      ->set('creator_roles', [])
+      ->save();
+    $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
+    $this->container->get('group_relation_type.manager')->clearCachedPluginMaps();
     $this->installEntitySchema('action');
     $this->installEntitySchema('group');
     $this->installEntitySchema('group_relationship');
@@ -99,18 +123,29 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $this->installSchema('file', ['file_usage']);
     $this->installSchema('entity_usage', ['entity_usage']);
     $this->installConfig(['file']);
-    $this->installEntitySchema('lms_activity');
-    $this->installEntitySchema('lms_lesson');
-    $this->installEntitySchema('lms_course_status');
-    $this->installEntitySchema('lms_lesson_status');
-    $this->installEntitySchema('lms_answer');
-    $this->installEntitySchema('comment');
-    $this->installSchema('comment', ['comment_entity_statistics']);
+    $this->installEntitySchema('aculta_lms_activity');
+    $this->installEntitySchema('aculta_lms_lesson');
+    $this->installEntitySchema('aculta_lms_answer');
     $this->installEntitySchema('aculta_lms_attempt_archive');
-    $this->installConfig(['group', 'lms', 'lms_answer_comments']);
+    $this->installConfig(['group']);
+    $this->installEntitySchema('node');
+    $this->installConfig(['node', 'node_storage_body_field']);
+    // O storage field_aculta_discussion pertence ao aculta_forum; criar aqui
+    // evita habilitar o fórum inteiro só para instalar a config do LMS.
+    FieldStorageConfig::create([
+      'field_name' => 'field_aculta_discussion',
+      'entity_type' => 'node',
+      'type' => 'comment',
+      'settings' => ['comment_type' => 'aculta_discussion_post'],
+      'cardinality' => 1,
+      'translatable' => TRUE,
+      'module' => 'comment',
+    ])->save();
+    $this->installConfig(['aculta_lms']);
   }
 
-  /** Archives ACULTA attempts when grading changes or the attempt is deleted. */
+  /**
+   * Archives ACULTA attempts when grading changes or the attempt is deleted. */
   public function testAcultaAttemptHistoryPreservesExactGradeAndComment(): void {
     $student = $this->createUser();
     $course = Group::create([
@@ -184,7 +219,8 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertSame(91.75, (float) $last->get('score_precise')->value);
   }
 
-  /** Removes attempt history when its student account is deleted. */
+  /**
+   * Removes attempt history when its student account is deleted. */
   public function testAccountDeletionPurgesAcultaAttemptHistory(): void {
     [$student, , , , $answer] = $this->createAcultaAttempt();
     $answer->delete();
@@ -195,7 +231,8 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertCount(0, $this->archivesForAcultaAttempt($student, $answer));
   }
 
-  /** Removes ACULTA attempt history when its course is deleted. */
+  /**
+   * Removes ACULTA attempt history when its course is deleted. */
   public function testCourseDeletionPurgesAcultaAttemptHistory(): void {
     [, $course, , , $answer] = $this->createAcultaAttempt();
     $answer->delete();
@@ -206,9 +243,10 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     self::assertCount(0, $this->archivesForAcultaAttempt(NULL, $answer));
   }
 
-  /** Restricts ACULTA history by course and renders stored text safely. */
+  /**
+   * Restricts ACULTA history by course and renders stored text safely. */
   public function testAcultaHistoryAccessIsCourseScopedAndOutputIsPlainText(): void {
-    [$student, $course, , $activity, $answer] = $this->createAcultaAttempt(['answer' => '<script>alert(1)</script>Resposta']);
+    [$student, $course, , , $answer] = $this->createAcultaAttempt(['answer' => '<script>alert(1)</script>Resposta']);
     $member_role = GroupRole::create([
       'id' => 'lms_course-test_member',
       'label' => 'Test student',
@@ -276,7 +314,7 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     $this->container->get('entity_type.manager')
       ->getAccessControlHandler('aculta_lms_attempt_archive')
       ->resetCache();
-    $direct_access = $this->container->get(\Drupal\aculta_lms\Hook\AttemptArchiveHooks::class)
+    $direct_access = $this->container->get(AttemptArchiveHooks::class)
       ->attemptArchiveAccess($archive, 'view', $student);
     self::assertTrue($direct_access->isForbidden(), sprintf(
       'Expected direct denial, got allowed=%s neutral=%s for administer lms=%s.',
@@ -323,8 +361,8 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
 
     $this->container->get('current_user')->setAccount($student);
     $build = [];
-    $this->container->get(\Drupal\aculta_lms\Hook\AttemptArchiveHooks::class)
-      ->attemptArchiveView($build, $answer, $this->createMock(\Drupal\Core\Entity\Display\EntityViewDisplayInterface::class), 'full');
+    $this->container->get(AttemptArchiveHooks::class)
+      ->attemptArchiveView($build, $answer, $this->createMock(EntityViewDisplayInterface::class), 'full');
     self::assertArrayHasKey('previous_attempts', $build);
     $rows = $build['previous_attempts']['history']['#rows'];
     $plain_text = [];
@@ -380,7 +418,8 @@ final class AttemptArchiveLifecycleTest extends KernelTestBase {
     }
   }
 
-  /** Creates a course, lesson, activity and immutable ACULTA attempt. */
+  /**
+   * Creates a course, lesson, activity and immutable ACULTA attempt. */
   private function createAcultaAttempt(array $payload = ['answer' => 'Resposta original']): array {
     $student = $this->createUser();
     $course_owner = $this->createUser();

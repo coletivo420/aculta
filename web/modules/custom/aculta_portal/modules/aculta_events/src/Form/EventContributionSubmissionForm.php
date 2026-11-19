@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Form;
 
-use Drupal\aculta_contributions\Adapter\ContributionAdapterRegistry;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Adapter\ContributionAdapterRegistry;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\aculta_events\Adapter\EventContributionAdapter;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
@@ -25,13 +25,13 @@ final class EventContributionSubmissionForm extends FormBase {
 
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entities,
-    #[Autowire(service: 'aculta_contributions.lifecycle')]
-    private readonly ContributionLifecycle $lifecycle,
-    #[Autowire(service: 'aculta_contributions.adapter_registry')]
-    private readonly ContributionAdapterRegistry $adapters,
+    protected readonly EntityTypeManagerInterface $entities,
+    #[Autowire(service: 'aculta_cgu.contribution_lifecycle')]
+    protected readonly ContributionLifecycle $lifecycle,
+    #[Autowire(service: 'aculta_cgu.contribution_adapter_registry')]
+    protected readonly ContributionAdapterRegistry $adapters,
     #[Autowire(service: 'aculta_events.organization_contribution_event_queue')]
-    private readonly OrganizationContributionEventQueue $eventQueue,
+    protected readonly OrganizationContributionEventQueue $eventQueue,
   ) {}
 
   /**

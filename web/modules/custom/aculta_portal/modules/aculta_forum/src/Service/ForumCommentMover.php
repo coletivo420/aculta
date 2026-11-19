@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Service;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_forum\Event\ForumCommentSubtreeMovedEvent;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentStatisticsInterface;
@@ -39,8 +40,8 @@ final class ForumCommentMover {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly ForumDiscussionWriteGuard $discussionWriteGuard,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     private readonly LockBackendInterface $lock,
     private readonly Connection $database,
     private readonly CommentStatisticsInterface $commentStatistics,
@@ -65,7 +66,7 @@ final class ForumCommentMover {
       return $result;
     }
 
-    $forum_domain = $this->domainPurposeManager->getDomain('forum');
+    $forum_domain = $this->siteManager->getDomain(SiteKey::Forum);
     $allowed = $this->configFactory->get('aculta_forum.settings')->get('comment_move_enabled') === TRUE
       && $forum_domain !== NULL
       && $account->hasPermission('move aculta forum comments')
@@ -79,11 +80,11 @@ final class ForumCommentMover {
     }
 
     if ($allowed) {
-      $node_access = $this->domainPurposeManager->runInPurpose(
+      $node_access = $this->siteManager->runInSite(
         'forum',
         fn () => $source->access('view', $account, TRUE),
       );
-      $comment_access = $this->domainPurposeManager->runInPurpose(
+      $comment_access = $this->siteManager->runInSite(
         'forum',
         fn () => $comment->access('view', $account, TRUE),
       );
@@ -106,18 +107,21 @@ final class ForumCommentMover {
   }
 
   /**
-   * Returns accessible, open public topics eligible as destinations. */
+   * Returns accessible, open public topics eligible as destinations.
+   *
+   * @return array<int, \Drupal\Core\StringTranslation\TranslatableMarkup|string|null>
+   */
   public function destinations(CommentInterface $comment, AccountInterface $account): array {
     if (!$this->access($comment, $account)->isAllowed()) {
       return [];
     }
     $source = $comment->getCommentedEntity();
-    $domain = $this->domainPurposeManager->getDomain('forum');
-    if (!$source instanceof NodeInterface || $domain === NULL) {
+    $domain = $this->siteManager->getDomain(SiteKey::Forum);
+    if (!$source instanceof NodeInterface || !$domain instanceof \Drupal\domain\DomainInterface) {
       return [];
     }
 
-    $ids = $this->domainPurposeManager->runInPurpose('forum', function () use ($domain, $source): array {
+    $rawIds = $this->siteManager->runInSite('forum', function () use ($domain, $source): array {
       return array_values($this->entityTypeManager->getStorage('node')->getQuery()
         ->accessCheck(TRUE)
         ->condition('type', 'aculta_forum_topic')
@@ -129,10 +133,13 @@ final class ForumCommentMover {
         ->execute());
     });
 
+    /** @var array<int|string> $ids */
+    $ids = is_array($rawIds) ? $rawIds : [];
+
     $destinations = [];
     foreach ($this->entityTypeManager->getStorage('node')->loadMultiple($ids) as $node) {
-      if ($node instanceof NodeInterface && $this->isOpenTopic($node)) {
-        $access = $this->domainPurposeManager->runInPurpose(
+      if ($this->isOpenTopic($node)) {
+        $access = $this->siteManager->runInSite(
           'forum',
           fn () => $node->access('view', $account, TRUE),
         );
@@ -160,9 +167,6 @@ final class ForumCommentMover {
     $destination_id = (int) $destination->id();
     $this->assertMoveEndpoints($comment, $destination, $account);
     $comment_storage = $this->entityTypeManager->getStorage('comment');
-    if (!$comment_storage instanceof CommentStorageInterface) {
-      throw new \LogicException('Drupal Comment storage does not support thread allocation.');
-    }
 
     // Comment::preSave() acquires its thread lock before comment_presave. Keep
     // the same order: reserve the destination root before discussion locks so
@@ -186,10 +190,11 @@ final class ForumCommentMover {
         $source = $this->assertMoveEndpoints($comment, $destination, $account);
         $subtree = $this->loadSubtree($comment);
         foreach ($subtree as $member) {
-          if (!$this->domainPurposeManager->runInPurpose(
+          $memberAccess = $this->siteManager->runInSite(
             'forum',
-            fn () => $member->access('view', $account, TRUE)->isAllowed(),
-          )) {
+            fn () => $member->access('view', $account, TRUE),
+          );
+          if (!$memberAccess instanceof AccessResultInterface || !$memberAccess->isAllowed()) {
             throw new \InvalidArgumentException('A reply in this subtree is not accessible.');
           }
         }
@@ -202,7 +207,13 @@ final class ForumCommentMover {
         $transaction = NULL;
         try {
           $transaction = $this->database->startTransaction();
-          $contains_published_comment = (bool) array_filter($subtree, static fn (CommentInterface $member): bool => $member->isPublished());
+          $contains_published_comment = FALSE;
+          foreach ($subtree as $member) {
+            if ($member->isPublished()) {
+              $contains_published_comment = TRUE;
+              break;
+            }
+          }
           $this->discussionWriteGuard->beginMove(array_keys($subtree));
           foreach ($subtree as $cid => $member) {
             $this->discussionWriteGuard->refresh($topic_locks);
@@ -216,7 +227,7 @@ final class ForumCommentMover {
                 throw new \InvalidArgumentException('The reply subtree has inconsistent thread positions.');
               }
               $suffix = substr(rtrim($old_thread, '/'), strlen($old_root_thread));
-              $member->setThread(rtrim($new_root_thread, '/') . $suffix . '/');
+              $member->setThread(rtrim((string) $new_root_thread, '/') . $suffix . '/');
             }
             $member->set('entity_id', $destination_id);
             $member->save();
@@ -265,7 +276,7 @@ final class ForumCommentMover {
       return count($subtree);
     }
     finally {
-      $this->lock->release($thread_lock);
+      $this->lock->release((string) $thread_lock);
     }
   }
 
@@ -279,12 +290,12 @@ final class ForumCommentMover {
       throw new \InvalidArgumentException('The Forum comment move is not authorized for these endpoints.');
     }
 
-    $forum_domain = $this->domainPurposeManager->getDomain('forum');
+    $forum_domain = $this->siteManager->getDomain(SiteKey::Forum);
     if ($forum_domain === NULL
       || (string) ($destination->get('field_domain_source')->target_id ?? '') !== (string) $forum_domain->id()) {
       throw new \InvalidArgumentException('The destination is outside the public Forum purpose.');
     }
-    $destination_access = $this->domainPurposeManager->runInPurpose(
+    $destination_access = $this->siteManager->runInSite(
       'forum',
       fn () => $destination->access('view', $account, TRUE),
     );
@@ -300,7 +311,10 @@ final class ForumCommentMover {
   }
 
   /**
-   * Loads and validates a complete descendant tree in stable thread order. */
+   * Loads and validates a complete descendant tree in stable thread order.
+   *
+   * @return array<int, CommentInterface>
+   */
   private function loadSubtree(CommentInterface $root): array {
     $this->assertMovableComment($root);
     $source_id = (int) $root->getCommentedEntityId();
@@ -312,11 +326,12 @@ final class ForumCommentMover {
       foreach ($frontier as $parent) {
         $parents[(int) $parent->id()] = $parent;
       }
-      $child_ids = $storage->getChildCids($parents);
+      $rawChildIds = $storage->getChildCids($parents);
+      /** @var array<int|string> $child_ids */
+      $child_ids = array_values($rawChildIds);
       $frontier = [];
       foreach ($storage->loadMultiple($child_ids) as $child) {
-        if (!$child instanceof CommentInterface
-          || (int) $child->getCommentedEntityId() !== $source_id
+        if ((int) $child->getCommentedEntityId() !== $source_id
           || $child->getCommentedEntityTypeId() !== 'node'
           || $child->getFieldName() !== self::FIELD_NAME
           || $child->bundle() !== self::COMMENT_TYPE) {
@@ -360,35 +375,45 @@ final class ForumCommentMover {
   /**
    * Whether the topic is public, active and uses the shared Comment field. */
   private function isMovableTopic(NodeInterface $topic): bool {
+    $fieldDef = $topic->getFieldDefinition(self::FIELD_NAME);
     return $topic->bundle() === 'aculta_forum_topic'
       && $topic->isPublished()
       && $topic->hasField(self::FIELD_NAME)
       && $topic->hasField('field_domain_source')
       && $topic->hasField('field_autor_legado')
       && $topic->get('field_autor_legado')->isEmpty()
-      && $topic->getFieldDefinition(self::FIELD_NAME)->getFieldStorageDefinition()->getSetting('comment_type') === self::COMMENT_TYPE;
+      && $fieldDef !== NULL
+      && $fieldDef->getFieldStorageDefinition()->getSetting('comment_type') === self::COMMENT_TYPE;
   }
 
   /**
    * Whether a topic is a valid open destination. */
   private function isOpenTopic(NodeInterface $topic): bool {
+    $field = $topic->get(self::FIELD_NAME);
+    $statusValue = $field->status;
     return $this->isMovableTopic($topic)
-      && (int) $topic->get(self::FIELD_NAME)->status === CommentingStatus::Open->value;
+      && is_numeric($statusValue)
+      && (int) $statusValue === CommentingStatus::Open->value;
   }
 
   /**
    * Builds an unsaved Comment to address Comment Core's per-host APIs. */
   private function newHostProbe(NodeInterface $host): CommentInterface {
-    return Comment::create([
+    /** @var CommentInterface $probe */
+    $probe = Comment::create([
       'entity_type' => 'node',
       'entity_id' => (int) $host->id(),
       'field_name' => self::FIELD_NAME,
       'comment_type' => self::COMMENT_TYPE,
     ]);
+    return $probe;
   }
 
   /**
-   * Allocates a Core-compatible thread slot under the Comment Core lock. */
+   * Allocates a Core-compatible thread slot under the Comment Core lock.
+   *
+   * @return array{0: string, 1: string}
+   */
   private function allocateRootThread(CommentStorageInterface $storage, CommentInterface $probe, int $destinationId): array {
     for ($attempt = 0; $attempt < 500; $attempt++) {
       // Match Comment Core's lock key so normal comment creation and moves

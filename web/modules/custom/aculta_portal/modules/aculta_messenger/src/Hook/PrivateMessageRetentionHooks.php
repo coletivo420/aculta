@@ -12,7 +12,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\State\StateInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -51,7 +51,8 @@ final class PrivateMessageRetentionHooks {
     $cutoff = (new \DateTimeImmutable('@' . $this->time->getRequestTime()))
       ->modify('-' . $this->policy->retentionMonths() . ' months')
       ->getTimestamp();
-    $cursor = max(0, (int) $this->state->get(self::CURSOR_KEY, 0));
+    $storedCursor = $this->state->get(self::CURSOR_KEY, 0);
+    $cursor = max(0, is_numeric($storedCursor) ? (int) $storedCursor : 0);
     $storage = $this->entityTypeManager->getStorage('private_message_thread');
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
@@ -79,7 +80,7 @@ final class PrivateMessageRetentionHooks {
         // An active conversation can no longer be deleted based on a stale
         // candidate selected before a concurrent reply.
         $thread = $storage->loadUnchanged($threadId);
-        if (!$thread instanceof PrivateMessageThreadInterface || (int) $thread->get('updated')->value > $cutoff) {
+        if (!$thread instanceof PrivateMessageThreadInterface || $this->updatedAt($thread) > $cutoff) {
           continue;
         }
         $transaction = $this->database->startTransaction();
@@ -90,7 +91,7 @@ final class PrivateMessageRetentionHooks {
           // fails.
           $messageIds = $this->privateMessageIds($thread);
           $thread->delete();
-          $this->deleteNotificationsFor($messageIds);
+          $this->deleteNotificationsFor(array_values($messageIds));
           $transaction->commitOrRelease();
           $deleted++;
         }
@@ -122,7 +123,11 @@ final class PrivateMessageRetentionHooks {
   }
 
   /**
-   * Deletes the Messenger notification records that reference this thread's private messages. */
+   * Deletes the Messenger notification records that reference this thread's private messages.
+   *
+   * @param list<int> $messageIds
+   *   O valor informado para $messageIds.
+   */
   private function deleteNotificationsFor(array $messageIds): void {
     if ($messageIds === []) {
       return;
@@ -144,6 +149,14 @@ final class PrivateMessageRetentionHooks {
         }
       } while (count($notificationIds) === self::NOTIFICATION_DELETE_BATCH_SIZE);
     }
+  }
+
+  /**
+   * Returns the thread's last update timestamp, or zero when it is not numeric.
+   */
+  private function updatedAt(PrivateMessageThreadInterface $thread): int {
+    $value = $thread->get('updated')->value;
+    return is_numeric($value) ? (int) $value : 0;
   }
 
   /**

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_pagamentos_mercadopago\Form;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoApiException;
 use Drupal\aculta_pagamentos_mercadopago\MercadoPago\MercadoPagoRecurrenceService;
 use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
@@ -19,9 +20,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class MercadoPagoPlanManagementForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly MercadoPagoRecurrenceService $recurrence,
-    private readonly DomainPurposeManager $domainPurposes,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly MercadoPagoRecurrenceService $recurrence,
+    protected readonly DomainSiteManager $siteManagers,
   ) {}
 
   /**
@@ -30,7 +31,7 @@ final class MercadoPagoPlanManagementForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('aculta_pagamentos_mercadopago.recurrence_service'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
@@ -45,7 +46,7 @@ final class MercadoPagoPlanManagementForm extends FormBase {
   public function buildForm(array $form, FormStateInterface $form_state): array {
     // All external-provider form submissions use the canonical integration
     // endpoint, even when Studio renders this form in the ACCOUNT domain.
-    $integrationUrl = $this->domainPurposes->routeUrl('main', 'aculta_pagamentos_mercadopago.plans');
+    $integrationUrl = $this->siteManagers->routeUrl(SiteKey::Main, 'aculta_pagamentos_mercadopago.plans');
     $form['#action'] = $integrationUrl?->toString() ?? Url::fromRoute('aculta_pagamentos_mercadopago.plans')->toString();
     $gateways = $this->testGateways();
     $form['intro'] = ['#markup' => $this->t('Planos Mercado Pago são modelos de assinatura. Esta interface acessa somente gateways em modo sandbox.')];
@@ -157,7 +158,7 @@ final class MercadoPagoPlanManagementForm extends FormBase {
       $this->messenger()->addError($this->t('Informe um valor e intervalo válidos.'));
       return;
     }
-    $backUrl = $this->domainPurposes->routeUrl('support', 'aculta_donation.donation.default')?->toString();
+    $backUrl = $this->siteManagers->routeUrl(SiteKey::Support, 'aculta_donation.donation.default')?->toString();
     if (!is_string($backUrl) || $backUrl === '') {
       $this->messenger()->addError($this->t('A página de apoio não está disponível para retorno.'));
       return;

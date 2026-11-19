@@ -44,7 +44,7 @@ Rotas atuais do Melhor Envio (conferir com `drush ev` ao alterar):
 | Webhook (POST, sem sessão) | `/integracoes/melhorenvio/webhook` | `_access: TRUE`, valida assinatura |
 | Simulador de frete (JSON, loja) | `/frete/simular` | `access content` |
 
-Ambiente de teste: host `https://aculta.toca.net.br`. Produção: `https://aculta.org`, com o mesmo caminho.
+Ambiente de desenvolvimento: host `https://aculta.toca.net.br`. Produção futura, sem host ainda: `https://aculta.org`, com o mesmo caminho.
 
 ## Padrão de ida e retorno de integrações (popup)
 

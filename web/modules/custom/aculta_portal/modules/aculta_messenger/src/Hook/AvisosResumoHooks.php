@@ -16,7 +16,8 @@ final class AvisosResumoHooks {
     private readonly AvisosResumo $resumo,
   ) {}
 
-  /** Implements hook_cron(). */
+  /**
+ * Implements hook_cron(). */
   #[Hook('cron')]
   public function cron(): void {
     $this->resumo->enviarResumos();

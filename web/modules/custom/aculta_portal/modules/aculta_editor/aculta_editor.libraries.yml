@@ -1,0 +1,9 @@
+ckeditor5.fluent_emoji:
+  version: VERSION
+  js:
+    js/ckeditor5/aculta-fluent-emoji.js: {}
+  css:
+    theme:
+      css/ckeditor5/fluent-emoji.css: {}
+  dependencies:
+    - core/ckeditor5

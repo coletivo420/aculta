@@ -1,0 +1,115 @@
+--- a/modules/log/src/EventSubscriber/PaymentEventSubscriber.php
++++ b/modules/log/src/EventSubscriber/PaymentEventSubscriber.php
+@@ -94,8 +94,8 @@
+     $template_id = 'payment_updated';
+ 
+     // Gets original state if possible.
+-    $original_state = isset($payment->original) ? $payment->original->getState()
+-      ->getId() : '';
++    $original = $payment->getOriginal();
++    $original_state = $original ? $original->getState()->getId() : '';
+     $gateway = $payment->getPaymentGateway();
+ 
+     // For changed state to the authorized use another template.
+--- a/modules/payment/src/Entity/Payment.php
++++ b/modules/payment/src/Entity/Payment.php
+@@ -384,7 +384,8 @@
+     }
+     // Maintain the authorized and completed timestamps.
+     $state = $this->getState()->getId();
+-    $original_state = isset($this->original) ? $this->original->getState()->getId() : '';
++    $original = $this->getOriginal();
++    $original_state = $original ? $original->getState()->getId() : '';
+     if ($state == 'authorization' && $original_state != 'authorization') {
+       if (empty($this->getAuthorizedTime())) {
+         $this->setAuthorizedTime(\Drupal::time()->getRequestTime());
+--- a/modules/store/src/Entity/Store.php
++++ b/modules/store/src/Entity/Store.php
+@@ -279,7 +279,8 @@
+     parent::postSave($storage, $update);
+ 
+     $default = $this->isDefault();
+-    $original_default = $this->original ? $this->original->isDefault() : FALSE;
++    $original = $this->getOriginal();
++    $original_default = $original ? $original->isDefault() : FALSE;
+     if ($default && !$original_default) {
+       // The store was set as default, remove the flag from other stores.
+       $store_ids = $storage->getQuery()
+--- a/modules/promotion/src/Hook/CommercePromotionHooks.php
++++ b/modules/promotion/src/Hook/CommercePromotionHooks.php
+@@ -64,7 +64,7 @@
+       return;
+     }
+ 
+-    $old_mail = $account->original->getEmail();
++    $old_mail = $account->getOriginal()?->getEmail();
+     $new_mail = $account->getEmail();
+     if ($old_mail && $new_mail && $old_mail != $new_mail) {
+       $this->promotionUsage->reassign($old_mail, $new_mail);
+--- a/modules/order/src/OrderStorage.php
++++ b/modules/order/src/OrderStorage.php
+@@ -133,7 +133,7 @@
+     $order->recalculateTotalPrice();
+ 
+     // Notify other modules if the order has been fully paid.
+-    $original_paid = isset($order->original) ? $order->original->isPaid() : FALSE;
++    $original_paid = $order->getOriginal()?->isPaid() ?? FALSE;
+     if ($order->isPaid() && !$original_paid) {
+       // Order::preSave() initializes the 'paid_event_dispatched' flag to FALSE.
+       // Skip dispatch if it already happened once (flag is TRUE), or if the
+--- a/modules/order/src/OrderRefresh.php
++++ b/modules/order/src/OrderRefresh.php
+@@ -192,14 +192,9 @@
+         $order_item->delete();
+         continue;
+       }
+-      if (!isset($order_item->original) &&
++      if ($order_item->getOriginal() === NULL &&
+         isset($original_order_items[$order_item->uuid()])) {
+-        if (method_exists($order_item, 'setOriginal')) {
+-          $order_item->setOriginal($original_order_items[$order_item->uuid()]);
+-        }
+-        else {
+-          $order_item->original = $original_order_items[$order_item->uuid()];
+-        }
++        $order_item->setOriginal($original_order_items[$order_item->uuid()]);
+       }
+       if ($order_item->hasTranslationChanges()) {
+         // Remove the order that was set above, to avoid
+--- a/modules/order/src/Entity/Order.php
++++ b/modules/order/src/Entity/Order.php
+@@ -761,8 +761,9 @@
+   public function preSave(EntityStorageInterface $storage) {
+     parent::preSave($storage);
+ 
+-    if (isset($this->original) && !$this->isNew() && $this->original->getVersion() > $this->getVersion()) {
+-      $mismatch_exception = new OrderVersionMismatchException(sprintf('Attempted to save order %s with version %s. Current version is %s.', $this->id(), $this->getVersion(), $this->original->getVersion()));
++    $original = $this->getOriginal();
++    if ($original !== NULL && !$this->isNew() && $original->getVersion() > $this->getVersion()) {
++      $mismatch_exception = new OrderVersionMismatchException(sprintf('Attempted to save order %s with version %s. Current version is %s.', $this->id(), $this->getVersion(), $original->getVersion()));
+       $log_only = $this->getEntityType()->get('log_version_mismatch');
+       if ($log_only) {
+         \Drupal::logger('commerce_order')->error('<pre>%exception</pre>', [
+--- a/modules/cart/tests/modules/commerce_cart_test/commerce_cart_test.module
++++ b/modules/cart/tests/modules/commerce_cart_test/commerce_cart_test.module
+@@ -15,7 +15,7 @@
+  * $entity->original being empty).
+  */
+ function commerce_cart_test_commerce_order_update(EntityInterface $entity) {
+-  if (!$entity->isNew() && empty($entity->original)) {
+-    throw new EntityMalformedException('$entity->original not found');
++  if (!$entity->isNew() && $entity->getOriginal() === NULL) {
++    throw new EntityMalformedException('$entity->getOriginal() not found');
+   }
+ }
+--- a/modules/order/tests/src/Kernel/OrderLockingTest.php
++++ b/modules/order/tests/src/Kernel/OrderLockingTest.php
+@@ -111,7 +111,7 @@
+       $this->fail('Expected OrderVersionMismatchException exception');
+     }
+     catch (EntityStorageException $e) {
+-      $this->assertEquals(sprintf('Attempted to save order %s with version %s. Current version is %s.', $order->id(), $order->getVersion(), $order->original->getVersion()), $e->getMessage());
++      $this->assertEquals(sprintf('Attempted to save order %s with version %s. Current version is %s.', $order->id(), $order->getVersion(), $order->getOriginal()->getVersion()), $e->getMessage());
+       $original = $e->getPrevious();
+       $this->assertInstanceOf(OrderVersionMismatchException::class, $original);
+     }

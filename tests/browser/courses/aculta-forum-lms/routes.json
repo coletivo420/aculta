@@ -1,0 +1,9 @@
+{
+  "front": "aculta-forum-lms",
+  "purpose": "courses",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/courses/aculta-forum-lms/README.md",
+  "auth": { "account": "teste_comum" },
+  "public_routes": [],
+  "notes": "Sem rota pública declarada. Os testes usam discussões de LMS e H5P com sessão. Cobertura fica no script da frente."
+}

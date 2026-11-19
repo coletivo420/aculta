@@ -26,10 +26,15 @@ use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
 
-/** Tests reliable confirmation request ordering, throttling, and failure handling. */
+/**
+ * Testa a ordem, o limite e o tratamento de falhas das confirmações.
+ */
 #[Group('aculta_portal')]
 final class EmailConfirmationRequesterTest extends UnitTestCase {
 
+  /**
+   * Verifica que o novo token é persistido antes de cancelar o token antigo.
+   */
   public function testAcceptedTransportPersistsNewTokenBeforeCancellingOldToken(): void {
     $events = [];
     $old = $this->confirmation(10, 7, $events, 'old');
@@ -40,6 +45,9 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $this->assertSame(['new-save', 'send', 'new-save', 'old-cancel', 'old-save'], $events);
   }
 
+  /**
+   * Verifica que a confirmação anterior é preservada quando o envio é rejeitado.
+   */
   public function testRejectedTransportPreservesPreviousConfirmation(): void {
     $events = [];
     $old = $this->confirmation(10, 7, $events, 'old');
@@ -55,6 +63,9 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $this->assertSame(['new-save', 'send', 'new-delete'], $events);
   }
 
+  /**
+   * Verifica que falhas na persistência inicial não enviam nem cancelam.
+   */
   public function testInitialPersistenceFailureDoesNotSendOrCancelOldConfirmation(): void {
     $events = [];
     $old = $this->confirmation(10, 7, $events, 'old');
@@ -69,6 +80,9 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $this->assertSame(['new-save'], $events);
   }
 
+  /**
+   * Verifica que o limite de flood bloqueia requisições repetidas.
+   */
   public function testFloodLimitBlocksRepeatedRequest(): void {
     $flood = $this->createMock(FloodInterface::class);
     $flood->expects($this->once())->method('isAllowed')->with('aculta_portal.email_confirmation_request', 1, 900, '7')->willReturn(FALSE);
@@ -91,6 +105,9 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $this->assertSame(EmailConfirmationRequestResult::RATE_LIMITED, $requester->request($this->account(7)));
   }
 
+  /**
+   * Verifica que uma requisição concorrente falha quando o lock está ocupado.
+   */
   public function testConcurrentRequestFailsClosedWhenLockIsHeld(): void {
     $flood = $this->createMock(FloodInterface::class);
     $flood->expects($this->never())->method('isAllowed');
@@ -112,6 +129,9 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $this->assertSame(EmailConfirmationRequestResult::BUSY, $requester->request($this->account(7)));
   }
 
+  /**
+   * Verifica que uma conta inválida não pode solicitar confirmação.
+   */
   public function testInvalidAccountCannotRequestConfirmation(): void {
     $account = $this->account(0);
     $flood = $this->createMock(FloodInterface::class);
@@ -133,6 +153,9 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $this->assertSame(EmailConfirmationRequestResult::INVALID_ACCOUNT, $requester->request($account));
   }
 
+  /**
+   * Verifica que confirmação anterior de outra conta não é cancelada.
+   */
   public function testPreviousConfirmationForDifferentAccountIsNotCancelled(): void {
     $events = [];
     $other = $this->confirmation(10, 8, $events, 'other');
@@ -145,6 +168,17 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     $this->assertSame(['new-save', 'send', 'new-save'], $events);
   }
 
+  /**
+   * Cria um gerenciador de confirmações simulado para os testes.
+   *
+   * @param \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface $new
+   *   Confirmação a ser criada pelo gerenciador.
+   * @param array $events
+   *   Lista de eventos preenchida pelos callbacks simulados.
+   *
+   * @return \Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface
+   *   Gerenciador de confirmações simulado.
+   */
   private function managerFor(AcultaMailConfirmationInterface $new, array &$events): AcultaMailConfirmerManagerInterface {
     $manager = $this->createMock(AcultaMailConfirmerManagerInterface::class);
     $manager->method('createConfirmation')->with('person@example.invalid')->willReturn($new);
@@ -156,6 +190,23 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     return $manager;
   }
 
+  /**
+   * Cria o solicitante de confirmação com dependências simuladas.
+   *
+   * @param array $existing
+   *   Confirmações existentes retornadas pela consulta.
+   * @param \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface $new
+   *   Nova confirmação criada pelo gerenciador.
+   * @param array $events
+   *   Lista de eventos preenchida pelos callbacks simulados.
+   * @param bool $accepted
+   *   Indica se o transporte de e-mail aceita a mensagem.
+   * @param \Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface $manager
+   *   Gerenciador de confirmações simulado.
+   *
+   * @return \Drupal\aculta_portal\Email\EmailConfirmationRequester
+   *   Solicitante de confirmação configurado para o teste.
+   */
   private function requester(array $existing, AcultaMailConfirmationInterface $new, array &$events, bool $accepted, AcultaMailConfirmerManagerInterface $manager): EmailConfirmationRequester {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->with(FALSE)->willReturnSelf();
@@ -187,6 +238,12 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     return new EmailConfirmationRequester($manager, $entity_manager, $flood, $this->lock(TRUE), $this->createMock(LoggerChannelInterface::class), $mailer, $this->configFactory(), new UuidGenerator(), $urls);
   }
 
+  /**
+   * Cria uma fábrica de configuração simulada.
+   *
+   * @return \Drupal\Core\Config\ConfigFactoryInterface
+   *   Fábrica de configuração com atraso de reenvio definido.
+   */
   private function configFactory(): ConfigFactoryInterface {
     $settings = $this->createMock(ImmutableConfig::class);
     $settings->method('get')->with('resendrequest_delay')->willReturn(900);
@@ -195,6 +252,21 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     return $factory;
   }
 
+  /**
+   * Cria uma confirmação simulada que registra seus eventos.
+   *
+   * @param int $id
+   *   Identificador da confirmação.
+   * @param int $uid
+   *   Identificador da conta associada.
+   * @param array $events
+   *   Lista de eventos preenchida pelos callbacks simulados.
+   * @param string $prefix
+   *   Prefixo usado nos nomes dos eventos registrados.
+   *
+   * @return \Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface
+   *   Confirmação simulada.
+   */
   private function confirmation(int $id, int $uid, array &$events, string $prefix): AcultaMailConfirmationInterface {
     $confirmation = $this->createMock(AcultaMailConfirmationInterface::class);
     $confirmation->method('isRequestSent')->willReturn(FALSE);
@@ -224,6 +296,15 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     return $confirmation;
   }
 
+  /**
+   * Cria uma conta de usuário simulada.
+   *
+   * @param int $uid
+   *   Identificador da conta.
+   *
+   * @return \Drupal\user\UserInterface
+   *   Conta de usuário simulada.
+   */
   private function account(int $uid): UserInterface {
     $account = $this->createMock(UserInterface::class);
     $account->method('id')->willReturn((string) $uid);
@@ -231,6 +312,15 @@ final class EmailConfirmationRequesterTest extends UnitTestCase {
     return $account;
   }
 
+  /**
+   * Cria um backend de lock simulado.
+   *
+   * @param bool $acquired
+   *   Indica se a aquisição do lock deve ter sucesso.
+   *
+   * @return \Drupal\Core\Lock\LockBackendInterface
+   *   Backend de lock simulado.
+   */
   private function lock(bool $acquired): LockBackendInterface {
     $lock = $this->createMock(LockBackendInterface::class);
     $lock->method('acquire')->with('aculta_portal.email_confirmation_requester.7', 60.0)->willReturn($acquired);

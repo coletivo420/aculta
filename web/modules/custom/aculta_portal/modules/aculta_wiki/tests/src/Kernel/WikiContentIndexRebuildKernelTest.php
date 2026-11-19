@@ -36,7 +36,32 @@ final class WikiContentIndexRebuildKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = [];
+protected static $modules = [
+    'system',
+    'user',
+    'field',
+    'entity',
+    'filter',
+    'text',
+    'text_with_summary',
+    'node',
+    'file',
+    'image',
+    'media',
+    'views',
+    'taxonomy',
+    'profile',
+    'domain',
+    'domain_alias',
+    'domain_source',
+    'aculta_portal',
+    'aculta_file_uploader',
+    'aculta_calendar',
+    'aculta_index',
+    'aculta_image',
+    'aculta_wiki',
+    'aculta_studio',
+  ];
 
   /**
    * Boots the actual Wiki, Image, Portal, and Content Index dependency graph.

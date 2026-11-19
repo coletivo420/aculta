@@ -9,6 +9,7 @@ use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventDateOverride;
 use Drupal\aculta_events\Occurrence\EventDateOccurrences;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -29,9 +30,9 @@ final class EventDateOccurrenceForm extends FormBase {
    * Construtor.
    */
   public function __construct(
-    private readonly EntityTypeManagerInterface $entities,
-    private readonly EventDateOccurrences $ocorrencias,
-    private readonly TimeInterface $tempo,
+    protected readonly EntityTypeManagerInterface $entities,
+    protected readonly EventDateOccurrences $ocorrencias,
+    protected readonly TimeInterface $tempo,
   ) {}
 
   /**
@@ -174,10 +175,17 @@ final class EventDateOccurrenceForm extends FormBase {
       $this->messenger()->addStatus($this->t('A ocorrência voltou ao horário da regra.'));
     }
     else {
-      $excecao = $existente ?? $storage->create([
-        'field_data_pai' => ['target_id' => $data->id()],
-        'field_inicio_original' => ['value' => $this->utc($inicio)],
-      ]);
+      $excecao = $existente;
+      if ($excecao === NULL) {
+        $created = $storage->create([
+          'field_data_pai' => ['target_id' => $data->id()],
+          'field_inicio_original' => ['value' => $this->utc($inicio)],
+        ]);
+        if (!$created instanceof ContentEntityInterface) {
+          throw new \LogicException('The occurrence storage returned an unexpected entity.');
+        }
+        $excecao = $created;
+      }
 
       if ($acao === 'cancelar') {
         $excecao->set('field_inicio', NULL);
@@ -202,7 +210,7 @@ final class EventDateOccurrenceForm extends FormBase {
     }
 
     $evento = $data->get('field_evento')->entity;
-    $slug = $evento?->get('field_slug')->value;
+    $slug = $evento instanceof ContentEntityInterface ? $evento->get('field_slug')->value : NULL;
     $form_state->setRedirectUrl($slug
       ? Url::fromRoute('aculta_events.page', ['slug' => (string) $slug])
       : Url::fromRoute('aculta_events.catalogue'));

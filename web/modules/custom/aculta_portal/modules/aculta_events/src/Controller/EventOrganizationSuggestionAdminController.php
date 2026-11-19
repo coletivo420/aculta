@@ -6,7 +6,9 @@ namespace Drupal\aculta_events\Controller;
 
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -46,6 +48,9 @@ final class EventOrganizationSuggestionAdminController extends ControllerBase {
       ->range(0, 50)
       ->execute();
     foreach ($contributionStorage->loadMultiple($contributionIds) as $proposal) {
+      if (!$proposal instanceof ContentEntityInterface || !$proposal instanceof EntityOwnerInterface) {
+        continue;
+      }
       $organization = NULL;
       $targetUuid = (string) $proposal->get('target_uuid')->value;
       if ($targetUuid !== '') {
@@ -68,6 +73,9 @@ final class EventOrganizationSuggestionAdminController extends ControllerBase {
     }
 
     foreach ($storage->loadMultiple($ids) as $suggestion) {
+      if (!$suggestion instanceof ContentEntityInterface) {
+        continue;
+      }
       $organization = $this->entities
         ->getStorage('aculta_event_organization')
         ->load($suggestion->get('field_organization')->target_id);

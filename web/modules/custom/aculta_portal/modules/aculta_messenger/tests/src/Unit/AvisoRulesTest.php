@@ -7,7 +7,7 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -58,7 +58,7 @@ class AvisoRulesTest extends UnitTestCase {
   public function testOnlyCurrentPublicForumBundleIsSupported(): void {
     $policy = new ForumNoticeAccessPolicy(
       $this->createMock(EntityTypeManagerInterface::class),
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $this->createMock(EntityTypeManagerInterface::class),
         $this->createMock(DomainNegotiatorInterface::class),
         $this->createMock(ConfigFactoryInterface::class),
@@ -81,7 +81,7 @@ class AvisoRulesTest extends UnitTestCase {
   public function testHistoricalAuthorTopicIsNotSupported(): void {
     $policy = new ForumNoticeAccessPolicy(
       $this->createMock(EntityTypeManagerInterface::class),
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $this->createMock(EntityTypeManagerInterface::class),
         $this->createMock(DomainNegotiatorInterface::class),
         $this->createMock(ConfigFactoryInterface::class),

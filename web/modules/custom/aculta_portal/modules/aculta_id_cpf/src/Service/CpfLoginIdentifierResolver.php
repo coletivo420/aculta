@@ -61,7 +61,8 @@ final class CpfLoginIdentifierResolver {
         return NULL;
       }
 
-      $account = $this->entityTypeManager->getStorage('user')->load($profile->getOwnerId());
+      $ownerId = $profile->getOwnerId();
+      $account = $ownerId === NULL ? NULL : $this->entityTypeManager->getStorage('user')->load($ownerId);
       return $account instanceof UserInterface ? $account->getAccountName() : NULL;
     }
     catch (\Throwable) {

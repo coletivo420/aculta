@@ -64,8 +64,15 @@ final class PersonalNameCompletionSubscriberTest extends UnitTestCase {
   /**
    * Monta o assinante com um pedido de teste.
    *
+   * @param \Drupal\aculta_portal\Checkout\PersonalNameStore $names
+   *   Armazenamento de nomes usado pelo assinante.
    * @param array<string, string> $nome
    *   Nome guardado no pedido.
+   * @param bool $autenticado
+   *   Indica se o cliente do pedido está autenticado.
+   *
+   * @return \Drupal\aculta_portal\EventSubscriber\PersonalNameCompletionSubscriber
+   *   Assinante configurado para o teste.
    */
   private function subscriber(PersonalNameStore $names, array $nome, bool $autenticado): PersonalNameCompletionSubscriber {
     $conta = $this->createMock(AccountInterface::class);

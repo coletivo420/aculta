@@ -1,5 +1,14 @@
 # Testes e critérios de migração
 
+## Templates Twig 0.4.0-dev.36
+
+- `LinksThemeHooksTest` protege a correspondência entre os nomes de template
+  registrados e os arquivos Twig existentes: 1 teste / 4 assertions PASS.
+- Após `drush cr` no purpose `links`, raiz HTTP 200 e alias interno
+  `/redes-sociais` HTTP 404. A causa era divergência entre o `template` dos
+  hooks e os arquivos Twig presentes no módulo.
+- PHP lint, PHPCS Drupal/DrupalPractice e `git diff --check` PASS.
+
 ## Fundação 0.1.0 (histórico)
 
 - Validar sintaxe do manifesto YAML.

@@ -1,0 +1,6 @@
+dialog:
+  js:
+    js/dialog.js: {}
+  dependencies:
+    - core/drupal
+    - core/once

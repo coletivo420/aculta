@@ -77,6 +77,9 @@ final class XapiAttemptToken {
    *
    * @throws \UnexpectedValueException
    *   Quando o token é malformado, tem assinatura inválida ou está expirado.
+   *
+   * @return array<mixed>
+   *   Claims validadas.
    */
   public function verify(string $token, int $now): array {
     $parts = explode('.', $token);

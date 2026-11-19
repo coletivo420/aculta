@@ -1,0 +1,30 @@
+.aculta-forum-category-page {
+  display: flex;
+  flex-direction: column;
+  justify-self: center;
+  box-sizing: border-box;
+  inline-size: min(100%, var(--page-content-max));
+  max-inline-size: var(--page-content-max);
+  margin-inline: auto;
+  min-inline-size: 0;
+}
+
+.aculta-forum-category-page__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-lg);
+  min-inline-size: 0;
+}
+
+.aculta-forum-category-page__main,
+.aculta-forum-category-page__aside {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+@media (min-width: 60rem) {
+  .aculta-forum-category-page__layout {
+    grid-template-columns: minmax(0, 1fr) 20rem;
+  }
+}

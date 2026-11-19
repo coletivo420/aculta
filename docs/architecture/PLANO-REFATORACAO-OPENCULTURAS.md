@@ -82,7 +82,7 @@ Objetivo: entregar as melhorias visuais aprovadas, como componentes SDC conforme
 
 Ordem: B1 → B2 → B3 (em sequência, um componente por microfase) → B4 → B5 → B6.
 
-**Limite de execução visual:** mudança de Twig e de cache de template só aparece no servidor de testes após
+**Limite de execução visual:** mudança de Twig e de cache de template só aparece no servidor de desenvolvimento após
 `drush cr`, que precisa de autorização do responsável. A frente B não roda `drush cr` por conta própria. Testes
 visuais no Firefox ESR (`DISPLAY=:0`) só depois dessa autorização.
 

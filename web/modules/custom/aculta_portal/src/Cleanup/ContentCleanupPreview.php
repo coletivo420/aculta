@@ -131,7 +131,7 @@ final class ContentCleanupPreview {
 
     $definition = $this->entityTypeManager->getDefinition($entityType);
     $idKey = $definition->getKey('id');
-    if ($idKey === NULL || $idKey === '') {
+    if ($idKey === FALSE || $idKey === '') {
       throw new \LogicException(sprintf('Entity type %s has no ID key.', $entityType));
     }
 

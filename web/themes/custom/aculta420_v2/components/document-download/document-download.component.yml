@@ -1,0 +1,33 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Download de documento
+description: Link de arquivo com formato e tamanho acessíveis.
+status: stable
+group: Conteúdo
+props:
+  type: object
+  additionalProperties: false
+  required: [format, size, format_token]
+  properties:
+    format:
+      title: Formato do documento
+      description: Rótulo visível do formato, como PDF.
+      type: string
+      minLength: 1
+    size:
+      title: Tamanho do arquivo
+      description: Tamanho legível do arquivo exibido junto ao formato.
+      type: string
+      minLength: 1
+    format_token:
+      title: Identificador de formato para exibição
+      description: Valor do atributo data-download-format usado para identificar o formato no markup.
+      type: string
+      minLength: 1
+slots:
+  link:
+    title: Link do arquivo
+    description: Link renderizado pelo formatter com nome e rótulo acessível.
+assets:
+  css:
+    component:
+      document-download.css: {}

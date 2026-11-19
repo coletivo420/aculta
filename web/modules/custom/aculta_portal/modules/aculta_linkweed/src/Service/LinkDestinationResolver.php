@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_linkweed\Service;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -21,7 +22,7 @@ final class LinkDestinationResolver {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurpose,
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
@@ -69,8 +70,8 @@ final class LinkDestinationResolver {
     if (!$node->hasField('field_domain_source') || $node->get('field_domain_source')->isEmpty()) {
       return new LinkDestinationResolution(NULL, $cacheability);
     }
-    $purpose = $this->domainPurpose->getPurposeForDomainId((string) $node->get('field_domain_source')->target_id);
-    $domain = $purpose !== NULL ? $this->domainPurpose->getDomain($purpose) : NULL;
+    $purpose = $this->siteManager->getSiteKeyValueForDomainId((string) $node->get('field_domain_source')->target_id);
+    $domain = $purpose !== NULL ? $this->siteManager->getDomain($purpose) : NULL;
     if ($purpose === NULL || $domain === NULL || ($node->isPublished() === FALSE && $public)) {
       if ($domain !== NULL) {
         $cacheability->addCacheableDependency($domain);
@@ -79,7 +80,7 @@ final class LinkDestinationResolver {
     }
 
     $access_account = $public ? new AnonymousUserSession() : $account;
-    $access = $this->domainPurpose->runInPurpose(
+    $access = $this->siteManager->runInSite(
       $purpose,
       static fn () => $node->access('view', $access_account, TRUE),
     );
@@ -93,7 +94,7 @@ final class LinkDestinationResolver {
       return new LinkDestinationResolution(NULL, $cacheability);
     }
 
-    $url = $this->domainPurpose->routeUrl($purpose, 'entity.node.canonical', ['node' => $node->id()]);
+    $url = $this->siteManager->routeUrl($purpose, 'entity.node.canonical', ['node' => $node->id()]);
     if (!$url instanceof Url) {
       return new LinkDestinationResolution(NULL, $cacheability);
     }

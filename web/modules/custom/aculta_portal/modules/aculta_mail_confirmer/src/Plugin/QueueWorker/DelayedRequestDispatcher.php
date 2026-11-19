@@ -6,7 +6,7 @@ use Drupal\aculta_mail_confirmer\AcultaMailConfirmerManagerInterface;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Plugin\Attribute\QueueWorker;
+use Drupal\Core\Queue\Attribute\QueueWorker;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;

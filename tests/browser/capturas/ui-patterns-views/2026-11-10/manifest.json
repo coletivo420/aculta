@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "front": "ui-patterns-views",
+  "date": "2026-11-10",
+  "environment": "development",
+  "path": "/albuns",
+  "view": "aculta_albuns:page_1",
+  "runner": "tests/browser/transversal/aculta-visual/visual.py",
+  "browser": "Firefox ESR visible (DISPLAY=:0)",
+  "configuration_import": {
+    "method": "drush config:import --partial --source=<single-view-config-directory>",
+    "config": "views.view.aculta_albuns",
+    "only_object_in_source": true,
+    "runtime_snapshot": "$SUITE_OUT/before/views.view.aculta_albuns.yml",
+    "rollback": "Restore the saved Runtime view config as the only object in a partial import; restore Config Sync from the parent commit."
+  },
+  "checks": {
+    "http_status": 200,
+    "result_count_before_after": [
+      3,
+      3
+    ],
+    "row_plugin": "ui_patterns",
+    "row_component": "aculta420_v2:revista-album-card",
+    "style_plugin": "ui_patterns",
+    "style_component": "aculta420_v2:layout-grid",
+    "display_component": "aculta420_v2:views-display",
+    "view_fields_preserved_as_sources": [
+      "field_gallery_cover",
+      "title",
+      "field_published_at",
+      "field_credits"
+    ],
+    "pager": "native mini pager, 12 items per page retained",
+    "access": "native access content permission; anonymous Runtime access allowed",
+    "cache": "View and access render arrays retain Drupal cache metadata; cache-hit variation not measured",
+    "viewports_css_px": [
+      1280,
+      320
+    ],
+    "themes": [
+      "light",
+      "dark"
+    ],
+    "horizontal_scroll": false,
+    "album_cards_per_capture": 3,
+    "small_interactive_targets": 0,
+    "unnamed_links": 0,
+    "placeholder_links": 0
+  },
+  "artifacts": {
+    "storage": "$SUITE_OUT/ui-patterns-views-albums-accepted-2026-11-10",
+    "screenshots": [
+      {
+        "file": "albums-desktop.png",
+        "viewport_css_px": 1280,
+        "mode": "light",
+        "sha256": "3b0365a6b6b13e23e2bea8c8c638c06bba61def57e4625b073af1bb375acbcdc"
+      },
+      {
+        "file": "albums-320.png",
+        "viewport_css_px": 320,
+        "mode": "light",
+        "sha256": "576debf5138b62c0cd4a4b9e0258339b45256a1f218153124a97eb90946f59e3"
+      },
+      {
+        "file": "albums-desktop-dark.png",
+        "viewport_css_px": 1280,
+        "mode": "dark",
+        "sha256": "af2ff5af96049cf639197271e4db31f7e11eb3985156e33fa216f7467a86ecd7"
+      },
+      {
+        "file": "albums-320-dark.png",
+        "viewport_css_px": 320,
+        "mode": "dark",
+        "sha256": "bc83a6a815b107407754af4e1324e9739f3e4e23ddfea2442263b18060b5641a"
+      }
+    ]
+  },
+  "notes": [
+    "The existing full transversal runner also attempted its unrelated Forum Flag probe and failed because the configured test topic has no native save action. The focused invocation reused the runner's story and album checks; it did not run or claim the Flag check.",
+    "All row, style, display, reflow and interactive-target checks for this View passed after the focused rerun. Zoom 200%, keyboard focus, exposed filters and multi-page navigation were not applicable or not exercised by the current View fixture."
+  ],
+  "additional_view_evidence": [
+    {
+      "path": "/categorias",
+      "view": "aculta_forum_categories:page_categories",
+      "owner_module": "aculta_forum",
+      "configuration_import": {
+        "method": "drush config:import --partial --source=<single-view-config-directory>",
+        "config": "views.view.aculta_forum_categories",
+        "only_object_in_source": true,
+        "runtime_snapshot": "$SUITE_OUT/forum-categories-views-20261110/runtime-before/views.view.aculta_forum_categories.yml",
+        "runtime_snapshot_sha256": "d2d93d70fee7d207ca01ea6a889d3ae7f51440bcd22eb59f4a272ee323cf7cea",
+        "rollback": "Restore the saved Runtime view config as the only object in a partial import; restore Config Sync from the parent commit."
+      },
+      "checks": {
+        "http_status": 200,
+        "result_count_before_after": [
+          12,
+          12
+        ],
+        "row_plugin": "ui_patterns",
+        "row_component": "aculta420_v2:forum-category",
+        "style_plugin": "default; native grouping by parent_name retained",
+        "display_component": "aculta420_v2:views-display",
+        "native_access": "access content inherited from default display; anonymous access allowed",
+        "native_pager": "some, 50 items/page; 12 categories mean no visible pager links",
+        "exposed_filters": "none configured; vocabulary filter retained",
+        "one_h1_and_main": true,
+        "horizontal_scroll": false,
+        "unnamed_links": 0,
+        "minimum_interactive_target_height_px": 44,
+        "duplicate_view_title": false,
+        "keyboard_focus": {
+          "tab_count": 11,
+          "focusVisible": true,
+          "height": 44,
+          "outlineStyle": "solid",
+          "outlineWidth": "3px",
+          "text": "Discussões recentes"
+        },
+        "viewports_css_px": [
+          320,
+          390,
+          768,
+          1024,
+          1440
+        ],
+        "modes": [
+          "light",
+          "dark"
+        ],
+        "dark_viewports_css_px": [
+          320,
+          1440
+        ],
+        "cache": "Views/render metadata retained; cache-hit variation not measured"
+      },
+      "artifacts": {
+        "storage": "$SUITE_OUT/forum-categories-views-20261110",
+        "screenshots": [
+          {
+            "file": "forum-categories-320-light.png",
+            "viewport_css_px": 320,
+            "mode": "light",
+            "sha256": "d07f235f2ca1928c9aa256cbfa81689d41006485893e10d87cd4f5675724256a"
+          },
+          {
+            "file": "forum-categories-390-light.png",
+            "viewport_css_px": 390,
+            "mode": "light",
+            "sha256": "11e631a0b75a40befe4ac38715d9aca2daca8bd01b5c9fe6c022ba90755c8930"
+          },
+          {
+            "file": "forum-categories-768-light.png",
+            "viewport_css_px": 768,
+            "mode": "light",
+            "sha256": "9cc281a90b0c6bf8bc4a1a80e0451537015144730a7779af4027c28ad0b24cf1"
+          },
+          {
+            "file": "forum-categories-1024-light.png",
+            "viewport_css_px": 1024,
+            "mode": "light",
+            "sha256": "31ff8dd29480f50d5a585a8f07a400a12356bb49499c40476e781aec11858bc3"
+          },
+          {
+            "file": "forum-categories-1440-light.png",
+            "viewport_css_px": 1440,
+            "mode": "light",
+            "sha256": "99ae8ab1a70a47261a327eade0458dcbed35afac191cd8e152204a25d2a7ce34"
+          },
+          {
+            "file": "forum-categories-320-dark.png",
+            "viewport_css_px": 320,
+            "mode": "dark",
+            "sha256": "68a8d2639763b0a649dbc71d914a615a91c6b5a7593ef4d67e3798d0665eaa88"
+          },
+          {
+            "file": "forum-categories-1440-dark.png",
+            "viewport_css_px": 1440,
+            "mode": "dark",
+            "sha256": "3990887537237b5703820ca31b60acf2e5601434552d7e54622129fa662b81b2"
+          }
+        ]
+      },
+      "notes": [
+        "The first display render showed the view title twice. The mapping was removed and the final browser capture confirms the duplicate is gone.",
+        "Block display block_landing keeps its UI Patterns row, but its parent block is display:none on the public home; no visible-output acceptance is claimed for it.",
+        "Zoom 200%, cache-hit variation and multi-page navigation remain unverified; the native pager has no second page with the current 12 results."
+      ]
+    }
+  ]
+}

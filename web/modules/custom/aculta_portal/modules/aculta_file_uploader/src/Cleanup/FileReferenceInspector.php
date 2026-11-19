@@ -60,14 +60,33 @@ final class FileReferenceInspector implements FileReferenceInspectorInterface {
           continue;
         }
         $definitions = $this->fieldManager->getFieldStorageDefinitions($entityTypeId);
+        $fieldDefinitions = [];
+        foreach ($definitions as $fieldName => $fieldDefinition) {
+          $fieldDefinitions[] = [$fieldName, $fieldDefinition];
+        }
+        // Some entity types define reference settings per bundle instead of
+        // on the shared field storage. Group's entity_id field is one such
+        // case, so include bundle field definitions when available.
+        $bundleEntityType = $definition->getBundleEntityType();
+        if ($entityTypeId === 'group_relationship' && $bundleEntityType !== NULL) {
+          $bundleStorage = $this->entityTypeManager->getStorage($bundleEntityType);
+          foreach ($bundleStorage->loadMultiple() as $bundle) {
+            foreach ($this->fieldManager->getFieldDefinitions($entityTypeId, $bundle->id()) as $fieldName => $fieldDefinition) {
+              $fieldDefinitions[] = [$fieldName, $fieldDefinition];
+            }
+          }
+        }
       }
       catch (\Throwable $exception) {
         return $this->unverifiable($entityTypeId, $exception);
       }
 
-      foreach ($definitions as $fieldName => $definition) {
+      foreach ($fieldDefinitions as [$fieldName, $definition]) {
         $type = $definition->getType();
-        if (in_array($type, ['entity_reference', 'entity_reference_revisions'], TRUE)
+        // Group stores the grouped entity in its own entity-reference field
+        // type. It has the same target_type/target_id contract and must count
+        // when deciding whether a Media or File is still in use.
+        if (in_array($type, ['entity_reference', 'entity_reference_revisions', 'group_relationship_target'], TRUE)
           && $definition->getSetting('target_type') === $targetType) {
           try {
             $query = $storage->getQuery()->accessCheck(FALSE);

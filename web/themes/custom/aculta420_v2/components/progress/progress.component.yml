@@ -1,0 +1,34 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Progresso
+description: Indicador nativo de progresso com rótulo e valor textual.
+status: experimental
+group: Dados
+props:
+  type: object
+  additionalProperties: false
+  required: [id, label]
+  properties:
+    id:
+      type: string
+      minLength: 1
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+      title: Identificador
+      description: ID HTML do elemento progress, usado também pelo atributo for do rótulo.
+    label:
+      type: string
+      minLength: 1
+      title: Rótulo acessível
+      description: Nome associado ao indicador nativo e texto alternativo quando o progresso é indeterminado.
+    value:
+      type: [number, 'null']
+      minimum: 0
+      default: null
+      title: Valor atual; null indica progresso indeterminado
+      description: Progresso numérico atual; null omite value no elemento nativo e representa atividade sem percentual conhecido.
+    max:
+      type: number
+      minimum: 0
+      exclusiveMinimum: true
+      default: 100
+      title: Valor máximo
+      description: Limite superior usado para calcular o percentual e configurar o elemento progress.

@@ -1,0 +1,13 @@
+name: Superfície com abas
+description: Composição de superfície com o componente SDC de abas.
+component: aculta420_v2:surface
+props:
+  tone: raised
+  radius: lg
+  spacing: normal
+  elevation: subtle
+  border: subtle
+slots:
+  content:
+    type: inline_template
+    template: '<div><h4 style="margin-block-start:0;">Navegação por Abas</h4>{{ include("aculta420_v2:tabs", { tabs: [{ label: "Geral", url: "#geral", active: true }, { label: "Configurações", url: "#config" }] }, with_context = false) }}<div style="padding-block-start:1rem;"><p>Conteúdo correspondente à aba ativa dentro da superfície.</p></div></div>'

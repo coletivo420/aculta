@@ -19,10 +19,12 @@ final class StreetNumberField {
 
   public const SN = 'S/N';
 
-  /** Limite folgado de dígitos do número (a caixa é pequena, mas aceita números maiores). */
+  /**
+   * Limite folgado de dígitos do número (a caixa é pequena, mas aceita números maiores). */
   public const MAX_DIGITS = 10;
 
-  /** Separa o logradouro salvo em rua, número e marca S/N. */
+  /**
+   * Separa o logradouro salvo em rua, número e marca S/N. */
   public static function split(string $line): array {
     if (!preg_match('/^(.*),\s*([^,]+)$/', $line, $m)) {
       return ['street' => trim($line), 'number' => '', 'sn' => FALSE];
@@ -34,7 +36,8 @@ final class StreetNumberField {
     return ['street' => trim($m[1]), 'number' => $tail, 'sn' => FALSE];
   }
 
-  /** Junta rua e número (ou S/N) no formato armazenado. */
+  /**
+   * Junta rua e número (ou S/N) no formato armazenado. */
   public static function join(string $street, string $number, bool $sn): string {
     $street = trim($street);
     if ($sn) {
@@ -44,6 +47,16 @@ final class StreetNumberField {
     return $number === '' ? $street : $street . ', ' . $number;
   }
 
+  /**
+   * Anexa os processos do campo Número ao elemento de endereço.
+   *
+   * @param array $element
+   *   Elemento de endereço alterado por referência.
+   * @param string $number
+   *   Número do endereço.
+   * @param bool $sn
+   *   Indica se o endereço não tem número (S/N).
+   */
   public static function attach(array &$element, string $number, bool $sn): void {
     $element['#process'] = [
       [Address::class, 'processAddress'],
@@ -54,7 +67,8 @@ final class StreetNumberField {
     $element['#street_number_sn_default'] = $sn;
   }
 
-  /** Recursivo: aplica ao primeiro elemento de endereço encontrado na árvore. */
+  /**
+   * Recursivo: aplica ao primeiro elemento de endereço encontrado na árvore. */
   public static function attachTo(array &$tree, string $number, bool $sn): bool {
     if (($tree['#type'] ?? NULL) === 'address') {
       self::attach($tree, $number, $sn);
@@ -68,7 +82,8 @@ final class StreetNumberField {
     return FALSE;
   }
 
-  /** #process: cria o campo Número e a marca S/N depois do Logradouro. */
+  /**
+   * Processa: cria o campo Número e a marca S/N depois do Logradouro. */
   public static function processStreetNumber(array $element, FormStateInterface $form_state, array &$complete_form): array {
     if (isset($element['address_line1'])) {
       $weight = ($element['address_line1']['#weight'] ?? 0);
@@ -103,7 +118,8 @@ final class StreetNumberField {
     return $element;
   }
 
-  /** Validação no servidor: 1 a 4 dígitos, ou S/N (sem número, dispensa a obrigatoriedade). */
+  /**
+   * Validação no servidor: 1 a 4 dígitos, ou S/N (sem número, dispensa a obrigatoriedade). */
   public static function validateNumber(array &$element, FormStateInterface $form_state, array &$complete_form): void {
     $sn_parents = array_merge(array_slice($element['#parents'], 0, -1), ['street_number_sn']);
     if ((bool) $form_state->getValue($sn_parents)) {
@@ -120,7 +136,8 @@ final class StreetNumberField {
     }
   }
 
-  /** Valores do formulário de endereço: [número, S/N] (parents relativos ao elemento de endereço). */
+  /**
+   * Valores do formulário de endereço: [número, S/N] (parents relativos ao elemento de endereço). */
   public static function values(array $tree, FormStateInterface $form_state): array {
     $number = self::find($tree);
     if ($number === NULL) {
@@ -130,7 +147,8 @@ final class StreetNumberField {
     return [trim((string) $form_state->getValue($number['#parents'])), (bool) $form_state->getValue($sn_parents)];
   }
 
-  /** Elemento processado de Número dentro da árvore (com #parents), ou NULL. */
+  /**
+   * Elemento processado de Número dentro da árvore (com #parents), ou NULL. */
   public static function find(array $tree): ?array {
     if (isset($tree['street_number']) && is_array($tree['street_number']) && isset($tree['street_number']['#parents'])) {
       return $tree['street_number'];

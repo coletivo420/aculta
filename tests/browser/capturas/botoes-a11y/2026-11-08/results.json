@@ -1,0 +1,62 @@
+[
+  {
+    "name": "conta: há botões do SDC visíveis",
+    "ok": true,
+    "detail": "4 botão(ões)"
+  },
+  {
+    "name": "conta: todo botão visível tem nome acessível",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "conta: Orca anuncia o nome de cada botão/link",
+    "ok": true,
+    "detail": "4/4"
+  },
+  {
+    "name": "eventos: há botões do SDC visíveis",
+    "ok": true,
+    "detail": "6 botão(ões)"
+  },
+  {
+    "name": "eventos: todo botão visível tem nome acessível",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "eventos: Orca anuncia o nome de cada botão/link",
+    "ok": true,
+    "detail": "6/6"
+  },
+  {
+    "name": "admin-redes: há botões do SDC visíveis",
+    "ok": true,
+    "detail": "3 botão(ões)"
+  },
+  {
+    "name": "admin-redes: todo botão visível tem nome acessível",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "admin-redes: Orca anuncia o nome de cada botão/link",
+    "ok": true,
+    "detail": "3/3"
+  },
+  {
+    "name": "admin-caminhos: há botões do SDC visíveis",
+    "ok": true,
+    "detail": "9 botão(ões)"
+  },
+  {
+    "name": "admin-caminhos: todo botão visível tem nome acessível",
+    "ok": true,
+    "detail": ""
+  },
+  {
+    "name": "admin-caminhos: Orca anuncia o nome de cada botão/link",
+    "ok": true,
+    "detail": "9/9"
+  }
+]

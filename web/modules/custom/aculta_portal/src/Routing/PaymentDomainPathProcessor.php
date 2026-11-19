@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Routing;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\PathProcessor\OutboundPathProcessorInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,20 +19,24 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final class PaymentDomainPathProcessor implements OutboundPathProcessorInterface {
 
-  /** Padrões (sem o host) dos caminhos que recebem o domínio principal. */
+  /**
+   * Padrões (sem o host) dos caminhos que recebem o domínio principal. */
   private const CAMINHOS_DE_PAGAMENTO = [
     '#^/integracoes/pagamentos/[^/]+/notificacao$#',
     '#^/checkout/[^/]+/[^/]+/(return|cancel)$#',
     '#^/integracoes/mercadopago/checkout-retorno$#',
   ];
 
-  public function __construct(private readonly DomainPurposeManager $purposes) {}
+  public function __construct(private readonly DomainSiteManager $purposes) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public function processOutbound($path, &$options = [], ?Request $request = NULL, ?BubbleableMetadata $bubbleable_metadata = NULL) {
     if (!self::ehCaminhoDePagamento($path)) {
       return $path;
     }
-    $principal = $this->purposes->getDomain('main')?->getPath();
+    $principal = $this->purposes->getDomain(SiteKey::Main)?->getPath();
     if ($principal === NULL) {
       return $path;
     }
@@ -40,6 +45,15 @@ final class PaymentDomainPathProcessor implements OutboundPathProcessorInterface
     return $path;
   }
 
+  /**
+   * Indica se o caminho é de pagamento.
+   *
+   * @param string $path
+   *   Caminho interno a verificar.
+   *
+   * @return bool
+   *   TRUE quando coincide com um padrão de pagamento.
+   */
   private static function ehCaminhoDePagamento(string $path): bool {
     foreach (self::CAMINHOS_DE_PAGAMENTO as $padrao) {
       if (preg_match($padrao, $path) === 1) {

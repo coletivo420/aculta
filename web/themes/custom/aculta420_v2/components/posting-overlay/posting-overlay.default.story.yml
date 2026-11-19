@@ -1,0 +1,5 @@
+name: Aviso de postagem (oculto)
+description: Sobreposição de envio. Fica oculta até o script exibi-la.
+props:
+  title: Aguarde
+  text: Postando seu comentário…

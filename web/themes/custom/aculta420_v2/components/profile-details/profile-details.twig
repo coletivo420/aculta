@@ -1,0 +1,10 @@
+<section{{ attributes.addClass('profile-details') }} aria-labelledby="{{ title_id }}">
+  {% if heading_level == 3 %}
+    <h3 class="profile-details__title" id="{{ title_id }}">{{ title }}</h3>
+  {% else %}
+    <h2 class="profile-details__title" id="{{ title_id }}">{{ title }}</h2>
+  {% endif %}
+  {% if bio is defined %}<div class="profile-details__content profile-details__content--bio">{% block bio %}{% endblock %}</div>{% endif %}
+  {% if social_links is defined %}<div class="profile-details__content profile-details__content--social">{% block social_links %}{% endblock %}</div>{% endif %}
+  {% if actions is defined %}<div class="profile-details__actions">{% block actions %}{% endblock %}</div>{% endif %}
+</section>

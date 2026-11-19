@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Largura total
+description: Conteúdo ocupando toda a largura do contêiner, com respiro lateral.
+status: experimental
+group: Layouts
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Conteúdo
+    description: Conteúdo em largura total.
+assets:
+  css:
+    component:
+      layout-full.css: {}

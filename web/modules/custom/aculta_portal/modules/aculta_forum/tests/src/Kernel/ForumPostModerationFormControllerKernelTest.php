@@ -47,11 +47,6 @@ final class ForumPostModerationFormControllerKernelTest extends KernelTestBase {
   private int $firstRevision;
 
   /**
-   * Second revision ID.
-   */
-  private int $secondRevision;
-
-  /**
    * Captured entity passed to the form builder.
    */
   private ?ForumPost $builtPost = NULL;
@@ -91,13 +86,12 @@ final class ForumPostModerationFormControllerKernelTest extends KernelTestBase {
     $this->post->set('subject', 'Segunda versão');
     $this->post->set('body', ['value' => 'Segunda versão', 'format' => 'plain_text']);
     $this->post->save();
-    $this->secondRevision = (int) $this->post->getRevisionId();
 
     $this->formBuilder = $this->createMock(EntityFormBuilderInterface::class);
     $this->formBuilder->method('getForm')->willReturnCallback(
-      function ($entity, $operation): array {
-        $this->builtPost = $entity;
-        $this->operation = $operation;
+      function (mixed $entity, mixed $operation): array {
+        $this->builtPost = $entity instanceof ForumPost ? $entity : NULL;
+        $this->operation = is_string($operation) ? $operation : NULL;
         return ['#markup' => 'form'];
       },
     );

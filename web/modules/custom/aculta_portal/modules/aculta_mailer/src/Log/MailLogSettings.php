@@ -38,7 +38,8 @@ final class MailLogSettings {
    * Prazo de retenção, em dias. Valor fora da lista permitida vale o padrão.
    */
   public function retentionDays(): int {
-    $days = (int) $this->configFactory->get(self::CONFIG)->get('retention_days');
+    $diasBruto = $this->configFactory->get(self::CONFIG)->get('retention_days');
+    $days = is_scalar($diasBruto) ? (int) $diasBruto : 0;
     return in_array($days, self::RETENTION_OPTIONS, TRUE) ? $days : self::DEFAULT_RETENTION_DAYS;
   }
 

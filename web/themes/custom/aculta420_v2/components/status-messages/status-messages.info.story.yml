@@ -1,0 +1,7 @@
+name: Mensagem informativa
+description: Informação complementar com ícone e contraste semântico próprio.
+component: aculta420_v2:status-messages
+props:
+  type: info
+  messages:
+    - Crie uma conta para acompanhar suas doações.

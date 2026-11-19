@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
+use Drupal\aculta_portal\EventSubscriber\SimplifiedAccountCheckoutSubscriber;
+use Drupal\user\UserDataInterface;
 use Drupal\aculta_portal\Access\EmailConfirmationResponseAccessHandler;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -11,6 +13,7 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_mail_confirmer\AcultaMailConfirmationInterface;
 use Drupal\user\UserInterface;
+use Drupal\user\LoginFinalizer;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -26,7 +29,9 @@ final class EmailConfirmerHooks {
     #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
     private readonly EmailConfirmationPolicy $policy,
     #[Autowire(service: 'user.data')]
-    private readonly \Drupal\user\UserDataInterface $userData,
+    private readonly UserDataInterface $userData,
+    #[Autowire(service: LoginFinalizer::class)]
+    private readonly LoginFinalizer $loginFinalizer,
   ) {}
 
   /**
@@ -52,11 +57,11 @@ final class EmailConfirmerHooks {
       $uid = (int) $confirmation->getProperty('user');
       $this->policy->markConfirmed($uid);
       // Conta do cadastro simplificado: entra para a pessoa criar a senha na etapa /criar-senha.
-      $simplificada = (bool) $this->userData->get('aculta_portal', $uid, \Drupal\aculta_portal\EventSubscriber\SimplifiedAccountCheckoutSubscriber::FLAG);
+      $simplificada = (bool) $this->userData->get('aculta_portal', $uid, SimplifiedAccountCheckoutSubscriber::FLAG);
       if ($simplificada && $this->currentUser->isAnonymous()) {
         $account = $uid > 0 ? $this->entityTypeManager->getStorage('user')->load($uid) : NULL;
         if ($account instanceof UserInterface && $account->isActive()) {
-          user_login_finalize($account);
+          $this->loginFinalizer->finalizeLogin($account);
         }
       }
       return;
@@ -74,7 +79,7 @@ final class EmailConfirmerHooks {
     if (!$account instanceof UserInterface || !$account->isActive()) {
       return;
     }
-    user_login_finalize($account);
+    $this->loginFinalizer->finalizeLogin($account);
   }
 
 }

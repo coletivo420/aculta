@@ -1,0 +1,11 @@
+.views-display {
+  display: grid;
+  gap: var(--spacing-base);
+  min-width: 0;
+}
+
+.views-display__rows,
+.views-display__exposed,
+.views-display__pager {
+  min-width: 0;
+}

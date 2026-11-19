@@ -8,20 +8,38 @@ use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\content_moderation\Entity\Handler\ModerationHandler;
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\aculta_forum\Hook\ForumPostAccessHooks;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\Core\Access\AccessResultInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\domain\DomainNegotiatorInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Registers the real ForumPost definition without enabling Forum integrations.
  */
 final class ForumPostEntityTestHooks {
 
+  public function __construct(
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly ConfigFactoryInterface $configFactory,
+    private readonly RequestStack $requestStack,
+    private readonly ModuleHandlerInterface $moduleHandler,
+    private readonly ?DomainSiteManagerInterface $siteManager = NULL,
+    private readonly ?DomainNegotiatorInterface $domainNegotiator = NULL,
+  ) {}
+
   /**
    * Declares the fixture's fixed bundle for Content Moderation discovery.
+   *
+   * @return array<string, array<string, array<string, mixed>>>
    */
   #[Hook('entity_bundle_info')]
   public function entityBundleInfo(): array {
@@ -43,17 +61,26 @@ final class ForumPostEntityTestHooks {
    */
   #[Hook('entity_access')]
   public function entityAccess(EntityInterface $entity, string $operation, AccountInterface $account): ?AccessResultInterface {
-    $purpose = new DomainPurposeManager(
-      \Drupal::entityTypeManager(),
-      \Drupal::service('domain.negotiator'),
-      \Drupal::configFactory(),
-      \Drupal::service('request_stack'),
-    );
-    return (new ForumPostAccessHooks($purpose))->entityAccess($entity, $operation, $account);
+    $siteManager = $this->siteManager instanceof DomainSiteManager
+      ? $this->siteManager
+      : ($this->domainNegotiator instanceof DomainNegotiatorInterface
+        ? new DomainSiteManager(
+          $this->entityTypeManager,
+          $this->domainNegotiator,
+          $this->configFactory,
+          $this->requestStack,
+        )
+        : NULL);
+    if (!$siteManager instanceof DomainSiteManager) {
+      return NULL;
+    }
+    return (new ForumPostAccessHooks($siteManager))->entityAccess($entity, $operation, $account);
   }
 
   /**
    * Implements hook_entity_type_alter().
+   *
+   * @param array<string, \Drupal\Core\Entity\EntityTypeInterface> $entity_types
    */
   #[Hook('entity_type_alter')]
   public function entityTypeAlter(array &$entity_types): void {
@@ -65,10 +92,12 @@ final class ForumPostEntityTestHooks {
     // Production discovers the entity type before alters, so Content
     // Moderation adds its handler. The fixture adds the type during the alter,
     // after that hook may have run; restore the handler for parity.
-    if (\Drupal::moduleHandler()->moduleExists('content_moderation')) {
+    if ($entity_type instanceof EntityTypeInterface && $this->moduleHandler->moduleExists('content_moderation')) {
       $entity_type->setHandlerClass('moderation', ModerationHandler::class);
     }
-    $entity_types['aculta_forum_post'] = $entity_type;
+    if ($entity_type instanceof EntityTypeInterface) {
+      $entity_types['aculta_forum_post'] = $entity_type;
+    }
   }
 
 }

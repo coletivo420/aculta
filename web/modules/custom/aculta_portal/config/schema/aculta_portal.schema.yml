@@ -31,6 +31,32 @@ aculta_portal.settings:
       type: uri
       label: 'Endereço da conta Mercado Pago (caixa de pagamentos em Meus pedidos; vazio oculta o link)'
 
+aculta_portal.user_upload:
+  type: config_object
+  label: 'Política de upload de arquivos de usuários'
+  mapping:
+    allowed_extensions:
+      type: string
+      label: 'Extensões globais permitidas'
+    max_size_mb:
+      type: integer
+      label: 'Tamanho global máximo em megabytes'
+    consumers:
+      type: sequence
+      label: 'Políticas por consumidor'
+      sequence:
+        type: mapping
+        mapping:
+          inherit_global:
+            type: boolean
+            label: 'Herdar política global'
+          allowed_extensions:
+            type: string
+            label: 'Extensões permitidas'
+          max_size_mb:
+            type: integer
+            label: 'Tamanho máximo em megabytes'
+
 aculta_portal.appearance:
   type: config_object
   label: 'Modo de cor padrão do ACULTA Portal'
@@ -38,6 +64,24 @@ aculta_portal.appearance:
     default_mode:
       type: string
       label: 'Modo de cor padrão (light, dark ou auto)'
+aculta_portal.visual_skins:
+  type: config_object
+  label: 'Mapeamento visual de skins por Domain ID'
+  mapping:
+    domains:
+      type: mapping
+      label: 'Skins por Domain ID'
+      mapping:
+        aculta_org: { type: string, label: 'Skin do domínio ACULTA' }
+        conta_aculta_org: { type: string, label: 'Skin do domínio Conta' }
+        apoio_aculta_org: { type: string, label: 'Skin do domínio Apoio' }
+        revista420_aculta_org: { type: string, label: 'Skin do domínio Revista' }
+        wiki420_aculta_org: { type: string, label: 'Skin do domínio Wiki' }
+        loja_aculta_org: { type: string, label: 'Skin do domínio Loja' }
+        cursos_aculta_org: { type: string, label: 'Skin do domínio Cursos' }
+        forum_aculta_org: { type: string, label: 'Skin do domínio Fórum' }
+        links_aculta_org: { type: string, label: 'Skin do domínio Links' }
+        eventos_aculta_org: { type: string, label: 'Skin do domínio Eventos' }
 # Legacy config retained as a rollback source while aculta_linkweed dual-writes.
 aculta_portal.social_links:
   type: config_object

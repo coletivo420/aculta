@@ -42,6 +42,11 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
     . "3 0 obj<</Type/Page/Parent 2 0 R/MediaBox[0 0 200 200]>>endobj\n"
     . "trailer<</Root 1 0 R>>\n%%EOF\n";
 
+  /**
+   * Módulos necessários ao teste de kernel.
+   *
+   * @var string[]
+   */
   protected static $modules = [
     'system',
     'user',
@@ -207,12 +212,19 @@ final class ForumAttachmentUploadDialogFormKernelTest extends KernelTestBase {
     $names = array_column($commands, 'command');
     self::assertContains('editorDialogSave', $names);
     self::assertContains('closeDialog', $names);
-    $save = $commands[array_search('editorDialogSave', $names, TRUE)];
-    self::assertSame('media', $save['values']['attributes']['data-entity-type']);
-    self::assertSame($media->uuid(), $save['values']['attributes']['data-entity-uuid']);
+    $saveIndex = array_search('editorDialogSave', $names, TRUE);
+    self::assertIsInt($saveIndex);
+    $save = $commands[$saveIndex];
+    self::assertIsArray($save);
+    $values = $save['values'] ?? [];
+    self::assertIsArray($values);
+    $attributes = $values['attributes'] ?? [];
+    self::assertIsArray($attributes);
+    self::assertSame('media', $attributes['data-entity-type'] ?? NULL);
+    self::assertSame($media->uuid(), $attributes['data-entity-uuid'] ?? NULL);
     self::assertSame(
       'entity_reference:entity_reference_entity_view',
-      $save['values']['attributes']['data-entity-embed-display'],
+      $attributes['data-entity-embed-display'] ?? NULL,
     );
   }
 

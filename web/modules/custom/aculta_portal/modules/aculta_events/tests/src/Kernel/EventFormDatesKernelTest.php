@@ -6,6 +6,8 @@ namespace Drupal\Tests\aculta_events\Kernel;
 
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
+use Drupal\aculta_events\Form\EventForm;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
@@ -67,6 +69,7 @@ final class EventFormDatesKernelTest extends KernelTestBase {
   public function testNewEventFormOffersMultipleDates(): void {
     $event = Event::create(['title' => 'Mostra de cinema', 'field_status' => 'publicado']);
     $formObject = $this->container->get('entity_type.manager')->getFormObject('aculta_event', 'default');
+    self::assertInstanceOf(EventForm::class, $formObject);
     $formObject->setEntity($event);
     $state = new FormState();
     $form = $this->container->get('form_builder')->buildForm($formObject, $state);
@@ -76,6 +79,21 @@ final class EventFormDatesKernelTest extends KernelTestBase {
     self::assertArrayHasKey(0, $form['date_location']['dates']);
     self::assertArrayHasKey('local_id', $form['date_location']['dates'][0]);
     self::assertArrayHasKey('date_add_more', $form);
+
+    // O envio "Adicionar outra data" usa HTMX na rota do próprio formulário e
+    // troca só o bloco de Datas (ADR-050). name, submit handler e limite de
+    // validação continuam os do Form API.
+    $botao = $form['date_add_more'];
+    self::assertSame('submit', $botao['#type']);
+    self::assertSame('add_more_event_date', $botao['#name']);
+    self::assertSame(['::addDateRow'], $botao['#submit']);
+    self::assertSame([], $botao['#limit_validation_errors']);
+    self::assertSame('/painel-administrativo/eventos/adicionar', (string) $botao['#attributes']['data-hx-post']);
+    self::assertSame('#event-dates-wrapper', (string) $botao['#attributes']['data-hx-select']);
+    self::assertSame('#event-dates-wrapper', (string) $botao['#attributes']['data-hx-target']);
+    self::assertStringStartsWith('outerHTML', (string) $botao['#attributes']['data-hx-swap']);
+    self::assertArrayHasKey('data-hx-drupal-only-main-content', $botao['#attributes']);
+    self::assertContains('core/drupal.htmx', $botao['#attached']['library']);
 
     // Add a second row through the AJAX submit handler.
     $state->set('date_delta', 1);
@@ -111,6 +129,7 @@ final class EventFormDatesKernelTest extends KernelTestBase {
     $dates = $this->container->get('entity_type.manager')
       ->getStorage('aculta_event_date')
       ->loadByProperties(['field_evento' => $event->id()]);
+    $dates = array_filter($dates, static fn (EntityInterface $date): bool => $date instanceof EventDate);
     self::assertCount(2, $dates);
     $titles = array_map(static fn (EventDate $date): string => (string) $date->label(), $dates);
     sort($titles);

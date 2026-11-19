@@ -16,7 +16,18 @@ use PHPUnit\Framework\Attributes\Group;
 final class RevistaFormHooksTest extends UnitTestCase {
 
   /**
+   * Clears the static FormState error flag so it does not leak to other tests.
+   */
+  protected function tearDown(): void {
+    (new FormState())->clearErrors();
+    parent::tearDown();
+  }
+
+  /**
    * Builds a minimal publication form with the secondary fields of the bundle.
+   *
+   * @return array<string, mixed>
+   *   Minimal Form API form.
    */
   private function form(): array {
     return [
@@ -57,8 +68,8 @@ final class RevistaFormHooksTest extends UnitTestCase {
     self::assertArrayNotHasKey('field_tags', $form);
     self::assertArrayNotHasKey('field_meta_tags', $form);
     self::assertArrayHasKey('title', $form);
-    self::assertFalse($form['revista_secondary']['#open']);
-    self::assertContains('aculta_magazine/revista-form', $form['#attached']['library']);
+    self::assertFalse(self::valueAt($form, 'revista_secondary', '#open'));
+    self::assertContains('aculta_magazine/revista-form', self::arrayAt($form, '#attached', 'library'));
     self::assertFalse($this->hasAutofocus($form));
 
     $form = $this->form();
@@ -79,7 +90,7 @@ final class RevistaFormHooksTest extends UnitTestCase {
 
     self::assertArrayHasKey('revista_secondary', $form);
     self::assertArrayNotHasKey('field_credits', $form);
-    self::assertArrayHasKey('field_credits', $form['revista_secondary']);
+    self::assertArrayHasKey('field_credits', self::arrayAt($form, 'revista_secondary'));
   }
 
   /**
@@ -102,12 +113,12 @@ final class RevistaFormHooksTest extends UnitTestCase {
     $form_state->setErrorByName('revista_secondary][field_tags', 'Etiqueta inválida.');
     (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_edit_form');
 
-    self::assertTrue($form['revista_secondary']['#open']);
+    self::assertTrue(self::valueAt($form, 'revista_secondary', '#open'));
     self::assertSame(
       'autofocus',
-      $form['revista_secondary']['field_tags']['target_id']['#attributes']['autofocus'] ?? NULL,
+      self::optionalValueAt($form, 'revista_secondary', 'field_tags', 'target_id', '#attributes', 'autofocus'),
     );
-    self::assertNull($form['title']['#attributes']['autofocus'] ?? NULL);
+    self::assertNull(self::optionalValueAt($form, 'title', '#attributes', 'autofocus'));
   }
 
   /**
@@ -119,10 +130,10 @@ final class RevistaFormHooksTest extends UnitTestCase {
     $form_state->setErrorByName('revista_secondary][field_meta_tags', 'Meta inválida.');
     (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_edit_form');
 
-    self::assertTrue($form['revista_secondary']['#open']);
+    self::assertTrue(self::valueAt($form, 'revista_secondary', '#open'));
     self::assertSame(
       'autofocus',
-      $form['revista_secondary']['field_meta_tags']['meta']['#attributes']['autofocus'] ?? NULL,
+      self::optionalValueAt($form, 'revista_secondary', 'field_meta_tags', 'meta', '#attributes', 'autofocus'),
     );
   }
 
@@ -135,10 +146,10 @@ final class RevistaFormHooksTest extends UnitTestCase {
     $form_state->setErrorByName('field_tags][target_id', 'Etiqueta inválida.');
     (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_edit_form');
 
-    self::assertTrue($form['revista_secondary']['#open']);
+    self::assertTrue(self::valueAt($form, 'revista_secondary', '#open'));
     self::assertSame(
       'autofocus',
-      $form['revista_secondary']['field_tags']['target_id']['#attributes']['autofocus'] ?? NULL,
+      self::optionalValueAt($form, 'revista_secondary', 'field_tags', 'target_id', '#attributes', 'autofocus'),
     );
     // A alteração visual não deve reescrever o estado de validação do Core.
     self::assertArrayHasKey('field_tags][target_id', $form_state->getErrors());
@@ -154,7 +165,7 @@ final class RevistaFormHooksTest extends UnitTestCase {
     $form_state->setErrorByName('field_tags][target_id', 'Etiqueta inválida.');
     (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_edit_form');
 
-    self::assertTrue($form['revista_secondary']['#open']);
+    self::assertTrue(self::valueAt($form, 'revista_secondary', '#open'));
     self::assertFalse($this->hasAutofocus($form));
   }
 
@@ -176,7 +187,7 @@ final class RevistaFormHooksTest extends UnitTestCase {
     $form_state->setErrorByName('field_credits', 'Crédito inválido.');
     (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_edit_form');
 
-    self::assertTrue($form['revista_secondary']['#open']);
+    self::assertTrue(self::valueAt($form, 'revista_secondary', '#open'));
     self::assertFalse($this->hasAutofocus($form));
   }
 
@@ -202,10 +213,10 @@ final class RevistaFormHooksTest extends UnitTestCase {
     $form_state->setErrorByName('field_credits', 'Crédito obrigatório.');
     (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_form');
 
-    self::assertTrue($form['revista_secondary']['#open']);
-    self::assertSame('autofocus', $form['revista_secondary']['field_credits']['credit']['#attributes']['autofocus'] ?? NULL);
-    self::assertFalse($this->hasAutofocus($form['revista_secondary']['field_credits']['token']));
-    self::assertFalse($this->hasAutofocus($form['revista_secondary']['field_credits']['disabled']));
+    self::assertTrue(self::valueAt($form, 'revista_secondary', '#open'));
+    self::assertSame('autofocus', self::optionalValueAt($form, 'revista_secondary', 'field_credits', 'credit', '#attributes', 'autofocus'));
+    self::assertFalse($this->hasAutofocus(self::arrayAt($form, 'revista_secondary', 'field_credits', 'token')));
+    self::assertFalse($this->hasAutofocus(self::arrayAt($form, 'revista_secondary', 'field_credits', 'disabled')));
   }
 
   /**
@@ -218,7 +229,7 @@ final class RevistaFormHooksTest extends UnitTestCase {
     $form_state->setErrorByName('revista_secondary][field_tags', 'Etiqueta inválida.');
     (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_edit_form');
 
-    self::assertTrue($form['revista_secondary']['#open']);
+    self::assertTrue(self::valueAt($form, 'revista_secondary', '#open'));
     self::assertFalse($this->hasAutofocus($form));
   }
 
@@ -231,15 +242,19 @@ final class RevistaFormHooksTest extends UnitTestCase {
     $form_state->setErrorByName('title', 'Título obrigatório.');
     (new RevistaFormHooks())->alter($form, $form_state, 'node_revista_edit_form');
 
-    self::assertFalse($form['revista_secondary']['#open']);
+    self::assertFalse(self::valueAt($form, 'revista_secondary', '#open'));
     self::assertFalse($this->hasAutofocus($form));
   }
 
   /**
    * Recursively checks a form array for the autofocus attribute.
+   *
+   * @param array<array-key, mixed> $element
+   *   Form element to inspect.
    */
   private function hasAutofocus(array $element): bool {
-    if (($element['#attributes']['autofocus'] ?? NULL) === 'autofocus') {
+    $attributes = $element['#attributes'] ?? NULL;
+    if (is_array($attributes) && ($attributes['autofocus'] ?? NULL) === 'autofocus') {
       return TRUE;
     }
     foreach ($element as $key => $value) {
@@ -248,6 +263,51 @@ final class RevistaFormHooksTest extends UnitTestCase {
       }
     }
     return FALSE;
+  }
+
+  /**
+   * Reads a form value while validating every parent element.
+   */
+  private static function valueAt(mixed $form, string ...$path): mixed {
+    $value = $form;
+    foreach ($path as $key) {
+      if (!is_array($value) || !array_key_exists($key, $value)) {
+        throw new \UnexpectedValueException(sprintf('Missing form element key "%s".', $key));
+      }
+      $value = $value[$key];
+    }
+
+    return $value;
+  }
+
+  /**
+   * Reads an optional form value, returning NULL when a path is absent.
+   */
+  private static function optionalValueAt(mixed $form, string ...$path): mixed {
+    $value = $form;
+    foreach ($path as $key) {
+      if (!is_array($value) || !array_key_exists($key, $value)) {
+        return NULL;
+      }
+      $value = $value[$key];
+    }
+
+    return $value;
+  }
+
+  /**
+   * Reads a nested form element while validating its array type.
+   *
+   * @return array<array-key, mixed>
+   *   Form element array.
+   */
+  private static function arrayAt(mixed $form, string ...$path): array {
+    $value = self::valueAt($form, ...$path);
+    if (!is_array($value)) {
+      throw new \UnexpectedValueException(sprintf('Form path "%s" must contain an array.', implode('.', $path)));
+    }
+
+    return $value;
   }
 
 }

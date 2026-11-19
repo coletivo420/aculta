@@ -10,18 +10,26 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/** Read-only, data-minimized administration list of account holders. */
+/**
+ * Read-only, data-minimized administration list of account holders. */
 final class PeopleListController extends ControllerBase {
 
   public function __construct(EntityTypeManagerInterface $entityTypeManager) {
     $this->entityTypeManager = $entityTypeManager;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('entity_type.manager'));
   }
 
-  /** Lists only display name, nickname, and account status. */
+  /**
+   * Lists only display name, nickname, and account status. */
+  /**
+   * @return array<array-key, mixed>
+   */
   public function listing(): array {
     $userStorage = $this->entityTypeManager->getStorage('user');
     $profileStorage = $this->entityTypeManager->getStorage('profile');
@@ -34,15 +42,12 @@ final class PeopleListController extends ControllerBase {
 
     $rows = [];
     foreach ($userStorage->loadMultiple($userIds) as $account) {
-      if (!$account instanceof UserInterface) {
-        continue;
-      }
       $profile = PerfilDoPapel::principal($profileStorage, $account);
       $displayName = $profile !== NULL && $profile->hasField('field_first_name')
-        ? trim((string) $profile->get('field_first_name')->value)
+        ? trim($this->textValue($profile->get('field_first_name')->value))
         : '';
       $nickname = $profile !== NULL && $profile->hasField('field_nickname')
-        ? trim((string) $profile->get('field_nickname')->value)
+        ? trim($this->textValue($profile->get('field_nickname')->value))
         : '';
 
       // Never fall back to the account name: some legacy accounts use an
@@ -69,6 +74,13 @@ final class PeopleListController extends ControllerBase {
       ],
       'pager' => ['#type' => 'pager'],
     ];
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Hook\PublicForumTopicHooks;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -32,7 +32,7 @@ final class PublicForumTopicHooksTest extends UnitTestCase {
     $storage->expects(self::once())->method('load')->with('forum_aculta_org')->willReturn(NULL);
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->expects(self::once())->method('getStorage')->with('domain')->willReturn($storage);
-    $hooks = new PublicForumTopicHooks($this->domainPurposeManager($entity_type_manager));
+    $hooks = new PublicForumTopicHooks($this->siteManager($entity_type_manager));
 
     $result = $hooks->entityCreateAccess($this->createMock(AccountInterface::class), ['entity_type_id' => 'node'], 'aculta_forum_topic');
 
@@ -57,7 +57,7 @@ final class PublicForumTopicHooksTest extends UnitTestCase {
     $entity_type_manager->method('getStorage')->with('domain')->willReturn($storage);
     $domain_negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $domain_negotiator->method('getActiveDomain')->willReturn($domain);
-    $manager = new DomainPurposeManager(
+    $manager = new DomainSiteManager(
       $entity_type_manager,
       $domain_negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -82,7 +82,7 @@ final class PublicForumTopicHooksTest extends UnitTestCase {
     $storage->expects(self::once())->method('load')->with('forum_aculta_org')->willReturn($domain);
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->expects(self::once())->method('getStorage')->with('domain')->willReturn($storage);
-    $hooks = new PublicForumTopicHooks($this->domainPurposeManager($entity_type_manager));
+    $hooks = new PublicForumTopicHooks($this->siteManager($entity_type_manager));
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('isEmpty')->willReturn(TRUE);
     $node = $this->createMock(NodeInterface::class);
@@ -99,8 +99,8 @@ final class PublicForumTopicHooksTest extends UnitTestCase {
    */
   public function testExistingExplicitDomainSourceIsPreserved(): void {
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
-    $domain_purpose = $this->domainPurposeManager($entity_type_manager);
-    $hooks = new PublicForumTopicHooks($domain_purpose);
+    $domain_site = $this->siteManager($entity_type_manager);
+    $hooks = new PublicForumTopicHooks($domain_site);
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('isEmpty')->willReturn(FALSE);
     $node = $this->createMock(NodeInterface::class);
@@ -115,8 +115,8 @@ final class PublicForumTopicHooksTest extends UnitTestCase {
   /**
    * Creates the purpose resolver with the provided entity manager.
    */
-  private function domainPurposeManager(EntityTypeManagerInterface $entity_type_manager): DomainPurposeManager {
-    return new DomainPurposeManager(
+  private function siteManager(EntityTypeManagerInterface $entity_type_manager): DomainSiteManager {
+    return new DomainSiteManager(
       $entity_type_manager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),

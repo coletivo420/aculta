@@ -1,0 +1,11 @@
+<article{{ attributes.addClass('aculta-event-page-layout') }}>
+  {% if title %}<header class="aculta-event-page-layout__title">{{ title }}</header>{% endif %}
+  {% if highlight %}<section class="aculta-event-page-layout__highlight" aria-label="{{ 'Destaque do evento'|t }}">{{ highlight }}</section>{% endif %}
+  {% if essentials or content %}
+    <div class="aculta-event-page-layout__primary">
+      {% if essentials %}<section class="aculta-event-page-layout__essentials" aria-label="{{ 'Informações essenciais'|t }}">{{ essentials }}</section>{% endif %}
+      {% if content %}<section class="aculta-event-page-layout__content">{{ content }}</section>{% endif %}
+    </div>
+  {% endif %}
+  {% if sidebar %}<aside class="aculta-event-page-layout__sidebar" aria-label="{{ 'Informações complementares'|t }}">{{ sidebar }}</aside>{% endif %}
+</article>

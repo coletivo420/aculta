@@ -9,7 +9,17 @@ declare(strict_types=1);
 
 // Testes determinísticos da CLI. Não usam Drupal, Drush nem vendor.
 $toolRoot = dirname(__DIR__);
-foreach (['Registry', 'Transform', 'Boundary', 'Verify', 'Indexing', 'HostingerLayout', 'Provision', 'Cli'] as $class) {
+foreach ([
+  'Registry',
+  'Transform',
+  'Boundary',
+  'Verify',
+  'Indexing',
+  'HostingerLayout',
+  'Provision',
+  'DomainHostnames',
+  'Cli',
+] as $class) {
   require_once $toolRoot . '/src/' . $class . '.php';
 }
 
@@ -21,6 +31,7 @@ use AcultaDeployer\Cli;
 use AcultaDeployer\Boundary;
 use AcultaDeployer\Registry;
 use AcultaDeployer\Transform;
+use AcultaDeployer\DomainHostnames;
 
 $failures = 0;
 $assert = static function (bool $ok, string $name) use (&$failures): void {
@@ -217,7 +228,8 @@ $quiet = static function (callable $fn): int {
   ob_start();
   try {
     return $fn();
-  } finally {
+  }
+  finally {
     ob_end_clean();
   }
 };
@@ -582,4 +594,27 @@ $assert(Provision::namesIn($tmpSecrets) === ['KEEP', 'BREVO_API_KEY', 'MAILER_PA
 @unlink($tmpSecrets);
 
 echo $failures === 0 ? "tests: PASS\n" : "tests: FAIL ($failures)\n";
+// Domínios: decisão de hostname por ambiente (sem banco).
 exit($failures === 0 ? 0 : 1);
+$entries = [
+  [
+    'domain_id' => 'forum_aculta_org',
+    'test_host' => 'growroom420.aculta.toca.net.br',
+    'production_host' => 'growroom420.aculta.org',
+  ],
+  [
+    'domain_id' => 'wiki420_aculta_org',
+    'test_host' => 'wiki420.aculta.toca.net.br',
+    'production_host' => 'wiki420.aculta.org',
+  ],
+];
+$p = DomainHostnames::plan($entries, 'test', [
+  'forum_aculta_org' => 'growroom420.aculta.org',
+  'wiki420_aculta_org' => 'wiki420.aculta.toca.net.br',
+]);
+$assert($p[0]['action'] === 'set' && $p[0]['target'] === 'growroom420.aculta.toca.net.br', 'dominio: teste grava host de teste quando diverge');
+$assert($p[1]['action'] === 'ok', 'dominio: já igual não grava');
+$p2 = DomainHostnames::plan($entries, 'test', []);
+$assert($p2[0]['action'] === 'unknown', 'dominio: sem leitura vira unknown, nunca grava');
+$p3 = DomainHostnames::plan($entries, 'production', ['forum_aculta_org' => 'growroom420.aculta.toca.net.br']);
+$assert($p3[0]['target'] === 'growroom420.aculta.org' && $p3[0]['action'] === 'set', 'dominio: production usa production_host');

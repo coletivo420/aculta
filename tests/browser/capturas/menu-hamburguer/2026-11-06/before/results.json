@@ -1,0 +1,46 @@
+{
+  "phase": "before",
+  "base": "https://aculta.toca.net.br",
+  "results": [
+    {
+      "name": "anon-light-320: gatilho observado (avatar?)",
+      "ok": null,
+      "detail": "avatar=True, ícone=False, rótulo=Abrir menu de conta"
+    },
+    {
+      "name": "anon-light-1440: gatilho observado (avatar?)",
+      "ok": null,
+      "detail": "avatar=True, ícone=False, rótulo=Abrir menu de conta"
+    },
+    {
+      "name": "anon-dark-320: gatilho observado (avatar?)",
+      "ok": null,
+      "detail": "avatar=True, ícone=False, rótulo=Abrir menu de conta"
+    },
+    {
+      "name": "anon-dark-1440: gatilho observado (avatar?)",
+      "ok": null,
+      "detail": "avatar=True, ícone=False, rótulo=Abrir menu de conta"
+    },
+    {
+      "name": "auth-light-320: gatilho observado (avatar?)",
+      "ok": null,
+      "detail": "avatar=True, ícone=False, rótulo=Abrir menu de conta"
+    },
+    {
+      "name": "auth-light-1440: gatilho observado (avatar?)",
+      "ok": null,
+      "detail": "avatar=True, ícone=False, rótulo=Abrir menu de conta"
+    },
+    {
+      "name": "auth-dark-320: gatilho observado (avatar?)",
+      "ok": null,
+      "detail": "avatar=True, ícone=False, rótulo=Abrir menu de conta"
+    },
+    {
+      "name": "auth-dark-1440: gatilho observado (avatar?)",
+      "ok": null,
+      "detail": "avatar=True, ícone=False, rótulo=Abrir menu de conta"
+    }
+  ]
+}

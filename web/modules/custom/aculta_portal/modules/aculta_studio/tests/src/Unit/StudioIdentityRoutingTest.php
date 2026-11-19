@@ -22,6 +22,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
   public function testCanonicalPathsHaveOneOwner(): void {
     $routes = $this->routes();
     $expected = [
+      '/aculta-studio-dashboard' => 'aculta_studio.dashboard',
       '/conta' => 'aculta_studio.account',
       '/conta/dados' => 'aculta_studio.account_data',
       '/conta/endereco' => 'aculta_studio.account_address',
@@ -32,11 +33,11 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/conta/pedidos' => 'aculta_studio.account_orders',
       '/conta/apoio' => 'aculta_studio.account_support',
       '/conta/preferencias' => 'aculta_studio.account_preferences',
-      '/perfil' => 'aculta_studio.profile',
-      '/perfil/apelido' => 'aculta_studio.profile_nickname',
-      '/perfil/privacidade' => 'aculta_studio.profile_privacy',
-      '/perfil/bio' => 'aculta_studio.profile_bio',
-      '/perfil/redes/{rede}' => 'aculta_studio.profile_social',
+      '/meu-perfil' => 'aculta_studio.profile',
+      '/meu-perfil/apelido' => 'aculta_studio.profile_nickname',
+      '/meu-perfil/privacidade' => 'aculta_studio.profile_privacy',
+      '/meu-perfil/bio' => 'aculta_studio.profile_bio',
+      '/meu-perfil/redes/{rede}' => 'aculta_studio.profile_social',
       '/marley' => 'aculta_studio.home',
       '/marley/{aba}' => 'aculta_studio.area',
       '/marley/{aba}/{secao}' => 'aculta_studio.section',
@@ -45,6 +46,14 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/we-sativa/inicio' => 'aculta_studio.we_sativa_start',
       '/ganjalab' => 'aculta_lms.student_dashboard',
       '/ganjalab/educador/cursos/novo' => 'aculta_lms.course_create',
+      '/ganjalab/educador/cursos/{course}/estrutura' => 'aculta_lms.course_structure',
+      '/ganjalab/educador/cursos/{course}/materiais' => 'aculta_lms.course_materials_edit',
+      '/ganjalab/educador/cursos/{course}/materiais/documentos/novo' => 'aculta_lms.course_document_add',
+      '/ganjalab/educador/cursos/{course}/materiais/documentos/{media}/editar' => 'aculta_lms.course_document_edit',
+      '/ganjalab/educador/cursos/{course}/aulas/nova' => 'aculta_lms.lesson_add',
+      '/ganjalab/educador/cursos/{course}/aulas/{lesson}/editar' => 'aculta_lms.lesson_edit',
+      '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/nova' => 'aculta_lms.activity_add',
+      '/ganjalab/educador/cursos/{course}/aulas/{lesson}/atividades/{activity}/editar' => 'aculta_lms.activity_edit',
       '/salvos' => 'aculta_studio.salvos',
       '/green-stash' => 'aculta_commerce.green_stash',
       '/green-stash/{secao}' => 'aculta_commerce.green_stash_area',
@@ -82,10 +91,15 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     ];
     foreach ($accountRoutes as $id) {
       $route = $routes[$id];
-      self::assertSame('account', $route['options']['_aculta_domain_purpose']);
+      self::assertSame('account', $route['options']['_aculta_site_key']);
       self::assertSame('access aculta portal', $route['requirements']['_permission']);
       self::assertSame('TRUE', $route['requirements']['_user_is_logged_in']);
     }
+    self::assertTrue($routes['aculta_studio.account']['defaults']['_disable_route_normalizer']);
+    $dashboard = $routes['aculta_studio.dashboard'];
+    self::assertSame('account', $dashboard['options']['_aculta_site_key']);
+    self::assertSame('access aculta portal', $dashboard['requirements']['_permission']);
+    self::assertSame('TRUE', $dashboard['requirements']['_user_is_logged_in']);
     $profileRoutes = [
       'aculta_studio.profile',
       'aculta_studio.profile_nickname',
@@ -95,18 +109,42 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     ];
     foreach ($profileRoutes as $id) {
       $route = $routes[$id];
-      self::assertSame('account', $route['options']['_aculta_domain_purpose']);
+      self::assertSame('account', $route['options']['_aculta_site_key']);
       self::assertSame('aculta_studio.profile_access:access', $route['requirements']['_custom_access']);
     }
-    self::assertSame('account', $routes['aculta_studio.home']['options']['_aculta_domain_purpose']);
-    self::assertSame('wiki', $routes['aculta_studio.we_sativa']['options']['_aculta_domain_purpose']);
-    self::assertSame('wiki', $routes['aculta_studio.we_sativa_start']['options']['_aculta_domain_purpose']);
-    self::assertSame('courses', $routes['aculta_lms.student_dashboard']['options']['_aculta_domain_purpose']);
-    self::assertSame('courses', $routes['aculta_lms.course_create']['options']['_aculta_domain_purpose']);
+    self::assertSame('account', $routes['aculta_studio.home']['options']['_aculta_site_key']);
+    self::assertSame('wiki', $routes['aculta_studio.we_sativa']['options']['_aculta_site_key']);
+    self::assertSame('wiki', $routes['aculta_studio.we_sativa_start']['options']['_aculta_site_key']);
+    self::assertSame('courses', $routes['aculta_lms.student_dashboard']['options']['_aculta_site_key']);
+    self::assertSame('courses', $routes['aculta_lms.course_create']['options']['_aculta_site_key']);
     self::assertSame('create lms_course group', $routes['aculta_lms.course_create']['requirements']['_permission']);
     self::assertTrue($routes['aculta_lms.course_create']['options']['no_cache']);
     self::assertSame('aculta_studio.course_authoring_controller:create', $routes['aculta_lms.course_create']['defaults']['_controller']);
-    self::assertSame('wiki', $routes['aculta_wiki.proposal_decide']['options']['_aculta_domain_purpose']);
+    foreach ([
+      'aculta_lms.course_structure',
+      'aculta_lms.course_materials_edit',
+      'aculta_lms.lesson_add',
+      'aculta_lms.lesson_edit',
+      'aculta_lms.activity_add',
+      'aculta_lms.activity_edit',
+    ] as $id) {
+      self::assertSame('courses', $routes[$id]['options']['_aculta_site_key']);
+      self::assertSame('aculta_lms.course_authoring_access:access', $routes[$id]['requirements']['_custom_access']);
+      self::assertTrue($routes[$id]['options']['no_cache']);
+    }
+    self::assertSame('aculta_lms.course_structure_controller:structure', $routes['aculta_lms.course_structure']['defaults']['_controller']);
+    self::assertSame('\\Drupal\\aculta_lms\\Resources\\Form\\CourseMaterialsForm', $routes['aculta_lms.course_materials_edit']['defaults']['_form']);
+    self::assertSame('aculta_lms.course_document_controller:add', $routes['aculta_lms.course_document_add']['defaults']['_controller']);
+    self::assertSame('aculta_lms.course_document_access:createAccess', $routes['aculta_lms.course_document_add']['requirements']['_custom_access']);
+    self::assertSame('courses', $routes['aculta_lms.course_document_add']['options']['_aculta_site_key']);
+    self::assertTrue($routes['aculta_lms.course_document_add']['options']['no_cache']);
+    self::assertSame('aculta_lms.course_document_controller:edit', $routes['aculta_lms.course_document_edit']['defaults']['_controller']);
+    self::assertSame('aculta_lms.course_document_access:updateAccess', $routes['aculta_lms.course_document_edit']['requirements']['_custom_access']);
+    self::assertSame('courses', $routes['aculta_lms.course_document_edit']['options']['_aculta_site_key']);
+    self::assertTrue($routes['aculta_lms.course_document_edit']['options']['no_cache']);
+    self::assertSame('\\Drupal\\aculta_lms\\Form\\LessonAuthoringForm', $routes['aculta_lms.lesson_add']['defaults']['_form']);
+    self::assertSame('\\Drupal\\aculta_lms\\Form\\ActivityAuthoringForm', $routes['aculta_lms.activity_add']['defaults']['_form']);
+    self::assertSame('wiki', $routes['aculta_wiki.proposal_decide']['options']['_aculta_site_key']);
     foreach ([
       'aculta_commerce.green_stash',
       'aculta_commerce.green_stash_area',
@@ -114,15 +152,23 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       'aculta_commerce.green_stash_product_detail',
       'aculta_commerce.green_stash_shipment_transition',
     ] as $id) {
-      self::assertSame('shop', $routes[$id]['options']['_aculta_domain_purpose']);
+      self::assertSame('shop', $routes[$id]['options']['_aculta_site_key']);
     }
-    self::assertSame('account', $routes['aculta_studio.salvos']['options']['_aculta_domain_purpose']);
+    self::assertSame('account', $routes['aculta_studio.salvos']['options']['_aculta_site_key']);
     self::assertSame('/conta/mercado-pago/planos', $routes['aculta_pagamentos_mercadopago.studio_plans']['path']);
     $noCacheRoutes = array_slice($accountRoutes, 2);
     foreach ($noCacheRoutes as $id) {
       self::assertTrue($routes[$id]['options']['no_cache']);
     }
-    self::assertTrue($routes['aculta_studio.profile_nickname']['options']['no_cache']);
+    foreach ([
+      'aculta_studio.profile',
+      'aculta_studio.profile_nickname',
+      'aculta_studio.profile_privacy',
+      'aculta_studio.profile_bio',
+      'aculta_studio.profile_social',
+    ] as $id) {
+      self::assertTrue($routes[$id]['options']['no_cache']);
+    }
     self::assertSame('\\Drupal\\aculta_user\\Form\\NicknameForm', $routes['aculta_studio.profile_nickname']['defaults']['_form']);
     self::assertSame('aculta_studio.marley_controller:page',
       $routes['aculta_studio.home']['defaults']['_controller']);
@@ -143,6 +189,11 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
       '/studio/salvos',
       '/studio/conta',
       '/studio/perfil',
+      '/perfil',
+      '/perfil/apelido',
+      '/perfil/privacidade',
+      '/perfil/bio',
+      '/perfil/redes/{rede}',
       '/studio/pessoal',
       '/studio/Marley',
       '/studio/inicio',
@@ -171,7 +222,7 @@ final class StudioIdentityRoutingTest extends UnitTestCase {
     self::assertSame('/conta-legada', $portal['aculta_portal.dashboard']['path']);
     // The technical /minha-conta path is blocked before routing, and the
     // Account purpose root is internally resolved to /conta, never /studio.
-    $subscriber = file_get_contents($root . '/../../src/EventSubscriber/DomainPurposeRequestSubscriber.php');
+    $subscriber = file_get_contents($root . '/../../src/EventSubscriber/DomainSiteRequestSubscriber.php');
     self::assertStringContainsString("\$accountPath === '/minha-conta'", $subscriber);
     self::assertStringContainsString('Response::HTTP_NOT_FOUND', $subscriber);
     self::assertStringNotContainsString('aculta_studio.hub', $subscriber);

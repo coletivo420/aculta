@@ -11,7 +11,7 @@ use Drupal\aculta_wiki\ContentIndex\WikiContentIndexProvider;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessPolicyProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -23,6 +23,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainInterface;
+use Drupal\domain\DomainNegotiationContext;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -159,9 +160,11 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): DomainInterface {
       return $activeDomain;
     });
-    $negotiator->method('setActiveDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
+    $context = $this->createMock(DomainNegotiationContext::class);
+    $context->method('setDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
       $activeDomain = $domain;
     });
+    $negotiator->method('getContext')->willReturn($context);
 
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('loadMultiple')->with(['1', '2'])->willReturn([
@@ -190,7 +193,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $domainStorage = $this->createMock(EntityStorageInterface::class);
     $domainStorage->expects(self::once())->method('load')->with('forum_aculta_org')->willReturn($forumDomain);
     $manager->method('getStorage')->willReturnCallback(static fn (string $type) => $type === 'domain' ? $domainStorage : $storage);
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $manager,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -199,7 +202,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $provider = new ForumContentIndexProvider();
     $registry = new ContentIndexProviderRegistry([$provider]);
 
-    $result = (new ContentIndexAccessFilter($manager, $registry, $purposeManager))->filter([
+    $result = (new ContentIndexAccessFilter($manager, $registry, $siteManager))->filter([
       ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
       ['entity_type' => 'node', 'entity_id' => '2', 'langcode' => 'pt-br'],
     ], $this->createMock(AccountInterface::class));
@@ -221,9 +224,11 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): DomainInterface {
       return $activeDomain;
     });
-    $negotiator->method('setActiveDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
+    $context = $this->createMock(DomainNegotiationContext::class);
+    $context->method('setDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
       $activeDomain = $domain;
     });
+    $negotiator->method('getContext')->willReturn($context);
 
     $wikiOne = $this->purposeTranslation('wiki_entry', $negotiator, $wikiDomain, 'wiki-entry:1');
     $forum = $this->purposeTranslation('aculta_forum_topic', $negotiator, $forumDomain, 'forum-topic:2');
@@ -253,7 +258,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $manager->method('getStorage')->willReturnCallback(
       static fn (string $type) => $type === 'domain' ? $domainStorage : $nodeStorage,
     );
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $manager,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -264,7 +269,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
       new ForumContentIndexProvider(),
     ]);
 
-    $result = (new ContentIndexAccessFilter($manager, $registry, $purposeManager))->filter([
+    $result = (new ContentIndexAccessFilter($manager, $registry, $siteManager))->filter([
       ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
       ['entity_type' => 'node', 'entity_id' => '2', 'langcode' => 'pt-br'],
       ['entity_type' => 'node', 'entity_id' => '3', 'langcode' => 'pt-br'],
@@ -285,9 +290,11 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $negotiator->method('getActiveDomain')->willReturnCallback(static function () use (&$activeDomain): DomainInterface {
       return $activeDomain;
     });
-    $negotiator->method('setActiveDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
+    $context = $this->createMock(DomainNegotiationContext::class);
+    $context->method('setDomain')->willReturnCallback(static function (DomainInterface $domain) use (&$activeDomain): void {
       $activeDomain = $domain;
     });
+    $negotiator->method('getContext')->willReturn($context);
 
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('loadMultiple')->with(['1'])->willReturn([
@@ -302,7 +309,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $domainStorage = $this->createMock(EntityStorageInterface::class);
     $domainStorage->expects(self::once())->method('load')->with('wiki420_aculta_org')->willReturn($wikiDomain);
     $manager->method('getStorage')->willReturnCallback(static fn (string $type) => $type === 'domain' ? $domainStorage : $storage);
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $manager,
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),
@@ -312,7 +319,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $result = (new ContentIndexAccessFilter(
       $manager,
       new ContentIndexProviderRegistry([new WikiContentIndexProvider()]),
-      $purposeManager,
+      $siteManager,
     ))->filter([
       ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
     ], $this->createMock(AccountInterface::class));
@@ -347,7 +354,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $manager->method('getStorage')->willReturnCallback(
       static fn (string $type) => $type === 'domain' ? $domainStorage : $nodeStorage,
     );
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $manager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -357,7 +364,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $result = (new ContentIndexAccessFilter(
       $manager,
       new ContentIndexProviderRegistry([new WikiContentIndexProvider()]),
-      $purposeManager,
+      $siteManager,
     ))->filter([
       ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
     ], $this->createMock(AccountInterface::class));
@@ -391,7 +398,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $manager->method('getStorage')->willReturnCallback(
       static fn (string $type) => $type === 'domain' ? $domainStorage : $nodeStorage,
     );
-    $purposeManager = new DomainPurposeManager(
+    $siteManager = new DomainSiteManager(
       $manager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -402,7 +409,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     $result = (new ContentIndexAccessFilter(
       $manager,
       new ContentIndexProviderRegistry([$provider]),
-      $purposeManager,
+      $siteManager,
     ))->filter([
       ['entity_type' => 'node', 'entity_id' => '1', 'langcode' => 'pt-br'],
     ], $this->createMock(AccountInterface::class));

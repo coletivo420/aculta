@@ -1,15 +1,35 @@
 {
-    "_hash": "492675850695b580ba02f4b18f17d6884ae0dc373235e556d2023e4210632508",
+    "_hash": "b23fcf8c5d1f318241d672604b82f4cf08c46834a11dbfed89f4c980401c9a79",
     "patches": {
         "drupal/address": [
             {
                 "package": "drupal/address",
                 "description": "Address 2.0.4 compatibility with Diff 2.x (Drupal.org issue 3589015)",
                 "url": "patches/address-diff-2-compatibility.patch",
-                "sha256": "f362f4ba21676290011bcb588d1a9239f2fd9603113499891a6841d47b1fadd6",
+                "sha256": "d2a9358dab74343c5d8c747c6c8fcb96233f9e0cfdf0af55c2a69f78d0b09970",
                 "depth": 1,
                 "extra": {
-                    "provenance": "root"
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            },
+            {
+                "package": "drupal/address",
+                "description": "Drupal 12 compatibility: migrate removed APIs (Drupal.org issue 3629639 and LegacyModuleImplementsAlter shim)",
+                "url": "patches/address-d12-compatibility.patch",
+                "sha256": "5ae81693c0ec30e0d832b138e49bd07241cd1d28ab4c11919bc33c738777bfa4",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            },
+            {
+                "package": "drupal/address",
+                "description": "Move Address field_views_data hook out of .views.inc for Drupal 12",
+                "url": "patches/address-move-views-hook.patch",
+                "sha256": "176df6b3fe4af51d89a887494fd8d0328dc8517d5c20d9749d8ba91d323e0c5f",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
                 }
             }
         ],
@@ -18,10 +38,10 @@
                 "package": "drupal/social_api",
                 "description": "PHP 8.4 explicit nullable request type (Drupal.org issue 3593752, MR !17)",
                 "url": "patches/social-api-php84-nullable-request.patch",
-                "sha256": "4478ee62ceddaf3434da8758800453a49ad1322d623aa8c0831b1a30cbad90fd",
+                "sha256": "347b1c893339c2a896f452056b801295a9058d83d0c11bfe77c55aee343ad29f",
                 "depth": 1,
                 "extra": {
-                    "provenance": "root"
+                    "provenance": "patches-file:patches-aculta.json"
                 }
             }
         ],
@@ -30,10 +50,22 @@
                 "package": "drupal/turnstile",
                 "description": "Fail closed when Turnstile credentials are missing; do not fall back to Math CAPTCHA",
                 "url": "patches/turnstile-no-math-fallback.patch",
-                "sha256": "9d3fe24474db08e380d3e048ae9bf794d99531411d765e708be4e5e85caf6feb",
+                "sha256": "462367924c81034c807f6e38042606fa1f660de79d2510198542d966b36f6045",
                 "depth": 1,
                 "extra": {
-                    "provenance": "root"
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            }
+        ],
+        "drupal/ui_patterns": [
+            {
+                "package": "drupal/ui_patterns",
+                "description": "UI Patterns: substituir drupal_static() depreciado pelo cache de memória do Drupal",
+                "url": "patches/aculta_patcher/ui_patterns_drupal_static_deprecation.patch",
+                "sha256": "b5445a47f3c729631110384e6e908c775a175af1d8a0b4ab9755fe8efbe8d54d",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
                 }
             }
         ],
@@ -43,6 +75,86 @@
                 "description": "H5P: bloquear tipos de conteúdo restritos no upload",
                 "url": "patches/aculta_patcher/h5p_restricted_upload.patch",
                 "sha256": "656137ed2c0ab27992305adc3785328c2f7e20646638f84da14efc8bb01c5e95",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            }
+        ],
+        "drupal/commerce": [
+            {
+                "package": "drupal/commerce",
+                "description": "Declare default table CSS class in Commerce provided Views (Drupal 12 change record 3499943)",
+                "url": "patches/commerce-views-default-table-class.patch",
+                "sha256": "d54ec831deacf4baa5ff191a5d234e644042622a2e199906b5a736cd27cb9a9a",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            },
+            {
+                "package": "drupal/commerce",
+                "description": "Replace removed Drupal 12 Entity::$original access with getOriginal()/setOriginal()",
+                "url": "patches/commerce-original-entity-api.patch",
+                "sha256": "4ba523200183f7a43897fd06f17b07cbf9e2ff6aca051462745480e4f91ad1fb",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            }
+        ],
+        "drupal/group": [
+            {
+                "package": "drupal/group",
+                "description": "Declare default table CSS class in Group provided Views (Drupal 12 change record 3499943)",
+                "url": "patches/group-views-default-table-class.patch",
+                "sha256": "35f668759192b92bfa144a3bae774564f36d87642956053be679175b82ef3ac4",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            },
+            {
+                "package": "drupal/group",
+                "description": "Replace removed Drupal 12 Entity::$original access in Group with getOriginal()",
+                "url": "patches/group-original-entity-api.patch",
+                "sha256": "d4b50835183f483a73ef1daf41c7a4592c01dd65efe61c627673bc306eea01bf",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            }
+        ],
+        "drupal/profile": [
+            {
+                "package": "drupal/profile",
+                "description": "Replace removed Drupal 12 Entity::$original access in Profile with getOriginal()",
+                "url": "patches/profile-original-entity-api.patch",
+                "sha256": "e624a42a342fc6935cd8af27aeff7de456284785c29e51e6cd3551a79c0c2d2a",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            }
+        ],
+        "drupal/entity": [
+            {
+                "package": "drupal/entity",
+                "description": "Move Entity API views_data hook into .module (Drupal.org issue 3610940)",
+                "url": "patches/entity-views-d12-hook.patch",
+                "sha256": "0c365fce79363fa299003085777c61f00c92483874da81b1224d09cac0e973fd",
+                "depth": 1,
+                "extra": {
+                    "provenance": "patches-file:patches-aculta.json"
+                }
+            }
+        ],
+        "drupal/entity_reference_revisions": [
+            {
+                "package": "drupal/entity_reference_revisions",
+                "description": "Remove ERR legacy .views.inc bridge; OOP hook is active on supported Drupal 11/12",
+                "url": "patches/entity-reference-revisions-remove-views-bridge.patch",
+                "sha256": "97e529bd59a0414e265322488783179ed0d0752f7de8c0b5f1b0ec97a6a63b4d",
                 "depth": 1,
                 "extra": {
                     "provenance": "patches-file:patches-aculta.json"

@@ -1,0 +1,14 @@
+aculta_editor_fluent_emoji:
+  ckeditor5:
+    plugins:
+      - acultaFluentEmoji.FluentEmoji
+  drupal:
+    label: Seletor de emojis Fluent
+    class: \Drupal\aculta_editor\Plugin\CKEditor5Plugin\FluentEmoji
+    library: aculta_editor/ckeditor5.fluent_emoji
+    elements: false
+    toolbar_items:
+      acultaFluentEmoji:
+        label: Emoji
+    conditions:
+      toolbarItem: acultaFluentEmoji

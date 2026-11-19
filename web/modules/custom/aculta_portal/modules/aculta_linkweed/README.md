@@ -1,7 +1,7 @@
 # ACULTA Links (`aculta_linkweed`)
 
 Submódulo Drupal para consolidar a página pública e as ferramentas de links do
-purpose `links` em micropáginas gerenciáveis. Versão atual do módulo: `0.4.0-dev.33` (manifesto). Os formulários nativos de destino, micropágina e item usam
+purpose `links` em micropáginas gerenciáveis. Versão atual do módulo: `0.4.0-dev.36` (manifesto). Os formulários nativos de destino, micropágina e item usam
 `ContentEntityForm` para renderizar campos de conteúdo; os add forms foram
 verificados no Firefox a 390 × 844. O módulo possui entidades revisionáveis de
 destinos, micropáginas e itens ordenados, painel administrativo, editor de composição e rota pública

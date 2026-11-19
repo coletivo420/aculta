@@ -1,0 +1,10 @@
+name: Autoria editorial padrão
+description: Composição de um título e cartões públicos de autoria.
+component: aculta420_v2:article-authors
+slots:
+  title:
+    type: inline_template
+    template: '<h2>Autoria</h2>'
+  authors:
+    type: inline_template
+    template: '<article class="portal-article-author"><div class="author-card">Pessoa autora</div></article><article class="portal-article-author"><div class="author-card">Pessoa coautora</div></article>'

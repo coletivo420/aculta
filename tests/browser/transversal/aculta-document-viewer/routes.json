@@ -1,0 +1,11 @@
+{
+  "front": "aculta-document-viewer",
+  "purpose": "transversal",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/transversal/aculta-document-viewer/README.md",
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
+  "notes": "Sem rota pública. O visualizador usa /node/ID de teste e o caminho administrativo /painel-administrativo/aculta/leitor-documentos. Cobertura fica nos scripts da frente."
+}

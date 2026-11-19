@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms\Hook;
 
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Drupal\aculta_lms\Event\AnswerEvaluatedEvent;
@@ -25,7 +26,7 @@ final class AnswerLifecycleEventHooks {
    */
   #[Hook('entity_insert')]
   public function entityInsert(EntityInterface $entity): void {
-    if ($entity->getEntityTypeId() !== 'aculta_lms_answer') {
+    if (!$entity instanceof ContentEntityInterface || $entity->getEntityTypeId() !== 'aculta_lms_answer') {
       return;
     }
     if ($this->state($entity) === CourseAnswer::STATE_GRADED) {
@@ -41,11 +42,11 @@ final class AnswerLifecycleEventHooks {
    */
   #[Hook('entity_update')]
   public function entityUpdate(EntityInterface $entity): void {
-    if ($entity->getEntityTypeId() !== 'aculta_lms_answer') {
+    if (!$entity instanceof ContentEntityInterface || $entity->getEntityTypeId() !== 'aculta_lms_answer') {
       return;
     }
     $original = $entity->getOriginal();
-    if ($original === NULL || $original->getEntityTypeId() !== 'aculta_lms_answer') {
+    if (!$original instanceof ContentEntityInterface || $original->getEntityTypeId() !== 'aculta_lms_answer') {
       return;
     }
     if ($this->state($entity) === CourseAnswer::STATE_SUBMITTED
@@ -61,7 +62,7 @@ final class AnswerLifecycleEventHooks {
   /**
    * Dispatches the learner-only evaluation event.
    */
-  private function publishEvaluation(EntityInterface $answer): void {
+  private function publishEvaluation(ContentEntityInterface $answer): void {
     $this->eventDispatcher->dispatch(new AnswerEvaluatedEvent(
       (string) $answer->uuid(),
       (string) $answer->get('uid')->value,
@@ -72,14 +73,23 @@ final class AnswerLifecycleEventHooks {
   /**
    * Dispatches a response without including its content.
    */
-  private function publishSubmission(EntityInterface $answer): void {
+  private function publishSubmission(ContentEntityInterface $answer): void {
     $this->eventDispatcher->dispatch(new AnswerSubmittedEvent(
       (string) $answer->uuid(),
       $this->newPublicationVersion(),
     ));
   }
 
-  private function state(EntityInterface $answer): string {
+  /**
+   * Retorna o estado atual da resposta.
+   *
+   * @param \Drupal\Core\Entity\ContentEntityInterface $answer
+   *   Entidade de resposta.
+   *
+   * @return string
+   *   Estado persistido da resposta.
+   */
+  private function state(ContentEntityInterface $answer): string {
     return (string) $answer->get('state')->value;
   }
 

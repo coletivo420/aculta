@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Tabela de listagem do Studio
+description: Apresenta tabelas administrativas e de conteúdo montadas pelo Studio.
+status: stable
+group: Studio
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Wrapper responsivo e tabela
+    description: Render arrays com cabeçalhos, células, links, operações e paginação do módulo proprietário.
+assets:
+  css:
+    component:
+      studio-listing-table.css: {}

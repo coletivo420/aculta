@@ -179,7 +179,7 @@ final class LinkPagePublicController {
               $identity_name = [
                 '#type' => 'link',
                 '#title' => $identity_data['display_name'],
-                '#url' => Url::fromUri($identity_data['profile_url']),
+                '#url' => Url::fromUri(is_string($identity_data['profile_url']) ? $identity_data['profile_url'] : ''),
               ];
             }
             catch (\InvalidArgumentException) {
@@ -265,7 +265,7 @@ final class LinkPagePublicController {
       '#attached' => ['library' => ['aculta_linkweed/micropagina']],
       '#theme' => 'aculta_linkweed_page',
       '#title' => $page->label(),
-      '#description' => (string) $page->get('description')->value,
+      '#description' => $this->textValue($page->get('description')->value),
       '#owner_identity' => $owner_identity,
       '#theme_preset' => in_array((string) $page->get('theme_preset')->value, ['classic', 'soft', 'outline'], TRUE)
         ? (string) $page->get('theme_preset')->value
@@ -278,6 +278,13 @@ final class LinkPagePublicController {
         'max-age' => $cache_max_age,
       ],
     ];
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

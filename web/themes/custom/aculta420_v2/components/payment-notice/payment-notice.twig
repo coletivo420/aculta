@@ -1,0 +1,18 @@
+{% set notice_content %}
+  <section data-portal-payment-notice>
+    <p>
+      {{ intro }}
+      {% if url and link_label %}
+        <a class="aculta-payment-notice__link" href="{{ url }}" target="_blank" rel="noopener">{{ link_label }}</a> ({{ 'abre em nova aba'|t }})
+      {% endif %}
+    </p>
+  </section>
+{% endset %}
+{{ include('aculta420_v2:surface', {
+  tone: 'raised',
+  radius: 'lg',
+  spacing: 'normal',
+  elevation: 'subtle',
+  border: 'subtle',
+  content: notice_content,
+}, with_context: false) }}

@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * PHPStan correction for H5P Core's filterParameters() API.
+ *
+ * The installed implementation returns the filtered JSON string or NULL,
+ * despite the vendor PHPDoc claiming it returns an object.
+ */
+class H5PCore
+{
+
+    /**
+     * Filters content parameters and updates the content structure by reference.
+     *
+     * @param array<string, mixed>|object $content
+     *   H5P content data.
+     *
+     * @return string|null
+     *   Filtered parameters encoded as JSON, or NULL when filtering fails.
+     */
+    public function filterParameters(&$content)
+    {
+    }
+
+}

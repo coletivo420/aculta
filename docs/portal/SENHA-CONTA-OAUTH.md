@@ -62,7 +62,7 @@ extra. Pendência: identificar contas com registro em `social_auth` e sem marca,
 (por exemplo, uma atualização de dados com regra explícita). Isso depende de consulta no runtime e de decisão do
 responsável.
 
-## Verificação feita (Homelab, runtime de teste)
+## Verificação feita (Homelab, runtime de desenvolvimento)
 
 - Lint dos arquivos alterados: sem erros.
 - Teste direto da lógica com uma conta temporária marcada como criada por OAuth:
@@ -71,7 +71,7 @@ responsável.
   - marca `social_auth_password_unset` removida;
   - redirect para `aculta_portal.security_password` definido;
   - conta temporária removida ao final (conferido: nenhuma `oauthteste` restante).
-- Gates: `validate-aculta-portal-drupal11` PASS. `validate-module-theme-boundary` com 1 falha, que é de outra linha de
+- Gates: `validate-aculta-portal-drupal12` PASS. `validate-module-theme-boundary` com 1 falha, que é de outra linha de
   trabalho (`SocialLinksPagePresenter.php`, classes de design no módulo), não desta mudança.
 
 ## Não verificado

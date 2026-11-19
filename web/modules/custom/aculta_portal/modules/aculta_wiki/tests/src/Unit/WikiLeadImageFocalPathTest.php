@@ -10,7 +10,6 @@ use Drupal\image_widget_crop\ImageWidgetCropManager;
 use Drupal\aculta_wiki\Upload\WikiLeadImageUploader;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\file\FileInterface;
 use Drupal\Tests\UnitTestCase;
@@ -24,10 +23,18 @@ use PHPUnit\Framework\Attributes\Group;
 #[CoversClass(WikiLeadImageUploader::class)]
 final class WikiLeadImageFocalPathTest extends UnitTestCase {
 
-  /** @var string[] */
+  /**
+   * Tipos de recorte esperados no teste.
+   *
+   * @var string[]
+   */
   private array $expectedTypes = [];
 
-  /** @var string[] */
+  /**
+   * Chamadas esperadas ao recorder.
+   *
+   * @var string[]
+   */
   private array $expectedCalls = [];
 
   /**
@@ -61,7 +68,6 @@ final class WikiLeadImageFocalPathTest extends UnitTestCase {
     $this->setProperty($uploader, 'focalPointRecorder', $recorder);
 
     $method = new \ReflectionMethod($uploader, 'recordFocal');
-    $method->setAccessible(TRUE);
     $method->invoke($uploader, $form_state);
   }
 
@@ -84,14 +90,23 @@ final class WikiLeadImageFocalPathTest extends UnitTestCase {
     $this->setProperty($uploader, 'focalPointRecorder', $recorder);
 
     $method = new \ReflectionMethod($uploader, 'recordFocal');
-    $method->setAccessible(TRUE);
     $method->invoke($uploader, $form_state);
   }
 
   /**
-   * Recorder real com gerenciador de recorte mockado: o crop_type só é consultado se o record() recebeu valores.
+   * Cria um recorder real com gerenciador de recorte mockado.
    *
+   * O crop_type só é consultado se o record() recebeu valores.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $etm
+   *   Gerenciador de tipos de entidade usado na asserção de chamadas.
+   * @param \Drupal\file\FileInterface|null $file
+   *   Arquivo associado ao ponto focal, ou NULL.
    * @param string[] $expected_types
+   *   Tipos de recorte que devem ser consultados.
+   *
+   * @return \Drupal\aculta_file_uploader\FocalPointRecorder
+   *   Recorder configurado.
    */
   private function realRecorder(EntityTypeManagerInterface $etm, ?FileInterface $file, array $expected_types): FocalPointRecorder {
     $cropTypes = $this->createMock(EntityStorageInterface::class);
@@ -139,7 +154,6 @@ final class WikiLeadImageFocalPathTest extends UnitTestCase {
    */
   private function setProperty(object $object, string $name, mixed $value): void {
     $prop = new \ReflectionProperty($object, $name);
-    $prop->setAccessible(TRUE);
     $prop->setValue($object, $value);
   }
 

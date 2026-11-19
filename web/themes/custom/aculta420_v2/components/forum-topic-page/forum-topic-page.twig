@@ -1,0 +1,37 @@
+<header class="aculta-forum-topic__full-header">
+  <div class="aculta-forum-topic__header-actions">
+    <button type="button" class="aculta-forum-action-btn" disabled aria-disabled="true">
+      {{ include('aculta420_v2:icon', {name: 'bell', variant: 'duotone', size: 'sm'}, with_context: false) }}
+      <span>{{ 'Seguir'|t }}</span>
+      <span class="aculta-forum-action-btn__badge">{{ 'Em breve'|t }}</span>
+    </button>
+    <button type="button" class="aculta-forum-action-btn" disabled aria-disabled="true">
+      {{ include('aculta420_v2:icon', {name: 'bookmark-simple', variant: 'duotone', size: 'sm'}, with_context: false) }}
+      <span>{{ 'Salvar'|t }}</span>
+      <span class="aculta-forum-action-btn__badge">{{ 'Em breve'|t }}</span>
+    </button>
+  </div>
+</header>
+<div class="aculta-forum-topic__layout">
+  <div class="aculta-forum-topic__main">{{ topic }}</div>
+  <aside class="aculta-forum-topic__aside" aria-labelledby="forum-topic-about">
+    <section class="aculta-forum-topic__about">
+      <h2 class="aculta-forum-topic__about-title" id="forum-topic-about">{{ 'Sobre este tópico'|t }}</h2>
+      <dl class="aculta-forum-topic__about-list">
+        <div><dt>{{ 'Categoria'|t }}</dt><dd>{{ category_label }}</dd></div>
+        <div><dt>{{ 'Criado por'|t }}</dt><dd>{{ author_name }}</dd></div>
+        <div><dt>{{ 'Criado em'|t }}</dt><dd>{{ created|date('d/m/Y H:i') }}</dd></div>
+      </dl>
+      <dl class="aculta-forum-topic__about-stats">
+        <div><dt>{{ 'Respostas'|t }}</dt><dd>—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></dd></div>
+        <div><dt>{{ 'Participantes'|t }}</dt><dd>—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></dd></div>
+        <div><dt>{{ 'Visualizações'|t }}</dt><dd>—<span class="visually-hidden">{{ 'Dado indisponível'|t }}</span></dd></div>
+      </dl>
+    </section>
+  </aside>
+  {{ include('aculta420_v2:button', {
+    text: 'Comentar'|t,
+    variant: 'primary',
+    attributes: create_attribute({'data-aculta-comment-new': '', hidden: 'hidden'}),
+  }, with_context: false) }}
+</div>

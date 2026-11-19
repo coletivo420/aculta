@@ -81,7 +81,7 @@ A interface deve ter rotas internas com **permissões administrativas específic
 - **P-CART F — Hardening:** configuração, segurança, conflito de ownership, observabilidade com Statistics quando relevante; não indexar pedidos/carrinhos no Content Index.
 - **P-CART T — Homologação:** homelab, testes unitários/Kernel/Functional/Browser, três fluxos no sandbox, gestão das configurações e regressão visual e de comportamento do carrinho do cabeçalho; registrar PASS/FAIL e rollback.
 
-## Gates rígidos no servidor de testes
+## Gates rígidos no servidor de desenvolvimento
 
 Antes e depois da migração, comparar as mesmas rotas, configs, botões, contadores, redirecionamentos, ordem dos checkouts, status HTTP, permissões, DOM e modo mobile/desktop do carrinho multidomínio. Confirmar `donate|cart|both`, pedidos de Loja/LMS/Doações, guest/auth, domínio cruzado, checkout e webhook assinado, assinaturas, pagamentos e estornos conforme política. Rodar suíte do Portal/tema e testes de acessibilidade. Sem essas provas, declarar **BLOCKED/DEFERRED**, jamais PASS.
 
@@ -91,7 +91,7 @@ Fases pequenas, commits isolados na branch/PR existente. Não forçar push, rese
 
 ## Estado de implementação (2026-10-22)
 
-P-CART A a D concluídas em código: testes de caracterização, contratos e registry no Portal, providers de Loja (`aculta_commerce`, módulo ainda não habilitado), LMS e Doações, e o seletor das rotas globais agora no Portal (`CommerceCheckoutRouteSubscriber`), com o subscriber do Donation removido após a prova de equivalência. Homologação em servidor de testes pendente (P-CART T).
+P-CART A a D concluídas em código: testes de caracterização, contratos e registry no Portal, providers de Loja (`aculta_commerce`, módulo ainda não habilitado), LMS e Doações, e o seletor das rotas globais agora no Portal (`CommerceCheckoutRouteSubscriber`), com o subscriber do Donation removido após a prova de equivalência. Homologação em servidor de desenvolvimento pendente (P-CART T).
 
 ## Adendo — decisões do responsável (2026-10-22)
 

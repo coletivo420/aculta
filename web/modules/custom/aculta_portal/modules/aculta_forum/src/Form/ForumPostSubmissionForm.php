@@ -7,6 +7,8 @@ namespace Drupal\aculta_forum\Form;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
@@ -19,6 +21,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Contextual submission form for public Forum posts.
+ *
+ * @property \Drupal\aculta_forum\Entity\ForumPost $entity
  */
 final class ForumPostSubmissionForm extends ContentEntityForm {
 
@@ -26,8 +30,8 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
     EntityRepositoryInterface $entity_repository,
     EntityTypeBundleInfoInterface $entity_type_bundle_info,
     TimeInterface $time,
-    private readonly MessengerInterface $submissionMessenger,
-    private readonly ForumPostThreadBuilder $threadBuilder,
+    protected readonly MessengerInterface $submissionMessenger,
+    protected readonly ForumPostThreadBuilder $threadBuilder,
   ) {
     parent::__construct($entity_repository, $entity_type_bundle_info, $time);
   }
@@ -47,12 +51,15 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
     $parent = $this->entity->get('parent')->entity;
     $topic = $this->entity->get('topic')->entity;
-    if ($parent === NULL) {
+    if (!$parent instanceof ContentEntityInterface || !$parent instanceof EntityPublishedInterface) {
       return $form;
     }
 
@@ -71,12 +78,13 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
       return $form;
     }
 
+    $parent_label = (string) $parent->label();
     $form['reply_context'] = [
       '#type' => 'container',
       '#weight' => -100,
       'description' => [
         '#plain_text' => $this->t('Você está respondendo à publicação: @subject', [
-          '@subject' => $parent->label(),
+          '@subject' => $parent_label,
         ]),
       ],
     ];
@@ -85,6 +93,8 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function buildEntity(array $form, FormStateInterface $form_state) {
     $entity = parent::buildEntity($form, $form_state);
@@ -92,24 +102,31 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
       $entity->setNewRevision(TRUE);
       $entity->setRevisionUserId($this->currentUser()->id());
       $entity->setRevisionCreationTime($this->time->getRequestTime());
-      $entity->setRevisionLogMessage($this->t('Edição pelo autor.'));
+      $entity->setRevisionLogMessage((string) $this->t('Edição pelo autor.'));
     }
     return $entity;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<mixed>
    */
   protected function actions(array $form, FormStateInterface $form_state): array {
     $actions = parent::actions($form, $form_state);
-    $actions['submit']['#value'] = $this->entity->isNew()
-      ? $this->t('Enviar publicação')
-      : $this->t('Salvar alterações');
+    if (isset($actions['submit']) && is_array($actions['submit'])) {
+      $actions['submit']['#value'] = $this->entity->isNew()
+        ? $this->t('Enviar publicação')
+        : $this->t('Salvar alterações');
+    }
     return $actions;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function save(array $form, FormStateInterface $form_state): int {
     $wasNew = $this->entity->isNew();
@@ -126,7 +143,7 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
       : $this->t('Sua publicação foi atualizada.');
     $this->submissionMessenger->addStatus($message);
     $url = $topic->toUrl('canonical');
-    if ($this->entity instanceof ForumPost && $this->entity->isPublished()) {
+    if ($this->entity->isPublished()) {
       $page = $this->threadBuilder->getPageForPost($topic, $this->entity);
       if ($page !== NULL) {
         $url->setOption('query', $this->threadBuilder->getTopicPagerQuery($page));

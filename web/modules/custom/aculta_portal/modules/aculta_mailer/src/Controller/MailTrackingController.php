@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Controller;
 
 use Drupal\aculta_mailer\Log\MailLogRecorder;
+use Drupal\aculta_mailer\Entity\MailLog;
 use Drupal\aculta_mailer\Tracking\MailTracker;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -74,8 +76,9 @@ final class MailTrackingController extends ControllerBase {
    */
   private function bump(string $correlation, string $counter, string $first): void {
     $storage = $this->entityTypes->getStorage(MailLogRecorder::ENTITY_TYPE);
-    $log = reset($storage->loadByProperties(['correlation_id' => $correlation]));
-    if (!$log) {
+    $matches = $storage->loadByProperties(['correlation_id' => $correlation]);
+    $log = reset($matches);
+    if (!$log instanceof MailLog) {
       return;
     }
     $log->set($counter, (int) $log->get($counter)->value + 1);

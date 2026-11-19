@@ -1,26 +1,32 @@
 /**
  * Draws ACULTA maps with Leaflet and groups nearby markers.
  */
-(function (Drupal, drupalSettings) {
+(function (Drupal, drupalSettings, once) {
   'use strict';
 
   const clusterDistance = 52;
+  const popupTemplates = new WeakMap();
+  const markerIconTemplates = new WeakMap();
 
   Drupal.behaviors.acultaMaps = {
     attach(context) {
-      const elements = Array.from(context.querySelectorAll('[data-aculta-map="true"]'));
-      if (context.matches && context.matches('[data-aculta-map="true"]')) {
-        elements.push(context);
-      }
-      elements.forEach((element) => {
-        if (element.dataset.acultaMapsReady === 'true') {
+      document.querySelectorAll('[data-aculta-map="true"]').forEach((element) => {
+        if (element.classList.contains('leaflet-container')) {
           return;
         }
         const settings = drupalSettings.acultaMaps && drupalSettings.acultaMaps[element.id];
         if (!settings) {
           return;
         }
-        element.dataset.acultaMapsReady = 'true';
+        once('acultaMaps', element);
+        popupTemplates.set(element, new Map(
+          Array.from(element.querySelectorAll('template[data-aculta-map-popup-template]'))
+            .map((template) => [template.dataset.popupId, template.content.cloneNode(true)]),
+        ));
+        markerIconTemplates.set(element, new Map(
+          Array.from(element.querySelectorAll('template[data-aculta-map-marker-icon-template]'))
+            .map((template) => [template.dataset.iconTemplateId, template.content.cloneNode(true)]),
+        ));
         if (settings.provider === 'google' && settings.googleApiKey) {
           loadGoogleMaps(settings.googleApiKey)
             .then(() => drawGoogleMap(element, settings))
@@ -50,7 +56,7 @@
       layer.clearLayers();
       clusterMarkers(settings.markers || [], map).forEach((group) => {
         if (group.length === 1) {
-          addLocationMarker(layer, group[0]);
+          addLocationMarker(layer, group[0], element);
         }
         else {
           addClusterMarker(layer, group, map);
@@ -115,29 +121,7 @@
         const position = { lat: marker.lat, lng: marker.lng };
         const pin = new window.google.maps.Marker({ map, position, title: marker.label });
         bounds.extend(position);
-        const content = document.createElement('div');
-        const title = document.createElement('strong');
-        title.textContent = marker.label;
-        content.appendChild(title);
-        if (marker.description) {
-          const description = document.createElement('p');
-          description.textContent = marker.description;
-          content.appendChild(description);
-        }
-        if (isSafeUrl(marker.url)) {
-          const link = document.createElement('a');
-          link.href = marker.url;
-          link.textContent = Drupal.t('Ver detalhes');
-          content.appendChild(link);
-        }
-        if (isSafeUrl(marker.routeUrl)) {
-          const route = document.createElement('a');
-          route.href = marker.routeUrl;
-          route.target = '_blank';
-          route.rel = 'noopener noreferrer';
-          route.textContent = Drupal.t('Ver rota');
-          content.appendChild(route);
-        }
+        const content = getPopupContent(element, marker);
         const info = new window.google.maps.InfoWindow({ content });
         pin.addListener('click', () => info.open({ anchor: pin, map }));
       });
@@ -158,7 +142,7 @@
   function drawFallbackMap(element, settings, failed = false) {
     if (failed && settings.showAdminNotice && !element.dataset.acultaMapFallbackNotified) {
       const notice = document.createElement('p');
-      notice.className = 'messages messages--warning';
+      notice.className = 'aculta-map-fallback-notice';
       notice.textContent = Drupal.t('Google Maps falhou; o mapa foi substituído pelo OpenStreetMap.');
       element.insertAdjacentElement('afterend', notice);
       element.dataset.acultaMapFallbackNotified = 'true';
@@ -214,8 +198,66 @@
     return Array.from(groups.values());
   }
 
-  function addLocationMarker(layer, marker) {
-    const pin = window.L.marker([marker.lat, marker.lng], { title: marker.label }).addTo(layer);
+  function addLocationMarker(layer, marker, element) {
+    const iconTemplate = markerIconTemplates.get(element)?.get(marker.iconTemplateId);
+    const iconMarkup = iconTemplate?.cloneNode(true) || createFallbackMarkerIcon();
+    const icon = createDuotoneMarker(iconMarkup, marker.categoryColorClass);
+    const pin = window.L.marker([marker.lat, marker.lng], {
+      title: marker.label,
+      alt: marker.label,
+      keyboard: true,
+      icon,
+    }).addTo(layer);
+    pin.bindPopup(getPopupContent(element, marker));
+  }
+
+  /** Builds a Leaflet divIcon around theme-rendered, inline SVG. */
+  function createDuotoneMarker(iconMarkup, categoryColorClass = 'primary') {
+    const allowedVariants = ['primary', 'highlight', 'neutral'];
+    const variant = allowedVariants.includes(categoryColorClass) ? categoryColorClass : 'primary';
+    const pin = document.createElement('span');
+    pin.className = `aculta-map-pin aculta-map-pin--${variant}`;
+    pin.setAttribute('aria-hidden', 'true');
+    const inner = document.createElement('span');
+    inner.className = 'aculta-map-pin__inner';
+    if (iconMarkup instanceof DocumentFragment) {
+      inner.appendChild(iconMarkup);
+    }
+    else if (iconMarkup instanceof Element) {
+      inner.appendChild(iconMarkup);
+    }
+    pin.appendChild(inner);
+    const shadow = document.createElement('span');
+    shadow.className = 'aculta-map-pin__shadow';
+    pin.appendChild(shadow);
+    return window.L.divIcon({
+      className: 'aculta-leaflet-marker-custom',
+      html: pin,
+      iconSize: [40, 48],
+      iconAnchor: [20, 46],
+      popupAnchor: [0, -42],
+    });
+  }
+
+  function createFallbackMarkerIcon() {
+    const icon = document.createElement('span');
+    icon.className = 'aculta-icon aculta-icon--duotone aculta-icon--md';
+    icon.setAttribute('aria-hidden', 'true');
+    icon.textContent = '•';
+    return icon;
+  }
+
+  /**
+   * Clones theme-rendered popup markup when present, with a safe DOM fallback.
+   */
+  function getPopupContent(element, marker) {
+    const templateContent = popupTemplates.get(element)?.get(marker.popupId);
+    if (templateContent) {
+      const content = document.createElement('div');
+      content.appendChild(templateContent.cloneNode(true));
+      return content;
+    }
+
     const content = document.createElement('div');
     const title = document.createElement('strong');
     title.textContent = marker.label;
@@ -239,7 +281,7 @@
       route.textContent = Drupal.t('Ver rota');
       content.appendChild(route);
     }
-    pin.bindPopup(content);
+    return content;
   }
 
   function addClusterMarker(layer, markers, map) {
@@ -283,4 +325,4 @@
     }
   }
 
-})(Drupal, drupalSettings);
+})(Drupal, drupalSettings, once);

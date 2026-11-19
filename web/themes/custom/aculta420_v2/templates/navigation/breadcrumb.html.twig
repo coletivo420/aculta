@@ -1,0 +1,21 @@
+{#
+  Breadcrumb do sistema: monta os dados do SDC breadcrumb.
+  O início já é renderizado pelo componente, então o link para "/" sai da trilha.
+  A sessão vem de aculta_breadcrumb_sessao, definida pelo aculta_portal em
+  preprocess_breadcrumb a partir do subdomínio ativo (SiteKey::breadcrumbSessao).
+  Sem valor, cai em "portal".
+#}
+{% if breadcrumb or aculta_current_breadcrumb %}
+  {% set trail = breadcrumb|filter(item => item.url != '/' and item.url != '<front>' and item.text|render|striptags|trim != 'Início')|map(item => {
+    label: item.text,
+    url: item.url,
+  }) %}
+  {{ include('aculta420_v2:breadcrumb', {
+    label: 'Breadcrumb'|t,
+    inicio_url: aculta_breadcrumb_inicio|default('/'),
+    sessao: aculta_breadcrumb_sessao|default('portal'),
+    variant: 'padrao',
+    trail: trail,
+    current: aculta_current_breadcrumb,
+  }, with_context = false) }}
+{% endif %}

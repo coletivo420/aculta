@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Plugin\migrate\source;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
@@ -38,18 +38,35 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
   /**
    * Maximum number of source Comments loaded into one batch.
    */
-  private int $batchSize;
+  protected int $batchSize;
 
+  /**
+   * Constructs a ForumComment source plugin.
+   *
+   * @param array<string, mixed> $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param array<string, mixed> $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\migrate\Plugin\MigrationInterface $migration
+   *   The migration entity.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   The entity type manager.
+   * @param \Drupal\aculta_portal\Domain\DomainSiteManager $siteManager
+   *   The domain site manager.
+   */
   public function __construct(
     array $configuration,
     string $plugin_id,
     array $plugin_definition,
     MigrationInterface $migration,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly DomainSiteManager $siteManager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $migration);
-    $this->batchSize = (int) ($configuration['comment_batch_size'] ?? self::DEFAULT_BATCH_SIZE);
+    $batchSizeVal = $configuration['comment_batch_size'] ?? self::DEFAULT_BATCH_SIZE;
+    $this->batchSize = is_numeric($batchSizeVal) ? (int) $batchSizeVal : self::DEFAULT_BATCH_SIZE;
     if ($this->batchSize < 1 || $this->batchSize > self::MAX_BATCH_SIZE) {
       throw new \InvalidArgumentException(sprintf('comment_batch_size deve ficar entre 1 e %d.', self::MAX_BATCH_SIZE));
     }
@@ -57,49 +74,60 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param array<string, mixed> $plugin_definition
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?MigrationInterface $migration = NULL): static {
+    if (!$migration instanceof MigrationInterface) {
+      throw new \InvalidArgumentException('MigrationInterface é obrigatória.');
+    }
     return new static(
       $configuration,
       $plugin_id,
       $plugin_definition,
       $migration,
       $container->get('entity_type.manager'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
     );
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @return \Generator<int, array<string, mixed>, void, void>
    */
   protected function initializeIterator(): \Generator {
     $storage = $this->entityTypeManager->getStorage('comment');
-    $max_ids = $this->sourceCommentQuery()
+    $max_res = $this->sourceCommentQuery()
       ->sort('cid', 'DESC')
       ->range(0, 1)
       ->execute();
-    $max_comment_id = $max_ids === [] ? 0 : (int) reset($max_ids);
+    $max_ids = is_array($max_res) ? array_values($max_res) : [];
+    $first_max = reset($max_ids);
+    $max_comment_id = is_numeric($first_max) ? (int) $first_max : 0;
     $last_comment_id = 0;
 
     while ($last_comment_id < $max_comment_id) {
-      $comment_ids = $this->sourceCommentQuery()
+      $comment_res = $this->sourceCommentQuery()
         ->condition('cid', $last_comment_id, '>')
         ->condition('cid', $max_comment_id, '<=')
         ->sort('cid')
         ->range(0, $this->batchSize)
         ->execute();
+      $comment_ids = is_array($comment_res) ? array_values($comment_res) : [];
       if ($comment_ids === []) {
         break;
       }
-      $comment_ids = array_values($comment_ids);
-      $last_comment_id = (int) end($comment_ids);
+      $end_id = end($comment_ids);
+      $last_comment_id = is_numeric($end_id) ? (int) $end_id : 0;
 
-      foreach ($storage->loadMultiple($comment_ids) as $comment) {
-        if (!$comment instanceof CommentInterface) {
-          continue;
-        }
+      /** @var array<int|string> $comment_ids */
+      /** @var \Drupal\comment\CommentInterface[] $comments */
+      $comments = $storage->loadMultiple($comment_ids);
+      foreach ($comments as $comment) {
         $topic = $comment->getCommentedEntity();
-        if (!$this->isEligibleTopic($topic)) {
+        if (!$topic instanceof NodeInterface || !$this->isEligibleTopic($topic)) {
           continue;
         }
         yield $this->toSourceRow($comment, $topic);
@@ -109,6 +137,8 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, string>
    */
   public function fields(): array {
     return [
@@ -130,6 +160,8 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, array<string, string>>
    */
   public function getIds(): array {
     return [
@@ -172,7 +204,7 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
       || !$topic->hasField('field_domain_source') || $topic->get('field_domain_source')->isEmpty()) {
       return FALSE;
     }
-    return $this->domainPurposeManager->getPurposeForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
+    return $this->siteManager->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) === 'forum';
   }
 
   /**
@@ -185,11 +217,13 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
     $translations = [];
     foreach ($comment->getTranslationLanguages() as $language) {
       $translation = $comment->getTranslation($language->getId());
-      $body = $translation->get('comment_body')->first();
+      $subjectVal = $translation->get('subject')->value;
+      $bodyVal = $translation->get('comment_body')->value;
+      $bodyFmt = $translation->get('comment_body')->format;
       $translations[$language->getId()] = [
-        'subject' => (string) ($translation->get('subject')->value ?? ''),
-        'body_value' => (string) ($body?->value ?? ''),
-        'body_format' => (string) ($body?->format ?? ''),
+        'subject' => is_scalar($subjectVal) ? (string) $subjectVal : '',
+        'body_value' => is_scalar($bodyVal) ? (string) $bodyVal : '',
+        'body_format' => is_scalar($bodyFmt) ? (string) $bodyFmt : '',
         'published' => (int) $translation->isPublished(),
       ];
     }
@@ -203,22 +237,26 @@ final class ForumComment extends SourcePluginBase implements ContainerFactoryPlu
     $first_published = $comment->hasField('field_aculta_published_at')
       ? $comment->get('field_aculta_published_at')->value
       : NULL;
-    $rejected = $comment->hasField('field_aculta_rejected')
-      && (bool) $comment->get('field_aculta_rejected')->value;
+    $rejectedVal = $comment->hasField('field_aculta_rejected')
+      ? $comment->get('field_aculta_rejected')->value
+      : NULL;
+    $rejected = !empty($rejectedVal);
+
+    $threadVal = $comment->get('thread')->value;
 
     return [
       'cid' => (int) $comment->id(),
       'langcode' => $comment->language()->getId(),
-      'parent_cid' => $parent_id === NULL ? NULL : (int) $parent_id,
+      'parent_cid' => is_numeric($parent_id) ? (int) $parent_id : NULL,
       'topic_id' => (int) $topic->id(),
       'uid' => (int) ($comment->getOwnerId() ?? 0),
       'created' => (int) $comment->getCreatedTime(),
       'changed' => (int) $comment->getChangedTime(),
       'published' => (int) $comment->isPublished(),
       'rejected' => (int) $rejected,
-      'legacy_author_id' => $legacy_author_id === NULL ? NULL : (int) $legacy_author_id,
-      'first_published' => $first_published === NULL ? NULL : (int) $first_published,
-      'thread' => (string) $comment->get('thread')->value,
+      'legacy_author_id' => is_numeric($legacy_author_id) ? (int) $legacy_author_id : NULL,
+      'first_published' => is_numeric($first_published) ? (int) $first_published : NULL,
+      'thread' => is_scalar($threadVal) ? (string) $threadVal : '',
       'translations' => $translations,
     ];
   }

@@ -23,6 +23,9 @@ final class SettingsTabsHooks {
 
   /**
    * Adds the shared email preferences route to settings navigation.
+   *
+   * @param array<mixed> $tabs
+   *   Dados de entrada (tabs).
    */
   #[Hook('aculta_portal_settings_tabs_alter')]
   public function addCommunicationSettings(array &$tabs): void {

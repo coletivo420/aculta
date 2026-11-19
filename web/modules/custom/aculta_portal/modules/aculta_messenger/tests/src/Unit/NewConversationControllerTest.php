@@ -17,11 +17,11 @@ use Drupal\Core\GeneratedUrl;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageBanManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
 use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
-use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
+use Drupal\aculta_messenger\Mapper\PrivateMessageMapperInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
@@ -50,7 +50,7 @@ final class NewConversationControllerTest extends UnitTestCase {
           'aculta_messenger.new_conversation_group' => '/mensagens/nova/grupo/painel',
           default => '/mensagens',
         };
-        $query = http_build_query($options['query'] ?? []);
+        $query = http_build_query(is_array($options['query'] ?? NULL) ? $options['query'] : []);
         $url = $path . ($query === '' ? '' : '?' . $query);
         return $collectMetadata ? (new GeneratedUrl())->setGeneratedUrl($url) : $url;
       },
@@ -77,7 +77,11 @@ final class NewConversationControllerTest extends UnitTestCase {
       $controller->setStringTranslation($this->getStringTranslationStub());
       $memberResults = new \ReflectionMethod(NewConversationController::class, 'memberResults');
       $results = $memberResults->invoke($controller, [['user' => $recipient, 'name' => 'membro-85']], [84]);
-      $link = $results['#items'][0];
+      $items = $results['#items'] ?? NULL;
+      if (!is_array($items)) {
+        self::fail('The member results have no items.');
+      }
+      $link = $items[0];
       self::assertSame(
         '/mensagens/nova/grupo/painel?members%5B0%5D=84&amp;members%5B1%5D=85',
         (string) $link['#element_attributes']->offsetGet('href'),
@@ -117,7 +121,7 @@ final class NewConversationControllerTest extends UnitTestCase {
           'aculta_messenger.new_conversation_group' => '/mensagens/nova/grupo/painel',
           default => '/mensagens',
         };
-        $query = http_build_query($options['query'] ?? []);
+        $query = http_build_query(is_array($options['query'] ?? NULL) ? $options['query'] : []);
         $url = $path . ($query === '' ? '' : '?' . $query);
         return $collectMetadata ? (new GeneratedUrl())->setGeneratedUrl($url) : $url;
       },

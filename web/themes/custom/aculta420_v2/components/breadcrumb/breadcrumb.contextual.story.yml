@@ -1,0 +1,9 @@
+name: Contextual (Studio)
+props:
+  label: Navegação estrutural
+  sessao: portal
+  variant: contextual
+  trail:
+    - label: Minha conta
+      url: /conta
+  current: Visão geral

@@ -17,10 +17,16 @@ use PHPUnit\Framework\Attributes\Group;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Drupal\user\UserInterface;
 
+/**
+ * Eventos publicados nas mudanças de matrícula em cursos.
+ */
 #[CoversClass(CourseEnrollmentEventHooks::class)]
 #[Group('aculta_lms')]
 final class CourseEnrollmentEventHooksTest extends UnitTestCase {
 
+  /**
+   * Confirma que a matrícula em turma de curso publica o evento de inscrição.
+   */
   public function testPublishesEnrollmentForCourseClassMembership(): void {
     $student = $this->createMock(UserInterface::class);
     $student->method('id')->willReturn('27');

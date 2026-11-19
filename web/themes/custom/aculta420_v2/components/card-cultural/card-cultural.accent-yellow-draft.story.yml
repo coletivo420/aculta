@@ -1,0 +1,10 @@
+name: Faixa amarela — DRAFT até contrato Portal
+description: Variação de story sem seleção automática pelo tema.
+component: aculta420_v2:card-cultural
+props:
+  title: Local cultural de exemplo
+  category: Local
+  accent: yellow
+slots:
+  image: ''
+  actions: ''

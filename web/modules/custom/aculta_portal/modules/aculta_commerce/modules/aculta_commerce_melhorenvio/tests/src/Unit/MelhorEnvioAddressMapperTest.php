@@ -17,7 +17,8 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_commerce_melhorenvio')]
 class MelhorEnvioAddressMapperTest extends UnitTestCase {
 
-  /** Endereço completo gravado como o formulário do ACULTA grava (join: "rua, número"). */
+  /**
+   * Endereço completo gravado como o formulário do ACULTA grava (join: "rua, número"). */
   private const FULL = [
     'country_code' => 'BR',
     'postal_code' => '01310-100',
@@ -28,15 +29,39 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     'administrative_area' => 'SP',
   ];
 
+  /**
+   * Cria o mapeador com um lookup de CEP que falha se for consultado.
+   *
+   * @return \Drupal\aculta_commerce_melhorenvio\Address\MelhorEnvioAddressMapper
+   *   Mapeador de endereços para o Melhor Envio.
+   */
   private function mapper(): MelhorEnvioAddressMapper {
     // Cep falso: normaliza como o serviço real, e falha se o mapper tentar consultar (sem HTTP, sem lookup).
     return new MelhorEnvioAddressMapper(new class implements CepLookupInterface {
 
+      /**
+       * Normaliza o CEP para oito dígitos, como o serviço real.
+       *
+       * @param string $cep
+       *   CEP a normalizar.
+       *
+       * @return string|null
+       *   CEP com oito dígitos ou NULL quando inválido.
+       */
       public function normalize(string $cep): ?string {
         $digits = preg_replace('/\D+/', '', $cep) ?? '';
         return strlen($digits) === 8 ? $digits : NULL;
       }
 
+      /**
+       * Lança exceção se o mapeador tentar consultar o CEP.
+       *
+       * @param string $cep
+       *   CEP que seria consultado.
+       *
+       * @throws \LogicException
+       *   Sempre lançada, pois o mapper não pode consultar CEP.
+       */
       public function lookup(string $cep): ?array {
         throw new \LogicException('O mapper não pode consultar CEP.');
       }
@@ -44,6 +69,9 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     });
   }
 
+  /**
+   * Endereço completo é convertido no payload de envio.
+   */
   public function testCompleteAddressMapsToShipmentPayload(): void {
     $result = $this->mapper()->map(self::FULL, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT);
 
@@ -60,6 +88,9 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     ], $result->toShipmentArray());
   }
 
+  /**
+   * Complemento vazio é aceito e permanece vazio.
+   */
   public function testComplementIsOptional(): void {
     $address = ['address_line2' => ''] + self::FULL;
     $result = $this->mapper()->map($address, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT);
@@ -68,6 +99,9 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     $this->assertSame('', $result->complement);
   }
 
+  /**
+   * S/N bloqueia o envio sem ser convertido em zero.
+   */
   public function testSnBlocksShipmentWithoutConvertingToZero(): void {
     $address = ['address_line1' => 'Rua Exemplo, S/N'] + self::FULL;
     $result = $this->mapper()->map($address, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT);
@@ -78,6 +112,9 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     $this->assertSame('', $result->number);
   }
 
+  /**
+   * S/N é aceito na cotação de frete.
+   */
   public function testSnIsAcceptedForQuote(): void {
     $address = ['address_line1' => 'Rua Exemplo, S/N'] + self::FULL;
     $result = $this->mapper()->map($address, MelhorEnvioAddressMapper::PURPOSE_QUOTE);
@@ -86,11 +123,17 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     $this->assertSame(['postal_code' => '01310100'], $result->toQuoteArray());
   }
 
+  /**
+   * Número com dez dígitos é aceito.
+   */
   public function testTenDigitNumberIsAccepted(): void {
     $address = ['address_line1' => 'Rua A, 1234567890'] + self::FULL;
     $this->assertTrue($this->mapper()->map($address, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT)->isValid());
   }
 
+  /**
+   * Número com onze dígitos é rejeitado.
+   */
   public function testElevenDigitNumberIsInvalid(): void {
     $address = ['address_line1' => 'Rua A, 12345678901'] + self::FULL;
     $result = $this->mapper()->map($address, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT);
@@ -98,6 +141,9 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     $this->assertSame([MelhorEnvioAddressMapper::ERR_NUMBER_INVALID], $result->errors);
   }
 
+  /**
+   * Número sem dígitos é rejeitado sem ser falsificado.
+   */
   public function testNonDigitNumberIsInvalidNotFalsified(): void {
     $address = ['address_line1' => 'Rua A, Bloco B'] + self::FULL;
     $result = $this->mapper()->map($address, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT);
@@ -105,6 +151,9 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     $this->assertSame([MelhorEnvioAddressMapper::ERR_NUMBER_INVALID], $result->errors);
   }
 
+  /**
+   * Ausência de número sem S/N gera erro.
+   */
   public function testMissingNumberWithoutSnIsError(): void {
     $address = ['address_line1' => 'Avenida Paulista'] + self::FULL;
     $result = $this->mapper()->map($address, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT);
@@ -112,6 +161,9 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     $this->assertSame([MelhorEnvioAddressMapper::ERR_NUMBER_MISSING], $result->errors);
   }
 
+  /**
+   * Logradouro com vírgulas mantém o texto completo e o último número.
+   */
   public function testStreetWithCommaKeepsFullStreetAndLastNumber(): void {
     $address = ['address_line1' => 'Rua Um, Centro, 45'] + self::FULL;
     $result = $this->mapper()->map($address, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT);
@@ -121,6 +173,9 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     $this->assertSame('45', $result->number);
   }
 
+  /**
+   * País estrangeiro é rejeitado na cotação e no envio.
+   */
   public function testForeignCountryIsRejectedForBothPurposes(): void {
     $address = ['country_code' => 'US'] + self::FULL;
     $mapper = $this->mapper();
@@ -129,11 +184,17 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     $this->assertSame([MelhorEnvioAddressMapper::ERR_COUNTRY], $mapper->map($address, MelhorEnvioAddressMapper::PURPOSE_SHIPMENT)->errors);
   }
 
+  /**
+   * CEP mascarado é normalizado para oito dígitos.
+   */
   public function testMaskedPostalCodeIsNormalized(): void {
     $result = $this->mapper()->map(self::FULL, MelhorEnvioAddressMapper::PURPOSE_QUOTE);
     $this->assertSame('01310100', $result->postalCode);
   }
 
+  /**
+   * CEP inválido é rejeitado.
+   */
   public function testInvalidPostalCodeIsRejected(): void {
     $address = ['postal_code' => '0131'] + self::FULL;
     $result = $this->mapper()->map($address, MelhorEnvioAddressMapper::PURPOSE_QUOTE);
@@ -141,6 +202,9 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     $this->assertSame([MelhorEnvioAddressMapper::ERR_POSTAL_CODE], $result->errors);
   }
 
+  /**
+   * Bairro ausente bloqueia apenas o envio.
+   */
   public function testMissingDistrictBlocksShipmentOnly(): void {
     $address = ['dependent_locality' => ''] + self::FULL;
     $mapper = $this->mapper();
@@ -149,6 +213,9 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     $this->assertTrue($mapper->map($address, MelhorEnvioAddressMapper::PURPOSE_QUOTE)->isValid());
   }
 
+  /**
+   * Endereço não resolvido fica incompleto com erros de logradouro, cidade e UF.
+   */
   public function testUnresolvedAddressWithoutFieldsIsIncomplete(): void {
     // CEP válido que a consulta não resolveu: logradouro, bairro, cidade e UF vazios.
     $address = [
@@ -167,18 +234,27 @@ class MelhorEnvioAddressMapperTest extends UnitTestCase {
     $this->assertContains(MelhorEnvioAddressMapper::ERR_STATE, $result->errors);
   }
 
+  /**
+   * Perfil de endereço ausente gera erro.
+   */
   public function testMissingProfileIsError(): void {
     $result = $this->mapper()->map(NULL, MelhorEnvioAddressMapper::PURPOSE_QUOTE);
 
     $this->assertSame([MelhorEnvioAddressMapper::ERR_MISSING], $result->errors);
   }
 
+  /**
+   * Finalidade desconhecida gera erro.
+   */
   public function testUnknownPurposeIsError(): void {
     $result = $this->mapper()->map(self::FULL, 'label-purchase');
 
     $this->assertSame([MelhorEnvioAddressMapper::ERR_PURPOSE], $result->errors);
   }
 
+  /**
+   * Cotação e envio compartilham o mesmo CEP normalizado.
+   */
   public function testQuoteAndShipmentShareTheSamePostalCode(): void {
     $mapper = $this->mapper();
     $quote = $mapper->map(self::FULL, MelhorEnvioAddressMapper::PURPOSE_QUOTE);

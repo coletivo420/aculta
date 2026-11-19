@@ -1,0 +1,6 @@
+name: Emoji de Reação Brócolis
+props:
+  name: broccoli
+  variant: flat
+  size: sm
+  label: Brócolis

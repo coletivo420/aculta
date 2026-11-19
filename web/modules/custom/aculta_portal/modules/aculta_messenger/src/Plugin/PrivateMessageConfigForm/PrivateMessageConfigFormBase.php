@@ -1,0 +1,92 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_messenger\Plugin\PrivateMessageConfigForm;
+
+use Drupal\Component\Render\MarkupInterface;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\PluginBase;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Base class for PrivateMessageConfigForm plugins.
+ *
+ * @phpstan-consistent-constructor
+ */
+abstract class PrivateMessageConfigFormBase extends PluginBase implements PrivateMessageConfigFormPluginInterface {
+
+  /**
+   * Tipagem do porte Private Message.
+   *
+   * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   * @param ConfigFactoryInterface $configFactory
+   *   O serviço de configuração do Drupal.
+   */
+  public function __construct(
+    array $configuration,
+    string $plugin_id,
+    mixed $plugin_definition,
+    protected ConfigFactoryInterface $configFactory,
+  ) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   O contêiner de serviços.
+   * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): self {
+    $instance = (new \ReflectionClass(static::class))->newInstanceArgs([
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('config.factory'),
+    ]);
+    return $instance;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getName(): MarkupInterface|string {
+    /** @var array<string, mixed> $definition */
+    $definition = $this->pluginDefinition;
+    /** @var \Drupal\Core\StringTranslation\TranslatableMarkup|string $name */
+    $name = $definition['name'];
+    return $name;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getId(): string {
+    return $this->getPluginId();
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $formState
+   *   O estado atual do formulário.
+   */
+  public function validateForm(array &$form, FormStateInterface $formState): void {
+  }
+
+}

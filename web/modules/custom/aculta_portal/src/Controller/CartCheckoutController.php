@@ -6,7 +6,8 @@ namespace Drupal\aculta_portal\Controller;
 
 use Drupal\aculta_portal\Cart\CartConsolidator;
 use Drupal\aculta_portal\Checkout\CheckoutStepResolver;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Url;
@@ -21,8 +22,8 @@ final class CartCheckoutController extends ControllerBase {
   public function __construct(
     #[Autowire(service: 'aculta_portal.cart_consolidator')]
     private readonly CartConsolidator $consolidator,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $purposes,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $purposes,
     #[Autowire(service: 'aculta_portal.checkout_step_resolver')]
     private readonly CheckoutStepResolver $checkoutStepResolver,
   ) {}
@@ -40,7 +41,7 @@ final class CartCheckoutController extends ControllerBase {
     // etapa invisível, pois o Commerce pode conservar esse valor e renderizar o
     // login.
     $passo = $this->checkoutStepResolver->resolve($pedido);
-    $url = $this->purposes->routeUrl('main', 'commerce_checkout.form', [
+    $url = $this->purposes->routeUrl(SiteKey::Main, 'commerce_checkout.form', [
       'commerce_order' => $pedido->id(),
       'step' => $passo,
     ]);

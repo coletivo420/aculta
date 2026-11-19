@@ -1,0 +1,12 @@
+name: Rodapé institucional
+description: Listra tricolor, identidade da associação, navegação institucional, divisor e linha legal, como na referência de rodapé do ACULTA420 V2.
+component: aculta420_v2:site-footer
+props:
+  variant: institutional
+slots:
+  brand:
+    markup: |
+      Associação Cultural Antiproibicionista<div class="field--name-field-cnpj"><span class="field__label">CNPJ:</span> 68.238.467/0001-08</div>
+  nav:
+    markup: |
+      <ul class="menu"><li><a href="/sobre/politica-de-privacidade">Privacidade</a></li><li><a href="/sobre/termos-de-uso">Termos de uso</a></li></ul>

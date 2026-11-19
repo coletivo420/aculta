@@ -11,13 +11,13 @@ final class NoticePaginationNavigationBuilder {
   /**
    * Builds a navigation landmark, or nothing when the list has no links.
    *
-   * @param array $links
-   *   Pager links built by PortalLinkElement.
+   * @param array<mixed> $links
+   *   Dados de entrada (links).
    * @param mixed $label
    *   Contextual accessible label for the navigation landmark.
    *
-   * @return array
-   *   Render array for the navigation landmark, or an empty array.
+   * @return array<mixed>
+   *   Dados retornados.
    */
   public static function build(array $links, mixed $label): array {
     if ($links === []) {

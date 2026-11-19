@@ -6,12 +6,14 @@ namespace Drupal\aculta_events\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
-use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
+use Drupal\views\EntityViewsData;
 use Drupal\user\EntityOwnerInterface;
 use Drupal\user\UserInterface;
 
@@ -35,6 +37,7 @@ use Drupal\user\UserInterface;
   handlers: [
     'storage' => 'Drupal\Core\Entity\Sql\SqlContentEntityStorage',
     'access' => 'Drupal\aculta_events\Access\EventAccessControlHandler',
+    'views_data' => EntityViewsData::class,
     'form' => [
       'default' => 'Drupal\aculta_events\Form\EventForm',
       'add' => 'Drupal\aculta_events\Form\EventForm',
@@ -53,15 +56,16 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
    * {@inheritdoc}
    */
   public function getOwner(): ?UserInterface {
-    return $this->get('field_organizador')->entity;
+    $owner = $this->get('field_organizador')->entity;
+    return $owner instanceof UserInterface ? $owner : NULL;
   }
 
   /**
    * {@inheritdoc}
    */
   public function getOwnerId(): ?int {
-    $targetId = $this->get('field_organizador')->target_id;
-    return $targetId !== NULL && $targetId !== '' ? (int) $targetId : NULL;
+    $ownerId = $this->getOwner()?->id();
+    return $ownerId !== NULL ? (int) $ownerId : NULL;
   }
 
   /**
@@ -92,8 +96,9 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
    * Retorna o ID da organização principal.
    */
   public function getOrganizationId(): ?int {
-    $targetId = $this->get('field_organizacao')->target_id;
-    return $targetId !== NULL && $targetId !== '' ? (int) $targetId : NULL;
+    $organization = $this->get('field_organizacao')->entity;
+    $organizationId = $organization instanceof EntityInterface ? $organization->id() : NULL;
+    return $organizationId !== NULL ? (int) $organizationId : NULL;
   }
 
   /**
@@ -112,24 +117,12 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
    */
   public function getCoOrganizerIds(): array {
     $ids = [];
-    foreach ($this->get('field_coorganizadores') as $item) {
-      if ($item->target_id !== NULL && $item->target_id !== '') {
-        $ids[] = (int) $item->target_id;
+    foreach ($this->get('field_coorganizadores')->referencedEntities() as $organization) {
+      if ($organization instanceof EntityInterface && $organization->id() !== NULL) {
+        $ids[] = (int) $organization->id();
       }
     }
     return $ids;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function preSave(EntityStorageInterface $storage): void {
-    parent::preSave($storage);
-    // Slug nasce com o evento e não muda depois (estável após publicado).
-    if ($this->get('field_slug')->isEmpty()) {
-      $gerador = \Drupal::service('aculta_events.slug');
-      $this->set('field_slug', $gerador->uniqueFor((string) $this->label(), $this->id() ? (int) $this->id() : NULL));
-    }
   }
 
   /**
@@ -149,10 +142,10 @@ final class Event extends ContentEntityBase implements EntityOwnerInterface {
   /**
    * Retorna a URL canônica absoluta no purpose/domínio de eventos.
    */
-  public function toCanonicalUrl(?DomainPurposeManager $purposes = NULL): Url {
+  public function toCanonicalUrl(?DomainSiteManager $purposes = NULL): Url {
     $slug = (string) $this->get('field_slug')->value;
     if ($purposes !== NULL && $slug !== '') {
-      $canonical = $purposes->canonicalRouteUrl('eventos', 'aculta_events.page', ['slug' => $slug]);
+      $canonical = $purposes->canonicalRouteUrl(SiteKey::Eventos, 'aculta_events.page', ['slug' => $slug]);
       if ($canonical !== NULL) {
         return $canonical;
       }

@@ -1,0 +1,10 @@
+aculta_user.coauthor_settings:
+  type: config_object
+  label: 'Configurações de coautoria do ACULTA'
+  mapping:
+    enabled_bundles:
+      type: sequence
+      label: 'Tipos de conteúdo habilitados para coautoria'
+      sequence:
+        type: string
+        label: 'Tipo de conteúdo'

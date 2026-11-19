@@ -41,7 +41,9 @@ final class CertificateIssueAccessCheck {
    * Checks a certificate's course and authority before a revocation form.
    */
   public function revokeAccess(GroupInterface $group, CourseCertificate $certificate): AccessResult {
-    if ($group->bundle() !== 'lms_course' || (int) $group->id() !== (int) $certificate->get('course_id')->value) {
+    $grupoId = $group->id();
+    $cursoBruto = $certificate->get('course_id')->value;
+    if ($group->bundle() !== 'lms_course' || (is_scalar($grupoId) ? (int) $grupoId : 0) !== (is_scalar($cursoBruto) ? (int) $cursoBruto : 0)) {
       return AccessResult::forbidden()
         ->addCacheableDependency($group)
         ->addCacheableDependency($certificate);

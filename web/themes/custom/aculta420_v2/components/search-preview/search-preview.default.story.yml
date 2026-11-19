@@ -1,0 +1,9 @@
+name: Prévia de busca
+description: Região de resultados com conteúdo assíncrono e dica inicial.
+component: aculta420_v2:search-preview
+props:
+  attributes: null
+slots:
+  content:
+    type: inline_template
+    template: '<p>Digite pelo menos três caracteres para ver resultados.</p>'

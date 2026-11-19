@@ -40,7 +40,7 @@ $result = [
   'accounts' => [],
 ];
 
-\Drupal::service('aculta_portal.domain_purpose')->runInPurpose(
+\Drupal::service('aculta_portal.domain_site')->runInSite(
   'forum',
   function () use ($index, $accounts, &$result): void {
     foreach ($accounts as $label => $account) {

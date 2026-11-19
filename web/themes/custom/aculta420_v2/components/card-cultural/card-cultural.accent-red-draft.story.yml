@@ -1,0 +1,10 @@
+name: Faixa vermelha — DRAFT até contrato Portal
+description: Variação de story sem seleção automática pelo tema.
+component: aculta420_v2:card-cultural
+props:
+  title: Espaço cultural de exemplo
+  category: Espaço
+  accent: red
+slots:
+  image: ''
+  actions: ''

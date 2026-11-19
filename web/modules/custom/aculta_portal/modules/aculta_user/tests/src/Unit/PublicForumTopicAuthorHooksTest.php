@@ -42,6 +42,10 @@ final class PublicForumTopicAuthorHooksTest extends UnitTestCase {
 
     $this->hook()->entityView($build, $node, $this->createMock(EntityViewDisplayInterface::class), 'full');
 
+    self::assertIsArray($build['author_card']);
+    self::assertIsArray($build['author_card']['#cache']);
+    self::assertIsArray($build['author_card']['#cache']['tags']);
+
     self::assertSame('aculta_user_author_card', $build['author_card']['#theme']);
     self::assertSame('author_forum', $build['author_card']['#variant']);
     self::assertSame('Maria', $build['author_card']['#display_name']);
@@ -58,6 +62,7 @@ final class PublicForumTopicAuthorHooksTest extends UnitTestCase {
     $build = [];
 
     $this->hook()->entityView($build, $node, $this->createMock(EntityViewDisplayInterface::class), 'full');
+
 
     self::assertArrayNotHasKey('author_card', $build);
 

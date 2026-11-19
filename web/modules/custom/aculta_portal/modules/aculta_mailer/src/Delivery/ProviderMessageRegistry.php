@@ -7,8 +7,9 @@ namespace Drupal\aculta_mailer\Delivery;
 /**
  * Guarda, na mesma requisição, o ID que o provedor deu a cada mensagem aceita, por correlação.
  *
- * O plugin de envio recebe só o resultado booleano do Core; o AcultaMailer consome o ID logo após a chamada e o grava no
- * registro. Não persiste nada: se a requisição acabar antes, o registro fica sem o ID, e o correlation ID continua valendo.
+ * O plugin de envio recebe só o resultado booleano do Core; o AcultaMailer consome o ID logo após a chamada e o grava
+ * no registro. Não persiste nada: se a requisição acabar antes, o registro fica sem o ID, e o correlation ID continua
+ * valendo.
  */
 final class ProviderMessageRegistry {
 

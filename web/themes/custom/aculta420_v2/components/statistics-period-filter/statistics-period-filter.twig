@@ -1,0 +1,19 @@
+<form{{ attributes.addClass('statistics-period-filter') }} method="get" action="{{ action }}">
+  {% for field in hidden %}
+    <input type="hidden" name="{{ field.name }}" value="{{ field.value }}">
+  {% endfor %}
+  <label class="statistics-period-filter__label">
+    <span>{{ label }}</span>
+    <select name="dias">
+      {% for option in options %}
+        <option value="{{ option.value }}"{{ option.value == selected ? ' selected' : '' }}>{{ option.label }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  {{ include('aculta420_v2:button', {
+    text: submit_label,
+    variant: 'primary',
+    is_submit: true,
+    attributes: create_attribute({class: ['statistics-period-filter__submit']}),
+  }, with_context = false) }}
+</form>

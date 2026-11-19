@@ -94,7 +94,7 @@ final class RotasGlobaisCaracterizacaoTest extends UnitTestCase {
   }
 
   /**
-   * donation_route em `donate`, ausente ou desconhecido fecha as três rotas globais.
+   * Rota de doação em `donate`, ausente ou desconhecida fecha as três rotas globais.
    */
   #[DataProvider('donationRouteComComumLigado')]
   public function testDonationRouteSemCarrinhoFechaAsRotasGlobais(array $settings): void {
@@ -110,7 +110,7 @@ final class RotasGlobaisCaracterizacaoTest extends UnitTestCase {
   }
 
   /**
-   * donation_route em `cart` ou `both` mantém as rotas globais como o Commerce as define.
+   * Rota de doação em `cart` ou `both` mantém as rotas globais como o Commerce as define.
    */
   public static function donationRouteComCarrinho(): array {
     return [
@@ -119,6 +119,9 @@ final class RotasGlobaisCaracterizacaoTest extends UnitTestCase {
     ];
   }
 
+  /**
+   * Mantém as rotas globais quando a doação usa carrinho ou ambos.
+   */
   #[DataProvider('donationRouteComCarrinho')]
   public function testCartOuBothMantemAsRotasGlobais(string $modo): void {
     $colecao = $this->aplicar(['donation_route' => $modo], TRUE);
@@ -144,7 +147,7 @@ final class RotasGlobaisCaracterizacaoTest extends UnitTestCase {
   }
 
   /**
-   * Todos os valores válidos de donation_route.
+   * Relaciona os valores válidos de donation_route.
    */
   public static function todasAsRotas(): array {
     return [

@@ -73,8 +73,8 @@ final class UpcomingDates {
    * A saída muda quando termina a próxima ocorrência. Ignora datas vencidas e
    * usa a menor validade.
    *
-   * @param array<int, array{fim: \DateTimeImmutable}> $ocorrencias
-   *   Ocorrências devolvidas por ::doEvento().
+   * @param array<int, array<string, mixed>> $ocorrencias
+   *   Ocorrências devolvidas por ::doEvento(); só `fim` é lido aqui.
    * @param int $agora
    *   Instante de referência, em timestamp.
    *
@@ -84,6 +84,9 @@ final class UpcomingDates {
   public function validade(array $ocorrencias, int $agora): ?int {
     $validade = NULL;
     foreach ($ocorrencias as $ocorrencia) {
+      if (!isset($ocorrencia['fim']) || !$ocorrencia['fim'] instanceof \DateTimeImmutable) {
+        continue;
+      }
       $segundos = $ocorrencia['fim']->getTimestamp() - $agora;
       if ($segundos <= 0) {
         continue;

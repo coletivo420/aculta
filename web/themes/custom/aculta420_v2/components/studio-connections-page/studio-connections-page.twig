@@ -1,0 +1,69 @@
+{#
+/**
+ * @file
+ * Template para o componente studio-connections-page.
+ */
+#}
+<div class="aculta-studio-connections-page" data-portal-ui="studio-connections-page">
+  <!-- Caixa 1: Suas conexões -->
+  <section class="aculta-connections-box" data-portal-ui="connections-box" id="aculta-my-connections-box">
+    <div class="aculta-connections-box__header">
+      <h2 class="aculta-connections-box__title">{{ connections_title|default('Suas conexões'|t) }}</h2>
+    </div>
+    <div class="aculta-connections-box__body">
+      <div class="aculta-connections-box__search-bar">
+        <input
+          type="search"
+          name="filter"
+          class="form-text aculta-connections-filter__input"
+          placeholder="{{ filter_placeholder|default('Filtrar suas conexões...'|t) }}"
+          aria-label="{{ filter_placeholder|default('Filtrar suas conexões...'|t) }}"
+          data-hx-get="/conta/conexoes/lista"
+          data-hx-trigger="input changed delay:300ms, search"
+          data-hx-target="#aculta-my-connections-list"
+          data-hx-indicator="#aculta-my-connections-loading"
+        />
+        <span id="aculta-my-connections-loading" class="htmx-indicator" aria-hidden="true">Carregando...</span>
+      </div>
+
+      <div class="aculta-connections-box__content" id="aculta-my-connections-list">
+        {% if connections_list %}
+          {{ connections_list }}
+        {% else %}
+          <p class="aculta-connections-box__empty">{{ empty_connections_message|default('Você ainda não tem conexões.'|t) }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Caixa 2: Buscar novas conexões -->
+  <section class="aculta-connections-box" data-portal-ui="connections-search-box" id="aculta-search-connections-box">
+    <div class="aculta-connections-box__header">
+      <h2 class="aculta-connections-box__title">{{ search_title|default('Buscar novas conexões'|t) }}</h2>
+    </div>
+    <div class="aculta-connections-box__body">
+      <div class="aculta-connections-box__search-bar">
+        <input
+          type="search"
+          name="q"
+          class="form-text aculta-connections-search__input"
+          placeholder="{{ search_input_placeholder|default('Digite o nome ou apelido...'|t) }}"
+          aria-label="{{ search_input_placeholder|default('Digite o nome ou apelido...'|t) }}"
+          data-hx-get="/conta/conexoes/busca"
+          data-hx-trigger="input changed delay:300ms, search"
+          data-hx-target="#aculta-search-connections-list"
+          data-hx-indicator="#aculta-search-connections-loading"
+        />
+        <span id="aculta-search-connections-loading" class="htmx-indicator" aria-hidden="true">Buscando...</span>
+      </div>
+
+      <div class="aculta-connections-box__content" id="aculta-search-connections-list">
+        {% if search_results %}
+          {{ search_results }}
+        {% else %}
+          <p class="aculta-connections-box__hint">{{ search_hint|default('Digite pelo menos 3 caracteres para buscar.'|t) }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+</div>

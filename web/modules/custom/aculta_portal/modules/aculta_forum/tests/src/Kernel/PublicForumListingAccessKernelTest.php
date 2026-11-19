@@ -17,6 +17,7 @@ use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Drupal\user\RoleInterface;
 use Drupal\views\Entity\View;
+use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -75,8 +76,13 @@ final class PublicForumListingAccessKernelTest extends KernelTestBase {
     $this->installSchema('node', ['node_access']);
     $this->installConfig(['system', 'user', 'field', 'filter', 'text', 'node', 'views']);
 
-    Role::load(RoleInterface::ANONYMOUS_ID)->grantPermission('access content')->save();
-    Role::load(RoleInterface::AUTHENTICATED_ID)
+    $anonRole = Role::load(RoleInterface::ANONYMOUS_ID);
+    self::assertInstanceOf(Role::class, $anonRole);
+    $anonRole->grantPermission('access content')->save();
+
+    $authRole = Role::load(RoleInterface::AUTHENTICATED_ID);
+    self::assertInstanceOf(Role::class, $authRole);
+    $authRole
       ->grantPermission('access content')
       ->grantPermission('view restricted forum counter topics')
       ->save();
@@ -98,11 +104,13 @@ final class PublicForumListingAccessKernelTest extends KernelTestBase {
   public function testAnonymousListingFiltersBeforePaging(): void {
     $this->container->get('current_user')->setAccount(new AnonymousUserSession());
     $view = Views::getView('test_public_forum_listing');
-    self::assertNotFalse($view);
+    self::assertInstanceOf(ViewExecutable::class, $view);
     $view->execute();
 
     self::assertCount(1, $view->result);
-    self::assertSame((int) $this->publicTopic->id(), (int) $view->result[0]->nid);
+    $firstRow = $view->result[0];
+    $nid = is_numeric($firstRow->nid ?? NULL) ? (int) $firstRow->nid : 0;
+    self::assertSame((int) $this->publicTopic->id(), $nid);
     self::assertSame(1, (int) $view->total_rows);
   }
 
@@ -112,13 +120,15 @@ final class PublicForumListingAccessKernelTest extends KernelTestBase {
   public function testMemberListingIncludesRestrictedTopic(): void {
     $this->container->get('current_user')->setAccount($this->member);
     $view = Views::getView('test_public_forum_listing');
-    self::assertNotFalse($view);
+    self::assertInstanceOf(ViewExecutable::class, $view);
     $view->setCurrentPage(1);
     $view->execute();
 
     self::assertSame(2, (int) $view->total_rows);
     self::assertCount(1, $view->result);
-    self::assertSame((int) $this->restrictedTopic->id(), (int) $view->result[0]->nid);
+    $firstRow = $view->result[0];
+    $nid = is_numeric($firstRow->nid ?? NULL) ? (int) $firstRow->nid : 0;
+    self::assertSame((int) $this->restrictedTopic->id(), $nid);
   }
 
   /**
@@ -133,7 +143,6 @@ final class PublicForumListingAccessKernelTest extends KernelTestBase {
     ]);
     $topic->save();
     $database = $this->container->get('database');
-    self::assertInstanceOf(Connection::class, $database);
     $database->delete('node_access')->condition('nid', $topic->id())->execute();
     $database->insert('node_access')->fields([
       'nid' => $topic->id(),

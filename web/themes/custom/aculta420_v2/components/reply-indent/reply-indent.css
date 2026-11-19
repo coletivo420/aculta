@@ -1,0 +1,26 @@
+/* Resposta recuada: recuo por nível; na primeira resposta do nível, a seta Phosphor à esquerda. */
+.reply-indent {
+  position: relative;
+  min-inline-size: 0;
+  margin-block: var(--spacing-lg);
+}
+
+.reply-indent--depth-1 {
+  margin-inline-start: var(--spacing-xl);
+}
+
+.reply-indent--depth-2 {
+  margin-inline-start: calc(var(--spacing-xl) * 2);
+}
+
+.reply-indent--depth-3 {
+  margin-inline-start: calc(var(--spacing-xl) * 3);
+}
+
+.reply-indent__marker {
+  position: absolute;
+  inset-block-start: var(--spacing-md);
+  inset-inline-start: calc(var(--spacing-xl) * -.75);
+  display: inline-flex;
+  color: var(--color-brand-primary);
+}

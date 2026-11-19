@@ -3,11 +3,16 @@ type: module
 description: 'Integra matrículas, avaliações e pedidos com entidades ACULTA e preserva histórico sem duplicar o estado ativo.'
 package: ACULTA Portal
 license: GPL-2.0-or-later
-version: '0.1.0-dev.176'
-core_version_requirement: ^11.3
+version: '0.1.0-dev.215'
+core_version_requirement: ^11 || ^12
 dependencies:
   - aculta_portal:aculta_portal
-  - aculta_portal:aculta_learning_contracts
+  - aculta_portal:aculta_calendar
+  - aculta_portal:aculta_events
+  - aculta_portal:aculta_forum
+  - drupal:text_with_summary
+  - group:gnode
+  - aculta_portal:aculta_wiki
   - aculta_portal:aculta_messenger
   - aculta_portal:aculta_pagamentos_mercadopago
   - aculta_portal:aculta_file_uploader
@@ -15,6 +20,7 @@ dependencies:
   - aculta_portal:aculta_document_viewer
   - aculta_portal:aculta_qrcode
   - aculta_portal:aculta_user
+  - media_gallery:media_gallery
   - entity_print:entity_print
   - commerce:commerce_cart
   - commerce:commerce_checkout
@@ -28,6 +34,12 @@ dependencies:
   - drupal:options
   - drupal:datetime
   - drupal:comment
+  - drupal:ckeditor5
+  - drupal:editor
   - drupal:field
+  - drupal:filter
+  - drupal:text
   - drupal:key
+  - drupal:views
+  - ui_patterns:ui_patterns_views
   - webform_score:webform_score

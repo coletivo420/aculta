@@ -18,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class MailBrandForm extends EntityForm {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypes,
+    protected readonly EntityTypeManagerInterface $entityTypes,
   ) {}
 
   /**

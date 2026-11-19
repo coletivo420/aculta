@@ -15,12 +15,14 @@ use Symfony\Component\HttpFoundation\Request;
  */
 final class CheckoutFriendlyPathProcessor implements InboundPathProcessorInterface, OutboundPathProcessorInterface {
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function processInbound($path, Request $request) {
     return CheckoutSlugMap::toInternal($path) ?? $path;
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function processOutbound($path, &$options = [], ?Request $request = NULL, ?BubbleableMetadata $bubbleable_metadata = NULL) {
     return CheckoutSlugMap::toPublic($path) ?? $path;
   }

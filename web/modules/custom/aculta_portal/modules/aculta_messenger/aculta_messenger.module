@@ -2,6 +2,22 @@
 
 /**
  * @file
+ * Hooks do módulo ACULTA Messenger.
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Render\Element;
+use Drupal\Core\Url;
+use Drupal\aculta_messenger\Entity\PrivateMessage;
+use Drupal\aculta_messenger\Hook\ViewsHooks;
+use Drupal\user\Entity\User;
+use Drupal\user\RoleInterface;
+use Drupal\user\Plugin\EntityReferenceSelection\UserSelection;
+
+/**
+ * @file
  * Hooks for the ACULTA Messenger module.
  */
 
@@ -9,6 +25,9 @@
  * Implements hook_queue_info_alter().
  *
  * Do not instantiate scheduled workers for disabled optional integrations.
+ *
+ * @param array<string, array<string, mixed>> $definitions
+ *   As definições das filas, indexadas pelo identificador da fila.
  */
 function aculta_messenger_queue_info_alter(array &$definitions): void {
   $module_handler = \Drupal::moduleHandler();
@@ -27,5 +46,496 @@ function aculta_messenger_queue_info_alter(array &$definitions): void {
         unset($definitions[$worker_id]);
       }
     }
+  }
+}
+
+// Hooks do motor de conversas portados do Private Message (ver docs/implementation/private-message-corte-direto-2026-11-15).
+
+/**
+ * Tipagem do porte Private Message.
+ *
+ * @return array<string, mixed>
+ *   Definições de campos extras da entidade de conversa.
+ */
+function aculta_messenger_views_data(): array {
+  return \Drupal::service(ViewsHooks::class)->viewsData();
+}
+
+/**
+ * Implements hook_entity_extra_field_info().
+ *
+ * @return array<string, mixed>
+ *   Campos extras de exibição por tipo de entidade.
+ */
+function aculta_messenger_entity_extra_field_info(): array {
+  $fields = [];
+
+  $private_message_thread_bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo('private_message_thread');
+  foreach (array_keys($private_message_thread_bundles) as $bundle) {
+    $fields['private_message_thread'][$bundle]['display']['last_message'] = [
+      'label' => t('Last Message'),
+      'description' => t('Displays the last message in the thread'),
+      'weight' => 100,
+      'visible' => TRUE,
+    ];
+
+    $fields['private_message_thread'][$bundle]['display']['private_message_form'] = [
+      'label' => t('Form'),
+      'description' => t('The form to create a new message'),
+      'weight' => 100,
+      'visible' => FALSE,
+    ];
+
+    $fields['private_message_thread'][$bundle]['display']['no_active_users'] = [
+      'label' => t('No active users'),
+      'description' => t('The notice that there are no active users'),
+      'weight' => 100,
+      'visible' => FALSE,
+    ];
+
+    $fields['private_message_thread'][$bundle]['display']['delete_link'] = [
+      'label' => t('Delete link'),
+      'description' => t('The link to delete the thread'),
+      'weight' => -100,
+      'visible' => TRUE,
+    ];
+
+    $fields['private_message_thread'][$bundle]['display']['clear_history_link'] = [
+      'label' => t('Clear history link'),
+      'description' => t('The link to clear personal messages history in the thread'),
+      'weight' => -100,
+      'visible' => TRUE,
+    ];
+  }
+
+  $private_message_bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo('private_message');
+  foreach (array_keys($private_message_bundles) as $bundle) {
+    $fields['private_message'][$bundle]['form']['members'] = [
+      'label' => t('Members'),
+      'description' => t('The widget to add members to the private message thread'),
+      'weight' => -100,
+      'visible' => TRUE,
+    ];
+  }
+
+  $user_bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo('user');
+  foreach (array_keys($user_bundles) as $bundle) {
+    $fields['user'][$bundle]['display']['linked_username'] = [
+      'label' => t('Username (linked if viewer has permission)'),
+      'description' => t('Displays the username, linked to the user profile if the viewer has permission to access user profiles'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+
+    $fields['user'][$bundle]['display']['private_message_link'] = [
+      'label' => t('Private message thread link'),
+      'description' => t('Displays a link to send a private message to the user'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+
+    $fields['user'][$bundle]['form']['private_messages'] = [
+      'label' => t('Private messages'),
+      'description' => t('Settings related to private messages'),
+      'weight' => 0,
+      'visible' => TRUE,
+    ];
+
+    $fields['user'][$bundle]['display']['block_user'] = [
+      'label' => t('Block/Unblock user link'),
+      'description' => t('Link to block or unblock user'),
+      'weight' => 0,
+      'visible' => TRUE,
+    ];
+  }
+
+  $node_bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo('node');
+  foreach (array_keys($node_bundles) as $bundle) {
+    $fields['node'][$bundle]['display']['private_message_link'] = [
+      'label' => t('Private message thread link'),
+      'description' => t('Displays a link to send a private message to the node author'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+  }
+
+  $node_bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo('comment');
+  foreach (array_keys($node_bundles) as $bundle) {
+    $fields['comment'][$bundle]['display']['private_message_link'] = [
+      'label' => t('Private message thread link'),
+      'description' => t('Displays a link to send a private message to the node author'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+  }
+
+  $profile_bundles = \Drupal::service('entity_type.bundle.info')->getBundleInfo('profile');
+  foreach (array_keys($profile_bundles) as $bundle) {
+    $fields['profile'][$bundle]['display']['private_message_link'] = [
+      'label' => t('Private message thread link'),
+      'description' => t('Displays a link to send a private message to the profile owner'),
+      'weight' => 0,
+      'visible' => FALSE,
+    ];
+  }
+
+  return $fields;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ *
+ * @param array<string, mixed> $build
+ *   O array de renderização da conversa.
+ * @param EntityInterface $entity
+ *   A entidade.
+ * @param EntityViewDisplayInterface $display
+ *   A configuração de exibição.
+ *   Renderização da conversa, alterada antes da exibição.
+ *
+ * @see hook_entity_view()
+ */
+function aculta_messenger_private_message_thread_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
+  /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $entity */
+  if ($display->getComponent('last_message')) {
+    $messages = $entity->getMessages();
+    if ($messages) {
+      $last_message = array_pop($messages);
+      $view_builder = \Drupal::entityTypeManager()->getViewBuilder('private_message');
+      $build['last_message'] = $view_builder->view($last_message, 'inbox');
+    }
+  }
+
+  if ($display->getComponent('private_message_form')) {
+    $currentUser = \Drupal::currentUser();
+    $members = $entity->getMembers();
+    $activeMembers = [];
+    foreach ($members as $member) {
+      if ($member->isActive() && $member->id() != $currentUser->id()) {
+        $activeMembers[] = $member;
+      }
+    }
+
+    if (empty($activeMembers)) {
+      $build['no_active_users'] = [
+        '#theme' => 'private_message_no_active_users_notice',
+      ];
+    }
+    else {
+      $private_message = PrivateMessage::create();
+      $form_object = \Drupal::entityTypeManager()
+        ->getFormObject('private_message', 'add')
+        ->setEntity($private_message);
+
+      $build['private_message_form'] = \Drupal::formBuilder()
+        ->getForm($form_object, $entity);
+    }
+  }
+
+  if ($display->getComponent('delete_link')) {
+    $url = Url::fromRoute('entity.private_message_thread.delete_form', ['private_message_thread' => $entity->id()]);
+    if ($url->access()) {
+      $build['delete_link'] = [
+        '#prefix' => '<div class="private_message_thread_delete_link_wrapper">',
+        '#suffix' => '</div>',
+        '#type' => 'link',
+        '#url' => $url,
+        '#title' => t('Delete thread'),
+      ];
+    }
+  }
+
+  if ($display->getComponent('clear_history_link')) {
+    $url = Url::fromRoute('entity.private_message_thread.clear_personal_history_form', ['private_message_thread' => $entity->id()]);
+    if ($url->access()) {
+      $build['clear_history_link'] = [
+        '#prefix' => '<div class="private_message_thread_clear_history_link_wrapper">',
+        '#suffix' => '</div>',
+        '#type' => 'link',
+        '#url' => $url,
+        '#title' => t('Clear history'),
+      ];
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ *
+ * @return array<string, mixed>
+ *   Definições de temas do módulo.
+ */
+function aculta_messenger_theme(): array {
+  return [
+    'private_message_thread' => [
+      'render element' => 'elements',
+    ],
+    'private_message' => [
+      'render element' => 'elements',
+    ],
+    'private_message_notification_block' => [
+      'variables' => [
+        'new_items_count' => 0,
+        'count_method' => 'threads',
+      ],
+    ],
+    'private_message_no_active_users_notice' => [
+      'render element' => 'elements',
+    ],
+  ];
+}
+
+/**
+ * Prepares variables for private_message_thread templates.
+ *
+ * Default template: private-message-thread.html.twig.
+ *
+ * @param array<string, mixed> $variables
+ *   An associative array containing:
+ *   - elements: An array of elements to display in view mode.
+ *   - private_message_thread: The private message thread object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function aculta_messenger_preprocess_private_message_thread(array &$variables): void {
+  /** @var array<string, mixed> $elements */
+  $elements = $variables['elements'];
+  $variables['view_mode'] = $elements['#view_mode'];
+  // Provide a distinct $teaser boolean.
+  $variables['private_message_thread'] = $elements['#private_message_thread'];
+  /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $private_message_thread */
+  $private_message_thread = $variables['private_message_thread'];
+  $last_update = '';
+  if (isset($elements['updated'])) {
+    /** @var array<string, mixed> $updated */
+    $updated = $elements['updated'];
+    $last_update = \Drupal::service('renderer')->render($updated);
+  }
+  $variables['last_update'] = $last_update;
+
+  $variables['url'] = $private_message_thread->toUrl('canonical', [
+    'language' => $private_message_thread->language(),
+  ]);
+
+  // Helpful $content variable for templates.
+  /** @var array{content: array<string, mixed>} $variables */
+  $variables += ['content' => []];
+  /** @var string $key */
+  foreach (Element::children($elements) as $key) {
+    $variables['content'][$key] = $elements[$key];
+  }
+}
+
+/**
+ * Prepares variables for private_message templates.
+ *
+ * Default template: private-message.html.twig.
+ *
+ * @param array<string, mixed> $variables
+ *   An associative array containing:
+ *   - elements: An array of elements to display in view mode.
+ *   - private_message: The private message object.
+ *   - view_mode: View mode; e.g., 'full', 'teaser', etc.
+ */
+function aculta_messenger_preprocess_private_message(array &$variables): void {
+  /** @var array<string, mixed> $elements */
+  $elements = $variables['elements'];
+  $variables['view_mode'] = $elements['#view_mode'];
+  // Provide a distinct $teaser boolean.
+  $variables['private_message'] = $elements['#private_message'];
+  /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $private_message */
+  $private_message = $variables['private_message'];
+
+  $variables['url'] = $private_message->toUrl('canonical', [
+    'language' => $private_message->language(),
+  ]);
+
+  // Helpful $content variable for templates.
+  /** @var array{content: array<string, mixed>} $variables */
+  $variables += ['content' => []];
+  /** @var string $key */
+  foreach (Element::children($elements) as $key) {
+    $variables['content'][$key] = $elements[$key];
+  }
+}
+
+/**
+ * Implements hook_preprocess_field().
+ *
+ * Adds a custom class to the field that can be targeted, as the default classes
+ * may be altered in themes/templates, and therefore should not be depended
+ * upon.
+ *
+ * @param array<string, mixed> $vars
+ *   Variáveis do campo, ajustadas pelo hook.
+ */
+function aculta_messenger_preprocess_field__private_message_thread__private_messages(array &$vars): void {
+  /** @var array<int|string, array<string, mixed>> $items */
+  $items = $vars['items'];
+  foreach (array_keys($items) as $index) {
+    /** @var \Drupal\Core\Template\Attribute $attributes */
+    $attributes = $items[$index]['attributes'];
+    $attributes->setAttribute('class', 'private-message-wrapper');
+  }
+}
+
+/**
+ * Implements hook_preprocess_container().
+ *
+ * Adds a custom class to the containers that can be targeted, as the default
+ * classes may be altered in themes/templates, and therefore should not be
+ * depended upon.
+ *
+ * @param array<string, mixed> $vars
+ *   Variáveis do campo, ajustadas pelo hook.
+ */
+function aculta_messenger_preprocess_container(array &$vars): void {
+  /** @var array<string, mixed> $element */
+  $element = $vars['element'];
+  if (!empty($element['#id'])) {
+    /** @var string $id */
+    $id = $element['#id'];
+    /** @var \Drupal\Core\Template\Attribute $attributes */
+    $attributes = &$vars['attributes'];
+    if (str_starts_with($id, 'edit-members-wrapper')) {
+      // Add a custom class to the private message members widget container.
+      $attributes->addClass('private_message_members_widget_default_wrapper');
+    }
+    elseif (str_starts_with($id, 'edit-message-wrapper')) {
+      // Add a custom class to the private message members widget container.
+      $attributes->addClass('private_message_message_widget_default_wrapper');
+    }
+  }
+}
+
+/**
+ * Implements hook_message_view_alter().
+ *
+ * Swaps out tokens with values.
+ *
+ * @param array<string, mixed> $build
+ *   Renderização da mensagem, alterada antes da exibição.
+ */
+function aculta_messenger_message_view_alter(array &$build): void {
+  /** @var \Drupal\user\EntityOwnerInterface&\Drupal\Core\Entity\ContentEntityInterface $message */
+  $message = $build['#message'];
+  if ($message->bundle() == 'private_message_notification') {
+    $data = [
+      'private_message' => $message->get('field_message_private_message')->entity,
+      'private_message_thread' => $message->get('field_message_pm_thread')->entity,
+      'user' => User::load($message->getOwnerId()),
+    ];
+
+    if ($build['#view_mode'] == 'mail_subject') {
+      /** @var array<string, mixed> $partial */
+      $partial = &$build['partial_0'];
+      /** @var string $markup */
+      $markup = $partial['#markup'];
+      $partial['#markup'] = \Drupal::token()->replace($markup, $data);
+    }
+    elseif ($build['#view_mode'] == 'mail_body') {
+      /** @var array<string, mixed> $partial */
+      $partial = &$build['partial_1'];
+      /** @var string $markup */
+      $markup = $partial['#markup'];
+      $partial['#markup'] = \Drupal::token()->replace($markup, $data);
+    }
+  }
+}
+
+/**
+ * Implements hook_suggestions_HOOK_alter().
+ *
+ * @param array<int|string, mixed> $suggestions
+ *   Sugestões de template, complementadas pelo hook.
+ * @param array<string, mixed> $vars
+ *   Variáveis do template.
+ *   Variáveis do campo, ajustadas pelo hook.
+ */
+function aculta_messenger_theme_suggestions_private_message_thread_alter(array &$suggestions, array &$vars): void {
+  /** @var array<string, mixed> $elements */
+  $elements = $vars['elements'];
+  /** @var string $view_mode */
+  $view_mode = $elements['#view_mode'];
+  $suggestions[] = 'private_message_thread__' . $view_mode;
+}
+
+/**
+ * Implements hook_suggestions_HOOK_alter().
+ *
+ * @param array<int|string, mixed> $suggestions
+ *   Sugestões de template, complementadas pelo hook.
+ * @param array<string, mixed> $vars
+ *   Variáveis do template.
+ *   Variáveis do campo, ajustadas pelo hook.
+ */
+function aculta_messenger_theme_suggestions_private_message_alter(array &$suggestions, array &$vars): void {
+  /** @var array<string, mixed> $elements */
+  $elements = $vars['elements'];
+  /** @var string $view_mode */
+  $view_mode = $elements['#view_mode'];
+  $suggestions[] = 'private_message__' . $view_mode;
+}
+
+/**
+ * Implements hook_entity_query_ENTITY_TYPE_alter().
+ */
+function aculta_messenger_entity_query_user_alter(QueryInterface $query): void {
+  if (!$handler = $query->getMetadata('entity_reference_selection_handler')) {
+    return;
+  }
+  if (!$handler instanceof UserSelection) {
+    return;
+  }
+
+  // Filter out blocked users.
+  /** @var array<string, array<string, mixed>> $config */
+  $config = $handler->getConfiguration();
+  if (empty($config['private_message']['active_users_selection'])) {
+    return;
+  }
+
+  $roles = array_filter(
+    \Drupal::entityTypeManager()->getStorage('user_role')->loadMultiple(),
+    fn(RoleInterface $role): bool => $role->hasPermission('use private messaging system'),
+  );
+
+  if (!$rids = array_keys($roles)) {
+    // Provide condition which will not return any results.
+    $query->condition('uid');
+    return;
+  }
+
+  $current_user_id = \Drupal::currentUser()->id();
+  $subquery = \Drupal::database()->select('private_message_ban', 'pmb')
+    ->fields('pmb', ['target']);
+  $subquery->condition('owner', $current_user_id);
+
+  $query->condition('uid', $subquery, 'NOT IN');
+  if (!in_array('authenticated', $rids)) {
+    $query->condition('roles', $rids, 'IN');
+  }
+
+  $query->condition('uid', $current_user_id, '<>');
+}
+
+/**
+ * Implements hook_config_schema_info_alter().
+ *
+ * @param array<string, mixed> $definitions
+ *   Definições de schema de configuração, alteradas pelo hook.
+ */
+function aculta_messenger_config_schema_info_alter(array &$definitions): void {
+  if (isset($definitions['entity_reference_selection.default:user'])) {
+    // Required to pass config_inspector validation.
+    /** @var array<string, mixed> $user_definition */
+    $user_definition = &$definitions['entity_reference_selection.default:user'];
+    /** @var array<string, mixed> $mapping */
+    $mapping = &$user_definition['mapping'];
+    $mapping['private_message'] = [
+      'active_users_selection' => [
+        'type' => 'boolean',
+        'label' => 'Whether to filter out blocked user on member selection widget',
+      ],
+    ];
   }
 }

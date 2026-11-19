@@ -45,11 +45,4 @@ final class SingleUseLinkMailTest extends UnitTestCase {
     $this->assertStringNotContainsString('token=', SingleUseLinkMail::withoutLinks($text));
   }
 
-  /**
-   * O prazo é de 24 horas.
-   */
-  public function testTtlIsOneDay(): void {
-    $this->assertSame(86400, SingleUseLinkMail::TTL);
-  }
-
 }

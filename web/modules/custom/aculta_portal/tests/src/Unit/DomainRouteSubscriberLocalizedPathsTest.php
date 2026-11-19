@@ -64,10 +64,10 @@ final class DomainRouteSubscriberLocalizedPathsTest extends UnitTestCase {
       'aculta_lms.answer_attachment_download',
       'entity.lms_answer.edit_form',
     ] as $name) {
-      self::assertSame('courses', $routes->get($name)?->getOption('_aculta_domain_purpose'), $name);
+      self::assertSame('courses', $routes->get($name)?->getOption('_aculta_site_key'), $name);
     }
     foreach (['entity.group.join', 'entity.group.leave'] as $name) {
-      self::assertNull($routes->get($name)?->getOption('_aculta_domain_purpose'), $name);
+      self::assertNull($routes->get($name)?->getOption('_aculta_site_key'), $name);
     }
     foreach ([
       'profile.user_page.single',
@@ -76,7 +76,7 @@ final class DomainRouteSubscriberLocalizedPathsTest extends UnitTestCase {
       'social_auth.user.profiles',
       'entity.webform_submission.user',
     ] as $name) {
-      self::assertSame('account', $routes->get($name)?->getOption('_aculta_domain_purpose'), $name);
+      self::assertSame('account', $routes->get($name)?->getOption('_aculta_site_key'), $name);
     }
   }
 

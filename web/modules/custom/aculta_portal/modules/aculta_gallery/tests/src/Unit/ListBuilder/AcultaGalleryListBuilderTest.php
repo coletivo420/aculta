@@ -46,7 +46,7 @@ final class AcultaGalleryListBuilderTest extends UnitTestCase {
 
     $builder = AcultaGalleryListBuilder::createInstance($container, $entityType);
 
-    self::assertInstanceOf(AcultaGalleryListBuilder::class, $builder);
+    self::assertSame(AcultaGalleryListBuilder::class, (new \ReflectionObject($builder))->getName());
   }
 
 }

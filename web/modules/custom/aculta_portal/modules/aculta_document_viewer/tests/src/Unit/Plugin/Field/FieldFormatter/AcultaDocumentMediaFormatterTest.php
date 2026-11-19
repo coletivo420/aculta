@@ -44,7 +44,11 @@ final class AcultaDocumentMediaFormatterTest extends UnitTestCase {
     $elements = $this->formatter($pdf, $docx, $spreadsheet)->viewElements($items, 'pt-br');
 
     self::assertSame($viewer['#type'], $elements[0]['#type']);
-    self::assertSame('file_link', $elements[0]['link']['#theme']);
+    $link = $elements[0]['link'];
+    if (!is_array($link)) {
+      self::fail('Link do arquivo ausente.');
+    }
+    self::assertSame('file_link', $link['#theme']);
   }
 
   /**

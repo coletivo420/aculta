@@ -37,7 +37,10 @@ final class ReportQueueControllerTest extends UnitTestCase {
    */
   public function testReportQueueRoutePreservesAccessAndRedirectsPost(): void {
     $routing = Yaml::parseFile(dirname(__DIR__, 4) . '/aculta_user.routing.yml');
+    self::assertIsArray($routing);
     $route = $routing['aculta_user.denuncias_forum'];
+    self::assertIsArray($route);
+    self::assertIsArray($route['requirements'] ?? NULL);
 
     self::assertSame('moderar denuncias do forum', $route['requirements']['_permission']);
     self::assertSame(['GET', 'HEAD', 'POST'], $route['methods']);
@@ -62,6 +65,8 @@ final class ReportQueueControllerTest extends UnitTestCase {
 
       /**
        * Returns an empty queue with a second page to exercise the pager.
+       *
+       * @return array{items: array<never>, total_items: int, total_pages: int}
        */
       public function getQueueItems(AccountInterface $account, string $purpose, string $status, int $page, int $limit): array {
         return ['items' => [], 'total_items' => 0, 'total_pages' => 2];
@@ -69,15 +74,25 @@ final class ReportQueueControllerTest extends UnitTestCase {
 
     };
     $build = (new ReportQueueController($queue))->view(Request::create('/forum/reports'));
+    self::assertIsArray($build);
+    self::assertIsArray($build['#attributes'] ?? NULL);
+    self::assertIsArray($build['pager'] ?? NULL);
+    self::assertIsArray($build['pager']['#attributes'] ?? NULL);
+    self::assertIsArray($build['#cache']);
+    self::assertIsArray($build['#attached']);
+    self::assertIsArray($build['#attached']['library']);
+    self::assertIsArray($build['#cache']['contexts']);
+    self::assertIsArray($build['#cache']['tags']);
 
     self::assertSame('forum-report-queue', $build['#attributes']['data-portal-ui']);
+    self::assertContains('aculta_user/report-queue', $build['#attached']['library']);
     self::assertArrayNotHasKey('class', $build['#attributes']);
     self::assertSame('forum-report-pager', $build['pager']['#attributes']['data-portal-ui']);
     self::assertArrayNotHasKey('class', $build['pager']['#attributes']);
     self::assertSame(Cache::PERMANENT, $build['#cache']['max-age']);
     self::assertContains('user.permissions', $build['#cache']['contexts']);
     self::assertContains('url.query_args:page', $build['#cache']['contexts']);
-    self::assertContains('aculta_ugc_report_list', $build['#cache']['tags']);
+    self::assertContains('aculta_cgu_report_list', $build['#cache']['tags']);
   }
 
 }

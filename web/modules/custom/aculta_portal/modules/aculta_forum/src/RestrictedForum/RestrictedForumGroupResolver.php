@@ -55,7 +55,8 @@ final class RestrictedForumGroupResolver implements RestrictedForumGroupResolver
    * {@inheritdoc}
    */
   public function configuredGroupType(): ?string {
-    $type = trim((string) $this->configFactory->get('aculta_forum.settings')->get('restricted_group_type'));
+    $rawType = $this->configFactory->get('aculta_forum.settings')->get('restricted_group_type');
+    $type = is_string($rawType) ? trim($rawType) : '';
     if ($type === '') {
       return NULL;
     }
@@ -97,11 +98,12 @@ final class RestrictedForumGroupResolver implements RestrictedForumGroupResolver
     // content. Query each plugin with its own IDs so a public topic is not
     // restricted by an unrelated category that shares its numeric ID.
     foreach ($targets as $plugin => $ids) {
-      $relationshipIds = array_merge($relationshipIds, $storage->getQuery()
+      $queryResult = $storage->getQuery()
         ->accessCheck(FALSE)
         ->condition('plugin_id', $plugin)
         ->condition('entity_id', $ids, 'IN')
-        ->execute());
+        ->execute();
+      $relationshipIds = array_merge($relationshipIds, array_values($queryResult));
     }
     if ($relationshipIds === []) {
       return [];
@@ -162,9 +164,12 @@ final class RestrictedForumGroupResolver implements RestrictedForumGroupResolver
       return [];
     }
     $ids = [];
-    foreach ($topic->get('field_aculta_categories')->getValue() as $item) {
-      if (isset($item['target_id'])) {
-        $ids[] = (int) $item['target_id'];
+    $items = $topic->get('field_aculta_categories')->getValue();
+    if (is_array($items)) {
+      foreach ($items as $item) {
+        if (is_array($item) && isset($item['target_id']) && is_numeric($item['target_id'])) {
+          $ids[] = (int) $item['target_id'];
+        }
       }
     }
     return $ids;

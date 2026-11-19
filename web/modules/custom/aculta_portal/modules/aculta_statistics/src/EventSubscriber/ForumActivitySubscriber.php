@@ -53,17 +53,35 @@ final class ForumActivitySubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * Soma um comentário criado.
+   * Soma um comentário criado e a resposta do tópico hospedeiro.
    */
-  public function onCommentCreated(): void {
+  public function onCommentCreated(?object $event = NULL): void {
     $this->recorder->record('forum.comments.created');
+    $this->recordReply($event);
   }
 
   /**
-   * Soma um post revisionável criado.
+   * Soma um post revisionável criado e a resposta do tópico hospedeiro.
    */
-  public function onPostCreated(): void {
+  public function onPostCreated(?object $event = NULL): void {
     $this->recorder->record('forum.posts.created');
+    $this->recordReply($event);
+  }
+
+  /**
+   * Registra a resposta na dimensão do tópico autorizado, quando informada.
+   *
+   * A dimensão é um ID de conteúdo, sem autoria. O Content Index revalida o
+   * acesso antes de pedir o detalhamento por tópico.
+   */
+  private function recordReply(?object $event): void {
+    if ($event === NULL) {
+      return;
+    }
+    $host = get_object_vars($event)['hostEntityId'] ?? NULL;
+    if (is_int($host) && $host > 0) {
+      $this->recorder->record('forum.replies.created', (string) $host);
+    }
   }
 
 }

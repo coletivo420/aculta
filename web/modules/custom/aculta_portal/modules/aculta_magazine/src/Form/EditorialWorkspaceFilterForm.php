@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Form API filters for the Studio publication inventory. */
 final class EditorialWorkspaceFilterForm extends FormBase {
 
-  public function __construct(private readonly EntityTypeManagerInterface $entities, private readonly LanguageManagerInterface $languages) {}
+  public function __construct(protected readonly EntityTypeManagerInterface $entities, protected readonly LanguageManagerInterface $languages) {}
 
   /**
    * Creates the inventory filter form from Drupal entity and language services.

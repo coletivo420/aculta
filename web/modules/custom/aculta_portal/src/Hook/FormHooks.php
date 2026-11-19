@@ -8,23 +8,26 @@ use Drupal\Core\Render\Markup;
 use Drupal\Component\Render\MarkupInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\aculta_portal\Cart\AddToCartAjax;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\aculta_portal\EventSubscriber\AccountRouteSubscriber;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Routing\CurrentRouteMatch;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\user\AccountForm;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Account and Commerce form alterations owned by the Portal.
  */
-final class FormHooks {
+class FormHooks {
 
   public function __construct(
     #[Autowire(service: 'current_route_match')]
@@ -35,8 +38,8 @@ final class FormHooks {
     private readonly TranslationInterface $translation,
     #[Autowire(service: 'aculta_portal.email_confirmation_policy')]
     private readonly EmailConfirmationPolicy $emailPolicy,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurpose,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'aculta_portal.cart_ajax')]
     private readonly AddToCartAjax $cartAjax,
     #[Autowire(service: 'request_stack')]
@@ -45,12 +48,14 @@ final class FormHooks {
 
   /**
    * Alters Portal-owned account and Commerce form surfaces.
+   *
+   * @param array<array-key, mixed> $form
    */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
     $this->accountAjaxSubmit($form, $formId);
-    $this->cartAjax->alter($form, $formId);
+    $this->cartAjax->alter($form, $formId, $formState);
 
     $this->restrictedFormNotice($form, $formId);
     $this->recoveryPasswordModal($form, $formState, $formId);
@@ -58,16 +63,39 @@ final class FormHooks {
     // Com a verificação de e-mail ligada, o Core gera a senha no cadastro.
     // O Portal mostra a senha escolhida e salva depois; a conta ativa permanece
     // restrita até a confirmação do endereço.
-    if ($formId === 'user_register_form' && !isset($form['account']['pass'])) {
-      $form['account']['pass'] = [
-        '#type' => 'password_confirm',
-        '#required' => TRUE,
-        '#size' => 25,
-        '#description' => $this->translation->translate('Escolha uma senha com pelo menos 8 caracteres.')
-        . ' ' . $this->translation->translate('Enviaremos um link para confirmar o seu e-mail.'),
-      ];
-      $form['#validate'][] = 'aculta_portal.form_callbacks:validateRegistrationPassword';
-      $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:storeRegistrationPassword';
+    if ($formId === 'user_register_form') {
+      $accountElement = &$form['account'];
+      if (!is_array($accountElement)) {
+        $accountElement = [];
+      }
+      if (!isset($accountElement['pass'])) {
+        $accountElement['pass'] = [
+          '#type' => 'password_confirm',
+          '#required' => TRUE,
+          '#size' => 25,
+          '#description' => $this->translation->translate('Escolha uma senha com pelo menos 8 caracteres.')
+            . ' ' . $this->translation->translate('Enviaremos um link para confirmar o seu e-mail.'),
+        ];
+        $validateCallbacks = &$form['#validate'];
+        if (!is_array($validateCallbacks)) {
+          $validateCallbacks = [];
+        }
+        $validateCallbacks[] = 'aculta_portal.form_callbacks:validateRegistrationPassword';
+
+        $actionsElement = &$form['actions'];
+        if (!is_array($actionsElement)) {
+          $actionsElement = [];
+        }
+        $submitElement = &$actionsElement['submit'];
+        if (!is_array($submitElement)) {
+          $submitElement = [];
+        }
+        $submitCallbacks = &$submitElement['#submit'];
+        if (!is_array($submitCallbacks)) {
+          $submitCallbacks = [];
+        }
+        $submitCallbacks[] = 'aculta_portal.form_callbacks:storeRegistrationPassword';
+      }
     }
     // Cadastro: a conta fica ativa; o link enviado confirma o endereço.
     if ($formId === 'user_register_form') {
@@ -80,13 +108,29 @@ final class FormHooks {
         '#weight' => 90,
       ];
       // DT-P06: o Portal não cria contas com e-mail existente.
-      $form['#validate'][] = 'aculta_portal.form_callbacks:validateRegistrationMail';
-      $form['actions']['submit']['#submit'] = array_map(
+      $validateCallbacks = &$form['#validate'];
+      if (!is_array($validateCallbacks)) {
+        $validateCallbacks = [];
+      }
+      $validateCallbacks[] = 'aculta_portal.form_callbacks:validateRegistrationMail';
+
+      $actionsElement = &$form['actions'];
+      if (!is_array($actionsElement)) {
+        $actionsElement = [];
+      }
+      $submitElement = &$actionsElement['submit'];
+      if (!is_array($submitElement)) {
+        $submitElement = [];
+      }
+      $rawSubmit = $submitElement['#submit'] ?? [];
+      $submitList = is_array($rawSubmit) ? $rawSubmit : [];
+      $submitCallbacks = array_map(
         static fn($callback) => $callback === '::save' ? 'aculta_portal.form_callbacks:saveRegistration' : $callback,
-        $form['actions']['submit']['#submit'] ?? [],
+        $submitList,
       );
-      $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:requestRegistrationConfirmation';
-      $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:recordAcultaUserAgreementAcceptance';
+      $submitCallbacks[] = 'aculta_portal.form_callbacks:requestRegistrationConfirmation';
+      $submitCallbacks[] = 'aculta_portal.form_callbacks:recordAcultaUserAgreementAcceptance';
+      $submitElement['#submit'] = $submitCallbacks;
     }
 
     if ($formId === 'user_login_form') {
@@ -96,7 +140,9 @@ final class FormHooks {
       // If Core's step is missing, this callback runs first. A rename cannot
       // silently restore the disclosure.
       $wrapper = 'aculta_portal.form_callbacks:validateLoginAuthentication';
-      $validators = array_values(array_filter($form['#validate'] ?? [], static fn($v) => $v !== $wrapper));
+      $rawValidate = $form['#validate'] ?? [];
+      $validateList = is_array($rawValidate) ? $rawValidate : [];
+      $validators = array_values(array_filter($validateList, static fn($v) => $v !== $wrapper));
       $index = array_search('::validateAuthentication', $validators, TRUE);
       if ($index === FALSE) {
         array_unshift($validators, $wrapper);
@@ -108,7 +154,7 @@ final class FormHooks {
     }
 
     // Na Segurança, a senha atual fica aqui, sem o link de recuperação do Core.
-    if ($formId === 'user_form' && $this->routeMatch->getRouteName() === 'aculta_portal.security_password' && isset($form['account']['current_pass'])) {
+    if ($formId === 'user_form' && $this->routeMatch->getRouteName() === 'aculta_portal.security_password' && isset($form['account']) && is_array($form['account']) && isset($form['account']['current_pass']) && is_array($form['account']['current_pass'])) {
       $form['account']['current_pass']['#description'] = $this->translation->translate('Obrigatório para alterar a senha: informe sua senha atual.');
     }
 
@@ -116,17 +162,53 @@ final class FormHooks {
       && $this->routeMatch->getRouteName() === 'aculta_portal.security_password'
       && $formObject instanceof AccountForm) {
       $account = $formObject->getEntity();
-      if ((int) $account->id() === (int) $this->currentUser->id()) {
+      if ((int) $account->id() === (int) $this->currentUser->id() && isset($form['account']) && is_array($form['account'])) {
         $formState->set('user_pass_reset', FALSE);
-        $form['account']['current_pass']['#access'] = TRUE;
-        $form['account']['current_pass']['#required'] = TRUE;
-        $form['account']['current_pass']['#title'] = $this->translation->translate('Senha atual');
-        $form['account']['current_pass']['#attributes']['autocomplete'] = 'current-password';
-        $form['account']['pass']['#title'] = $this->translation->translate('Nova senha');
-        $form['account']['pass']['#attributes']['autocomplete'] = 'new-password';
-        $form['#after_build'][] = 'aculta_portal.form_callbacks:securityPasswordAfterBuild';
-        $form['#attributes']['data-portal-ui'] = 'security-password-form';
-        $form['actions']['submit']['#value'] = $this->translation->translate('Salvar nova senha');
+        $currentPass = &$form['account']['current_pass'];
+        if (!is_array($currentPass)) {
+          $currentPass = [];
+        }
+        $currentPass['#access'] = TRUE;
+        $currentPass['#required'] = TRUE;
+        $currentPass['#title'] = $this->translation->translate('Senha atual');
+        $currentPassAttributes = &$currentPass['#attributes'];
+        if (!is_array($currentPassAttributes)) {
+          $currentPassAttributes = [];
+        }
+        $currentPassAttributes['autocomplete'] = 'current-password';
+
+        $pass = &$form['account']['pass'];
+        if (!is_array($pass)) {
+          $pass = [];
+        }
+        $pass['#title'] = $this->translation->translate('Nova senha');
+        $passAttributes = &$pass['#attributes'];
+        if (!is_array($passAttributes)) {
+          $passAttributes = [];
+        }
+        $passAttributes['autocomplete'] = 'new-password';
+
+        $afterBuild = &$form['#after_build'];
+        if (!is_array($afterBuild)) {
+          $afterBuild = [];
+        }
+        $afterBuild[] = 'aculta_portal.form_callbacks:securityPasswordAfterBuild';
+
+        $formAttributes = &$form['#attributes'];
+        if (!is_array($formAttributes)) {
+          $formAttributes = [];
+        }
+        $formAttributes['data-portal-ui'] = 'security-password-form';
+
+        $actions = &$form['actions'];
+        if (!is_array($actions)) {
+          $actions = [];
+        }
+        $submit = &$actions['submit'];
+        if (!is_array($submit)) {
+          $submit = [];
+        }
+        $submit['#value'] = $this->translation->translate('Salvar nova senha');
 
         foreach (array_keys($form) as $key) {
           if (!str_starts_with((string) $key, '#')
@@ -140,24 +222,36 @@ final class FormHooks {
             unset($form['account'][$key]);
           }
         }
-        $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:securityPasswordRedirect';
+        $submitCallbacks = &$submit['#submit'];
+        if (!is_array($submitCallbacks)) {
+          $submitCallbacks = [];
+        }
+        $submitCallbacks[] = 'aculta_portal.form_callbacks:securityPasswordRedirect';
       }
     }
 
-    if (isset($form['commerce_donation_pane']['field_donation_amount'])) {
+    if (isset($form['commerce_donation_pane']) && is_array($form['commerce_donation_pane']) && isset($form['commerce_donation_pane']['field_donation_amount']) && is_array($form['commerce_donation_pane']['field_donation_amount'])) {
       // The contrib widget converts an empty custom value to zero while
       // massaging values. Require a real positive custom value server-side.
-      $form['#validate'][] = 'aculta_portal.form_callbacks:validateDonationAmount';
+      $validateCallbacks = &$form['#validate'];
+      if (!is_array($validateCallbacks)) {
+        $validateCallbacks = [];
+      }
+      $validateCallbacks[] = 'aculta_portal.form_callbacks:validateDonationAmount';
       $form['commerce_donation_pane']['#title'] = $this->translation->translate('Seu apoio');
-      $amountWidget = &$form['commerce_donation_pane']['field_donation_amount']['widget'][0]['donation_level'];
-      if (isset($amountWidget)) {
-        $amountWidget['#title'] = $this->translation->translate('Escolha um valor');
-        if (isset($amountWidget['value']['#options']['custom_amount'])) {
-          $amountWidget['value']['#options']['custom_amount'] = $this->translation->translate('Outro valor');
-        }
-        if (isset($amountWidget['amount'])) {
-          $amountWidget['amount']['#title'] = $this->translation->translate('Outro valor');
-          $amountWidget['amount']['#placeholder'] = $this->translation->translate('Outro valor');
+
+      $widget = &$form['commerce_donation_pane']['field_donation_amount']['widget'];
+      if (is_array($widget) && isset($widget[0]) && is_array($widget[0])) {
+        $amountWidget = &$widget[0]['donation_level'];
+        if (is_array($amountWidget)) {
+          $amountWidget['#title'] = $this->translation->translate('Escolha um valor');
+          if (isset($amountWidget['value']) && is_array($amountWidget['value']) && isset($amountWidget['value']['#options']) && is_array($amountWidget['value']['#options']) && isset($amountWidget['value']['#options']['custom_amount'])) {
+            $amountWidget['value']['#options']['custom_amount'] = $this->translation->translate('Outro valor');
+          }
+          if (isset($amountWidget['amount']) && is_array($amountWidget['amount'])) {
+            $amountWidget['amount']['#title'] = $this->translation->translate('Outro valor');
+            $amountWidget['amount']['#placeholder'] = $this->translation->translate('Outro valor');
+          }
         }
       }
     }
@@ -165,48 +259,82 @@ final class FormHooks {
   }
 
   /**
-   * Adds AJAX submit behavior to account forms.
+   * Adds HTMX submit behavior to account forms.
    *
-   * The submit callback returns the form and its messages inside the same
-   * wrapper without reloading. Save redirects are disabled and focus moves to
-   * the first error (aculta_portal/account-navigation).
+   * The response returns the form and its messages inside the same wrapper
+   * without reloading. Save redirects are disabled and the theme focus
+   * behavior moves to the first error (aculta_portal/account-navigation).
    *
    * The bio form uses its modal's JSON route and stays outside this behavior.
    *
    * The login form stays outside this behavior so Core can redirect after
-   * authentication. AJAX previously kept the new session on the login page.
+   * authentication.
+   *
+   * @param array<array-key, mixed> $form
    */
   private function accountAjaxSubmit(array &$form, string $formId): void {
     $route = $this->routeMatch->getRouteObject();
-    if ($route === NULL || $route->getOption('_aculta_domain_purpose') !== 'account' || $formId === 'aculta_portal_aculta_user_agreement_accept' || $formId === 'aculta_portal_account_password_create'
-      || $formId === 'user_login_form' || $formId === 'user_pass_reset' || $formId === 'aculta_mail_confirmer_response' || $formId === 'aculta_user_account_bio_form' || !empty($form['#aculta_json_save']) || !isset($form['actions']['submit'])) {
+    if ($route === NULL
+      || $route->getOption('_aculta_site_key') !== 'account'
+      || $formId === 'aculta_portal_aculta_user_agreement_accept'
+      || $formId === 'aculta_portal_account_password_create'
+      || $formId === 'user_login_form'
+      || $formId === 'user_pass_reset'
+      || $formId === 'aculta_mail_confirmer_response'
+      || $formId === 'aculta_user_account_bio_form'
+      || !empty($form['#aculta_json_save'])
+      || !isset($form['actions'])
+      || !is_array($form['actions'])
+      || !isset($form['actions']['submit'])
+      || !is_array($form['actions']['submit'])
+      // Popup fragment routes already configure HTMX on their own form/button;
+      // the Account wrapper does not exist in those dialogs.
+      || $route->getOption('_htmx_route')) {
       return;
     }
     $wrapper = 'portal-account-' . Html::cleanCssIdentifier($formId);
-    $form['#prefix'] = '<div id="' . $wrapper . '">' . ($form['#prefix'] ?? '');
-    $form['#suffix'] = ($form['#suffix'] ?? '') . '</div>';
+    $prefix = is_scalar($form['#prefix'] ?? '') ? (string) ($form['#prefix'] ?? '') : '';
+    $form['#prefix'] = '<div id="' . $wrapper . '">' . $prefix;
+    $suffix = is_scalar($form['#suffix'] ?? '') ? (string) ($form['#suffix'] ?? '') : '';
+    $form['#suffix'] = $suffix . '</div>';
     $submit = &$form['actions']['submit'];
-    $submit['#ajax'] = [
-      'callback' => 'aculta_portal.form_callbacks:accountAjaxResponse',
-      'wrapper' => $wrapper,
-      'progress' => ['type' => 'throbber'],
-      // Focus moves to the first form error through the account error handler.
-      'disable-refocus' => TRUE,
-    ];
+    $routeName = (string) $this->routeMatch->getRouteName();
+    $url = $routeName === ''
+      ? Url::fromRoute('<current>')
+      : Url::fromRoute($routeName, $this->routeMatch->getRawParameters()->all());
+    (new Htmx())
+      ->post($url)
+      ->select('#' . $wrapper)
+      ->target('#' . $wrapper)
+      ->swap('outerHTML')
+      ->onlyMainContent()
+      ->applyTo($submit);
+    // Na resposta HTMX as mensagens precisam viajar dentro do wrapper. Na
+    // página normal elas continuam apenas na região global, sem duplicar.
+    if ($this->requestStack->getCurrentRequest()?->headers->has('HX-Request')) {
+      $form['status_messages'] = ['#type' => 'status_messages', '#weight' => -100];
+    }
     // Keep the response and status message in place instead of redirecting.
-    if (!empty($submit['#submit'])) {
+    if (!empty($submit['#submit']) && is_array($submit['#submit'])) {
       $submit['#submit'][] = 'aculta_portal.form_callbacks:disableAccountRedirect';
     }
     else {
-      $form['#submit'][] = 'aculta_portal.form_callbacks:disableAccountRedirect';
+      $formSubmit = &$form['#submit'];
+      if (!is_array($formSubmit)) {
+        $formSubmit = [];
+      }
+      $formSubmit[] = 'aculta_portal.form_callbacks:disableAccountRedirect';
     }
   }
 
   /**
    * Recuperação de senha em modal sem fechar, só com a nova senha.
    *
-   * O link do e-mail leva ao formulário de conta com o token do Core. Só o campo de senha aparece, em modal sem botão
-   * de fechar (js/account-password-modal.js), como na criação de senha do cadastro simplificado.
+   * O link do e-mail leva ao formulário de conta com o token do Core. Só o
+   * campo de senha aparece em modal sem botão de fechar
+   * (js/account-password-modal.js), como na criação de senha do cadastro.
+   *
+   * @param array<array-key, mixed> $form
    */
   private function recoveryPasswordModal(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
@@ -215,7 +343,12 @@ final class FormHooks {
       return;
     }
     $account = $formObject->getEntity();
-    if (!AccountRouteSubscriber::isValidCorePasswordResetRequest($request, (int) $account->id(), (int) $this->currentUser->id())) {
+    if (!$account instanceof UserInterface
+      || !AccountRouteSubscriber::isValidCorePasswordResetRequest(
+        $request,
+        (int) $account->id(),
+        (int) $this->currentUser->id(),
+      )) {
       return;
     }
     $manter = ['account', 'actions', 'form_build_id', 'form_token', 'form_id'];
@@ -224,20 +357,48 @@ final class FormHooks {
         unset($form[$key]);
       }
     }
-    foreach (array_keys($form['account']) as $key) {
-      if (!str_starts_with((string) $key, '#') && $key !== 'pass') {
-        unset($form['account'][$key]);
+    if (isset($form['account']) && is_array($form['account'])) {
+      foreach (array_keys($form['account']) as $key) {
+        if (!str_starts_with((string) $key, '#') && $key !== 'pass') {
+          unset($form['account'][$key]);
+        }
       }
+      // O Core espera o campo de papéis no buildEntity: mantém os papéis atuais,
+      // sem exibir o campo.
+      /** @var list<string> $roles */
+      $roles = $account->getRoles();
+      /** @var list<string> $papeis */
+      $papeis = array_values(array_diff($roles, ['authenticated']));
+      /** @var array<string, string> $papeisAssociativo */
+      $papeisAssociativo = array_combine($papeis, $papeis) ?: [];
+      $form['account']['roles'] = ['#type' => 'value', '#value' => $papeisAssociativo];
     }
-    // O Core espera o campo de papéis no buildEntity: mantém os papéis atuais, sem exibir o campo.
-    $papeis = array_values(array_diff($account->getRoles(), ['authenticated']));
-    $form['account']['roles'] = ['#type' => 'value', '#value' => array_combine($papeis, $papeis) ?: []];
-    $form['actions']['submit']['#value'] = $this->translation->translate('Salvar nova senha');
-    $form['actions']['submit']['#submit'][] = 'aculta_portal.form_callbacks:recoveryPasswordRedirect';
+    $actions = &$form['actions'];
+    if (!is_array($actions)) {
+      $actions = [];
+    }
+    $submit = &$actions['submit'];
+    if (!is_array($submit)) {
+      $submit = [];
+    }
+    $submit['#value'] = $this->translation->translate('Salvar nova senha');
+    $submitCallbacks = &$submit['#submit'];
+    if (!is_array($submitCallbacks)) {
+      $submitCallbacks = [];
+    }
+    $submitCallbacks[] = 'aculta_portal.form_callbacks:recoveryPasswordRedirect';
     $title = Html::escape((string) $this->translation->translate('Crie sua nova senha'));
     $form['#prefix'] = '<div id="aculta-account-password" data-dialog-title="' . $title . '" hidden>';
     $form['#suffix'] = '</div>';
-    $form['#attached']['library'][] = 'aculta_portal/account-password-modal';
+    $attached = &$form['#attached'];
+    if (!is_array($attached)) {
+      $attached = [];
+    }
+    $libraries = &$attached['library'];
+    if (!is_array($libraries)) {
+      $libraries = [];
+    }
+    $libraries[] = 'aculta_portal/account-password-modal';
   }
 
   /**
@@ -245,6 +406,8 @@ final class FormHooks {
    *
    * Wiki and comment writes are already denied by access checks. This directs
    * the user to account security to confirm the address.
+   *
+   * @param array<array-key, mixed> $form
    */
   private function restrictedFormNotice(array &$form, string $form_id): void {
     $policy = $this->emailPolicy;
@@ -264,17 +427,20 @@ final class FormHooks {
     }
     $url = Url::fromRoute('aculta_portal.security')->toString();
     $form['aculta_email_restriction'] = [
-      '#type' => 'container',
+      '#component' => 'aculta420_v2:status-messages',
       '#weight' => -100,
-      '#attributes' => ['data-portal-ui' => 'notice-error email-notice', 'role' => 'alert'],
-      'text' => [
+      '#props' => ['type' => 'error'],
+      '#slots' => ['content' => [
         '#markup' => '<p><strong>' . htmlspecialchars((string) $this->translation->translate('Você precisa confirmar seu e-mail para participar desta área.'), ENT_QUOTES) . '</strong> '
-        . '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '">' . htmlspecialchars((string) $this->translation->translate('Confirme o e-mail em Minha conta > Segurança'), ENT_QUOTES) . '</a>.</p>',
-      ],
+          . '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '">' . htmlspecialchars((string) $this->translation->translate('Confirme o e-mail em Minha conta > Segurança'), ENT_QUOTES) . '</a>.</p>',
+      ]],
     ];
     foreach (array_keys($form) as $key) {
       if (!str_starts_with((string) $key, '#') && $key !== 'aculta_email_restriction') {
-        $form[$key]['#access'] = FALSE;
+        $element = &$form[$key];
+        if (is_array($element)) {
+          $element['#access'] = FALSE;
+        }
       }
     }
   }
@@ -284,12 +450,12 @@ final class FormHooks {
    *
    * Links open in a new tab because registration happens on the account host.
    */
-  private function termsLabel(): MarkupInterface {
+  private function termsLabel(): MarkupInterface|string {
     $link = static function (string $href, string $text): string {
       return '<a href="' . htmlspecialchars($href, ENT_QUOTES) . '" target="_blank" rel="noopener noreferrer">' . htmlspecialchars($text, ENT_QUOTES) . '</a>';
     };
-    $terms = $this->domainPurpose->pathUrl('main', '/sobre/termos-de-uso')?->toString() ?? '/sobre/termos-de-uso';
-    $privacy = $this->domainPurpose->pathUrl('main', '/sobre/politica-de-privacidade')?->toString() ?? '/sobre/politica-de-privacidade';
+    $terms = $this->siteManager->pathUrl(SiteKey::Main, '/sobre/termos-de-uso')?->toString() ?? '/sobre/termos-de-uso';
+    $privacy = $this->siteManager->pathUrl(SiteKey::Main, '/sobre/politica-de-privacidade')?->toString() ?? '/sobre/politica-de-privacidade';
     $pattern = (string) $this->translation->translate('Li e aceito os @terms e a @privacy.');
     $html = strtr($pattern, [
       '@terms' => $link($terms, (string) $this->translation->translate('Termos de Uso')),

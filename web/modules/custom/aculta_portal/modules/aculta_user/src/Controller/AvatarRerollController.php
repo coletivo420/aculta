@@ -24,7 +24,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 final class AvatarRerollController implements ContainerInjectionInterface {
 
-  /** Atributo que marca cada avatar exibido no painel (alvo do AJAX). */
+  /**
+   * Atributo que marca cada avatar exibido no painel (alvo do AJAX). */
   public const SLOT_ATTRIBUTE = 'data-aculta-user-avatar';
 
   public function __construct(
@@ -34,6 +35,9 @@ final class AvatarRerollController implements ContainerInjectionInterface {
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_user.avatar_pool'),
@@ -44,8 +48,10 @@ final class AvatarRerollController implements ContainerInjectionInterface {
   }
 
   /**
-   * Sorteia uma prévia no modal. Não grava a foto: "Salvar foto do perfil" aplica a escolha (AvatarPool::applyPending).
-   * Só o modal é atualizado; o avatar da visão geral muda quando a pessoa salva.
+   * Sorteia uma prévia no modal sem gravar a foto.
+   *
+   * "Salvar foto do perfil" aplica a escolha (AvatarPool::applyPending). Só o
+   * modal é atualizado; o avatar da visão geral muda quando a pessoa salva.
    */
   public function reroll(Request $request): AjaxResponse|RedirectResponse {
     $uid = (int) $this->currentUserService->id();

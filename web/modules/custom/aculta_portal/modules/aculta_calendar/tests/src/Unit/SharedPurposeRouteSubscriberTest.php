@@ -28,18 +28,18 @@ final class SharedPurposeRouteSubscriberTest extends UnitTestCase {
       'aculta_events.interactive' => '/calendario/interativo',
     ];
     foreach ($calendarRoutes as $name => $path) {
-      $routes->add($name, new Route($path, [], [], ['_aculta_domain_purpose' => 'eventos']));
+      $routes->add($name, new Route($path, [], [], ['_aculta_site_key' => 'eventos']));
     }
-    $routes->add('aculta_events.date_add', new Route('/painel-administrativo/eventos/datas/adicionar', [], [], ['_aculta_domain_purpose' => 'eventos']));
+    $routes->add('aculta_events.date_add', new Route('/painel-administrativo/eventos/datas/adicionar', [], [], ['_aculta_site_key' => 'eventos']));
     $subscriber = new SharedPurposeRouteSubscriber();
     $alter = new \ReflectionMethod($subscriber, 'alterRoutes');
     $alter->invoke($subscriber, $routes);
 
     self::assertSame('eventos', $routes->get('aculta_events.agenda')->getOption('_aculta_canonical_purpose'));
     foreach (array_keys($calendarRoutes) as $name) {
-      self::assertSame(['eventos', 'main'], $routes->get($name)->getOption('_aculta_domain_purposes'));
+      self::assertSame(['eventos', 'main'], $routes->get($name)->getOption('_aculta_site_keys'));
     }
-    self::assertNull($routes->get('aculta_events.date_add')->getOption('_aculta_domain_purposes'));
+    self::assertNull($routes->get('aculta_events.date_add')->getOption('_aculta_site_keys'));
   }
 
 }

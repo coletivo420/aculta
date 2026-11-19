@@ -1,0 +1,117 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de Post do Fórum
+status: stable
+description: "Card de postagem do tópico com faixa lateral de acento (verde, à esquerda por padrão), cabeçalho de autoria, distintivo opcional, corpo e reações."
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [author_name]
+  properties:
+    theme:
+      type: string
+      title: Tema
+      enum: [light, dark]
+      default: light
+      description: "dark aplica os tokens de modo escuro somente a este cartão."
+    author_url:
+      type: [string, 'null']
+      title: Link para a conta pública do autor
+      description: Destino público aplicado ao nome do autor; null mantém a identidade sem link.
+      default: null
+    author_position:
+      type: string
+      title: Posição da autoria
+      enum: [top, side]
+      default: top
+      description: "top: autoria no topo. side: autoria em coluna à direita, ao lado do corpo."
+    density:
+      type: string
+      title: Densidade do cartão
+      description: "default ou compact (mobile: menos espaçamento e ações em linha)."
+      enum: [default, compact]
+      default: default
+    stripe:
+      type: string
+      title: Variante da faixa colorida no topo
+      description: Define o conjunto de cores da faixa superior do cartão.
+      enum: [brand, highlight, member]
+      default: brand
+    accent_side:
+      type: string
+      title: Lado da faixa lateral de acento
+      description: "Faixa verde lateral no início (esquerda) ou no fim (direita). Padrão: início."
+      enum: [start, end]
+      default: start
+    accent_color:
+      type: string
+      title: Cor da faixa lateral
+      description: Define a cor semântica da faixa lateral quando ela está habilitada.
+      enum: [green, yellow, red]
+      default: green
+    author_name:
+      type: string
+      title: Nome do autor
+      description: Nome público mostrado no cabeçalho de autoria.
+      minLength: 1
+    author_role:
+      type: [string, 'null']
+      title: Papel do autor entregue pelo Portal
+      description: Papel público opcional exibido ao lado da identidade do autor.
+      default: null
+    author_posts:
+      type: [string, integer, 'null']
+      title: Contagem de posts do autor
+      description: Número de posts do autor; null ou string vazia omite a contagem.
+      default: null
+    timestamp:
+      type: [string, 'null']
+      title: Data ou horário da publicação
+      description: Data pronta para exibição na linha de autoria.
+      default: null
+    reactions:
+      type: [array, 'null']
+      title: Reações recebidas
+      description: Lista de reações resumidas por rótulo e contagem, usada quando não há barra interativa no slot.
+      default: null
+      items:
+        type: object
+        description: Uma reação resumida pelo rótulo e pela contagem.
+        additionalProperties: false
+        required: [label, count]
+        properties:
+          label:
+            type: string
+            title: Rótulo da reação
+            description: Nome da reação usado na representação resumida.
+          count:
+            type: integer
+            title: Contagem da reação
+            description: Quantidade dessa reação recebida pelo post.
+    reply_url:
+      type: [string, 'null']
+      title: URL de ação para responder
+      description: Destino opcional do link de resposta quando o slot reply não fornece um controle renderizado.
+      default: null
+slots:
+  avatar:
+    title: Avatar do autor
+    description: Conteúdo renderizável do avatar encaminhado ao slot avatar do SDC forum-author-line sem inspeção ou conversão em texto.
+  body:
+    title: Conteúdo da mensagem
+    description: Texto e mídias renderizadas do post.
+  actions:
+    title: Ações do post
+    description: Botões de curtir, sinalizar ou moderar.
+  reactions_received:
+    title: Reações recebidas
+    description: Barra somente leitura (discussion-reactions-received) entre o texto e as ações.
+  reactions_slot:
+    title: Barra de reações interativas
+    description: Barra de reações por emojis renderizada pelo aculta_forum.
+  reply:
+    title: Botão ou link de resposta
+    description: Elemento alternativo para responder.
+  badge:
+    title: Distintivo do post
+    description: Distintivo renderizado por um componente SDC.

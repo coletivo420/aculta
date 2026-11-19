@@ -37,7 +37,9 @@ final class DocumentValidationTest extends TestCase {
    *   Valid document cases from the shared fixture.
    */
   public static function validDocuments(): array {
-    return (require dirname(__DIR__, 2) . '/fixtures/documents.php')['valid'];
+    /** @var array{valid: array<string, array{string, string, string, string}>, invalid: array<string, array{string, string}>} $fixtures */
+    $fixtures = require dirname(__DIR__, 2) . '/fixtures/documents.php';
+    return $fixtures['valid'];
   }
 
   /**
@@ -47,7 +49,9 @@ final class DocumentValidationTest extends TestCase {
    *   Invalid document cases from the shared fixture.
    */
   public static function invalidDocuments(): array {
-    return (require dirname(__DIR__, 2) . '/fixtures/documents.php')['invalid'];
+    /** @var array{valid: array<string, array{string, string, string, string}>, invalid: array<string, array{string, string}>} $fixtures */
+    $fixtures = require dirname(__DIR__, 2) . '/fixtures/documents.php';
+    return $fixtures['invalid'];
   }
 
   /**

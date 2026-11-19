@@ -161,3 +161,14 @@ A coluna "retenção" acima é o padrão inicial. O administrador ajusta cada m�
 no painel (30, 90, 180, 365 dias ou indefinido), conforme ADR-0003. Métricas de
 visita podem ser configuradas como indefinido, por decisão do responsável; o risco
 está registrado na ADR.
+
+## Fórum — tipos e indicadores FST
+
+- `counter`: `forum.topics.created`, `forum.comments.created`, `forum.posts.created`, `forum.replies.created`, `forum.participants.new_contributors`, `forum.reactions.added`, `forum.search.queries`, `forum.search.zero_results`, `forum.search.clickthrough`, `forum.topics.views`, `forum.categories.views`.
+- `snapshot`: `forum.topics.published_current`, `forum.replies.published_current`, `forum.categories.active`, `forum.topics.unanswered`, `forum.response.unanswered_over_72h`, `forum.reactions.active`.
+- `distinct-window`: `forum.participants.engaged_7d`, `forum.participants.engaged_30d`.
+- `distribution`: `forum.response.first_median_minutes`, `forum.response.first_p90_minutes`, `forum.moderation.resolution_median_minutes`.
+- `ratio`: `forum.response.rate` (derivada, não gravada por contador).
+- `operational`: `forum.moderation.reports_open`, `forum.moderation.posts_pending`.
+
+Regras: contadores somam no período; retratos, janelas e distribuições não são somados entre dias; razões e taxas usam numerador e denominador do mesmo recorte. Dimensões públicas aceitam apenas ID de conteúdo autorizado, categoria pública ou tipo de reação.

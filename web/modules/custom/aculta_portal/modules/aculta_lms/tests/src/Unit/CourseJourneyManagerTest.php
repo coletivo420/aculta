@@ -11,6 +11,7 @@ use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_lms\LearningDashboardManager;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Url;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\UserSession;
 use Drupal\group\Entity\GroupInterface;
@@ -18,11 +19,16 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
-/** Tests the ACULTA-backed course journey projection. */
+/**
+ * Tests the ACULTA-backed course journey projection.
+ */
 #[CoversClass(LearningDashboardManager::class)]
 #[Group('aculta_lms')]
 final class CourseJourneyManagerTest extends UnitTestCase {
 
+  /**
+   * Checks that only published course lessons appear in the journey.
+   */
   public function testJourneyListsOwnPublishedLessonsWithoutInventingLessonProgress(): void {
     $account = new UserSession(['uid' => 42]);
     $course = $this->course($account, '1');
@@ -53,7 +59,11 @@ final class CourseJourneyManagerTest extends UnitTestCase {
     self::assertNull($journey->currentLessonLabel);
     self::assertSame(0, $journey->completedLessons);
     self::assertSame(0, $journey->progressPercent);
-    self::assertNull($journey->lessons[1]->url, 'There is no ACULTA lesson-answer route yet.');
+    $lessonUrl = $journey->lessons[1]->url;
+    self::assertInstanceOf(Url::class, $lessonUrl);
+    self::assertSame('aculta_lms.lesson_view', $lessonUrl->getRouteName());
+    self::assertSame(['group' => '1', 'lesson_delta' => 1], $lessonUrl->getRouteParameters());
+    self::assertInstanceOf(Url::class, $journey->continueUrl);
     self::assertSame('entity.group.canonical', $journey->continueUrl->getRouteName());
     self::assertSame(['group' => '1'], $journey->continueUrl->getRouteParameters());
     self::assertSame(1, $journey->lessonPosition(0));
@@ -61,6 +71,9 @@ final class CourseJourneyManagerTest extends UnitTestCase {
     self::assertSame('Redução de danos', $journey->lessonByDelta(1)?->label);
   }
 
+  /**
+   * Checks course lookup and take permission behavior.
+   */
   public function testCourseJourneyReaderResolvesOnlyCourseGroupsAndChecksTakePermission(): void {
     $account = new UserSession(['uid' => 42]);
     $course = $this->course($account, 'course-1', FALSE);
@@ -83,6 +96,9 @@ final class CourseJourneyManagerTest extends UnitTestCase {
     self::assertNull($manager->getCourseJourney('missing', $account));
   }
 
+  /**
+   * Creates a course entity double with the requested access result.
+   */
   private function course(UserSession $account, string $id, bool $takePermission = TRUE): GroupInterface {
     $course = $this->createMock(GroupInterface::class);
     $course->method('id')->willReturn($id);

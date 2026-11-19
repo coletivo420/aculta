@@ -1,7 +1,9 @@
 uuid: efbfdeae-ec36-4099-b203-28d68bf0fd15
 langcode: pt-br
 status: true
-dependencies: {  }
+dependencies:
+  module:
+    - profile
 _core:
   default_config_hash: OeKGIkmZA_c-t6QLH81WNQx8gDCc1MRmxaTuQgxBByU
 id: administrator

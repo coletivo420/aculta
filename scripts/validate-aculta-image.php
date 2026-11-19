@@ -1,26 +1,34 @@
 <?php
 
 /**
- * Barreira do aculta_image: todo uso de imagem passa pelo sistema único (docs do submódulo, seção 3.8).
- * Somente leitura; não inicia o Drupal.
+ * @file
+ * Barreira do aculta_image: todo uso de imagem passa pelo sistema único.
  *
- * Regra (AGENTS.md, "Imagens e arquivos de imagem"): tolerância zero. Vale para código novo e antigo. Código existente
- * fora do aculta_image deve ser refatorado; enquanto não for, o gate reprova e lista cada ocorrência.
+ * Docs do submódulo, seção 3.8. Somente leitura; não inicia o Drupal.
+ *
+ * Regra (AGENTS.md, "Imagens e arquivos de imagem"): tolerância zero. Vale
+ * para código novo e antigo. Código existente fora do aculta_image deve ser
+ * refatorado; enquanto não for, o gate reprova e lista cada ocorrência.
  *
  * Verifica:
- * - R1: estilo de imagem renderizado ou referenciado fora do aculta_image (image_style, #theme image_style);
- * - R2: limite de upload próprio (FileExtension, FileSizeLimit, FileImageDimensions) fora da política;
+ * - R1: estilo de imagem renderizado ou referenciado fora do aculta_image
+ *   (image_style, #theme image_style);
+ * - R2: limite de upload próprio (FileExtension, FileSizeLimit,
+ *   FileImageDimensions) fora da política;
  * - R3: upload de imagem em public:// fora da política;
  * - R4: processamento direto de imagem (ImageFactory, image.factory);
  * - R5: exclusão direta de arquivo (file_unmanaged_delete, delete() em File);
  * - R6: estilo de imagem em config/sync que não está no catálogo;
- * - R7: campo de imagem em config/sync sem a política do aculta_image em third_party_settings;
+ * - R7: campo de imagem em config/sync sem a política do aculta_image em
+ *   third_party_settings;
  * - R8: estilo de imagem em Twig ou CSS do tema.
- * - R9: estilos configurados em Views e modos de exibição, validados contra o catálogo.
+ * - R9: estilos configurados em Views e modos de exibição, validados
+ *   contra o catálogo.
  * - R10: cópia direta de imagens em mirroring de assets fora do aculta_image.
  *
- * Exceções de R2: a conquista do aculta_game (política contextual aprovada) e a política central do
- * aculta_file_uploader (dona dos validadores de upload).
+ * Exceções de R2: a conquista do aculta_game (política contextual aprovada)
+ * e a política central do aculta_file_uploader (dona dos validadores de
+ * upload).
  */
 
 declare(strict_types=1);
@@ -29,7 +37,8 @@ $root = dirname(__DIR__);
 $image = 'web/modules/custom/aculta_portal/modules/aculta_image/';
 $catalogFile = $root . '/' . $image . 'src/ImageCatalog.php';
 
-/** Exceções revisadas: arquivo => [padrão => motivo]. */
+/**
+ * Exceções revisadas: arquivo => [padrão => motivo]. */
 $EXCECOES = [
   'web/modules/custom/aculta_portal/modules/aculta_game/src/Form/AchievementDefinitionForm.php' => [
     'FileSizeLimit' => 'Exceção aprovada pelo responsável: a conquista mantém 2 MB próprios.',
@@ -51,10 +60,12 @@ $EXCECOES = [
   ],
 ];
 
-/** Caminhos que pertencem ao próprio sistema. */
+/**
+ * Caminhos que pertencem ao próprio sistema. */
 $DONO = [$image];
 
-/** Estilos do catálogo (lista lida de ImageCatalog::STYLES). */
+/**
+ * Estilos do catálogo (lista lida de ImageCatalog::STYLES). */
 $estilos = [];
 if (is_file($catalogFile)) {
   if (preg_match('/const STYLES = \[(.*?)\];/s', (string) file_get_contents($catalogFile), $m)) {
@@ -126,7 +137,8 @@ foreach ($dirs as $dir) {
       if (str_starts_with($trim, '//') || str_starts_with($trim, '*') || str_starts_with($trim, '/*') || str_starts_with($trim, '#')) {
         continue;
       }
-      // R1: uso da API de estilo (renderização, storage, carga) ou nome literal de estilo em chave de configuração.
+      // R1: uso da API de estilo (renderização, storage, carga) ou nome
+      // literal de estilo em chave de configuração.
       $usoApi = preg_match("/#theme.*image_style|getStorage\(['\"]image_style|ImageStyle::load|image_style_url/", $linha);
       $nomeLiteral = $estilos !== [] && preg_match(
         "/(image_style|style_name|preview_image_style)['\"]?\\s*(=>|:)\\s*['\"](" . implode('|', array_map('preg_quote', $estilos)) . ")['\"]/",

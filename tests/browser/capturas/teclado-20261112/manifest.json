@@ -1,0 +1,27 @@
+{
+  "frente": "aculta-teclado-foco",
+  "data": "2026-11-12",
+  "objetivo": "Verificar foco visível de teclado nos domínios públicos após a migração dos utilitários.",
+  "ambiente": "servidor de desenvolvimento (*.aculta.toca.net.br)",
+  "metodo": "Firefox do Playwright headless; 30 paradas de Tab por combinação, claro e escuro, 320 e 1440 CSS px; transições e animações desligadas.",
+  "script": "tests/browser/transversal/aculta-teclado-foco/teclado.mjs",
+  "urls": [
+    "https://aculta.toca.net.br/",
+    "https://growroom420.aculta.toca.net.br/",
+    "https://revista.aculta.toca.net.br/",
+    "https://eventos.aculta.toca.net.br/",
+    "https://conta.aculta.toca.net.br/entrar"
+  ],
+  "resultado": {
+    "combinacoes": 20,
+    "paradas_por_combinacao": 30,
+    "falhas": 0,
+    "criterio": "cada parada com outline >= 2px ou box-shadow; foco permanece no documento"
+  },
+  "limitacoes": [
+    "Não substitui leitor de tela (Orca) nem revisão manual de ordem de leitura.",
+    "Diálogos e gavetas abertos por JavaScript ficam para roteiro próprio.",
+    "Sessão autenticada coberta em frente separada (aculta-contraste/visual-autenticado.mjs)."
+  ],
+  "evidencia_bruta": "/home/piradopirata/aculta-suite-out/teclado-20261112/teclado.json (fora do Git)"
+}

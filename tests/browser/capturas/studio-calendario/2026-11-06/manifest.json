@@ -1,0 +1,76 @@
+{
+  "frente": "studio-calendario (SDC studio-calendar no Studio Dashboard)",
+  "data": "2026-11-06",
+  "metodo": "Firefox ESR visivel (DISPLAY=:0), script tests/browser/account/studio-calendario/calendar-visual.py",
+  "motor": "Firefox ESR",
+  "viewports_css_px": [
+    320,
+    1440
+  ],
+  "modos_de_cor": [
+    "light",
+    "dark"
+  ],
+  "estados": [
+    "anon",
+    "auth"
+  ],
+  "url_testada": "https://aculta.toca.net.br/aculta-studio-dashboard",
+  "verificacoes": {
+    "total": 8,
+    "passaram": 8,
+    "falharam": 0,
+    "detalhes": [
+      {
+        "name": "anon-light-320px: sem overflow horizontal",
+        "ok": true,
+        "detail": "overflow=0px"
+      },
+      {
+        "name": "anon-light-1440px: sem overflow horizontal",
+        "ok": true,
+        "detail": "overflow=0px"
+      },
+      {
+        "name": "anon-dark-320px: sem overflow horizontal",
+        "ok": true,
+        "detail": "overflow=0px"
+      },
+      {
+        "name": "anon-dark-1440px: sem overflow horizontal",
+        "ok": true,
+        "detail": "overflow=0px"
+      },
+      {
+        "name": "auth-light-320px: sem overflow horizontal",
+        "ok": true,
+        "detail": "overflow=0px"
+      },
+      {
+        "name": "auth-light-1440px: sem overflow horizontal",
+        "ok": true,
+        "detail": "overflow=0px"
+      },
+      {
+        "name": "auth-dark-320px: sem overflow horizontal",
+        "ok": true,
+        "detail": "overflow=0px"
+      },
+      {
+        "name": "auth-dark-1440px: sem overflow horizontal",
+        "ok": true,
+        "detail": "overflow=0px"
+      }
+    ]
+  },
+  "arquivos": [
+    "anon-light-320px.png",
+    "anon-light-1440px.png",
+    "anon-dark-320px.png",
+    "anon-dark-1440px.png",
+    "auth-light-320px.png",
+    "auth-light-1440px.png",
+    "auth-dark-320px.png",
+    "auth-dark-1440px.png"
+  ]
+}

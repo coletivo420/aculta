@@ -1,0 +1,13 @@
+name: Faixa de acento — DRAFT até contrato Portal
+description: Mapeamento visual local, sem consumer; não usar como regra de conteúdo.
+component: aculta420_v2:card-cultural
+props:
+  title: Evento cultural de exemplo
+  category: Cultura
+  date: 2026-11-05
+  location: Centro
+  accent: green
+  variant: default
+slots:
+  image: ''
+  actions: ''

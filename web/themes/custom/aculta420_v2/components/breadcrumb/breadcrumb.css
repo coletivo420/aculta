@@ -1,0 +1,124 @@
+/* Trilha por sessão. Cores vêm de tokens semânticos; a sessão só altera o ícone. */
+.aculta-breadcrumb {
+  position: relative;
+  text-align: start;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+  margin-block: var(--spacing-md) var(--spacing-base);
+}
+
+/* Faixa tricolor da marca acima da trilha (vermelho, amarelo, verde), como nas referências. */
+.aculta-breadcrumb::before {
+  display: block;
+  margin-block-end: var(--spacing-xs);
+  content: "";
+  border-radius: 2px;
+  background:
+    linear-gradient(
+      90deg,
+      var(--surface-accent-red) 0 33.33%,
+      var(--surface-accent-yellow) 33.33% 66.66%,
+      var(--surface-accent-green) 66.66% 100%
+    );
+  inline-size: 3.5rem;
+  block-size: 4px;
+}
+
+.aculta-breadcrumb__list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: var(--spacing-xs) var(--spacing-sm);
+  min-inline-size: 0;
+}
+
+.aculta-breadcrumb__item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.aculta-breadcrumb__item + .aculta-breadcrumb__item::before {
+  display: inline-block;
+  content: "";
+  transform: rotate(45deg);
+  border-block-start: 2px solid var(--color-text-secondary);
+  border-inline-end: 2px solid var(--color-text-secondary);
+  inline-size: .45em;
+  block-size: .45em;
+  margin-inline: var(--spacing-xs);
+}
+
+.aculta-breadcrumb__link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  color: var(--color-link-editorial);
+  text-decoration-color: currentColor;
+  text-decoration-line: underline;
+  text-decoration-thickness: .075em;
+  text-underline-offset: .2em;
+  overflow-wrap: anywhere;
+}
+
+.aculta-breadcrumb__link .aculta-icon {
+  flex: 0 0 auto;
+  color: var(--color-text-primary);
+}
+
+.aculta-breadcrumb__link:hover,
+.aculta-breadcrumb__link:focus-visible {
+  color: var(--color-link-editorial-hover);
+}
+
+.aculta-breadcrumb__link:focus-visible {
+  border-radius: var(--radius-sm);
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* O verde da marca é superfície decorativa (faixa tricolor acima), não cor de
+   texto: `--color-brand-secondary` sobre o canvas claro rendia 3,58:1.
+   O nível atual usa o token de texto e mantém o destaque pelo peso. */
+.aculta-breadcrumb__current {
+  color: var(--color-text-primary);
+  font-weight: 700;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Mobile: mostra só o último nível anterior e a página atual, como "< Revista / Cultura". */
+@media (max-width: 40rem) {
+  .aculta-breadcrumb__item--home,
+  .aculta-breadcrumb__item:not(:nth-last-child(-n + 2)) {
+    display: none;
+  }
+
+  .aculta-breadcrumb__item:nth-last-child(2)::before {
+    display: none;
+  }
+}
+
+/* Contextual: trilha sobre superfície escura do Studio, com links de contraste próprio. */
+.aculta-breadcrumb--contextual {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  color: var(--color-text-inverse, inherit);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-inverse, transparent);
+}
+
+.aculta-breadcrumb--contextual .aculta-breadcrumb__link {
+  color: var(--color-link-inverse, inherit);
+}
+
+.aculta-breadcrumb--contextual .aculta-breadcrumb__current {
+  color: var(--color-text-inverse, inherit);
+}

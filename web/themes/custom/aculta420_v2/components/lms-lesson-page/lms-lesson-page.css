@@ -1,0 +1,27 @@
+.lms-lesson-page {
+  color: var(--color-text-primary);
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+  padding-block: var(--spacing-md);
+}
+
+.lms-lesson-page .aculta-lms-course-preview {
+  display: grid;
+  gap: var(--spacing-lg);
+  min-inline-size: 0;
+}
+
+.lms-lesson-page table {
+  display: block;
+  max-inline-size: 100%;
+  overflow-x: auto;
+}
+
+.aculta-lms-lesson-preview__activity {
+  display: grid;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-raised);
+}

@@ -1,0 +1,125 @@
+button:
+  category: "Botões"
+  label: "Estilo de botão"
+  description: "Aplica variantes oficiais de botões com tokens semânticos e contrastes medidos."
+  options:
+    button--primary: "Botão primário"
+    button--secondary: "Botão secundário"
+    button--outline: "Botão contorno"
+    button--ghost: "Botão fantasma"
+  previewed_as: hidden
+
+card_accent:
+  category: "Cartões"
+  label: "Faixa de acento do cartão"
+  description: "Aplica a cor da faixa lateral de acento do cartão cultural."
+  options:
+    card-cultural--accent-green: "Faixa de acento verde"
+    card-cultural--accent-yellow: "Faixa de acento amarela"
+    card-cultural--accent-red: "Faixa de acento vermelha"
+  previewed_as: hidden
+
+revista_accent:
+  category: "Revista"
+  label: "Faixa de acento da publicação"
+  description: "Escolha a faixa de acento da publicação da Revista."
+  options:
+    revista-teaser--accent-green: "Verde"
+    revista-teaser--accent-yellow: "Amarela"
+    revista-teaser--accent-red: "Vermelha"
+  previewed_as: hidden
+
+unpublished_preview:
+  category: "Conteúdo"
+  label: "Pré-visualização de conteúdo não publicado"
+  description: "Marca visualmente entidades não publicadas para revisão editorial; não altera acesso nem moderação."
+  options:
+    aculta-content-status--unpublished: "Conteúdo não publicado"
+  previewed_as: hidden
+
+heading_accent:
+  category: "Títulos"
+  label: "Cor do destaque do título"
+  description: "Aplica a cor da barra lateral dos títulos H3–H6, inclusive em blocos de título."
+  options:
+    aculta-heading--accent-green: "Verde"
+    aculta-heading--accent-yellow: "Amarelo"
+    aculta-heading--accent-red: "Vermelho"
+    aculta-heading--accent-dark-green: "Verde-escuro"
+  previewed_as: hidden
+
+heading_surface:
+  category: "Títulos"
+  label: "Superfície do título"
+  description: "Aplica uma superfície semântica ao bloco de título; claro e escuro trocam pelos tokens."
+  options:
+    aculta-heading--surface-canvas: "Fundo base (canvas)"
+    aculta-heading--surface-raised: "Superfície elevada (raised)"
+    aculta-heading--surface-institution: "Superfície institucional"
+    aculta-heading--surface-highlight: "Superfície de destaque"
+  previewed_as: hidden
+
+spacing_section:
+  category: "Espaçamento"
+  label: "Espaçamento interno de superfície"
+  description: "Define o padding interno semântico da superfície."
+  options:
+    aculta-surface aculta-surface--spacing-compact: "Compacto"
+    aculta-surface aculta-surface--spacing-normal: "Padrão"
+    aculta-surface aculta-surface--spacing-spacious: "Amplo"
+  previewed_as: hidden
+
+surface_style:
+  category: "Superfícies"
+  label: "Superfície de fundo"
+  description: "Aplica superfícies semânticas compatíveis com light/dark."
+  options:
+    aculta-surface aculta-surface--tone-canvas: "Fundo base (canvas)"
+    aculta-surface aculta-surface--tone-raised: "Superfície elevada (raised)"
+    aculta-surface aculta-surface--tone-institution: "Superfície institucional"
+    aculta-surface aculta-surface--tone-green-soft: "Superfície verde suave (estrutura)"
+  previewed_as: hidden
+
+layout_section_surface:
+  category: "Superfícies"
+  label: "Superfície da seção Layout Builder"
+  description: "Aplica a uma seção do Layout Builder uma superfície neutra ou verde, sem alterar as outras seções."
+  options:
+    layout-section--raised: "Seção neutra elevada"
+    layout-section--green-soft: "Seção verde suave estrutural"
+  previewed_as: hidden
+
+surface_accent_style:
+  category: "Superfícies"
+  label: "Moldura de destaque da superfície"
+  description: "Aplica molduras unitárias e tricolor das referências oficiais do ACULTA."
+  options:
+    aculta-surface-accent--green: "Moldura verde lateral"
+    aculta-surface-accent--yellow: "Moldura amarela lateral"
+    aculta-surface-accent--red: "Moldura vermelha lateral"
+    aculta-surface-accent--tricolor: "Moldura tricolor contínua"
+    aculta-surface-accent--neutral: "Moldura neutra institucional"
+  previewed_as: hidden
+
+surface_elevation_style:
+  category: "Superfícies"
+  label: "Elevação e sombra"
+  description: "Controla a profundidade e sombra da superfície."
+  options:
+    aculta-surface--elevation-none: "Sem sombra"
+    aculta-surface--elevation-subtle: "Sombra sutil"
+    aculta-surface--elevation-raised: "Sombra elevada"
+    aculta-surface--elevation-floating: "Sombra flutuante"
+  previewed_as: hidden
+
+surface_radius_style:
+  category: "Superfícies"
+  label: "Raio dos cantos"
+  description: "Curvatura dos cantos da caixa."
+  options:
+    aculta-surface--radius-none: "Cantos retos"
+    aculta-surface--radius-sm: "Arredondado pequeno (sm)"
+    aculta-surface--radius-md: "Arredondado médio (md)"
+    aculta-surface--radius-lg: "Arredondado padrão (lg)"
+    aculta-surface--radius-xl: "Arredondado amplo (xl)"
+  previewed_as: hidden

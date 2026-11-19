@@ -11,7 +11,6 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupMembership;
-use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -28,15 +27,16 @@ final class LearningEligibility implements LearningEligibilityInterface {
    * {@inheritdoc}
    */
   public function courseForAnswer(EntityInterface $answer): ?GroupInterface {
+    assert($answer instanceof ContentEntityInterface);
     if ($answer->getEntityTypeId() !== 'aculta_lms_answer') {
       return NULL;
     }
     $activity = $this->entityTypeManager->getStorage('aculta_lms_activity')->load((int) $answer->get('activity_id')->value);
-    if (!$activity instanceof EntityInterface) {
+    if (!$activity instanceof ContentEntityInterface) {
       return NULL;
     }
     $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $activity->get('lesson_id')->value);
-    if (!$lesson instanceof EntityInterface) {
+    if (!$lesson instanceof ContentEntityInterface) {
       return NULL;
     }
     $course = $this->entityTypeManager->getStorage('group')->load((int) $lesson->get('course_id')->value);
@@ -47,6 +47,7 @@ final class LearningEligibility implements LearningEligibilityInterface {
    * {@inheritdoc}
    */
   public function coursesForContent(EntityInterface $content): array {
+    assert($content instanceof ContentEntityInterface);
     if ($content instanceof GroupInterface && $content->bundle() === 'lms_course') {
       return [$content];
     }
@@ -57,15 +58,17 @@ final class LearningEligibility implements LearningEligibilityInterface {
     elseif ($content->getEntityTypeId() === 'aculta_lms_activity') {
       $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $content->get('lesson_id')->value);
     }
-    if (!$lesson instanceof EntityInterface) {
+    if (!$lesson instanceof ContentEntityInterface) {
       return [];
     }
     $course = $this->entityTypeManager->getStorage('group')->load((int) $lesson->get('course_id')->value);
     return $course instanceof GroupInterface && $course->bundle() === 'lms_course' ? [$course] : [];
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function isContentAvailable(EntityInterface $content): bool {
+    assert($content instanceof ContentEntityInterface);
     if ($content instanceof GroupInterface && $content->bundle() === 'lms_course') {
       return $content->isPublished();
     }
@@ -74,7 +77,7 @@ final class LearningEligibility implements LearningEligibilityInterface {
     }
     if ($content->getEntityTypeId() === 'aculta_lms_activity') {
       $lesson = $this->entityTypeManager->getStorage('aculta_lms_lesson')->load((int) $content->get('lesson_id')->value);
-      return $lesson instanceof EntityInterface && (bool) $lesson->get('published')->value;
+      return $lesson instanceof ContentEntityInterface && (bool) $lesson->get('published')->value;
     }
     return FALSE;
   }
@@ -87,8 +90,8 @@ final class LearningEligibility implements LearningEligibilityInterface {
       return FALSE;
     }
     foreach ($course->getRelationships('lms_classes') as $relationship) {
-      $class = $relationship instanceof GroupRelationshipInterface ? $relationship->getEntity() : NULL;
-      if ($class === NULL || $class->bundle() !== 'lms_class') {
+      $class = $relationship->getEntity();
+      if (!$class instanceof GroupInterface || $class->bundle() !== 'lms_class') {
         continue;
       }
       foreach (GroupMembership::loadByGroup($class) as $membership) {
@@ -101,6 +104,20 @@ final class LearningEligibility implements LearningEligibilityInterface {
       }
     }
     return FALSE;
+  }
+
+  /**
+   * {@inheritdoc} */
+  public function courseEnrollmentCacheTags(GroupInterface $course): array {
+    $tags = ['group_relationship_list:plugin:lms_classes:group:' . $course->id()];
+    foreach ($course->getRelationships('lms_classes') as $relationship) {
+      $class = $relationship->getEntity();
+      if ($class instanceof GroupInterface && $class->bundle() === 'lms_class') {
+        $tags[] = 'group_relationship_list:plugin:group_membership:group:' . $class->id();
+      }
+    }
+
+    return array_values(array_unique($tags));
   }
 
   /**

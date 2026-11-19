@@ -11,14 +11,19 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\file\FileInterface;
 use Drupal\image_widget_crop\ImageWidgetCropInterface;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Covers the fail-closed paths of FocalPointRecorder.
  *
- * @group aculta_file_uploader
+
  */
+#[Group('aculta_file_uploader')]
 final class FocalPointRecorderTest extends UnitTestCase {
 
+  /**
+   * Verifica que todos os tipos retornam falso quando falta o tipo de recorte.
+   */
   public function testReturnsFalseForEveryTypeWhenCropTypeIsMissing(): void {
     $storage = $this->createMock(EntityStorageInterface::class);
     $storage->method('load')->willReturn(NULL);

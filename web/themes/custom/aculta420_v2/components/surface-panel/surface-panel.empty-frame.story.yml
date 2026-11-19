@@ -1,0 +1,14 @@
+name: Painel institucional vazio (moldura)
+description: Painel institucional exibindo a faixa superior verde como moldura mesmo sem conteúdo de texto, fiel às referências 05 e 07 vazias.
+component: aculta420_v2:surface-panel
+props:
+  header_variant: institutional
+  tone: raised
+  radius: lg
+  spacing: normal
+  elevation: subtle
+  show_header_placeholder: true
+slots:
+  content:
+    type: inline_template
+    template: '<p>Superfície institucional com cabeçalho de destaque em moldura vazia.</p>'

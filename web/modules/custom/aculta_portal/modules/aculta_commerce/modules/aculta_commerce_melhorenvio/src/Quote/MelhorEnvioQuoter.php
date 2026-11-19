@@ -82,7 +82,6 @@ class MelhorEnvioQuoter {
     return $this->parser->parse($response);
   }
 
-
   /**
    * Cotação de um carrinho: um produto por item na API, que monta as caixas.
    *
@@ -105,4 +104,5 @@ class MelhorEnvioQuoter {
     $response = $this->client->request('POST', MelhorEnvioEndpoints::QUOTE, $this->builder->buildItems($pair, $items), TRUE);
     return $this->parser->parse($response);
   }
+
 }

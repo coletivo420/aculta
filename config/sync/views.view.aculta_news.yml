@@ -62,9 +62,35 @@ display:
           value:
             revista: revista
       style:
-        type: default
+        type: ui_patterns
         options:
-          default_row_class: true
+          ui_patterns:
+            ui_patterns:
+              component_id: 'aculta420_v2:revista-listing'
+              variant_id: null
+              props:
+                eyebrow:
+                  source_id: select
+                  source:
+                    value: Publicações
+                title:
+                  source_id: select
+                  source:
+                    value: 'Revista 420'
+                title_level:
+                  source_id: select
+                  source:
+                    value: h2
+                has_items:
+                  source_id: checkbox
+                  source:
+                    value: true
+              slots:
+                items:
+                  sources:
+                    -
+                      source_id: view_rows
+                      source: {  }
       row:
         type: 'entity:node'
         options:
@@ -72,7 +98,6 @@ display:
       query:
         type: views_query
         options: {  }
-      css_class: aculta-editorial-list
       display_extenders: {  }
     cache_metadata:
       max-age: -1

@@ -1,9 +1,9 @@
 # Atualização do site de teste — 2026-10-20
 
-Registro operacional da atualização do Runtime de teste (`aculta_runtime`, servidor de testes) com as ferramentas
+Registro operacional da atualização do Runtime de desenvolvimento (`aculta_runtime`, servidor de desenvolvimento) com as ferramentas
 previstas. Produção não foi implementada nesta data: não há deploy de produção registrado aqui.
 
-## Estado do Runtime de teste (após a atualização)
+## Estado do Runtime de desenvolvimento (após a atualização)
 
 - Código: checkout do repositório aberto pelo responsável, no commit `16bb1e0d` (branch `docs/aculta-forum-0.1.0-dev.1`).
 - Versões em execução: `aculta_portal` 0.4.0-dev.227; `aculta_mailer` 0.1.0-dev.44.
@@ -130,9 +130,9 @@ Produção **não implementada**. Passos em "Produção: o que falta" acima, mai
 ## Política de Privacidade: versão 0.2 (minuta)
 
 - Fonte única: `scripts/institution/politica-de-privacidade.html`. `scripts/install-institution.php` passou a ler esse arquivo.
-- Aplicada à página `/politica-de-privacidade` (nó 11) no Runtime de teste, como nova revisão do conteúdo.
+- Aplicada à página `/politica-de-privacidade` (nó 11) no Runtime de desenvolvimento, como nova revisão do conteúdo.
 - Conteúdo novo: destinatário guardado só como identificador criptográfico; conteúdo de mensagem guardado só em falha, cifrado, com 24 horas para links de uso único; eventos de entrega do Brevo; relatórios DMARC; SMTP2GO como contingência; rastreamento como opt-in futuro, desligado por padrão, com consentimento no aceite dos termos; prazos de retenção.
-- Correção de uma afirmação da versão 0.1: o gateway Mercado Pago está ativo no Runtime de teste e a rota de checkout existe. O texto da seção de pagamentos foi corrigido, e a situação em produção fica marcada para confirmação.
+- Correção de uma afirmação da versão 0.1: o gateway Mercado Pago está ativo no Runtime de desenvolvimento e a rota de checkout existe. O texto da seção de pagamentos foi corrigido, e a situação em produção fica marcada para confirmação.
 
 Pendências para publicar em produção (não resolvidas):
 

@@ -1,0 +1,109 @@
+{#
+  Lista pública de tópicos do fórum (ACULTA420 V2), três colunas como na referência:
+  categorias à esquerda, lista ao centro e números e regras à direita.
+  Categorias e totais públicos vêm do módulo owner com EntityQuery e cacheabilidade;
+  abas usam as rotas dos displays existentes.
+#}
+{% set current_display = view.current_display %}
+
+{% set new_topic_markup %}
+  <a href="{{ url('aculta_forum.topic_composer') }}" class="use-htmx" data-action="topico-criar" data-hx-get="{{ url('aculta_forum.topic_composer') }}" data-hx-target="#aculta-topic-dialog-body" data-hx-swap="innerHTML" data-hx-select="[data-aculta-topic-composer]">{{ '+ Novo tópico'|t }}</a>
+{% endset %}
+
+{% set tab_items = [
+  { label: 'Recentes'|t, href: url('view.aculta_forum_public_topics.page_discussions'), active: current_display == 'page_discussions', count: null },
+  { label: 'Populares'|t, href: url('view.aculta_forum_public_topics.page_most_commented'), active: current_display == 'page_most_commented', count: null },
+  { label: 'Novas'|t, href: url('view.aculta_forum_public_topics.page_new_topics'), active: current_display == 'page_new_topics', count: null },
+  { label: 'Sem resposta'|t, href: url('view.aculta_forum_public_topics.page_unanswered'), active: current_display == 'page_unanswered', count: null }
+] %}
+
+{% embed 'aculta420_v2:forum-list-page' %}
+{% block header %}
+  {{ include('aculta420_v2:forum-category-header', {
+    title: 'Growroom420'|t,
+    description: 'Cultivo, ciência, cultura e antiproibicionismo. Um espaço para aprender e trocar experiências.'|t,
+    icon: null,
+    actions: new_topic_markup|raw,
+    stats: null
+  }, with_context = false) }}
+{% endblock %}
+
+{% block categories %}
+  <ul class="aculta-forum-list__category-list">
+    <li>
+      <a href="{{ url('view.aculta_forum_public_topics.page_discussions') }}" class="aculta-forum-list__category is-all">
+        <span>{{ 'Todas as categorias'|t }}</span>
+        <span class="aculta-forum-list__category-count">{{ forum_total_topics }}</span>
+      </a>
+    </li>
+    {% for category in forum_categories %}
+      <li>
+        <a href="{{ category.url }}" class="aculta-forum-list__category">
+          <span>{{ category.label }}</span>
+          <span class="aculta-forum-list__category-count">{{ category.count }}</span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+{% block search %}
+  <div class="aculta-forum-list__search">
+    <input type="search" class="aculta-forum-list__search-input" disabled aria-disabled="true" aria-label="{{ 'Buscar tópicos'|t }}" placeholder="{{ 'Buscar tópicos (em breve)'|t }}">
+  </div>
+{% endblock %}
+
+{% block navigation %}
+  {{ include('aculta420_v2:forum-tabs', {
+    label: 'Ordenação dos tópicos'|t,
+    items: tab_items
+  }, with_context = false) }}
+{% endblock %}
+
+{% block shortcuts %}
+  <ul class="aculta-forum-list__soon" aria-label="{{ 'Em breve'|t }}">
+    {% for label in ['Não lidos'|t, 'Seguindo'|t, 'Meus tópicos'|t, 'Participações'|t] %}
+      <li><span aria-disabled="true">{{ label }} <em>{{ 'Em breve'|t }}</em></span></li>
+    {% endfor %}
+  </ul>
+{% endblock %}
+
+{% block topics %}
+  {{ rows }}
+{% endblock %}
+
+{% block empty %}
+  {{ empty }}
+{% endblock %}
+
+{% block pager %}
+  {{ pager }}
+{% endblock %}
+
+{% block sidebar %}
+  {% set aside_stats = [
+    { label: 'Tópicos'|t, value: forum_total_topics },
+    { label: 'Respostas'|t, value: null },
+    { label: 'Pessoas'|t, value: null }
+  ] %}
+  {{ include('aculta420_v2:forum-sidebar-panels', {
+    stats: aside_stats,
+    featured: null,
+    moderators: null,
+    rules: [
+      'Mantenha as postagens no tema específico de cada discussão.'|t,
+      'Sem spam ou autopromoção desautorizada.'|t,
+      'Colabore com respostas úteis e fundamentadas.'|t
+    ],
+    related: null
+  }, with_context = false) }}
+{% endblock %}
+{% endembed %}
+{% set topic_dialog_body %}<div id="aculta-topic-dialog-body" class="aculta-reply-dialog__body"></div>{% endset %}
+{{ include('aculta420_v2:popup', {
+  id: 'aculta-topic-dialog',
+  title: 'Criar tópico'|t,
+  close_label: 'Fechar'|t,
+  content: topic_dialog_body|raw,
+}, with_context = false) }}
+{{ forum_list_cache_metadata }}

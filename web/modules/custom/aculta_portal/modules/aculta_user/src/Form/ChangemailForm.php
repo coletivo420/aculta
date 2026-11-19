@@ -25,22 +25,26 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 final class ChangemailForm extends FormBase {
 
-  /** Tentativas erradas de senha atual, por conta, dentro da janela. */
+  /**
+   * Tentativas erradas de senha atual, por conta, dentro da janela. */
   private const MAX_PASSWORD_ATTEMPTS = 5;
 
-  /** Janela de contagem das tentativas erradas, em segundos. */
+  /**
+   * Janela de contagem das tentativas erradas, em segundos. */
   private const PASSWORD_WINDOW = 3600;
 
-  /** Nome do evento de flood das tentativas de senha atual. */
+  /**
+   * Nome do evento de flood das tentativas de senha atual. */
   private const FLOOD_EVENT = 'aculta_user_changemail_password';
 
-  /** Ajuste do aculta_mail_confirmer_user que liga a confirmação da troca. */
-  private const CONFIRMER_SETTING = 'aculta_mail_confirmer_user.settings';
+  /**
+   * Ajuste do aculta_mail_confirmer_user que liga a confirmação da troca. */
+  private const CONFIRMER_SETTING = 'aculta_mail_confirmer.settings';
 
   public function __construct(
-    private readonly ConfigFactoryInterface $confirmerConfig,
-    private readonly PasswordInterface $password,
-    private readonly FloodInterface $flood,
+    protected readonly ConfigFactoryInterface $confirmerConfig,
+    protected readonly PasswordInterface $password,
+    protected readonly FloodInterface $flood,
   ) {
   }
 
@@ -64,6 +68,12 @@ final class ChangemailForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
+   *
+   * @return array<array-key, mixed>
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?UserInterface $user = NULL): array {
     $form_state->set('user', $user);
@@ -95,6 +105,9 @@ final class ChangemailForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     // Sem a confirmação ligada, o Core gravaria o novo e-mail direto: o pedido não existe nesse caso.
@@ -106,8 +119,8 @@ final class ChangemailForm extends FormBase {
     /** @var \Drupal\user\UserInterface $account */
     $account = $form_state->get('user');
     $uid = (string) $account->id();
-    $mail = trim((string) $form_state->getValue('mail'));
-    $pass = (string) $form_state->getValue('current_pass');
+    $mail = trim($this->textValue($form_state->getValue('mail')));
+    $pass = $this->textValue($form_state->getValue('current_pass'));
 
     if (!$this->flood->isAllowed(self::FLOOD_EVENT, self::MAX_PASSWORD_ATTEMPTS, self::PASSWORD_WINDOW, $uid)) {
       $form_state->setErrorByName('current_pass', $this->t('Muitas tentativas com a senha atual. Tente novamente em uma hora.'));
@@ -118,7 +131,7 @@ final class ChangemailForm extends FormBase {
       $form_state->setErrorByName('current_pass', $this->t('A senha atual não confere.'));
       return;
     }
-    if (strcasecmp($mail, $account->getEmail()) === 0) {
+    if (strcasecmp($mail, (string) $account->getEmail()) === 0) {
       $form_state->setErrorByName('mail', $this->t('Informe um endereço diferente do seu e-mail atual.'));
       return;
     }
@@ -133,12 +146,15 @@ final class ChangemailForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     /** @var \Drupal\user\UserInterface $account */
     $account = $form_state->get('user');
-    $account->setEmail(trim((string) $form_state->getValue('mail')));
-    $account->setExistingPassword((string) $form_state->getValue('current_pass'));
+    $account->setEmail(trim($this->textValue($form_state->getValue('mail'))));
+    $account->setExistingPassword($this->textValue($form_state->getValue('current_pass')));
     // A confirmação do aculta_mail_confirmer_user intercepta este save e mantém o e-mail atual até a confirmação.
     $account->save();
 
@@ -146,6 +162,13 @@ final class ChangemailForm extends FormBase {
     $this->messenger()->deleteByType(MessengerInterface::TYPE_STATUS);
     $this->messenger()->addStatus($this->t('A solicitação foi registrada. Seu e-mail atual permanece ativo até a confirmação do novo endereço.'));
     $form_state->setRedirect('aculta_portal.security');
+  }
+
+  /**
+   * Texto de um valor de formulário; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

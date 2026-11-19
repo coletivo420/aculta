@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Saved;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Query\SelectInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -33,9 +34,9 @@ class SavedContentQuery implements SavedContentQueryInterface {
   ];
 
   /**
-   * Bundle to purpose mapping for canonical domain purposes.
+   * Bundle to site key mapping for canonical domains.
    */
-  protected const BUNDLE_PURPOSE_MAP = [
+  protected const BUNDLE_SITE_KEY_MAP = [
     'aculta_forum_topic' => 'forum',
     'revista' => 'magazine',
     'aculta_event' => 'eventos',
@@ -46,7 +47,7 @@ class SavedContentQuery implements SavedContentQueryInterface {
   public function __construct(
     protected readonly Connection $database,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
-    protected readonly ?object $domainPurposeManager = NULL,
+    protected readonly ?object $siteManager = NULL,
   ) {}
 
   /**
@@ -89,7 +90,40 @@ class SavedContentQuery implements SavedContentQueryInterface {
     $offset = $filter->getOffset();
     $limit = $filter->getLimit();
 
-    $records = $baseQuery->range(0, 500)->execute()->fetchAll();
+    $statement = $baseQuery->range(0, 500)->execute();
+    if ($statement === NULL) {
+      return new SavedContentQueryResult(
+        [],
+        0,
+        FALSE,
+        ['user', 'user.permissions'],
+        ['flagging_list', 'user:' . $account->id()]
+      );
+    }
+
+    $records = [];
+    foreach ($statement->fetchAll() as $candidate) {
+      if (!is_object($candidate)) {
+        continue;
+      }
+      $flagId = $candidate->flag_id ?? NULL;
+      $entityType = $candidate->entity_type ?? NULL;
+      $entityId = $candidate->entity_id ?? NULL;
+      $created = $candidate->created ?? NULL;
+      if (!is_string($flagId)
+        || !is_string($entityType)
+        || $entityType === ''
+        || (!is_int($entityId) && !is_string($entityId))
+        || (!is_int($created) && (!is_string($created) || !ctype_digit($created)))) {
+        continue;
+      }
+      $records[] = [
+        'flag_id' => $flagId,
+        'entity_type' => $entityType,
+        'entity_id' => $entityId,
+        'created' => (int) $created,
+      ];
+    }
 
     if (empty($records)) {
       return new SavedContentQueryResult(
@@ -104,15 +138,20 @@ class SavedContentQuery implements SavedContentQueryInterface {
     // Group IDs by entity type for batch loading.
     $groupedIds = [];
     foreach ($records as $row) {
-      $groupedIds[$row->entity_type][] = $row->entity_id;
+      $groupedIds[$row['entity_type']][] = $row['entity_id'];
     }
 
+    /** @var array<string, array<int|string, EntityInterface>> $loadedEntities */
     $loadedEntities = [];
     foreach ($groupedIds as $entityType => $ids) {
       if ($this->entityTypeManager->hasDefinition($entityType)) {
         try {
           $storage = $this->entityTypeManager->getStorage($entityType);
-          $loadedEntities[$entityType] = $storage->loadMultiple($ids);
+          $loaded = [];
+          foreach ($storage->loadMultiple($ids) as $id => $entity) {
+            $loaded[$id] = $entity;
+          }
+          $loadedEntities[$entityType] = $loaded;
         }
         catch (\Throwable) {
           $loadedEntities[$entityType] = [];
@@ -122,12 +161,12 @@ class SavedContentQuery implements SavedContentQueryInterface {
 
     $accessibleItems = [];
     $allCacheTags = ['flagging_list', 'user:' . $account->id()];
-    $purposeFilter = $filter->getPurpose();
+    $siteKeyFilter = $filter->getSiteKey();
     $bundleFilter = $filter->getBundle();
 
     foreach ($records as $row) {
-      $type = $row->entity_type;
-      $id = $row->entity_id;
+      $type = $row['entity_type'];
+      $id = $row['entity_id'];
 
       // 1. Safe handling of deleted entities (flagging row exists, entity
       // does not exist).
@@ -136,9 +175,6 @@ class SavedContentQuery implements SavedContentQueryInterface {
       }
 
       $entity = $loadedEntities[$type][$id];
-      if (!$entity instanceof EntityInterface) {
-        continue;
-      }
 
       // 2. Strict Entity Access enforcement: unpublished or restricted
       // entities must never leak.
@@ -152,23 +188,23 @@ class SavedContentQuery implements SavedContentQueryInterface {
         continue;
       }
 
-      // 4. Resolve purpose and apply purpose filter if requested.
-      $purpose = $this->resolveEntityPurpose($entity);
-      if ($purposeFilter !== NULL && $purpose !== $purposeFilter) {
+      // 4. Resolve site key and apply the optional site key filter.
+      $siteKey = $this->resolveEntitySiteKey($entity);
+      if ($siteKeyFilter !== NULL && $siteKey !== $siteKeyFilter) {
         continue;
       }
 
-      $isFollow = in_array($row->flag_id, self::FOLLOW_FLAGS, TRUE);
+      $isFollow = in_array($row['flag_id'], self::FOLLOW_FLAGS, TRUE);
       $cat = $isFollow ? self::CATEGORY_FOLLOWING : self::CATEGORY_SAVED;
 
       $accessibleItems[] = new SavedContentItem(
         $type,
         $id,
         $entity,
-        $row->flag_id,
-        (int) $row->created,
+        $row['flag_id'],
+        $row['created'],
         $cat,
-        $purpose,
+        $siteKey,
       );
 
       // Collect entity cache tags.
@@ -197,19 +233,15 @@ class SavedContentQuery implements SavedContentQueryInterface {
       return ['saved' => 0, 'following' => 0, 'total' => 0];
     }
 
-    $saved = (int) $this->database->select('flagging', 'f')
+    $saved = $this->executeCountQuery($this->database->select('flagging', 'f')
       ->condition('f.uid', (int) $account->id())
       ->condition('f.flag_id', self::SAVED_FLAGS, 'IN')
-      ->countQuery()
-      ->execute()
-      ->fetchField();
+      ->countQuery());
 
-    $following = (int) $this->database->select('flagging', 'f')
+    $following = $this->executeCountQuery($this->database->select('flagging', 'f')
       ->condition('f.uid', (int) $account->id())
       ->condition('f.flag_id', self::FOLLOW_FLAGS, 'IN')
-      ->countQuery()
-      ->execute()
-      ->fetchField();
+      ->countQuery());
 
     return [
       'saved' => $saved,
@@ -226,25 +258,23 @@ class SavedContentQuery implements SavedContentQueryInterface {
       return FALSE;
     }
 
-    $count = (int) $this->database->select('flagging', 'f')
+    $count = $this->executeCountQuery($this->database->select('flagging', 'f')
       ->condition('f.uid', (int) $account->id())
       ->condition('f.entity_type', $entityTypeId)
       ->condition('f.entity_id', (string) $entityId)
       ->condition('f.flag_id', self::SAVED_FLAGS, 'IN')
-      ->countQuery()
-      ->execute()
-      ->fetchField();
+      ->countQuery());
 
     return $count > 0;
   }
 
   /**
-   * Resolves the domain purpose for an entity based on bundle or domain fields.
+   * Resolves the domain site key for an entity based on its bundle.
    */
-  protected function resolveEntityPurpose(EntityInterface $entity): ?string {
+  protected function resolveEntitySiteKey(EntityInterface $entity): ?string {
     $bundle = $entity->bundle();
-    if (isset(self::BUNDLE_PURPOSE_MAP[$bundle])) {
-      return self::BUNDLE_PURPOSE_MAP[$bundle];
+    if (isset(self::BUNDLE_SITE_KEY_MAP[$bundle])) {
+      return self::BUNDLE_SITE_KEY_MAP[$bundle];
     }
 
     $entityTypeId = $entity->getEntityTypeId();
@@ -253,6 +283,26 @@ class SavedContentQuery implements SavedContentQueryInterface {
     }
 
     return NULL;
+  }
+
+  /**
+   * Executes a count query and safely narrows the database value to an integer.
+   */
+  private function executeCountQuery(SelectInterface $query): int {
+    $statement = $query->execute();
+    if ($statement === NULL) {
+      return 0;
+    }
+
+    $count = $statement->fetchField();
+    if (is_int($count)) {
+      return max(0, $count);
+    }
+    if (is_string($count) && ctype_digit($count)) {
+      return (int) $count;
+    }
+
+    return 0;
   }
 
 }

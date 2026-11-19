@@ -17,6 +17,7 @@ use Drupal\editor\EditorInterface;
 #[CKEditor5Plugin(
   id: 'aculta_forum_attachment',
   ckeditor5: new CKEditor5AspectsOfCKEditor5Plugin(
+    // @phpstan-ignore argument.type (The value is a CKEditor JavaScript global plugin name, not a PHP class-string.)
     plugins: ['acultaForumAttachment.AcultaForumAttachmentUI'],
   ),
   drupal: new DrupalAspectsOfCKEditor5Plugin(
@@ -34,15 +35,20 @@ final class ForumAttachment extends CKEditor5PluginDefault {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $static_plugin_config
+   * @return array<string, mixed>
    */
   public function getDynamicPluginConfig(array $static_plugin_config, EditorInterface $editor): array {
+    $filterFormat = $editor->getFilterFormat();
+    $formatId = $filterFormat !== NULL ? (string) $filterFormat->id() : '';
     $static_plugin_config['acultaForumAttachment'] = [
       'dialogUrl' => Url::fromRoute('aculta_forum.attachment_dialog', [
-        'filter_format' => $editor->getFilterFormat()->id(),
+        'filter_format' => $formatId,
       ])->toString(),
       'label' => 'Adicionar anexo à discussão',
       'galleryDialogUrl' => Url::fromRoute('aculta_forum.gallery_dialog', [
-        'filter_format' => $editor->getFilterFormat()->id(),
+        'filter_format' => $formatId,
       ])->toString(),
       'galleryLabel' => 'Criar galeria de imagens',
     ];

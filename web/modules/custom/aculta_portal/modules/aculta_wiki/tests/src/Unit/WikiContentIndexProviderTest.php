@@ -27,8 +27,8 @@ final class WikiContentIndexProviderTest extends UnitTestCase {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('wiki_entry');
 
-    self::assertSame('wiki', $provider->getAccessPurpose($node));
-    self::assertNull($provider->getAccessPurpose($this->createMock(ContentEntityInterface::class)));
+    self::assertSame('wiki', $provider->getAccessSiteKey($node));
+    self::assertNull($provider->getAccessSiteKey($this->createMock(ContentEntityInterface::class)));
   }
 
   /**

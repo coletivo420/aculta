@@ -41,8 +41,8 @@ final class IcsEventBuilder {
    * Monta o calendário com um evento.
    *
    * @param string $key
-   *   Chave estável da entidade, por exemplo "node:123". Compõe o UID junto
-   *   com a data de início, então o mesmo evento na mesma data mantém o UID.
+   *   Chave estável da entidade, por exemplo "node:123". Compõe o UID;
+   *   atributos editáveis do evento não participam do identificador.
    * @param string $summary
    *   Título. CR e LF viram espaço; controles são removidos antes do escape.
    * @param string $location
@@ -93,9 +93,9 @@ final class IcsEventBuilder {
    *   Instante UTC usado em DTSTAMP.
    * @param string|null $rrule
    *   RRULE normalizada. UNTIL vira fim do dia de Brasília em UTC.
-   * @param \DateTimeImmutable[] $excecoes
+   * @param list<\DateTimeImmutable> $excecoes
    *   Inícios originais cancelados (EXDATE).
-   * @param array<int, array<string, \DateTimeImmutable|null>> $reagendadas
+   * @param list<array{inicio: \DateTimeImmutable, fim: ?\DateTimeImmutable, original: ?\DateTimeImmutable}> $reagendadas
    *   Ocorrências com novo horário (VEVENT com RECURRENCE-ID).
    *
    * @return string
@@ -113,7 +113,7 @@ final class IcsEventBuilder {
     array $excecoes = [],
     array $reagendadas = [],
   ): string {
-    $uid = $this->uid($key, $start, $allDay);
+    $uid = $this->uid($key);
     $lines = [
       'BEGIN:VCALENDAR',
       'VERSION:2.0',
@@ -164,16 +164,35 @@ final class IcsEventBuilder {
       'END:VTIMEZONE',
     ];
     foreach ($series as $serie) {
-      $uid = $this->uid($serie['key'], $serie['start'], $serie['allDay']);
+      $key = isset($serie['key']) && is_string($serie['key']) ? $serie['key'] : '';
+      $summary = isset($serie['summary']) && is_string($serie['summary']) ? $serie['summary'] : '';
+      $location = isset($serie['location']) && is_string($serie['location']) ? $serie['location'] : '';
+      $start = isset($serie['start']) && $serie['start'] instanceof \DateTimeImmutable ? $serie['start'] : new \DateTimeImmutable();
+      $end = isset($serie['end']) && $serie['end'] instanceof \DateTimeImmutable ? $serie['end'] : NULL;
+      $allDay = !empty($serie['allDay']);
+      $stamp = isset($serie['stamp']) && $serie['stamp'] instanceof \DateTimeImmutable ? $serie['stamp'] : new \DateTimeImmutable();
+      $rrule = isset($serie['rrule']) && is_string($serie['rrule']) ? $serie['rrule'] : NULL;
+      /** @var list<\DateTimeImmutable> $excecoes */
+      $excecoes = isset($serie['excecoes']) && is_array($serie['excecoes']) ? array_values(array_filter($serie['excecoes'], static fn(mixed $d): bool => $d instanceof \DateTimeImmutable)) : [];
+
+      $uid = $this->uid($key);
       $lines = array_merge($lines, $this->vevent(
-        $uid, $serie['summary'], $serie['location'], $serie['start'], $serie['end'], $serie['allDay'],
-        $serie['stamp'], NULL, $serie['rrule'] ?? NULL, $serie['excecoes'] ?? [],
+        $uid, $summary, $location, $start, $end, $allDay,
+        $stamp, NULL, $rrule, $excecoes,
       ));
-      foreach ($serie['reagendadas'] ?? [] as $reagendada) {
-        $lines = array_merge($lines, $this->vevent(
-          $uid, $serie['summary'], $serie['location'], $reagendada['inicio'], $reagendada['fim'], $serie['allDay'],
-          $serie['stamp'], $reagendada['original'], NULL, [],
-        ));
+      if (isset($serie['reagendadas']) && is_iterable($serie['reagendadas'])) {
+        foreach ($serie['reagendadas'] as $reagendada) {
+          if (!is_array($reagendada)) {
+            continue;
+          }
+          $rInicio = isset($reagendada['inicio']) && $reagendada['inicio'] instanceof \DateTimeImmutable ? $reagendada['inicio'] : $start;
+          $rFim = isset($reagendada['fim']) && $reagendada['fim'] instanceof \DateTimeImmutable ? $reagendada['fim'] : NULL;
+          $rOriginal = isset($reagendada['original']) && $reagendada['original'] instanceof \DateTimeImmutable ? $reagendada['original'] : NULL;
+          $lines = array_merge($lines, $this->vevent(
+            $uid, $summary, $location, $rInicio, $rFim, $allDay,
+            $stamp, $rOriginal, NULL, [],
+          ));
+        }
       }
     }
     $lines[] = 'END:VCALENDAR';
@@ -268,11 +287,10 @@ final class IcsEventBuilder {
   }
 
   /**
-   * UID estável: hash de chave e data de início, com o domínio.
+   * UID estável: somente a chave imutável da entidade e o domínio.
    */
-  private function uid(string $key, \DateTimeImmutable $start, bool $allDay): string {
-    $when = $allDay ? $start->format('Ymd') : $this->utc($start);
-    return substr(hash('sha256', $key . '|' . $when), 0, 32) . '@' . $this->uidDomain;
+  private function uid(string $key): string {
+    return substr(hash('sha256', $key), 0, 32) . '@' . $this->uidDomain;
   }
 
   /**

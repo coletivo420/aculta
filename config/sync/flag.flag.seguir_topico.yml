@@ -13,7 +13,7 @@ global: false
 flag_short: 'Seguir tópico'
 flag_long: ''
 flag_message: ''
-unflag_short: 'Seguindo'
+unflag_short: Seguindo
 unflag_long: ''
 unflag_message: ''
 unflag_denied_text: ''
@@ -27,4 +27,3 @@ flagTypeConfig:
   show_contextual_link: false
   extra_permissions: {  }
 linkTypeConfig: {  }
-

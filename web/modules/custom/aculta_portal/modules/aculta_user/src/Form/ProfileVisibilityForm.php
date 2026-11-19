@@ -18,17 +18,18 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
 /**
  * Minha conta > Configurações > Privacidade.
  *
- * Escolhas de visibilidade do perfil público. A seção "Mensagens privadas" é acrescentada pelo aculta_messenger (form_alter).
+ * Escolhas de visibilidade do perfil público. A seção "Mensagens privadas" é acrescentada pelo
+ * aculta_messenger (form_alter).
  * Apelido é editado em Meus dados; bio e redes sociais, na visão geral. Autores e editores têm o perfil
  * público obrigatório (PublicProfilePolicy).
  */
 final class ProfileVisibilityForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManagerService,
-    private readonly AccountProxyInterface $currentUserService,
-    private readonly SettingsTabs $settingsTabs,
-    private readonly ?RouteMatchInterface $currentRouteMatch = NULL,
+    protected readonly EntityTypeManagerInterface $entityTypeManagerService,
+    protected readonly AccountProxyInterface $currentUserService,
+    protected readonly SettingsTabs $settingsTabs,
+    protected readonly ?RouteMatchInterface $currentRouteMatch = NULL,
   ) {}
 
   /**
@@ -52,6 +53,12 @@ final class ProfileVisibilityForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
+   *
+   * @return array<array-key, mixed>
+   *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $profile = $this->loadOrCreateProfile();
@@ -73,9 +80,21 @@ final class ProfileVisibilityForm extends FormBase {
       '#default_value' => $obrigatorio ? TRUE : $this->flag($profile, 'field_perfil_publico', TRUE),
       '#disabled' => $obrigatorio,
     ];
-    $form['exibir_bio'] = ['#type' => 'checkbox', '#title' => $this->t('Mostrar bio'), '#default_value' => $this->flag($profile, 'field_exibir_bio', FALSE)];
-    $form['exibir_redes'] = ['#type' => 'checkbox', '#title' => $this->t('Mostrar redes sociais'), '#default_value' => $this->flag($profile, 'field_exibir_redes', FALSE)];
-    $form['exibir_email'] = ['#type' => 'checkbox', '#title' => $this->t('Mostrar e-mail'), '#default_value' => $this->flag($profile, 'field_exibir_email', FALSE)];
+    $form['exibir_bio'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Mostrar bio'),
+      '#default_value' => $this->flag($profile, 'field_exibir_bio', FALSE),
+    ];
+    $form['exibir_redes'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Mostrar redes sociais'),
+      '#default_value' => $this->flag($profile, 'field_exibir_redes', FALSE),
+    ];
+    $form['exibir_email'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Mostrar e-mail'),
+      '#default_value' => $this->flag($profile, 'field_exibir_email', FALSE),
+    ];
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar')];
@@ -84,6 +103,9 @@ final class ProfileVisibilityForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $profile = $this->loadOrCreateProfile();
@@ -110,7 +132,7 @@ final class ProfileVisibilityForm extends FormBase {
    * Indica se a conta atual é autor ou editor (perfil público obrigatório).
    */
   private function isObrigatorioPublico(): bool {
-    return PublicProfilePolicy::isObrigatorioPublico($this->currentUserService->getAccount()->getRoles());
+    return PublicProfilePolicy::isObrigatorioPublico($this->stringsOf($this->currentUserService->getAccount()->getRoles()));
   }
 
   /**
@@ -130,6 +152,25 @@ final class ProfileVisibilityForm extends FormBase {
     $storage = $this->entityTypeManagerService->getStorage('profile');
     $account = $this->currentUserService->getAccount();
     return PerfilDoPapel::obter($storage, $account);
+  }
+
+  /**
+   * Só os itens textuais de uma lista (papéis são strings).
+   *
+   * @param array<array-key, mixed> $values
+   *   Lista de valores não tipados.
+   *
+   * @return list<string>
+   *   Itens que são strings, na mesma ordem.
+   */
+  private function stringsOf(array $values): array {
+    $strings = [];
+    foreach ($values as $value) {
+      if (is_string($value)) {
+        $strings[] = $value;
+      }
+    }
+    return $strings;
   }
 
 }

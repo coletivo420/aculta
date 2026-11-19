@@ -1,0 +1,4 @@
+name: Barra institucional
+description: Barra institucional com valores de exemplo (carrinho, mensagens e alertas) para o catálogo de componentes.
+component: aculta420_v2:multidomain-bar
+class: Drupal\aculta420_v2\Story\MultidomainBarStory

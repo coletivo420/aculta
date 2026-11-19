@@ -12,7 +12,9 @@ use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\entity_usage\EntityUsageInterface;
 use Drupal\file\FileInterface;
@@ -56,7 +58,8 @@ final class ForumAttachmentCleanup {
       $cutoff = $requestTime - self::RETENTION;
       $removed = $this->cleanupOrphanMedia($cutoff);
       if ($removed < self::LIMIT) {
-        $temporaryAge = (int) $this->configFactory->get('system.file')->get('temporary_maximum_age');
+        $rawTempAge = $this->configFactory->get('system.file')->get('temporary_maximum_age');
+        $temporaryAge = is_numeric($rawTempAge) ? (int) $rawTempAge : 0;
         if ($temporaryAge > 0) {
           $removed += $this->cleanupTemporaryFiles(
             $requestTime - $temporaryAge,
@@ -86,8 +89,7 @@ final class ForumAttachmentCleanup {
       ->execute();
     $removed = 0;
     foreach ($storage->loadMultiple($ids) as $media) {
-      if (!$media instanceof MediaInterface
-        || !$media->hasField('field_media_forum_attachment')
+      if (!$media->hasField('field_media_forum_attachment')
         || $media->get('field_media_forum_attachment')->isEmpty()
         || $this->hasLiveReference($media)) {
         continue;
@@ -129,9 +131,6 @@ final class ForumAttachmentCleanup {
       ->execute();
     $removed = 0;
     foreach ($storage->loadMultiple($ids) as $file) {
-      if (!$file instanceof FileInterface) {
-        continue;
-      }
       if ($this->unusedFileCleaner->removeIfUnused($file, TRUE) === FileCleanupStatus::Deleted) {
         $removed++;
       }
@@ -141,6 +140,10 @@ final class ForumAttachmentCleanup {
 
   /**
    * Checks Entity Usage sources against current content and post revisions.
+   *
+   * @phpstan-impure
+   *   The query results can change between the initial check and the final
+   *   deletion recheck, so repeated calls must not be treated as identical.
    */
   private function hasLiveReference(MediaInterface $media): bool {
     $gallery_ids = $this->entityTypeManager->getStorage('media_gallery')->getQuery()
@@ -149,39 +152,38 @@ final class ForumAttachmentCleanup {
       ->condition('images.target_id', $media->id())
       ->range(0, 1)
       ->execute();
-    if ($gallery_ids !== []) {
+    if ($this->hasResults($gallery_ids)) {
       return TRUE;
     }
 
     // Query comment text directly as well as Entity Usage: cleanup must remain
     // safe if contrib tracking is delayed or a usage record was not created.
+    $mediaUuid = (string) $media->uuid();
     $comment_ids = $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)
       ->condition('comment_type', 'aculta_discussion_post')
       ->condition('entity_type', 'node')
       ->condition('field_name', 'field_aculta_discussion')
-      ->condition('comment_body.value', '%' . $this->database->escapeLike($media->uuid()) . '%', 'LIKE')
+      ->condition('comment_body.value', '%' . $this->database->escapeLike($mediaUuid) . '%', 'LIKE')
       ->execute();
     foreach ($this->entityTypeManager->getStorage('comment')->loadMultiple($comment_ids) as $comment) {
-      if ($comment instanceof CommentInterface && $this->commentEmbeds($comment, $media->uuid())) {
+      if ($this->commentEmbeds($comment, $mediaUuid)) {
         return TRUE;
       }
     }
-    if ($this->hasForumPostMediaReference($media->uuid())) {
+    if ($this->hasForumPostMediaReference($mediaUuid)) {
       return TRUE;
     }
 
     foreach ($this->entityUsage->listSources($media, FALSE) as $source) {
-      $type = (string) ($source['source_type'] ?? '');
-      $id = $source['source_id'] ?? NULL;
+      $type = (string) $source['source_type'];
+      $id = $source['source_id'];
       if (!$id) {
         // Unknown source types fail closed to prevent deleting live media.
         return TRUE;
       }
       if ($type === 'aculta_forum_post') {
-        if ($this->hasForumPostMediaReference($media->uuid())) {
-          return TRUE;
-        }
+        // A live post reference was already ruled out above.
         continue;
       }
       if ($type !== 'comment') {
@@ -192,7 +194,7 @@ final class ForumAttachmentCleanup {
       if (!$comment instanceof CommentInterface || !$this->isForumComment($comment)) {
         continue;
       }
-      if ($this->commentEmbeds($comment, $media->uuid())) {
+      if ($this->commentEmbeds($comment, $mediaUuid)) {
         return TRUE;
       }
     }
@@ -200,24 +202,42 @@ final class ForumAttachmentCleanup {
   }
 
   /**
+   * Keeps the runtime result check explicit across the entity query API boundary.
+   *
+   * @param array<array-key, mixed> $ids
+   *   Entity IDs returned by an access-disabled entity query.
+   */
+  private function hasResults(array $ids): bool {
+    return $ids !== [];
+  }
+
+  /**
    * Checks every Forum post revision for an exact Media embed.
    */
   private function hasForumPostMediaReference(string $uuid): bool {
     $storage = $this->entityTypeManager->getStorage('aculta_forum_post');
+    if (!$storage instanceof RevisionableStorageInterface) {
+      return FALSE;
+    }
     $revision_ids = $storage->getQuery()
       ->accessCheck(FALSE)
       ->allRevisions()
       ->condition('body.value', '%' . $this->database->escapeLike($uuid) . '%', 'LIKE')
       ->execute();
     foreach ($storage->loadMultipleRevisions($revision_ids) as $post) {
-      if (!$post->hasField('body') || $post->get('body')->isEmpty()) {
+      if (!$post instanceof ContentEntityInterface || !$post->hasField('body') || $post->get('body')->isEmpty()) {
         continue;
       }
-      $document = Html::load((string) $post->get('body')->value);
+      $bodyValue = $post->get('body')->value;
+      $rawHtml = is_scalar($bodyValue) ? (string) $bodyValue : '';
+      $document = Html::load($rawHtml);
       $xpath = new \DOMXPath($document);
-      foreach ($xpath->query('//drupal-media[@data-entity-type="media"][@data-entity-uuid]') as $element) {
-        if ($element instanceof \DOMElement && $element->getAttribute('data-entity-uuid') === $uuid) {
-          return TRUE;
+      $nodes = $xpath->query('//drupal-media[@data-entity-type="media"][@data-entity-uuid]');
+      if ($nodes instanceof \DOMNodeList) {
+        foreach ($nodes as $element) {
+          if ($element instanceof \DOMElement && $element->getAttribute('data-entity-uuid') === $uuid) {
+            return TRUE;
+          }
         }
       }
     }
@@ -240,11 +260,16 @@ final class ForumAttachmentCleanup {
     if (!$comment->hasField('comment_body') || $comment->get('comment_body')->isEmpty()) {
       return FALSE;
     }
-    $document = Html::load((string) $comment->get('comment_body')->value);
+    $bodyValue = $comment->get('comment_body')->value;
+    $rawHtml = is_scalar($bodyValue) ? (string) $bodyValue : '';
+    $document = Html::load($rawHtml);
     $xpath = new \DOMXPath($document);
-    foreach ($xpath->query('//drupal-media[@data-entity-type="media"][@data-entity-uuid]') as $element) {
-      if ($element instanceof \DOMElement && $element->getAttribute('data-entity-uuid') === $uuid) {
-        return TRUE;
+    $nodes = $xpath->query('//drupal-media[@data-entity-type="media"][@data-entity-uuid]');
+    if ($nodes instanceof \DOMNodeList) {
+      foreach ($nodes as $element) {
+        if ($element instanceof \DOMElement && $element->getAttribute('data-entity-uuid') === $uuid) {
+          return TRUE;
+        }
       }
     }
     return FALSE;

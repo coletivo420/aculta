@@ -3,7 +3,7 @@
 Regras que bloqueiam regressão no `aculta_portal`. São normativas: quem altera o Portal deve
 cumpri-las, e o gate ou a revisão deve checá-las. Não são roadmap nem relatório.
 
-Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS.md),
+Documentos normativos relacionados: [DRUPAL-12-STANDARDS.md](DRUPAL-12-STANDARDS.md),
 [SOURCE-OF-TRUTH.md](SOURCE-OF-TRUTH.md), [ARCHITECTURE.md](ARCHITECTURE.md),
 [ADMIN-DOMAIN-POLICY.md](ADMIN-DOMAIN-POLICY.md),
 [CROSS-DOMAIN-REQUEST-POLICY.md](CROSS-DOMAIN-REQUEST-POLICY.md),
@@ -61,7 +61,7 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 - Os dados e modelos das entidades continuam separados conforme seus contratos; unificar o formulário não autoriza fundir campos, entidades, permissões ou regras de negócio.
 - Busca e preenchimento por CEP via `aculta_portal_cep` são padrão para todo formulário de endereço completo do Portal. Isso não autoriza busca por logradouro fora de Events/Maps nem mudança do comportamento de Conta/checkout. Brasil fixo, sem seletor de país.
 - Atividades editoriais legadas (`node:activity` e `/node/add/activity`) foram descontinuadas em favor exclusivo de Eventos (`aculta_events`). A adição de eventos ocorre em `/painel-administrativo/eventos/adicionar` (não confundir com as atividades educacionais do LMS nem com o módulo ACULTA Activity). O cadastro e seleção de Local como popup modal com AJAX pertencem a Events. Revalidar autorização no servidor; nunca confiar em IDs submetidos pelo cliente.
-- Mudanças nesse contrato devem atualizar `docs/portal/ACCOUNT-ADDRESS.md` e executar `scripts/validate-account-address.php`; mudanças de renderização também executam o teste Firefox documentado em `tests/browser/aculta-theme-mobile-first/README.md`.
+- Mudanças nesse contrato devem atualizar `docs/portal/ACCOUNT-ADDRESS.md` e executar `scripts/validate-account-address.php`; mudanças de renderização também executam o teste Firefox documentado em `tests/browser/transversal/aculta-theme-mobile-first/README.md`.
 
 ## Views e CTools
 
@@ -81,7 +81,7 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
   categorias usam Taxonomy e navegação/listagem usa Views. Posts públicos revisionáveis
   coexistem com Comments durante a migração aprovada; Comments contextuais de Publicações,
   LMS e Wiki permanecem sob seus contratos. Não criar storage paralelo de tópico/categoria.
-- `drupal/forum` foi retirado do Composer e do Runtime de teste na limpeza aprovada. Conteúdo e
+- `drupal/forum` foi retirado do Composer e do Runtime de desenvolvimento na limpeza aprovada. Conteúdo e
   configuração legados foram inventariados/limpos conforme
   `aculta_forum/docs/MIGRATION-REMOVAL.md`; não reintroduzir o contrib nem presumir presença
   de dados antigos. Operações em Runtime continuam sujeitas ao preflight e à política de
@@ -156,7 +156,7 @@ Documentos normativos relacionados: [DRUPAL-11-STANDARDS.md](DRUPAL-11-STANDARDS
 
 ## Como verificar
 
-- Gate Drupal 11+: `php scripts/validate-aculta-portal-drupal11.php`.
+- Gate Drupal 11+: `php scripts/validate-aculta-portal-drupal12.php`.
 - Revisão de PR: checar cada regra que o diff toca. Regra violada é finding, não nota.
 - Regressão: comportamentos já aceitos são invariantes em `docs/portal/ANTI-REGRESSAO.md`; diff que toca um deles precisa do caso executado.
 
@@ -224,7 +224,7 @@ nunca escrever `/u/...` à mão nem guardar a URL sem tags de cache.
 - Ao criar uma capacidade, verifique que a documentação explica finalidade, fonte de verdade, fronteiras, segurança,
   cache/Domain e configuração/testes pertinentes. Atualize o changelog do Portal e a documentação específica no mesmo
   conjunto de mudanças.
-- O gate `php scripts/validate-aculta-portal-drupal11.php` valida o README/descrição do Portal, a implementação do
+- O gate `php scripts/validate-aculta-portal-drupal12.php` valida o README/descrição do Portal, a implementação do
   inventário de Status e a presença de descrição/documentação em cada submódulo.
 - Cada novo serviço reutilizável do Portal deve receber a tag `aculta_portal.helper` e metadados em
   `PortalHelperRegistry`; cada serviço de integração runtime efetivamente aplicado deve receber a tag

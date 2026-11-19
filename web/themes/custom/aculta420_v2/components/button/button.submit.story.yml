@@ -1,0 +1,6 @@
+name: Envio (button)
+description: Sem URL, renderizado como button. Usado para ações que não são navegação.
+props:
+  text: Salvar rascunho
+  variant: secondary
+  is_submit: false

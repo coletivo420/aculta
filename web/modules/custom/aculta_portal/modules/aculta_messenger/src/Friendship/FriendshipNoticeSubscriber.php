@@ -136,6 +136,9 @@ final class FriendshipNoticeSubscriber implements EventSubscriberInterface {
         'field_aculta_enqueue_attempts' => 0,
         'field_aculta_mailer_managed' => TRUE,
       ]);
+      if (!$message instanceof MessageInterface) {
+        throw new \LogicException('The message storage returned an unexpected entity.');
+      }
       $message->save();
       $this->enqueueSafely($message);
     }

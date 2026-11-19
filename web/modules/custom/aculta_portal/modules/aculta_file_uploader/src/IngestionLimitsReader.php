@@ -27,7 +27,16 @@ final class IngestionLimitsReader {
    * Limites atuais.
    */
   public function get(): IngestionLimits {
-    return IngestionLimits::fromArray($this->configFactory->get(self::CONFIG_NAME)->get() ?? []);
+    $stored = $this->configFactory->get(self::CONFIG_NAME)->get();
+    $limites = [];
+    if (is_array($stored)) {
+      foreach ($stored as $chave => $valor) {
+        if (is_string($chave)) {
+          $limites[$chave] = $valor;
+        }
+      }
+    }
+    return IngestionLimits::fromArray($limites);
   }
 
 }

@@ -16,7 +16,8 @@ final class OrderTypeCheckoutFlows {
 
   public function __construct(private readonly EntityTypeManagerInterface $entityTypeManager) {}
 
-  /** Flow que o Commerce usa quando o tipo de pedido não define nenhum (DefaultCheckoutFlowResolver). */
+  /**
+   * Flow que o Commerce usa quando o tipo de pedido não define nenhum (DefaultCheckoutFlowResolver). */
   public const COMMERCE_DEFAULT_FLOW = 'default';
 
   /**

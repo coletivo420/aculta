@@ -1,0 +1,7 @@
+name: Aviso Mercado Pago
+description: Aviso de processamento de pagamentos com destino externo seguro.
+component: aculta420_v2:payment-notice
+props:
+  intro: Todos os pagamentos são processados pelo Mercado Pago.
+  link_label: Acesse sua conta Mercado Pago
+  url: https://www.mercadopago.com.br/

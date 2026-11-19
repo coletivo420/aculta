@@ -70,4 +70,30 @@ final class MetricCatalogTest extends TestCase {
     new MetricDefinition('wiki.entries.read', 'Leituras', 'leituras', 'X', 90);
   }
 
+  /**
+   * O catálogo distingue contador, retrato, janela distinta, razão,
+   * distribuição e estado operacional.
+   */
+  public function testMetricTypesAreDeclared(): void {
+    $catalog = new MetricCatalog();
+
+    $this->assertSame(MetricDefinition::TYPE_COUNTER, $catalog->get('forum.replies.created')->type);
+    $this->assertSame(MetricDefinition::TYPE_SNAPSHOT, $catalog->get('forum.topics.published_current')->type);
+    $this->assertSame(MetricDefinition::TYPE_DISTINCT_WINDOW, $catalog->get('forum.participants.engaged_7d')->type);
+    $this->assertSame(MetricDefinition::TYPE_RATIO, $catalog->get('forum.response.rate')->type);
+    $this->assertSame(MetricDefinition::TYPE_DISTRIBUTION, $catalog->get('forum.response.first_median_minutes')->type);
+    $this->assertSame(MetricDefinition::TYPE_OPERATIONAL, $catalog->get('forum.moderation.reports_open')->type);
+
+    $this->assertTrue($catalog->get('forum.topics.created')->isAdditive());
+    $this->assertFalse($catalog->get('forum.topics.published_current')->isAdditive());
+  }
+
+  /**
+   * Tipo fora da lista é recusado.
+   */
+  public function testInvalidTypeIsRejected(): void {
+    $this->expectException(\InvalidArgumentException::class);
+    new MetricDefinition('forum.topics.created', 'Tópicos', 'tópicos', MetricDefinition::SENSITIVITY_PUBLIC, 90, 'gauge');
+  }
+
 }

@@ -1,0 +1,19 @@
+uuid: 0736c326-048b-432e-a304-1e78c6d53b65
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_revista_accent
+    - node.type.revista
+id: node.revista.field_revista_accent
+field_name: field_revista_accent
+entity_type: node
+bundle: revista
+label: 'Faixa de acento'
+description: 'Escolha administrativa da faixa do teaser da Revista.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

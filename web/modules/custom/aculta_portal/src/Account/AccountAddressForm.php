@@ -4,8 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Account;
 
+use Drupal\Core\Field\FieldItemInterface;
+use Drupal\Core\Render\Element;
 use Drupal\address\Element\Address;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
@@ -71,7 +74,7 @@ final class AccountAddressForm {
   /**
    * Aplica o formulário central ao primeiro elemento address encontrado.
    *
-   * @param array<string, mixed> $tree
+   * @param array<mixed> $tree
    *   Árvore do formulário que contém o elemento address.
    * @param string $number
    *   Número salvo para preencher no elemento.
@@ -90,19 +93,41 @@ final class AccountAddressForm {
     bool $withStreetNumber = TRUE,
   ): bool {
     if (($tree['#type'] ?? NULL) === 'address') {
+      if (!isset($tree['#default_value']) || !is_array($tree['#default_value'])) {
+        $tree['#default_value'] = [];
+      }
       $tree['#default_value']['country_code'] = 'BR';
       $tree['#available_countries'] = ['BR'];
-      $tree['#field_overrides'] = array_merge($tree['#field_overrides'] ?? [], [
+      $fieldOverrides = isset($tree['#field_overrides']) && is_array($tree['#field_overrides'])
+        ? $tree['#field_overrides']
+        : [];
+      $tree['#field_overrides'] = array_merge($fieldOverrides, [
         'givenName' => 'hidden',
         'familyName' => 'hidden',
         'additionalName' => 'hidden',
         'organization' => 'hidden',
         'addressLine3' => 'hidden',
       ]);
+      if (!isset($tree['#attached']) || !is_array($tree['#attached'])) {
+        $tree['#attached'] = [];
+      }
+      if (!isset($tree['#attached']['library']) || !is_array($tree['#attached']['library'])) {
+        $tree['#attached']['library'] = [];
+      }
       $tree['#attached']['library'][] = self::LIBRARY;
+      if (!isset($tree['#element_validate']) || !is_array($tree['#element_validate'])) {
+        $tree['#element_validate'] = [];
+      }
       $tree['#element_validate'][] = [self::class, 'validateAddressElement'];
       if ($withStreetNumber) {
         StreetNumberField::attach($tree, $number, $sn);
+        if (!isset($tree['#attached']) || !is_array($tree['#attached'])) {
+          $tree['#attached'] = [];
+        }
+        if (!isset($tree['#attached']['library']) || !is_array($tree['#attached']['library'])) {
+          $tree['#attached']['library'] = [];
+        }
+        $tree['#attached']['library'][] = 'aculta420_v2/address-fields';
       }
       else {
         // External address adapters (such as OSM tag review) have their own
@@ -113,14 +138,18 @@ final class AccountAddressForm {
           [Address::class, 'processGroup'],
         ];
       }
+      if (!isset($tree['#process']) || !is_array($tree['#process'])) {
+        $tree['#process'] = [];
+      }
       $tree['#process'][] = [self::class, 'finish'];
       return TRUE;
     }
     foreach ($tree as $key => &$child) {
-      if (is_array($child) && !str_starts_with((string) $key, '#')
-        && self::apply($child, $number, $sn, $withStreetNumber)) {
-        unset($child);
-        return TRUE;
+      if (is_array($child) && !str_starts_with((string) $key, '#')) {
+        if (self::apply($child, $number, $sn, $withStreetNumber)) {
+          unset($child);
+          return TRUE;
+        }
       }
     }
     unset($child);
@@ -139,10 +168,21 @@ final class AccountAddressForm {
    *   Rua, número e indicador de sem número.
    */
   public static function savedParts(?EntityInterface $saved, string $field): array {
-    if ($saved === NULL || !$saved->hasField($field) || $saved->get($field)->isEmpty()) {
+    if (!$saved instanceof FieldableEntityInterface || !$saved->hasField($field) || $saved->get($field)->isEmpty()) {
       return ['street' => '', 'number' => '', 'sn' => FALSE];
     }
-    return StreetNumberField::split((string) $saved->get($field)->first()->getAddressLine1());
+    $address = $saved->get($field)->first();
+    /** @var array<string, mixed> $addressValue */
+    $addressValue = $address instanceof FieldItemInterface ? (array) $address->getValue() : [];
+    $rawAddressLine1 = $addressValue['address_line1'] ?? '';
+    $addressLine1 = is_scalar($rawAddressLine1) ? (string) $rawAddressLine1 : '';
+    /** @var array{street: string, number: string, sn: bool} $parts */
+    $parts = StreetNumberField::split($addressLine1);
+    return [
+      'street' => $parts['street'],
+      'number' => $parts['number'],
+      'sn' => $parts['sn'],
+    ];
   }
 
   /**
@@ -163,18 +203,29 @@ final class AccountAddressForm {
     array &$form,
     FormStateInterface $formState,
   ): void {
+    if (!$entity instanceof FieldableEntityInterface) {
+      return;
+    }
     // Perfis usam field_address; eventos, field_endereco; lojas, address.
     $field = $entity->hasField('field_address') ? 'field_address'
       : ($entity->hasField('field_endereco') ? 'field_endereco' : 'address');
     if (!$entity->hasField($field) || $entity->get($field)->isEmpty()) {
       return;
     }
-    [$number, $sn] = StreetNumberField::values($form, $formState);
+    [$rawNumber, $rawSn] = StreetNumberField::values($form, $formState);
+    $number = is_scalar($rawNumber) ? (string) $rawNumber : '';
+    $sn = (bool) $rawSn;
     $address = $entity->get($field)->first();
-    $value = $address->getValue();
+    if (!$address instanceof FieldItemInterface) {
+      return;
+    }
+    /** @var array<string, mixed> $value */
+    $value = (array) $address->getValue();
     $value['country_code'] = 'BR';
+    $rawCurrentLine1 = $value['address_line1'] ?? '';
+    $currentLine1 = is_scalar($rawCurrentLine1) ? (string) $rawCurrentLine1 : '';
     $value['address_line1'] = StreetNumberField::join(
-      (string) $address->getAddressLine1(),
+      $currentLine1,
       $number,
       $sn,
     );
@@ -193,7 +244,7 @@ final class AccountAddressForm {
    *   Elemento atualizado com país fixo e rótulos em português.
    */
   public static function finish(array $element): array {
-    if (isset($element['country_code'])) {
+    if (isset($element['country_code']) && is_array($element['country_code'])) {
       // Campo oculto, e não #access FALSE: o módulo Address descarta a entrada
       // toda quando country_code não vem no POST; ver o teste de CEP.
       $element['country_code']['#type'] = 'hidden';
@@ -214,51 +265,55 @@ final class AccountAddressForm {
     // Nome e sobrenome pertencem ao perfil do usuário ou não se aplicam (locais, lojas).
     // Complemento possui apenas uma linha canônica (address_line2).
     foreach (['given_name', 'family_name', 'additional_name', 'organization', 'address_line3'] as $hiddenKey) {
-      if (isset($element[$hiddenKey])) {
+      if (isset($element[$hiddenKey]) && is_array($element[$hiddenKey])) {
         $element[$hiddenKey]['#access'] = FALSE;
       }
     }
 
     // O CEP é sempre o primeiro campo visível no formulário de endereço
     // para permitir o autopreenchimento imediato de rua, bairro, cidade e UF.
-    if (isset($element['postal_code'])) {
+    if (isset($element['postal_code']) && is_array($element['postal_code'])) {
       $element['postal_code']['#weight'] = -50;
     }
-    if (isset($element['address_line1'])) {
+    if (isset($element['address_line1']) && is_array($element['address_line1'])) {
       $element['address_line1']['#weight'] = -40;
     }
-    if (isset($element['street_number'])) {
+    if (isset($element['street_number']) && is_array($element['street_number'])) {
       $element['street_number']['#weight'] = -35;
     }
-    if (isset($element['street_number_sn'])) {
+    if (isset($element['street_number_sn']) && is_array($element['street_number_sn'])) {
       $element['street_number_sn']['#weight'] = -34;
     }
-    if (isset($element['address_line2'])) {
+    if (isset($element['address_line2']) && is_array($element['address_line2'])) {
       $element['address_line2']['#weight'] = -30;
     }
-    if (isset($element['address_line3'])) {
+    if (isset($element['address_line3']) && is_array($element['address_line3'])) {
       $element['address_line3']['#weight'] = -25;
     }
-    if (isset($element['dependent_locality'])) {
+    if (isset($element['dependent_locality']) && is_array($element['dependent_locality'])) {
       $element['dependent_locality']['#weight'] = -20;
     }
-    foreach (\Drupal\Core\Render\Element::children($element) as $key) {
-      if (str_starts_with((string) $key, 'container')) {
-        $element[$key]['#weight'] = -10;
+    /** @var array<int|string, int|string> $children */
+    $children = Element::children($element);
+    foreach ($children as $key) {
+      $childKey = (string) $key;
+      if (str_starts_with($childKey, 'container') && isset($element[$childKey]) && is_array($element[$childKey])) {
+        $element[$childKey]['#weight'] = -10;
       }
     }
-    if (isset($element['locality'])) {
+    if (isset($element['locality']) && is_array($element['locality'])) {
       $element['locality']['#weight'] = -10;
     }
-    if (isset($element['administrative_area'])) {
+    if (isset($element['administrative_area']) && is_array($element['administrative_area'])) {
       $element['administrative_area']['#weight'] = -9;
     }
     foreach (self::LABELS as $key => $label) {
-      if (isset($element[$key])) {
+      if (isset($element[$key]) && is_array($element[$key])) {
         // phpcs:ignore Drupal.Semantics.FunctionT.NotLiteralString -- labels are fixed constants above.
         $element[$key]['#title'] = new TranslatableMarkup($label);
       }
     }
+    /** @var array<string, mixed> $element */
     return $element;
   }
 
@@ -269,7 +324,7 @@ final class AccountAddressForm {
    *   Elemento address_country sendo processado.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   Estado do formulário.
-   * @param array<string, mixed> $completeForm
+   * @param array<mixed> $completeForm
    *   Estrutura do formulário completo.
    *
    * @return array<string, mixed>
@@ -279,7 +334,7 @@ final class AccountAddressForm {
     $element['#type'] = 'hidden';
     $element['#value'] = 'BR';
     $element['#default_value'] = 'BR';
-    if (isset($element['country_code'])) {
+    if (isset($element['country_code']) && is_array($element['country_code'])) {
       $element['country_code']['#type'] = 'hidden';
       $element['country_code']['#value'] = 'BR';
       $element['country_code']['#default_value'] = 'BR';
@@ -303,17 +358,20 @@ final class AccountAddressForm {
   /**
    * Validação no servidor: o país deve ser exclusivamente Brasil (BR).
    *
-   * @param array<string, mixed> $element
+   * @param array<mixed> $element
    *   Elemento country_code validado.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   Estado do formulário.
-   * @param array<string, mixed> $completeForm
+   * @param array<mixed> $completeForm
    *   Formulário completo.
    */
   public static function validateCountryCode(array &$element, FormStateInterface $formState, array &$completeForm): void {
-    $value = $formState->getValue($element['#parents']);
+    $rawParents = $element['#parents'] ?? [];
+    /** @var array<int|string, string>|string $parents */
+    $parents = (is_array($rawParents) || is_string($rawParents)) ? $rawParents : [];
+    $value = $formState->getValue($parents);
     if ($value === NULL || $value === '') {
-      $formState->setValue($element['#parents'], 'BR');
+      $formState->setValue($parents, 'BR');
       return;
     }
     if ($value !== 'BR') {
@@ -324,22 +382,26 @@ final class AccountAddressForm {
   /**
    * Validação no servidor do elemento de endereço: garante country_code BR.
    *
-   * @param array<string, mixed> $element
+   * @param array<mixed> $element
    *   Elemento address.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   Estado do formulário.
-   * @param array<string, mixed> $completeForm
+   * @param array<mixed> $completeForm
    *   Formulário completo.
    */
   public static function validateAddressElement(array &$element, FormStateInterface $formState, array &$completeForm): void {
-    $values = $formState->getValue($element['#parents']);
+    $rawParents = $element['#parents'] ?? [];
+    /** @var array<int|string, string>|string $parents */
+    $parents = (is_array($rawParents) || is_string($rawParents)) ? $rawParents : [];
+    $values = $formState->getValue($parents);
     if (!is_array($values)) {
       return;
     }
     $country = $values['country_code'] ?? NULL;
     if ($country === NULL || $country === '') {
-      $parents = array_merge($element['#parents'], ['country_code']);
-      $formState->setValue($parents, 'BR');
+      $parentArray = is_array($parents) ? $parents : [$parents];
+      $countryParents = array_merge($parentArray, ['country_code']);
+      $formState->setValue($countryParents, 'BR');
       return;
     }
     if ($country !== 'BR') {

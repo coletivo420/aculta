@@ -44,7 +44,7 @@ final class GalleryContentIndexProvider implements ContentIndexProviderInterface
   /**
    * {@inheritdoc}
    */
-  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string {
     return $entity instanceof MediaGalleryInterface && $entity->bundle() === 'media_gallery'
       ? 'magazine'
       : NULL;

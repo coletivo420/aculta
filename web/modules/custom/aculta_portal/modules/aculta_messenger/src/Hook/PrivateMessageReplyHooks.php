@@ -16,8 +16,7 @@ use Drupal\Core\Url;
 use Drupal\aculta_messenger\Form\ConversationRelationshipForm;
 use Drupal\aculta_messenger\Service\ConversationMessagingState;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -32,14 +31,21 @@ final class PrivateMessageReplyHooks {
     private readonly FormBuilderInterface $formBuilder,
     #[Autowire(service: 'current_user')]
     private readonly AccountInterface $currentUser,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
     #[Autowire(service: 'aculta_messenger.conversation_messaging')]
     private readonly ConversationMessagingState $messagingState,
   ) {}
 
   /**
    * Adds the native composer when a site's thread display omitted its field.
+   *
+   * @param array<array-key, mixed> $build
+   *   O valor informado para $build.
+   * @param EntityInterface $entity
+   *   O valor informado para $entity.
+   * @param EntityViewDisplayInterface $display
+   *   O valor informado para $display.
+   * @param string $view_mode
+   *   O valor informado para $view_mode.
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
@@ -89,6 +95,11 @@ final class PrivateMessageReplyHooks {
 
   /**
    * Configures either native or fallback form for the shared drawer endpoint.
+   *
+   * @param array<array-key, mixed> $replyForm
+   *   O valor informado para $replyForm.
+   * @param PrivateMessageThreadInterface $thread
+   *   O valor informado para $thread.
    */
   private function configureReplyForm(array &$replyForm, PrivateMessageThreadInterface $thread): void {
     $replyForm['#attributes']['id'] = 'aculta-messenger-reply-form';
@@ -109,6 +120,13 @@ final class PrivateMessageReplyHooks {
    *
    * Alter, not view: the module adds a link in hook_entity_view().
    * The order between modules is not ours.
+   *
+   * @param array<array-key, mixed> $build
+   *   O valor informado para $build.
+   * @param EntityInterface $entity
+   *   O valor informado para $entity.
+   * @param EntityViewDisplayInterface $display
+   *   O valor informado para $display.
    */
   #[Hook('entity_view_alter')]
   public function entityViewAlter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
@@ -121,6 +139,11 @@ final class PrivateMessageReplyHooks {
 
   /**
    * The members base field and its forms share the Portuguese label.
+   *
+   * @param array<array-key, mixed> $fields
+   *   O valor informado para $fields.
+   * @param EntityTypeInterface $entity_type
+   *   O valor informado para $entity_type.
    */
   #[Hook('entity_base_field_info_alter')]
   public function entityBaseFieldInfoAlter(array &$fields, EntityTypeInterface $entity_type): void {
@@ -133,6 +156,14 @@ final class PrivateMessageReplyHooks {
    * Builds the notice that replaces the reply box.
    *
    * The notice includes the state sentence and its allowed action, if any.
+   *
+   * @param PrivateMessageThreadInterface $thread
+   *   O valor informado para $thread.
+   * @param string $state
+   *   O valor informado para $state.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function notice(PrivateMessageThreadInterface $thread, string $state): array {
     $other = $this->messagingState->otherMember($thread);

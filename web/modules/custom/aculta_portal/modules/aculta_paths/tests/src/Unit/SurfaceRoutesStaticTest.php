@@ -22,62 +22,91 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
    * Rotas declaradas nos YAML dos módulos envolvidos.
    *
    * @return array<string, array<string, mixed>>
+   *   Rotas indexadas pelo nome, conforme os arquivos YAML.
    */
   private static function rotas(): array {
     $modulos = dirname(__DIR__, 4);
     $rotas = [];
-    foreach (['aculta_wiki/aculta_wiki.routing.yml', 'aculta_studio/aculta_studio.routing.yml', 'aculta_commerce/aculta_commerce.routing.yml'] as $arquivo) {
+    foreach ([
+      'aculta_wiki/aculta_wiki.routing.yml',
+      'aculta_studio/aculta_studio.routing.yml',
+      'aculta_commerce/aculta_commerce.routing.yml',
+    ] as $arquivo) {
       $dados = Yaml::parseFile($modulos . '/' . $arquivo);
-      $rotas = array_merge($rotas, is_array($dados) ? $dados : []);
+      if (is_array($dados)) {
+        foreach ($dados as $key => $item) {
+          if (is_string($key) && is_array($item)) {
+            /** @var array<string, mixed> $item */
+            $rotas[$key] = $item;
+          }
+        }
+      }
     }
     return $rotas;
   }
 
   /**
-   * WE SATIVA em /we-sativa, no purpose wiki.
+   * WE SATIVA em /we-sativa, na site_key wiki.
    */
   public function testWeSativaEmCaminhoProprio(): void {
     $rotas = self::rotas();
+    $this->assertArrayHasKey('aculta_studio.we_sativa', $rotas);
+    $this->assertIsArray($rotas['aculta_studio.we_sativa']['options'] ?? NULL);
     $this->assertSame('/we-sativa', $rotas['aculta_studio.we_sativa']['path']);
-    $this->assertSame('wiki', $rotas['aculta_studio.we_sativa']['options']['_aculta_domain_purpose']);
+    $this->assertSame('wiki', $rotas['aculta_studio.we_sativa']['options']['_aculta_site_key']);
     $this->assertSame('/we-sativa/inicio', $rotas['aculta_studio.we_sativa_start']['path']);
   }
 
   /**
-   * GREEN STASH em /green-stash, no purpose shop.
+   * GREEN STASH em /green-stash, na site_key shop.
    */
   public function testGreenStashEmCaminhoProprio(): void {
     $rotas = self::rotas();
+    $this->assertArrayHasKey('aculta_commerce.green_stash', $rotas);
+    $this->assertIsArray($rotas['aculta_commerce.green_stash']['options'] ?? NULL);
     $this->assertSame('/green-stash', $rotas['aculta_commerce.green_stash']['path']);
-    $this->assertSame('shop', $rotas['aculta_commerce.green_stash']['options']['_aculta_domain_purpose']);
+    $this->assertSame('shop', $rotas['aculta_commerce.green_stash']['options']['_aculta_site_key']);
   }
 
   /**
    * Ação de decisão da WE SATIVA migrou para /we-sativa.
    */
   public function testAcaoDeDecisaoDaWeSativa(): void {
-    $this->assertSame('/we-sativa/propostas/{proposal}/decidir', self::rotas()['aculta_wiki.proposal_decide']['path']);
+    $rotas = self::rotas();
+    $this->assertArrayHasKey('aculta_wiki.proposal_decide', $rotas);
+    $this->assertSame(
+      '/we-sativa/propostas/{proposal}/decidir',
+      $rotas['aculta_wiki.proposal_decide']['path'],
+    );
   }
 
   /**
-   * Formulário de caminhos fica em /painel-administrativo/aculta/caminhos, só no MAIN.
+   * O formulário de caminhos fica restrito ao MAIN.
    */
   public function testFormularioEhSoMain(): void {
     $dados = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_paths.routing.yml');
+    $this->assertIsArray($dados);
+    $this->assertIsArray($dados['aculta_paths.form'] ?? NULL);
     $rota = $dados['aculta_paths.form'];
+    $this->assertIsArray($rota['options'] ?? NULL);
+    $this->assertIsArray($rota['requirements'] ?? NULL);
     $this->assertSame('/painel-administrativo/aculta/caminhos', $rota['path']);
-    $this->assertSame('main', $rota['options']['_aculta_domain_purpose']);
+    $this->assertSame('main', $rota['options']['_aculta_site_key']);
     $this->assertSame('administrar superficies', $rota['requirements']['_permission']);
   }
 
   /**
-   * A edição abre em modal dentro do MAIN, com o purpose na rota.
+   * A edição abre em modal dentro do MAIN, com a site_key na rota.
    */
-  public function testEdicaoEhSoMainEModal(): void {
+  public function testEdicaoEhSomenteMainComModal(): void {
     $dados = Yaml::parseFile(dirname(__DIR__, 3) . '/aculta_paths.routing.yml');
+    $this->assertIsArray($dados);
+    $this->assertIsArray($dados['aculta_paths.editar'] ?? NULL);
     $rota = $dados['aculta_paths.editar'];
-    $this->assertSame('/painel-administrativo/aculta/caminhos/{purpose}/editar', $rota['path']);
-    $this->assertSame('main', $rota['options']['_aculta_domain_purpose']);
+    $this->assertIsArray($rota['options'] ?? NULL);
+    $this->assertIsArray($rota['requirements'] ?? NULL);
+    $this->assertSame('/painel-administrativo/aculta/caminhos/{site_key}/editar', $rota['path']);
+    $this->assertSame('main', $rota['options']['_aculta_site_key']);
     $this->assertSame('administrar superficies', $rota['requirements']['_permission']);
   }
 
@@ -87,7 +116,8 @@ final class SurfaceRoutesStaticTest extends UnitTestCase {
   public function testCaminhosAntigosNaoDeclarados(): void {
     $proibidos = ['/studio', '/wesativa', '/greenstash', '/wiki/busca', '/wiki/verbetes', '/wiki/propostas'];
     foreach (self::rotas() as $nome => $rota) {
-      $caminho = (string) ($rota['path'] ?? '');
+      $pathRaw = $rota['path'] ?? '';
+      $caminho = is_string($pathRaw) ? $pathRaw : '';
       foreach ($proibidos as $proibido) {
         $this->assertFalse(
           $caminho === $proibido || str_starts_with($caminho, $proibido . '/'),

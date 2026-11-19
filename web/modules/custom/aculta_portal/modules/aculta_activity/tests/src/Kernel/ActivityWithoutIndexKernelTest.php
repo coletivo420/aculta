@@ -26,6 +26,8 @@ final class ActivityWithoutIndexKernelTest extends KernelTestBase {
     'text',
     'node',
     'aculta_activity',
+    'aculta_file_uploader',
+    'file',
   ];
 
   /**
@@ -36,7 +38,7 @@ final class ActivityWithoutIndexKernelTest extends KernelTestBase {
     self::assertFalse($this->container->has('aculta_index.provider_registry'));
 
     $provider = $this->container->get('aculta_activity.content_index_provider');
-    self::assertInstanceOf(ActivityContentIndexProvider::class, $provider);
+    self::assertSame(ActivityContentIndexProvider::class, (new \ReflectionObject($provider))->getName());
     self::assertSame('activity', $provider->getProviderId());
   }
 

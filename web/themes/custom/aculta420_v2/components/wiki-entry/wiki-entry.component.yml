@@ -1,0 +1,72 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Verbete da Wiki
+description: Apresenta um verbete completo ou um cartão de listagem usando campos e ações renderizados pelo Drupal.
+status: experimental
+group: Layouts
+props:
+  type: object
+  additionalProperties: false
+  required: [variant]
+  properties:
+    variant:
+      type: string
+      title: Variante de apresentação
+      description: article renderiza o verbete completo; teaser renderiza um cartão resumido.
+      enum: [article, teaser]
+    title_level:
+      type: string
+      title: Nível do título do verbete
+      description: O H1 pertence ao título da rota; o verbete usa h2 por padrão.
+      enum: [h1, h2]
+      default: h2
+    url:
+      type: [string, 'null']
+      title: URL canônica do verbete
+      description: No modo article, destino do link Ler que indica a página atual do verbete.
+      format: uri-reference
+      default: null
+    entity_title:
+      type: string
+      title: Título do verbete
+      description: Título vindo do contexto da entidade no Layout Builder.
+      default: ''
+    has_summary:
+      type: boolean
+      title: Resumo visível
+      description: No modo teaser, controla a exibição do slot summary; no artigo, o slot é exibido quando contém conteúdo.
+    has_image:
+      type: boolean
+      title: Imagem visível
+      description: No modo teaser, controla a exibição do slot image; no artigo, a coluna lateral depende do conteúdo renderizado.
+    has_categories:
+      type: boolean
+      title: Categorias visíveis
+      description: No modo teaser, controla a exibição do slot categories; no artigo, as categorias aparecem quando o slot contém conteúdo.
+slots:
+  body:
+    title: Corpo do verbete
+    description: Corpo renderizado pelo Drupal.
+  title:
+    title: Título
+    description: Texto simples no artigo ou título vinculado no cartão.
+  summary:
+    title: Resumo
+    description: Campo renderizado e autorizado pelo Drupal.
+  image:
+    title: Imagem de destaque
+    description: Campo de imagem renderizado pelo Drupal.
+  categories:
+    title: Categorias
+    description: Termos renderizados e autorizados pelo Drupal.
+  related:
+    title: Verbetes relacionados
+    description: Lista de verbetes relacionados autorizados e renderizados pelo Drupal.
+  references:
+    title: Referências
+    description: Referências bibliográficas renderizadas para o verbete.
+  discussion:
+    title: Discussão
+    description: Render array de discussão fornecido pelo módulo proprietário.
+  actions:
+    title: Ações do verbete
+    description: Links renderizados com access check pelo Drupal.

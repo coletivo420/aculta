@@ -60,7 +60,6 @@ final class QrCodeEntityKernelTest extends KernelTestBase {
   public function testCreatesPublishedCodeWithOpaqueIdentifier(): void {
     $entity = $this->manager->create('Cartaz da oficina', 'https://example.invalid/apoie');
 
-    self::assertInstanceOf(QrCode::class, $entity);
     self::assertTrue($entity->isPublished());
     self::assertMatchesRegularExpression('/^[a-z0-9]{12}$/', $entity->getCode());
     self::assertSame('https://example.invalid/apoie', $entity->getTargetUrl());
@@ -119,10 +118,13 @@ final class QrCodeEntityKernelTest extends KernelTestBase {
 
     $this->manager->updateTarget($entity, 'https://example.invalid/novo', 'troca de destino');
 
-    $reloaded = $this->storage()->load($entity->id());
+    $entityId = $entity->id();
+    self::assertNotNull($entityId);
+    $reloaded = $this->storage()->load($entityId);
+    self::assertInstanceOf(QrCode::class, $reloaded);
     self::assertSame($code, $reloaded->getCode());
     self::assertSame('https://example.invalid/novo', $reloaded->getTargetUrl());
-    self::assertCount(2, $this->storage()->getQuery()->accessCheck(FALSE)->allRevisions()->condition('id', $entity->id())->execute());
+    self::assertCount(2, $this->storage()->getQuery()->accessCheck(FALSE)->allRevisions()->condition('id', $entityId)->execute());
   }
 
   /**
@@ -132,7 +134,6 @@ final class QrCodeEntityKernelTest extends KernelTestBase {
     $entity = $this->manager->create('Redirect', 'https://example.invalid/apoie');
     $response = $this->controller()->redirectByCode($entity->getCode());
 
-    self::assertInstanceOf(TrustedRedirectResponse::class, $response);
     self::assertSame(302, $response->getStatusCode());
     self::assertSame('https://example.invalid/apoie', $response->getTargetUrl());
   }

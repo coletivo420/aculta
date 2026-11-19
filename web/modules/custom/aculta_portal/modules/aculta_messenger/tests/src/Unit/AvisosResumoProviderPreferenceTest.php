@@ -314,8 +314,10 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
       ['tipo' => 'wiki', 'titulo' => 'Revisão publicada', 'quantidade' => 1, 'delivery_id' => 502],
     ]);
     if ($supportsSelectiveDiscard) {
-      $provider->expects(self::once())->method('discardDigestItems')->with(27, [501]);
-      $provider->expects(self::once())->method('markDigestSent')->with(27, [502]);
+      /** @var AvisoDigestProviderInterface&AvisoDigestSelectiveDiscardInterface $selectiveProvider */
+      $selectiveProvider = $provider;
+      $selectiveProvider->expects(self::once())->method('discardDigestItems')->with(27, [501]);
+      $selectiveProvider->expects(self::once())->method('markDigestSent')->with(27, [502]);
     }
     else {
       $provider->expects(self::never())->method('discardDigest');
@@ -531,7 +533,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     });
     $userData->expects(self::once())
       ->method('set')
-      ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento', self::isType('array'));
+      ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento', self::isArray());
     $provider = $this->createMockForIntersectionOfInterfaces([
       AvisoDigestProviderInterface::class,
       AvisoDigestSelectiveDiscardInterface::class,
@@ -611,7 +613,7 @@ final class AvisosResumoProviderPreferenceTest extends UnitTestCase {
     });
     $userData->expects(self::once())
       ->method('set')
-      ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento', self::isType('array'));
+      ->with('aculta_messenger', 27, 'avisos_resumo_em_andamento', self::isArray());
     $provider = $this->createMock(AvisoDigestProviderInterface::class);
     $provider->method('pendingRecipientIds')->willReturn([27]);
     $provider->method('digestRowsFor')->with(27)->willReturn([

@@ -154,10 +154,11 @@ final class DocumentFingerprintUniqueIndexKernelTest extends KernelTestBase {
       'profile__field_documento_indice',
       'aculta_id_cpf_documento_unique',
     ));
-    self::assertSame(1, (int) $database->select('profile__field_documento_indice', 'i')
+    $countResult = $database->select('profile__field_documento_indice', 'i')
       ->countQuery()
-      ->execute()
-      ->fetchField());
+      ->execute();
+    $countField = $countResult ? $countResult->fetchField() : 0;
+    self::assertSame(1, is_numeric($countField) ? (int) $countField : 0);
   }
 
 }

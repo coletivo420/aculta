@@ -1,0 +1,9 @@
+{
+  "front": "revista-color",
+  "purpose": "magazine",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/magazine/revista-color/README.md",
+  "auth": { "account": "teste_comum" },
+  "public_routes": [],
+  "notes": "Sem rota pública declarada. A suíte precisa de categoria e nó de teste (SUITE_OUT da categoria); não há rota fixa. Cobertura fica no script da frente."
+}

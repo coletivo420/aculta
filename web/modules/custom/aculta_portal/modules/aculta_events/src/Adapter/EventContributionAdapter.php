@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Adapter;
 
-use Drupal\aculta_contributions\Contract\ContributionAdapterInterface;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Contract\ContributionAdapterInterface;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventDate;
@@ -13,7 +13,8 @@ use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent;
 use Drupal\aculta_events\Service\OrganizationContributionEventQueue;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_events\Service\WebsiteUrl;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
@@ -47,7 +48,7 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ?DomainPurposeManager $domainPurposes,
+    private readonly ?DomainSiteManager $siteManagers,
     private readonly EventPermissionPolicy $permissionPolicy,
     private readonly ?OrganizationAccessService $organizationAccess,
     private readonly LockBackendInterface $lock,
@@ -96,7 +97,7 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
    * {@inheritdoc} */
   public function submitAccess(AccountInterface $account, string $intent, ?EntityInterface $target): bool {
     if (!$account->isAuthenticated() || (int) $account->id() < 1
-      || $this->domainPurposes?->getCurrentPurpose() !== 'eventos') {
+      || $this->siteManagers?->getCurrentSiteKey()?->value !== 'eventos') {
       return FALSE;
     }
     if ($intent === 'event_create') {
@@ -111,7 +112,7 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
    * {@inheritdoc} */
   public function reviewAccess(AccountInterface $reviewer, string $intent, ?EntityInterface $target): bool {
     return in_array($intent, ['event_create', 'event_update'], TRUE)
-      && $this->domainPurposes?->getCurrentPurpose() === 'main'
+      && $this->siteManagers?->getCurrentSiteKey()?->value === 'main'
       && $reviewer->hasPermission('administer aculta events');
   }
 
@@ -166,8 +167,8 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
       if ($key === 'title' && $value === '') {
         throw new UnprocessableEntityHttpException('O título do Evento não pode ficar vazio.');
       }
-      if ($key === 'field_url' && $value !== '' && filter_var($value, FILTER_VALIDATE_URL) === FALSE) {
-        throw new UnprocessableEntityHttpException('O site do Evento precisa ser uma URL válida.');
+      if ($key === 'field_url' && $value !== '' && !WebsiteUrl::isValid($value)) {
+        throw new UnprocessableEntityHttpException('O site do Evento precisa ser uma URL HTTP ou HTTPS válida.');
       }
       $normalized[$key] = $value;
     }
@@ -280,7 +281,9 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
     $transaction = NULL;
     try {
       $transaction = $this->database->startTransaction();
-      $this->database->select('aculta_event', 'event')->fields('event', ['id'])->condition('id', $eventId)->forUpdate()->execute()->fetchField();
+      $select = $this->database->select('aculta_event', 'event');
+      $select->fields('event', ['id'])->condition('id', $eventId)->forUpdate();
+      $select->execute()->fetchField();
       $fresh = $this->entityTypeManager->getStorage('aculta_event')->loadUnchanged($eventId);
       if (!$fresh instanceof Event || !hash_equals($expectedVersion, $this->currentVersion($intent, $fresh))) {
         throw new ConflictHttpException('O Evento ou suas Datas mudaram desde o envio da proposta.');
@@ -321,11 +324,15 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
       $transaction = $this->database->startTransaction();
       $this->assertReferences($values, $uid);
       $this->assertNoDuplicate($values);
-      $event = $this->entityTypeManager->getStorage('aculta_event')->create([
+      $created = $this->entityTypeManager->getStorage('aculta_event')->create([
         'title' => $values['title'],
         'field_organizador' => $uid,
         'field_status' => 'rascunho',
       ]);
+      if (!$created instanceof Event) {
+        throw new \LogicException('The event storage returned an unexpected entity.');
+      }
+      $event = $created;
       $this->applyEventFields($event, $values);
       $event->set('field_status', 'rascunho');
       $event->save();
@@ -349,9 +356,15 @@ final class EventContributionAdapter implements ContributionAdapterInterface {
     if ($account === NULL || !$account->isActive()) {
       throw new ConflictHttpException('O organizador do Evento não está mais ativo.');
     }
+    $eventReferences = $event instanceof Event
+      ? array_map(
+        static fn ($entity): string => $entity instanceof EntityInterface ? (string) $entity->uuid() : '',
+        $event->get('field_coorganizadores')->referencedEntities(),
+      )
+      : [];
     $references = [
       'field_organizacao' => $values['field_organizacao'] ?? ($event instanceof Event && !$event->get('field_organizacao')->isEmpty() ? [(string) $event->get('field_organizacao')->entity?->uuid()] : []),
-      'field_coorganizadores' => $values['field_coorganizadores'] ?? ($event instanceof Event ? array_map(static fn ($item): string => (string) $item->entity?->uuid(), iterator_to_array($event->get('field_coorganizadores'))) : []),
+      'field_coorganizadores' => $values['field_coorganizadores'] ?? $eventReferences,
     ];
     foreach (['field_organizacao' => FALSE, 'field_coorganizadores' => TRUE] as $field => $multiple) {
       $ids = $references[$field];

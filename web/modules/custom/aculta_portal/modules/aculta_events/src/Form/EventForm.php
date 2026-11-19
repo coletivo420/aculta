@@ -13,7 +13,10 @@ use Drupal\aculta_events\Route\EventRouteContext;
 use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -31,6 +34,11 @@ final class EventForm extends ContentEntityForm {
   protected EventDateListBuilder $dateListBuilder;
 
   /**
+   * Service for selecting the Events-purpose route.
+   */
+  protected EventRouteContext $eventRouteContext;
+
+  /**
    * Serviço de acesso a organizações.
    */
   protected ?OrganizationAccessService $organizationAccessService = NULL;
@@ -41,6 +49,7 @@ final class EventForm extends ContentEntityForm {
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
     $instance->dateListBuilder = $container->get('aculta_events.date_list_builder');
+    $instance->eventRouteContext = $container->get('aculta_events.route_context');
     if ($container->has('aculta_user.organization_access_service')) {
       $instance->organizationAccessService = $container->get('aculta_user.organization_access_service');
     }
@@ -109,11 +118,17 @@ final class EventForm extends ContentEntityForm {
       '#submit' => ['::addDateRow'],
       '#limit_validation_errors' => [],
       '#weight' => 23,
-      '#ajax' => [
-        'callback' => '::ajaxRebuildDates',
-        'wrapper' => 'event-dates-wrapper',
-      ],
     ];
+    // Envio sem Drupal AJAX: a rota do formulário devolve o próprio bloco de
+    // Datas, que o HTMX troca no lugar. O envio continua sendo um submit do
+    // Form API (name, submitHandler e limite de validação preservados).
+    (new Htmx())
+      ->post(Url::fromRoute($this->eventRouteContext->route('aculta_events.event_add', 'aculta_events.organizer_event_add')))
+      ->select('#event-dates-wrapper')
+      ->target('#event-dates-wrapper')
+      ->swap('outerHTML')
+      ->onlyMainContent()
+      ->applyTo($form['date_add_more']);
   }
 
   /**
@@ -150,7 +165,7 @@ final class EventForm extends ContentEntityForm {
       '#type' => 'container',
       '#attributes' => ['id' => $wrapperId, 'data-portal-ui' => 'event-location-widget'],
       '#attached' => ['library' => ['core/drupal.dialog.ajax']],
-    ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId);
+    ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId, $this->entityTypeManager, $this->currentUser(), $this->eventRouteContext, $this->getStringTranslation());
 
     return $element;
   }
@@ -164,17 +179,10 @@ final class EventForm extends ContentEntityForm {
   }
 
   /**
-   * Devolve o contêiner de Datas para o rebuild AJAX.
-   */
-  public function ajaxRebuildDates(array &$form, FormStateInterface $form_state): array {
-    return $form['date_location']['dates'];
-  }
-
-  /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state): void {
-    parent::validateForm($form, $form_state);
+  public function validateForm(array &$form, FormStateInterface $form_state): ContentEntityInterface {
+    $entity = parent::validateForm($form, $form_state);
 
     // Validação de segurança no servidor para Organizações.
     $orgValues = $form_state->getValue('field_organizacao');
@@ -207,10 +215,8 @@ final class EventForm extends ContentEntityForm {
       }
     }
 
-    /** @var \Drupal\aculta_events\Entity\Event $entity */
-    $entity = $this->entity;
     if (!$entity->isNew()) {
-      return;
+      return $entity;
     }
 
     $dates = (array) $form_state->getValue(['date_location', 'dates'], []);
@@ -239,6 +245,7 @@ final class EventForm extends ContentEntityForm {
         }
       }
     }
+    return $entity;
   }
 
   /**
@@ -295,7 +302,7 @@ final class EventForm extends ContentEntityForm {
       ]));
     }
 
-    if (EventRouteContext::route('aculta_events.catalogue', 'aculta_events.organizer_event_edit') === 'aculta_events.organizer_event_edit') {
+    if ($this->eventRouteContext->route('aculta_events.catalogue', 'aculta_events.organizer_event_edit') === 'aculta_events.organizer_event_edit') {
       $form_state->setRedirect('aculta_events.organizer_event_edit', ['aculta_event' => $entity->id()]);
     }
     else {

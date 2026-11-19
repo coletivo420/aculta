@@ -13,7 +13,8 @@ use Drupal\aculta_messenger\Aviso\AvisoPreferenciasInterface;
 use Drupal\aculta_messenger\Event\MessengerNoticeEvent;
 use Drupal\aculta_messenger\Service\NoticeListFilter;
 use Drupal\aculta_messenger\Service\NoticeRelatedGrouper;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
@@ -63,7 +64,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly AvisoPreferenciasInterface $preferences,
     private readonly QueueFactory $queueFactory,
     private readonly LockBackendInterface $lock,
@@ -127,7 +128,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
         ? $this->preferences->emailMode($event->recipientUid(), 'doacao')
         : AvisoPreferencias::EMAIL_OFF;
       $direct = $mode === AvisoPreferencias::EMAIL_IMMEDIATE;
-      $message = $storage->create([
+      $created = $storage->create([
         'template' => self::TEMPLATE,
         'uid' => $event->recipientUid(),
         self::EVENT_FIELD => $type,
@@ -138,6 +139,10 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
         self::DELIVERY_FIELD => $direct ? 'pending' : 'sent',
         self::ATTEMPTS_FIELD => 0,
       ]);
+      if (!$created instanceof MessageInterface) {
+        throw new \LogicException('The message storage returned an unexpected entity.');
+      }
+      $message = $created;
       $message->save();
       if ($direct) {
         $this->queueDirectDelivery($message);
@@ -282,7 +287,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
       || !$order->access('view', $account, TRUE)->isAllowed()) {
       return NULL;
     }
-    $url = $this->domainPurposes->routeUrl('shop', 'entity.commerce_order.user_view', [
+    $url = $this->siteManagers->routeUrl(SiteKey::Shop, 'entity.commerce_order.user_view', [
       'commerce_order' => $order->id(),
     ]);
     if ($url === NULL) {
@@ -302,7 +307,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
     return [
       'title' => $payment ? $this->t('Pagamento de doação aprovado') : $this->t('Pedido de doação criado'),
       'summary' => $summary,
-      'email_summary' => $summary,
+      'email_summary' => (string) $summary,
       'url' => $url,
     ];
   }
@@ -327,7 +332,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
           ->condition('template', self::TEMPLATE)
           ->condition('uid', (int) $account->id());
         NoticeListFilter::applyReadCondition($query, self::READ_FIELD, $filters);
-        return $query->sort('created', 'DESC')->sort('id', 'DESC')
+        return $query->sort('created', 'DESC')->sort('mid', 'DESC')
           ->range($scanOffset, $batchSize)->execute();
       },
       static fn(array $ids): array => array_values($storage->loadMultiple($ids)),
@@ -398,9 +403,13 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
         $message->set(self::DIGEST_FIELD, 1)->save();
         continue;
       }
+      $summary = $notice['email_summary'] ?? NULL;
+      if (!is_string($summary)) {
+        continue;
+      }
       $rows[] = [
         'tipo' => 'doacao',
-        'titulo' => $notice['email_summary'],
+        'titulo' => $summary,
         'quantidade' => 1,
         'delivery_id' => (int) $message->id(),
       ];

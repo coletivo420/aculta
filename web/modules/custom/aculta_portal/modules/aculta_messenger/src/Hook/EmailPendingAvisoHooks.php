@@ -19,7 +19,8 @@ final class EmailPendingAvisoHooks {
     private readonly EmailPendingAviso $pending,
   ) {}
 
-  /** Título e texto do aviso de atenção em "Minha conta" vêm do mesmo aviso persistente. */
+  /**
+ * Título e texto do aviso de atenção em "Minha conta" vêm do mesmo aviso persistente. */
   #[Hook('aculta_portal_email_notice_alter')]
   public function emailNoticeAlter(array &$context, AccountInterface $account): void {
     if (!$this->pending->isPending($account)) {
@@ -31,8 +32,11 @@ final class EmailPendingAvisoHooks {
   }
 
   /**
-   * Remove o aviso quando o e-mail é confirmado. Vem do ponto aculta_portal_email_confirmed, e não de user_update:
-   * a confirmação pode não salvar a conta (o papel já existe), e o aviso não pode sobrar.
+   * Remove o aviso quando o e-mail é confirmado.
+   *
+   * Vem do ponto aculta_portal_email_confirmed, e não de user_update: a
+   * confirmação pode não salvar a conta (o papel já existe), e o aviso não pode
+   * sobrar.
    */
   #[Hook('aculta_portal_email_confirmed')]
   public function emailConfirmed(int $uid): void {

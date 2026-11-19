@@ -3,6 +3,7 @@ langcode: pt-br
 status: true
 dependencies:
   module:
+    - aculta_editor
     - freelinking
     - media
 name: 'Aculta Wiki (somente Wiki)'
@@ -42,6 +43,12 @@ filters:
     status: true
     weight: 20
     settings: {  }
+  fluent_emoji:
+    id: fluent_emoji
+    provider: aculta_editor
+    status: true
+    weight: 25
+    settings: {  }
   freelinking:
     id: freelinking
     provider: freelinking
@@ -69,4 +76,3 @@ filters:
       allowed_view_modes: {  }
       allowed_media_types:
         document: document
-

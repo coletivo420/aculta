@@ -1,0 +1,40 @@
+body.path-entrar .aculta-login__reset-link {
+  display: inline-block;
+  margin-block: .25rem 1rem;
+  text-decoration: underline;
+  text-decoration-color: var(--color-brand-primary);
+  text-underline-offset: .2em;
+  color: var(--color-text-primary);
+}
+
+body.path-entrar .aculta-login__divider {
+  display: flex;
+  align-items: center;
+  margin-block: 1rem;
+  text-transform: uppercase;
+  color: var(--color-text-secondary);
+  font: 500 .875rem/1.4 var(--font-family-base);
+  gap: .75rem;
+}
+
+body.path-entrar .aculta-login__divider span {
+  flex: 1;
+  block-size: 1px;
+  background-color: var(--color-brand-primary);
+}
+
+body.path-entrar .aculta-login__registration {
+  margin-block-start: 1.25rem;
+  padding-block-start: 1rem;
+  color: var(--color-text-primary);
+  border-block-start: 1px solid var(--color-border);
+  font: 400 .875rem/1.5 var(--font-family-base);
+}
+
+body.path-entrar .aculta-login__registration a {
+  text-decoration: underline;
+  text-decoration-color: var(--color-brand-highlight);
+  text-underline-offset: .2em;
+  color: var(--color-text-primary);
+  font-weight: 600;
+}

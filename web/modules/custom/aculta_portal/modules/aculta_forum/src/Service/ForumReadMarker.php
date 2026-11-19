@@ -9,7 +9,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\user\UserInterface;
 
 /**
@@ -20,7 +21,7 @@ final class ForumReadMarker {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly AccountProxyInterface $currentUser,
     private readonly TranslationInterface $stringTranslation,
     private readonly MessengerInterface $messenger,
@@ -29,10 +30,10 @@ final class ForumReadMarker {
   /**
    * Returns the number of currently accessible public topics. */
   public function countEligibleTopics(): int {
-    if ($this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+    if ($this->siteManager->getCurrentSiteKey()?->value !== 'forum') {
       return 0;
     }
-    $domain = $this->domainPurposeManager->getDomain('forum');
+    $domain = $this->siteManager->getDomain(SiteKey::Forum);
     if ($domain === NULL) {
       return 0;
     }
@@ -49,7 +50,7 @@ final class ForumReadMarker {
    *   Authenticated account captured when the user confirmed the action.
    * @param int $total
    *   Eligible topic count captured when the batch was created.
-   * @param array $context
+   * @param array<string, mixed> $context
    *   Core Batch API context.
    */
   public function markBatch(int $accountId, int $total, array &$context): void {
@@ -61,25 +62,29 @@ final class ForumReadMarker {
     }
 
     $account = $this->entityTypeManager->getStorage('user')->load($accountId);
-    $domain = $this->domainPurposeManager->getDomain('forum');
+    $domain = $this->siteManager->getDomain(SiteKey::Forum);
     if (!$account instanceof UserInterface || $domain === NULL) {
       $context['finished'] = 1;
       return;
     }
 
-    $processed = $this->domainPurposeManager->runInPurpose('forum', function () use ($domain, $account, $total, &$context): bool {
-      if ($this->domainPurposeManager->getCurrentPurpose() !== 'forum') {
+    $processed = $this->siteManager->runInSite('forum', function () use ($domain, $account, $total, &$context): bool {
+      if ($this->siteManager->getCurrentSiteKey()?->value !== 'forum') {
         $context['finished'] = 1;
         $context['message'] = $this->stringTranslation->translate('O contexto do Fórum não está disponível; nenhuma discussão adicional foi marcada.');
         return FALSE;
       }
 
-      $lastId = (int) ($context['sandbox']['last_id'] ?? 0);
-      $ids = $this->topicQuery((string) $domain->id())
+      $sandbox = isset($context['sandbox']) && is_array($context['sandbox']) ? $context['sandbox'] : [];
+      $lastIdVal = $sandbox['last_id'] ?? 0;
+      $lastId = is_numeric($lastIdVal) ? (int) $lastIdVal : 0;
+      $rawIds = $this->topicQuery((string) $domain->id())
         ->condition('nid', $lastId, '>')
         ->sort('nid', 'ASC')
         ->range(0, self::BATCH_SIZE)
         ->execute();
+
+      $ids = is_array($rawIds) ? array_values($rawIds) : [];
 
       if ($ids === []) {
         $context['finished'] = 1;
@@ -87,19 +92,28 @@ final class ForumReadMarker {
         return TRUE;
       }
 
+      $results = isset($context['results']) && is_array($context['results']) ? $context['results'] : [];
+      $markedVal = $results['marked'] ?? 0;
+      $markedCount = is_numeric($markedVal) ? (int) $markedVal : 0;
+
       foreach ($ids as $id) {
-        // history_write() is the installed History module's public API.
-        history_write((int) $id, $account);
-        $lastId = (int) $id;
-        $context['results']['marked'] = (int) ($context['results']['marked'] ?? 0) + 1;
+        if (is_numeric($id)) {
+          // history_write() is the installed History module's public API.
+          history_write((int) $id, $account);
+          $lastId = (int) $id;
+          $markedCount++;
+        }
       }
-      $context['sandbox']['last_id'] = $lastId;
+      $results['marked'] = $markedCount;
+      $context['results'] = $results;
+
+      $sandbox['last_id'] = $lastId;
+      $context['sandbox'] = $sandbox;
       // Progress follows the number of topics actually marked, not the sparse
       // node IDs, because IDs advance far faster than the eligible count.
-      $marked = (int) ($context['results']['marked'] ?? 0);
-      $context['finished'] = min(0.99, $total > 0 ? $marked / $total : 0.99);
+      $context['finished'] = min(0.99, $total > 0 ? $markedCount / $total : 0.99);
       $context['message'] = $this->stringTranslation->translate('Marcando discussões como lidas (@count processadas).', [
-        '@count' => $context['results']['marked'],
+        '@count' => (string) $markedCount,
       ]);
       return TRUE;
     });
@@ -111,15 +125,22 @@ final class ForumReadMarker {
   }
 
   /**
-   * Reports the final result of the Core batch. */
+   * Reports the final result of the Core batch.
+   *
+   * @param array<string, mixed> $results
+   *   The batch results.
+   * @param array<int|string, mixed> $operations
+   *   Remaining batch operations.
+   */
   public function finishBatch(bool $success, array $results, array $operations, string $elapsed): void {
     if (!$success) {
       $this->messenger->addError($this->stringTranslation->translate('O histórico foi atualizado parcialmente. Você pode executar a ação novamente com segurança.'));
       return;
     }
-    $count = (int) ($results['marked'] ?? 0);
+    $countVal = $results['marked'] ?? 0;
+    $count = is_numeric($countVal) ? (int) $countVal : 0;
     $this->messenger->addStatus($this->stringTranslation->translate('Foram marcadas @count discussões como lidas.', [
-      '@count' => $count,
+      '@count' => (string) $count,
     ]));
   }
 

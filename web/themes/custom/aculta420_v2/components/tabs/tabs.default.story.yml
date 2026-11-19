@@ -1,0 +1,8 @@
+name: Navegação de suíte
+description: Links de rota normais, com a página atual marcada por aria-current.
+component: aculta420_v2:tabs
+props:
+  label: Suítes ACULTA
+slots:
+  items:
+    markup: '<div class="item-list"><ul class="item-list__items"><li><a href="/marley" aria-current="page">Marley</a></li><li><a href="/ganjalab">Ganjalab</a></li><li><a href="/we-sativa">WE Sativa</a></li><li><a href="/culturas">Culturas</a></li><li><a href="/green-stash">Green Stash</a></li></ul></div>'

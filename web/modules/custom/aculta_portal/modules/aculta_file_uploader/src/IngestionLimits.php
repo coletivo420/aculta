@@ -64,6 +64,7 @@ final class IngestionLimits {
    * Valores em megabytes, já validados.
    *
    * @param array<string, int> $megabytes
+   *   Limites em megabytes, indexados pela chave do limite.
    */
   private function __construct(private readonly array $megabytes) {}
 

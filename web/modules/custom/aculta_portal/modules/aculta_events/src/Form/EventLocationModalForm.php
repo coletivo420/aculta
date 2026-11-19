@@ -7,36 +7,51 @@ namespace Drupal\aculta_events\Form;
 use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Adapter\LocationContributionAdapter;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
+use Drupal\aculta_events\Route\EventRouteContext;
 use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_portal\Account\StreetNumberField;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
-use Drupal\Core\Ajax\InvokeCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
+use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Modal AJAX com duas etapas para buscar ou cadastrar locais reutilizáveis.
  */
 final class EventLocationModalForm extends FormBase {
 
+  /**
+   * Wrapper do formulário trocado pelo envio HTMX.
+   */
+  private const WRAPPER_ID = 'aculta-location-modal-form-wrapper';
+
+  /**
+   * URL do próprio modal (com o contexto do widget) para o `hx-post`.
+   */
+  protected Url $htmxUrl;
+
   public function __construct(
     #[Autowire(service: 'entity_type.manager')]
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_events.permission_policy')]
-    private readonly EventPermissionPolicy $permissionPolicy,
-    #[Autowire(service: 'aculta_contributions.lifecycle')]
-    private readonly ?ContributionLifecycle $contributions = NULL,
+    protected readonly EventPermissionPolicy $permissionPolicy,
+    #[Autowire(service: 'renderer')]
+    protected readonly RendererInterface $renderer,
+    #[Autowire(service: 'aculta_events.route_context')]
+    protected readonly EventRouteContext $eventRouteContext,
+    #[Autowire(service: 'aculta_cgu.contribution_lifecycle')]
+    protected readonly ?ContributionLifecycle $contributions = NULL,
     #[Autowire(service: 'aculta_events.location_contribution_adapter')]
-    private readonly ?LocationContributionAdapter $locationAdapter = NULL,
+    protected readonly ?LocationContributionAdapter $locationAdapter = NULL,
   ) {}
 
   /**
@@ -46,7 +61,9 @@ final class EventLocationModalForm extends FormBase {
     return new static(
       $container->get('entity_type.manager'),
       $container->get('aculta_events.permission_policy'),
-      $container->has('aculta_contributions.lifecycle') ? $container->get('aculta_contributions.lifecycle') : NULL,
+      $container->get('renderer'),
+      $container->get('aculta_events.route_context'),
+      $container->has('aculta_cgu.contribution_lifecycle') ? $container->get('aculta_cgu.contribution_lifecycle') : NULL,
       $container->has('aculta_events.location_contribution_adapter') ? $container->get('aculta_events.location_contribution_adapter') : NULL,
     );
   }
@@ -86,7 +103,16 @@ final class EventLocationModalForm extends FormBase {
     $form_state->set('field_name', $fieldName);
     $form_state->set('wrapper_id', $wrapperId);
 
+    $query = ['field_name' => $fieldName, 'wrapper_id' => $wrapperId];
     $targetId = $form_state->get('target_id') ?? $request->query->get('target_id');
+    if ($targetId !== NULL && (int) $targetId > 0) {
+      $query['target_id'] = (int) $targetId;
+    }
+    $this->htmxUrl = Url::fromRoute(
+      $this->eventRouteContext->route('aculta_events.location_modal', 'aculta_events.organizer_location_modal'),
+      [],
+      ['query' => $query],
+    );
     if ($targetId !== NULL) {
       $form_state->set('target_id', (int) $targetId);
     }
@@ -143,11 +169,8 @@ final class EventLocationModalForm extends FormBase {
       '#value' => $this->t('Buscar'),
       '#name' => 'op_search',
       '#submit' => ['::submitSearch'],
-      '#ajax' => [
-        'callback' => '::ajaxRebuildModal',
-        'wrapper' => 'aculta-location-modal-form-wrapper',
-      ],
     ];
+    $this->applyHtmx($form['search_bar']['search_submit']);
 
     if ($searchTerm !== '') {
       $form['search_bar']['search_clear'] = [
@@ -155,12 +178,10 @@ final class EventLocationModalForm extends FormBase {
         '#value' => $this->t('Limpar'),
         '#name' => 'op_search_clear',
         '#submit' => ['::submitClearSearch'],
-        '#ajax' => [
-          'callback' => '::ajaxRebuildModal',
-          'wrapper' => 'aculta-location-modal-form-wrapper',
-        ],
         '#limit_validation_errors' => [],
+        '#attributes' => ['data-portal-ui' => 'button-secondary'],
       ];
+      $this->applyHtmx($form['search_bar']['search_clear']);
     }
 
     $query = $this->entityTypeManager->getStorage('aculta_event_location')
@@ -191,7 +212,8 @@ final class EventLocationModalForm extends FormBase {
       if ($loc->hasField('field_endereco') && !$loc->get('field_endereco')->isEmpty()) {
         $addr = $loc->get('field_endereco')->first();
         if ($addr) {
-          $parts = array_filter([$addr->locality, $addr->administrative_area]);
+          $addressValue = $addr->getValue();
+          $parts = array_filter([$addressValue['locality'] ?? NULL, $addressValue['administrative_area'] ?? NULL]);
           $addressText = implode(' - ', $parts);
         }
       }
@@ -199,23 +221,20 @@ final class EventLocationModalForm extends FormBase {
       $locId = (int) $loc->id();
       $isPublic = ($loc->get('field_status')->value ?? '') === 'publicado';
 
+      $select = [
+        '#type' => 'submit',
+        '#value' => $this->t('Selecionar'),
+        '#name' => 'select_location_' . $locId,
+        '#location_id' => $locId,
+        '#submit' => ['::submitSelectLocation'],
+        '#attributes' => ['data-portal-ui' => 'event-location-button-primary-small'],
+      ];
+      $this->applyHtmx($select);
       $rows[$locId] = [
         'title' => $loc->label(),
         'city' => $addressText !== '' ? $addressText : $this->t('Brasil'),
         'status' => $isPublic ? $this->t('Publicado') : $this->t('Rascunho'),
-        'actions' => [
-          'data' => [
-            '#type' => 'submit',
-            '#value' => $this->t('Selecionar'),
-            '#name' => 'select_location_' . $locId,
-            '#location_id' => $locId,
-            '#submit' => ['::submitSelectLocation'],
-            '#ajax' => [
-              'callback' => '::ajaxSelectLocation',
-            ],
-            '#attributes' => ['data-portal-ui' => 'event-location-button-primary-small'],
-          ],
-        ],
+        'actions' => ['data' => $select],
       ];
     }
 
@@ -241,21 +260,16 @@ final class EventLocationModalForm extends FormBase {
         '#value' => $this->t('Cadastrar novo local'),
         '#name' => 'op_switch_create',
         '#submit' => ['::switchToCreate'],
-        '#ajax' => [
-          'callback' => '::ajaxRebuildModal',
-          'wrapper' => 'aculta-location-modal-form-wrapper',
-        ],
         '#limit_validation_errors' => [],
         '#attributes' => ['data-portal-ui' => 'event-location-button-action'],
       ];
+      $this->applyHtmx($form['actions']['switch_create']);
     }
 
     $form['actions']['cancel'] = [
       '#type' => 'button',
       '#value' => $this->t('Cancelar'),
-      '#ajax' => [
-        'callback' => '::ajaxCloseModal',
-      ],
+      '#attributes' => ['data-aculta-dialog-close' => ''],
     ];
   }
 
@@ -332,9 +346,6 @@ final class EventLocationModalForm extends FormBase {
         '#value' => $this->t('Salvar e selecionar este local'),
         '#name' => 'op_create_save',
         '#submit' => ['::submitCreateLocation'],
-        '#ajax' => [
-          'callback' => '::ajaxCreateLocation',
-        ],
         '#attributes' => ['data-portal-ui' => 'event-location-button-primary'],
       ],
       'back_to_search' => [
@@ -342,21 +353,17 @@ final class EventLocationModalForm extends FormBase {
         '#value' => $this->t('Voltar para busca'),
         '#name' => 'op_back_search',
         '#submit' => ['::switchToSearch'],
-        '#ajax' => [
-          'callback' => '::ajaxRebuildModal',
-          'wrapper' => 'aculta-location-modal-form-wrapper',
-        ],
         '#limit_validation_errors' => [],
         '#attributes' => ['data-portal-ui' => 'event-location-button-secondary'],
       ],
       'cancel' => [
         '#type' => 'button',
         '#value' => $this->t('Cancelar'),
-        '#ajax' => [
-          'callback' => '::ajaxCloseModal',
-        ],
+        '#attributes' => ['data-portal-ui' => 'button-secondary', 'data-aculta-dialog-close' => ''],
       ],
     ];
+    $this->applyHtmx($form['actions']['save_and_select']);
+    $this->applyHtmx($form['actions']['back_to_search']);
   }
 
   /**
@@ -436,6 +443,13 @@ final class EventLocationModalForm extends FormBase {
       $loc = $this->entityTypeManager->getStorage('aculta_event_location')->load($locationId);
       if ($loc instanceof EventLocation && $loc->access('view', $this->currentUser())) {
         $form_state->set('selected_location_id', $locationId);
+        if ($this->isHtmxRequest()) {
+          $form_state->setResponse($this->htmxUpdateParentResponse(
+            $locationId,
+            (string) $form_state->get('field_name'),
+            (string) $form_state->get('wrapper_id'),
+          ));
+        }
       }
       else {
         $form_state->setErrorByName('', (string) $this->t('Você não tem permissão para selecionar este local.'));
@@ -521,6 +535,13 @@ final class EventLocationModalForm extends FormBase {
     $location->save();
 
     $form_state->set('selected_location_id', (int) $location->id());
+    if ($this->isHtmxRequest()) {
+      $form_state->setResponse($this->htmxUpdateParentResponse(
+        (int) $location->id(),
+        (string) $form_state->get('field_name'),
+        (string) $form_state->get('wrapper_id'),
+      ));
+    }
   }
 
   /**
@@ -531,79 +552,42 @@ final class EventLocationModalForm extends FormBase {
   }
 
   /**
-   * AJAX callback para reconstruir o modal após troca de tela ou busca.
+   * Aplica HTMX a um botão do modal: recorta e troca o wrapper do formulário.
    */
-  public function ajaxRebuildModal(array &$form, FormStateInterface $form_state): array {
-    return $form;
+  private function applyHtmx(array &$button): void {
+    (new Htmx())
+      ->post($this->htmxUrl)
+      ->select('#' . self::WRAPPER_ID)
+      ->target('#' . self::WRAPPER_ID)
+      ->swap('outerHTML')
+      ->onlyMainContent()
+      ->applyTo($button);
   }
 
   /**
-   * AJAX callback para fechar o modal.
+   * Resposta HTMX que fecha o modal e troca o widget no formulário pai.
+   *
+   * O card traz o campo oculto `target_id` atualizado, então o widget inteiro
+   * volta fora de banda e o formulário pai mantém os demais campos.
    */
-  public function ajaxCloseModal(array &$form, FormStateInterface $form_state): AjaxResponse {
-    $response = new AjaxResponse();
-    $response->addCommand(new CloseModalDialogCommand());
-    return $response;
-  }
+  public function htmxUpdateParentResponse(int $locationId, string $fieldName, string $wrapperId): Response {
+    $card = [
+      '#type' => 'container',
+      '#attributes' => [
+        'id' => $wrapperId,
+        'data-portal-ui' => 'event-location-widget',
+        'hx-swap-oob' => 'outerHTML',
+      ],
+    ] + EventLocationModalWidget::buildCardOrEmpty($locationId, $fieldName, $wrapperId, $this->entityTypeManager, $this->currentUser(), $this->eventRouteContext, $this->getStringTranslation());
 
-  /**
-   * AJAX callback para selecionar local e atualizar o formulário pai.
-   */
-  public function ajaxSelectLocation(array &$form, FormStateInterface $form_state): AjaxResponse|array {
-    if ($form_state->hasAnyErrors()) {
-      return $form;
-    }
-    $locationId = (int) $form_state->get('selected_location_id');
-    return $this->buildUpdateParentResponse(
-      $locationId,
-      (string) $form_state->get('field_name'),
-      (string) $form_state->get('wrapper_id')
+    return new Response(
+      (string) $this->renderer->renderInIsolation($card),
+      Response::HTTP_OK,
+      [
+        'Content-Type' => 'text/html; charset=UTF-8',
+        'HX-Trigger' => 'aculta:close-dialog',
+      ],
     );
-  }
-
-  /**
-   * AJAX callback para salvar novo local e atualizar o pai.
-   */
-  public function ajaxCreateLocation(array &$form, FormStateInterface $form_state): AjaxResponse|array {
-    if ($form_state->hasAnyErrors()) {
-      return $form;
-    }
-    if ($form_state->get('proposal_submitted')) {
-      return $form;
-    }
-    $locationId = (int) $form_state->get('selected_location_id');
-    return $this->buildUpdateParentResponse(
-      $locationId,
-      (string) $form_state->get('field_name'),
-      (string) $form_state->get('wrapper_id')
-    );
-  }
-
-  /**
-   * Constrói resposta AJAX que fecha o modal e atualiza o formulário pai.
-   */
-  private function buildUpdateParentResponse(int $locationId, string $fieldName, string $wrapperId): AjaxResponse {
-    $response = new AjaxResponse();
-    $response->addCommand(new CloseModalDialogCommand());
-
-    $cardArray = EventLocationModalWidget::buildCardOrEmpty($locationId, $fieldName, $wrapperId);
-    $cardArray['#prefix'] = '<div id="' . $wrapperId . '" class="aculta-event-location-widget">';
-    $cardArray['#suffix'] = '</div>';
-
-    $targetInputId = $wrapperId === 'field-event-location-wrapper'
-      ? '#field-event-location-target-id'
-      : '#' . $wrapperId . '-target-id';
-
-    $response->addCommand(new ReplaceCommand('#' . $wrapperId, $cardArray));
-    $response->addCommand(new InvokeCommand($targetInputId, 'val', [(string) $locationId]));
-    $response->addCommand(new InvokeCommand($targetInputId, 'trigger', ['change']));
-
-    if ($targetInputId !== '#field-event-location-target-id') {
-      $response->addCommand(new InvokeCommand('#field-event-location-target-id', 'val', [(string) $locationId]));
-      $response->addCommand(new InvokeCommand('#field-event-location-target-id', 'trigger', ['change']));
-    }
-
-    return $response;
   }
 
 }

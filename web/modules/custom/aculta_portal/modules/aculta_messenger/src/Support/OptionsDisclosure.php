@@ -15,9 +15,11 @@ use Drupal\Core\Template\Attribute;
 final class OptionsDisclosure {
 
   /**
+   * Monta o acordeão nativo de opções com rótulo e ícone.
+   *
    * @param string $label
    *   The visible and accessible label ("Opções").
-   * @param array<string, mixed> $panel
+   * @param array<array-key, mixed> $panel
    *   The menu items (render arrays).
    * @param bool $open
    *   Open at first render (after an action the menu stays open, so its result is what the member sees).

@@ -44,11 +44,16 @@ final class GeocodingServiceTest extends UnitTestCase {
     $http = $this->createMock(ClientInterface::class);
     $http->expects($this->once())
       ->method('request')
-      ->with('GET', 'https://nominatim.openstreetmap.org/search', $this->callback(static function (array $options): bool {
-        return ($options['headers']['User-Agent'] ?? '') === 'ACULTA Maps/1.0'
-          && ($options['query']['countrycodes'] ?? '') === 'br'
-          && ($options['query']['format'] ?? '') === 'jsonv2'
-          && ($options['query']['limit'] ?? 0) === 1
+      ->with('GET', 'https://nominatim.openstreetmap.org/search', $this->callback(static function (mixed $options): bool {
+        if (!is_array($options)) {
+          return FALSE;
+        }
+        $headers = is_array($options['headers'] ?? NULL) ? $options['headers'] : [];
+        $query = is_array($options['query'] ?? NULL) ? $options['query'] : [];
+        return ($headers['User-Agent'] ?? '') === 'ACULTA Maps/1.0'
+          && ($query['countrycodes'] ?? '') === 'br'
+          && ($query['format'] ?? '') === 'jsonv2'
+          && ($query['limit'] ?? 0) === 1
           && ($options['timeout'] ?? 0) === 8;
       }))
       ->willReturn(new Response(200, [], '[{"lat":"-16.68","lon":"-49.26"}]'));

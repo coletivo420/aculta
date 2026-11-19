@@ -1,0 +1,10 @@
+{% set ratio = ratio|default('equal') %}
+{% if ratio not in ['equal', 'wide'] %}
+  {% set ratio = 'equal' %}
+{% endif %}
+<div{{ attributes.addClass('layout-two-columns', 'layout-two-columns--' ~ ratio) }}>
+  <div class="layout-two-columns__primary">{{ primary }}</div>
+  {% if secondary %}
+    <div class="layout-two-columns__secondary">{{ secondary }}</div>
+  {% endif %}
+</div>

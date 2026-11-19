@@ -5,7 +5,7 @@ dependencies:
     - field.storage.message.field_aculta_messenger_source_pm
     - message.template.aculta_msg_private_notification
   module:
-    - private_message
+    - aculta_messenger
   enforced:
     module:
       - aculta_messenger

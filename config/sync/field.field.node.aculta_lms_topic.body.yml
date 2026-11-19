@@ -6,7 +6,7 @@ dependencies:
     - field.storage.node.body
     - node.type.aculta_lms_topic
   module:
-    - text
+    - text_with_summary
 _core:
   default_config_hash: VExPBuE7QSlwWhhGcNVYdHuk5WEaTB1YOQZgUTTesu0
 id: node.aculta_lms_topic.body

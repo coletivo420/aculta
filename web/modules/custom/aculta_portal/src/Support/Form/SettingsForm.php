@@ -14,22 +14,56 @@ use Drupal\Core\Form\FormStateInterface;
  */
 final class SettingsForm extends ConfigFormBase {
 
-  /** Valores padrão de instalação (R$). */
+  /**
+   * Valores padrão de instalação (R$). */
   public const VALORES_PADRAO = [5, 10, 20, 50, 100];
 
-  /** Limite de cartões de valor na página. */
+  /**
+   * Limite de cartões de valor na página. */
   public const MAXIMO_VALORES = 8;
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_support_settings';
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @return list<string>
+   */
   protected function getEditableConfigNames(): array {
     return ['aculta_portal.support'];
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<string, mixed>
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config('aculta_portal.support');
+    $amountsConfig = $config->get('amounts');
+    $amountsParts = [];
+    if (is_iterable($amountsConfig)) {
+      foreach ($amountsConfig as $v) {
+        if (is_int($v) || is_string($v) || is_float($v)) {
+          $amountsParts[] = (string) $v;
+        }
+      }
+    }
+    if ($amountsParts === []) {
+      foreach (self::VALORES_PADRAO as $v) {
+        $amountsParts[] = (string) $v;
+      }
+    }
+    $amountsStr = implode(', ', $amountsParts);
+
     $form['intro'] = [
       '#type' => 'textarea',
       '#title' => $this->t('Introdução pública'),
@@ -39,7 +73,7 @@ final class SettingsForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => $this->t('Valores padrão (em reais)'),
       '#description' => $this->t('Separados por vírgula, em ordem de exibição, por exemplo: 5, 10, 20, 50, 100. Máximo de @max valores. Valem quando não há campanha vigente.', ['@max' => self::MAXIMO_VALORES]),
-      '#default_value' => implode(', ', $config->get('amounts') ?? self::VALORES_PADRAO),
+      '#default_value' => $amountsStr,
       '#required' => TRUE,
     ];
     $form['custom_amount'] = [
@@ -47,12 +81,21 @@ final class SettingsForm extends ConfigFormBase {
       '#title' => $this->t('Permitir valor personalizado ("Outro valor") quando não há campanha vigente'),
       '#default_value' => $config->get('custom_amount') ?? TRUE,
     ];
-    return parent::buildForm($form, $form_state);
+    /** @var array<string, mixed> $builtForm */
+    $builtForm = parent::buildForm($form, $form_state);
+    return $builtForm;
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    parent::validateForm($form, $form_state);
-    $valores = $this->valoresDoTexto((string) $form_state->getValue('amounts'));
+    $rawAmounts = $form_state->getValue('amounts');
+    $amountsStr = is_string($rawAmounts) ? $rawAmounts : '';
+    $valores = $this->valoresDoTexto($amountsStr);
     if ($valores === NULL) {
       $form_state->setErrorByName('amounts', $this->t('Informe valores inteiros maiores que zero, separados por vírgula.'));
     }
@@ -61,19 +104,32 @@ final class SettingsForm extends ConfigFormBase {
     }
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $rawIntro = $form_state->getValue('intro');
+    $introStr = is_string($rawIntro) ? $rawIntro : '';
+    $rawAmounts = $form_state->getValue('amounts');
+    $amountsStr = is_string($rawAmounts) ? $rawAmounts : '';
     $this->config('aculta_portal.support')
-      ->set('intro', (string) $form_state->getValue('intro'))
-      ->set('amounts', $this->valoresDoTexto((string) $form_state->getValue('amounts')) ?? self::VALORES_PADRAO)
+      ->set('intro', $introStr)
+      ->set('amounts', $this->valoresDoTexto($amountsStr) ?? self::VALORES_PADRAO)
       ->set('custom_amount', (bool) $form_state->getValue('custom_amount'))
       ->save();
-    parent::submitForm($form, $form_state);
   }
 
   /**
    * Lista de valores sem repetição, na ordem informada. NULL quando o texto não é uma lista válida.
    *
+   * @param string $texto
+   *   Texto com valores separados por vírgula.
+   *
    * @return int[]|null
+   *   Valores inteiros únicos na ordem informada, ou NULL se o texto for inválido.
    */
   public static function valoresDoTexto(string $texto): ?array {
     $partes = array_filter(array_map('trim', explode(',', $texto)), static fn (string $p): bool => $p !== '');

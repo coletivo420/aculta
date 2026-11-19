@@ -90,7 +90,7 @@ final class WikiLeadImageCleanup {
     }
     $mediaStorage = $this->entityTypeManager->getStorage('media');
     foreach ($fileStorage->loadMultiple($fileIds) as $file) {
-      if (!$file instanceof FileInterface || !str_starts_with($file->getFileUri(), 'private://wiki/imagens/')) {
+      if (!str_starts_with($file->getFileUri(), 'private://wiki/imagens/')) {
         continue;
       }
 
@@ -105,8 +105,7 @@ final class WikiLeadImageCleanup {
           ->execute();
         $canCheckFile = TRUE;
         foreach ($mediaStorage->loadMultiple($mediaIds) as $media) {
-          if (!$media instanceof MediaInterface
-            || $media->bundle() !== 'image'
+          if ($media->bundle() !== 'image'
             || $media->isPublished()
             || !$media->hasField('field_media_image')
             || $media->get('field_media_image')->isEmpty()

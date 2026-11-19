@@ -159,6 +159,7 @@ final class SubmissionUploadPolicyKernelTest extends KernelTestBase {
    * Extensões aceitas por imagens e documentos, na ordem do catálogo.
    *
    * @return string[]
+   *   Extensões de imagem e de documento aceitas.
    */
   private function allowed(?string $consumer = NULL): array {
     return array_merge($this->policy->imageExtensions($consumer), $this->policy->documentExtensions($consumer));

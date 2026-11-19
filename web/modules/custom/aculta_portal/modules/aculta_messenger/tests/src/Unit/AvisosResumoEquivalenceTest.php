@@ -80,6 +80,9 @@ final class AvisosResumoEquivalenceTest extends UnitTestCase {
 
   /**
    * Runs one fixed scenario and returns its normalized observable outcome.
+   *
+   * @return array<mixed>
+   *   Resultado do cenário.
    */
   private function runScenario(string $scenario): array {
     $now = 1_792_800_000;

@@ -1,0 +1,6 @@
+name: ACULTA Brócolis - Fill
+description: Desenho original ACULTA Brócolis na variante fill.
+props:
+  name: aculta-brocolis
+  variant: fill
+  size: xl

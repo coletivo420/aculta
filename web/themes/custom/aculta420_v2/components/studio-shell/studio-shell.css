@@ -1,0 +1,124 @@
+/* ACULTA Studio (portado do V1 em 2026-11-05). Estado: DEFERRED (sem captura visual). */
+
+.studio a:not(.button) {
+  color: var(--color-link-editorial);
+}
+
+.studio a:not(.button):is(:hover, :focus-visible) {
+  color: var(--color-brand-primary);
+}
+
+.studio h1 {
+  font-size: clamp(2rem, 7vw, 3rem);
+  font-weight: 700;
+}
+
+.studio h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.studio h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.studio h4 {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.studio h5 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.studio h6 {
+  font-size: 1rem;
+  font-weight: 300;
+}
+
+/* Ações do Studio: substituem os utilitários aculta-u-flex/wrap/gap-2 e o
+   reset de lista que o mapa de tokens aplicava antes de 2026-11-12. */
+.studio__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.studio__actions--grid {
+  display: grid;
+  gap: var(--spacing-sm);
+}
+
+.studio__actions > li {
+  margin: 0;
+}
+
+.studio__layout {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+  background-color: var(--color-surface-raised);
+}
+
+.studio__sidebar {
+  flex: 1 1 100%;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.studio__main {
+  flex: 1 1 100%;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (min-width: 48rem) {
+  .studio__layout {
+    flex-direction: row;
+  }
+
+  .studio__sidebar {
+    flex: 0 0 14rem;
+    width: auto;
+    min-width: auto;
+    max-width: 14rem;
+  }
+
+  .studio__main {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+  }
+}
+
+html body a[data-portal-ui="studio-tab"][data-aculta-studio="tab"][aria-current="page"],
+html body a[data-portal-ui="studio-tab"][data-aculta-studio="tab"][aria-current="page"]:is(:hover, :focus-visible),
+html body a[data-portal-ui="studio-link"][data-aculta-studio="subtab"][aria-current="page"],
+html body a[data-portal-ui="studio-link"][data-aculta-studio="subtab"][aria-current="page"]:is(:hover, :focus-visible) {
+  color: var(--color-on-highlight);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio__link,
+  .studio__action {
+    transition: none !important;
+  }
+}
+
+.studio__live:empty {
+  display: none;
+}
+
+.studio__live:not(:empty) {
+  color: var(--color-text-muted);
+  font-size: .875em;
+}

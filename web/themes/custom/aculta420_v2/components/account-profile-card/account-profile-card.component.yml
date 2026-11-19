@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão privado de perfil
+description: Apresenta biografia ou redes sociais preparadas pelo módulo de Conta.
+status: stable
+group: Conta
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Cartão de perfil
+    description: Render array da biografia ou das redes sociais, já autorizado e preparado pelo módulo.
+assets:
+  css:
+    component:
+      account-profile-card.css: {}

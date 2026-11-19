@@ -6,15 +6,20 @@ namespace Drupal\aculta_donation\Form;
 
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\aculta_donation\Entity\DonationCampaign;
 
 /**
  * Formulário de campanha de doação.
  */
 final class DonationCampaignForm extends EntityForm {
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @return array<mixed>
+   */
   public function form(array $form, FormStateInterface $form_state): array {
-    $form = parent::form($form, $form_state);
+    $form = (array) parent::form($form, $form_state);
     /** @var \Drupal\aculta_donation\Entity\DonationCampaign $campanha */
     $campanha = $this->entity;
 
@@ -64,36 +69,65 @@ final class DonationCampaignForm extends EntityForm {
     return $form;
   }
 
+  /**
+   * Verifica se já existe uma campanha com o identificador informado.
+   *
+   * @param string $id
+   *   Identificador da campanha.
+   *
+   * @return bool
+   *   TRUE se a campanha existir.
+   */
   public function exists(string $id): bool {
     return (bool) $this->entityTypeManager->getStorage('aculta_donation_campaign')->load($id);
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
-    $inicio = (string) $form_state->getValue('start');
-    $fim = (string) $form_state->getValue('end');
+    $rawInicio = $form_state->getValue('start');
+    $inicio = is_scalar($rawInicio) ? (string) $rawInicio : '';
+    $rawFim = $form_state->getValue('end');
+    $fim = is_scalar($rawFim) ? (string) $rawFim : '';
     if ($inicio !== '' && $fim !== '' && $fim < $inicio) {
       $form_state->setErrorByName('end', $this->t('O término não pode ser anterior ao início.'));
     }
-    $valores = array_filter(array_map('trim', explode(',', (string) $form_state->getValue('amounts'))), static fn ($v) => $v !== '');
+    $rawAmounts = $form_state->getValue('amounts');
+    $amountsStr = is_scalar($rawAmounts) ? (string) $rawAmounts : '';
+    $valores = array_filter(array_map('trim', explode(',', $amountsStr)), static fn ($v) => $v !== '');
     $inteiros = array_filter($valores, static fn ($v) => ctype_digit($v) && (int) $v > 0);
     if ($valores === [] || count($inteiros) !== count($valores)) {
       $form_state->setErrorByName('amounts', $this->t('Informe valores inteiros maiores que zero, separados por vírgula.'));
     }
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   */
   public function save(array $form, FormStateInterface $form_state): int {
     /** @var \Drupal\aculta_donation\Entity\DonationCampaign $campanha */
     $campanha = $this->entity;
-    $valores = array_map('intval', array_filter(array_map('trim', explode(',', (string) $form_state->getValue('amounts')))));
+    $rawAmounts = $form_state->getValue('amounts');
+    $amountsStr = is_scalar($rawAmounts) ? (string) $rawAmounts : '';
+    $valores = array_map('intval', array_filter(array_map('trim', explode(',', $amountsStr))));
+    $rawStart = $form_state->getValue('start');
+    $rawEnd = $form_state->getValue('end');
+    $startStr = is_scalar($rawStart) ? (string) $rawStart : '';
+    $endStr = is_scalar($rawEnd) ? (string) $rawEnd : '';
     $campanha
-      ->setStart((string) $form_state->getValue('start'))
-      ->setEnd((string) $form_state->getValue('end'))
+      ->setStart($startStr)
+      ->setEnd($endStr)
       ->setAmounts($valores)
       ->setCustomAmount((bool) $form_state->getValue('customAmount'))
       ->set('status', (bool) $form_state->getValue('status'));
     $resultado = $campanha->save();
-    $this->messenger()->addStatus($this->t('Campanha @nome salva.', ['@nome' => $campanha->label()]));
+    $this->messenger()->addStatus($this->t('Campanha @nome salva.', ['@nome' => (string) $campanha->label()]));
     $form_state->setRedirectUrl($campanha->toUrl('collection'));
     return $resultado;
   }

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_mailer\Unit;
 
-use Drupal\aculta_mailer\Delivery\DeliverySettings;
 use Drupal\aculta_mailer\EventSubscriber\ReturnPathSubscriber;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;

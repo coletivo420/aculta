@@ -1,0 +1,11 @@
+{
+  "front": "aculta-gallery",
+  "purpose": "gallery",
+  "origin_env": "ACULTA_SITE_ORIGIN",
+  "source": "tests/browser/gallery/aculta-gallery/README.md",
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
+  "notes": "Sem rota pública declarada. A suíte usa nó descartável (SUITE_NODE_ID) e modos sem JavaScript e sem editor. Cobertura fica no script da frente."
+}

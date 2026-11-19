@@ -15,11 +15,15 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
 use Psr\EventDispatcher\EventDispatcherInterface;
 
-/** Tests learner notices for content stored in ACULTA's own entities. */
+/**
+ * Tests learner notices for content stored in ACULTA's own entities. */
 #[CoversClass(CourseContentEventHooks::class)]
 #[TestGroup('aculta_lms')]
 final class CourseContentEventHooksTest extends UnitTestCase {
 
+  /**
+   * Confirma que a publicação de um curso dispara o aviso de liberação.
+   */
   public function testPublishedCourseInsertPublishesRelease(): void {
     $course = $this->createMock(Group::class);
     $course->method('bundle')->willReturn('lms_course');
@@ -36,6 +40,9 @@ final class CourseContentEventHooksTest extends UnitTestCase {
     (new CourseContentEventHooks($dispatcher, $this->createMock(EntityTypeManagerInterface::class)))->entityInsert($course);
   }
 
+  /**
+   * Confirma que a publicação de uma aula dispara o aviso de liberação.
+   */
   public function testPublishedOwnLessonInsertPublishesRelease(): void {
     $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE]);
     $dispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -48,6 +55,9 @@ final class CourseContentEventHooksTest extends UnitTestCase {
     (new CourseContentEventHooks($dispatcher, $this->createMock(EntityTypeManagerInterface::class)))->entityInsert($lesson);
   }
 
+  /**
+   * Confirma que a atividade herda a disponibilidade de uma aula publicada.
+   */
   public function testActivityAvailabilityInheritsPublishedLesson(): void {
     $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE]);
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -65,6 +75,9 @@ final class CourseContentEventHooksTest extends UnitTestCase {
     (new CourseContentEventHooks($dispatcher, $manager))->entityInsert($activity);
   }
 
+  /**
+   * Confirma que atividade em aula não publicada não dispara aviso.
+   */
   public function testActivityUnderUnpublishedLessonDoesNotPublish(): void {
     $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => FALSE]);
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -78,6 +91,9 @@ final class CourseContentEventHooksTest extends UnitTestCase {
     (new CourseContentEventHooks($dispatcher, $manager))->entityInsert($activity);
   }
 
+  /**
+   * Confirma que edição editorial de aula já disponível não dispara aviso.
+   */
   public function testEditorialUpdateOfAvailableLessonDoesNotPublish(): void {
     $original = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE]);
     $lesson = $this->contentEntity('aculta_lms_lesson', 'lesson-uuid', ['published' => TRUE], $original);
@@ -87,6 +103,21 @@ final class CourseContentEventHooksTest extends UnitTestCase {
     (new CourseContentEventHooks($dispatcher, $this->createMock(EntityTypeManagerInterface::class)))->entityUpdate($lesson);
   }
 
+  /**
+   * Cria uma entidade de conteúdo simulada com os campos informados.
+   *
+   * @param string $type
+   *   ID do tipo de entidade.
+   * @param string $uuid
+   *   UUID da entidade.
+   * @param array<string, mixed> $fields
+   *   Valores dos campos indexados pelo nome.
+   * @param \Drupal\Core\Entity\ContentEntityBase|null $original
+   *   Entidade original, ou NULL.
+   *
+   * @return \Drupal\Core\Entity\ContentEntityBase
+   *   Entidade simulada.
+   */
   private function contentEntity(string $type, string $uuid, array $fields, ?ContentEntityBase $original = NULL): ContentEntityBase {
     $entity = $this->createMock(ContentEntityBase::class);
     $entity->method('getEntityTypeId')->willReturn($type);

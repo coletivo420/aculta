@@ -24,8 +24,9 @@ final class UploadPolicy {
   public const EXTENSIONS = FileUploadPolicy::EXTENSIONS;
 
   /**
-   * Tamanho máximo do arquivo enviado, em bytes (10 MB). Fonte única:
-   * aculta_file_uploader.
+   * Tamanho máximo do arquivo enviado, em bytes (10 MB).
+   *
+   * Fonte única: aculta_file_uploader.
    */
   public const MAX_BYTES = FileUploadPolicy::MAX_BYTES;
 

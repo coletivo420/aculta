@@ -60,6 +60,24 @@ final class XapiProgressAccessTest extends UnitTestCase {
   }
 
   /**
+   * Malformed field values cannot grant progress ownership.
+   */
+  public function testRejectsMalformedOwnerFieldValue(): void {
+    $field = $this->createMock(FieldItemListInterface::class);
+    $field->method('getValue')->willReturn([['value' => ['42']]]);
+    $progress = $this->createMock(ContentEntityInterface::class);
+    $progress->method('getEntityTypeId')->willReturn('aculta_lms_progress');
+    $progress->method('hasField')->with('uid')->willReturn(TRUE);
+    $progress->method('get')->with('uid')->willReturn($field);
+    $storage = $this->createMock(EntityStorageInterface::class);
+    $storage->method('load')->with(17)->willReturn($progress);
+    $manager = $this->createMock(EntityTypeManagerInterface::class);
+    $manager->method('getStorage')->with('aculta_lms_progress')->willReturn($storage);
+
+    self::assertFalse((new XapiProgressAccess($manager))->isOwnedBy(17, 42));
+  }
+
+  /**
    * Creates a progress entity double for a user.
    */
   private function progress(int $uid): ContentEntityInterface {

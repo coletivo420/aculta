@@ -1,0 +1,6 @@
+aculta_studio.account_presentation:
+  title: 'Apresentação da Conta'
+  route_name: aculta_studio.account_presentation
+  base_route: aculta_portal.admin
+  parent_id: aculta_portal.admin_tab_site
+  weight: 3

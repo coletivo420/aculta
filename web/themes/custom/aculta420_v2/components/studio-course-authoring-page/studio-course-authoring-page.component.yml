@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Criação de curso no Studio
+description: Apresenta o formulário proprietário de criação de curso no espaço do educador.
+status: stable
+group: Studio
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Formulário de criação
+    description: Form API do Group proprietário do curso, com ações e retorno preparados pelo Studio.
+assets:
+  css:
+    component:
+      studio-course-authoring-page.css: {}

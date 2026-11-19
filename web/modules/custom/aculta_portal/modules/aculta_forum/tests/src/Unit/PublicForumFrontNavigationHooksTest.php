@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Hook\PublicForumFrontNavigationHooks;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\PathProcessor\SiteFrontPathProcessor;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -30,7 +30,7 @@ final class PublicForumFrontNavigationHooksTest extends UnitTestCase {
   public function testNavigationUsesExistingLocalTasksAtThePurposeRoot(): void {
     $requestStack = new RequestStack();
     $request = Request::create('/');
-    $request->attributes->set(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, TRUE);
+    $request->attributes->set(SiteFrontPathProcessor::FRONT_ATTRIBUTE, TRUE);
     $requestStack->push($request);
 
     $taskBuild = [
@@ -55,25 +55,42 @@ final class PublicForumFrontNavigationHooksTest extends UnitTestCase {
     $hooks = new PublicForumFrontNavigationHooks(
       $localTaskManager,
       $requestStack,
-      $this->domainPurposeManager('forum'),
+      $this->siteManager('forum'),
     );
     $hooks->viewsPreRender($view);
 
+    /** @var array<string, mixed> $navigation */
     $navigation = $view->attachment_before['aculta_forum_front_navigation'];
     self::assertSame('menu_local_tasks', $navigation['#theme']);
-    self::assertSame('base:/', $navigation['#primary']['aculta_forum.public_front']['#link']['url']->getUri());
+    /** @var array<string, mixed> $primary */
+    $primary = $navigation['#primary'];
+    /** @var array<string, mixed> $frontTask */
+    $frontTask = $primary['aculta_forum.public_front'];
+    /** @var array<string, mixed> $link */
+    $link = $frontTask['#link'];
+    /** @var \Drupal\Core\Url $url */
+    $url = $link['url'];
+    self::assertSame('base:/', $url->getUri());
+    /** @var array<string, mixed> $attributes */
+    $attributes = $url->getOption('attributes');
     self::assertSame(
       'page',
-      $navigation['#primary']['aculta_forum.public_front']['#link']['url']->getOption('attributes')['aria-current'],
+      $attributes['aria-current'],
     );
-    self::assertTrue($navigation['#primary']['aculta_forum.public_front']['#active']);
-    self::assertFalse($navigation['#primary']['new_topics']['#active']);
+    self::assertTrue($frontTask['#active']);
+    /** @var array<string, mixed> $newTopicsTask */
+    $newTopicsTask = $primary['new_topics'];
+    self::assertFalse($newTopicsTask['#active']);
     self::assertSame($taskBuild[1], $navigation['#secondary']);
+    /** @var array{contexts: list<string>} $cache */
+    $cache = $navigation['#cache'];
     self::assertEqualsCanonicalizing(
       ['url.path', 'url.site', 'user.permissions'],
-      $navigation['#cache']['contexts'],
+      $cache['contexts'],
     );
-    self::assertSame($navigation['#cache']['contexts'], $view->element['#cache']['contexts']);
+    /** @var array{contexts: list<string>} $elementCache */
+    $elementCache = $view->element['#cache'];
+    self::assertSame($cache['contexts'], $elementCache['contexts']);
   }
 
   /**
@@ -87,7 +104,7 @@ final class PublicForumFrontNavigationHooksTest extends UnitTestCase {
       $requestStack = new RequestStack();
       $request = Request::create($path);
       if ($path === '/' && $view->id() === 'aculta_forum_public_topics') {
-        $request->attributes->set(PurposeFrontPathProcessor::FRONT_ATTRIBUTE, FALSE);
+        $request->attributes->set(SiteFrontPathProcessor::FRONT_ATTRIBUTE, FALSE);
       }
       $requestStack->push($request);
       $localTaskManager = $this->createMock(LocalTaskManagerInterface::class);
@@ -96,7 +113,7 @@ final class PublicForumFrontNavigationHooksTest extends UnitTestCase {
       (new PublicForumFrontNavigationHooks(
         $localTaskManager,
         $requestStack,
-        $this->domainPurposeManager('forum'),
+        $this->siteManager('forum'),
       ))->viewsPreRender($view);
 
       self::assertArrayNotHasKey('aculta_forum_front_navigation', $view->attachment_before);
@@ -128,13 +145,13 @@ final class PublicForumFrontNavigationHooksTest extends UnitTestCase {
   /**
    * Creates a purpose manager for the requested purpose.
    */
-  private function domainPurposeManager(string $purpose): DomainPurposeManager {
+  private function siteManager(string $purpose): DomainSiteManager {
     $domain = $this->createMock(DomainInterface::class);
     $domain->method('id')->willReturn($purpose === 'forum' ? 'forum_aculta_org' : 'aculta_org');
     $negotiator = $this->createMock(DomainNegotiatorInterface::class);
     $negotiator->method('getActiveDomain')->willReturn($domain);
 
-    return new DomainPurposeManager(
+    return new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $negotiator,
       $this->createMock(ConfigFactoryInterface::class),

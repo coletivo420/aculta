@@ -1,0 +1,77 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Barra de Respostas de Conteúdo
+description: Ações de um post do tópico (link permanente, excluir, editar, citar e responder) com ícones Phosphor coloridos. Cada ação aparece só quando sua URL é informada.
+status: stable
+group: Comunidade
+libraryOverrides:
+  dependencies:
+    - aculta_forum/discussion-reply-popup
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    admin_url:
+      type: [string, 'null']
+      title: URL dos controles administrativos
+      description: Quando informada (só para quem pode moderar), mostra o botão de controles do comentário no fim da barra.
+      default: null
+    admin_with_dialog:
+      type: boolean
+      title: Ícone com popup próprio
+      description: Verdadeiro na UI Library — o ícone de controles traz o popup (admin_dialog) e abre por aria-controls.
+      default: false
+    reply_with_dialog:
+      type: boolean
+      title: Responder, editar e citar abrem o popup da barra
+      description: Verdadeiro na UI Library — os três ícones abrem o popup de resposta (reply_dialog) por aria-controls, sem HTMX.
+      default: false
+    admin_author_name:
+      type: [string, 'null']
+      title: Autor para o rótulo do controle
+      description: Nome do autor do comentário, usado no rótulo acessível do botão de controles.
+      default: null
+    permalink_url:
+      type: [string, 'null']
+      title: Link permanente do post
+      description: URL canônica exibida como ação de link permanente quando informada.
+      default: null
+    delete_url:
+      type: [string, 'null']
+      title: URL para excluir o tópico ou resposta
+      description: URL carregada via HTMX para apresentar a confirmação ou formulário de exclusão.
+      default: null
+    delete_target:
+      type: [string, 'null']
+      title: Janela de confirmação de exclusão
+      description: ID da janela (delete-confirm) aberta pelo ícone de excluir. Quando informado, o ícone abre a confirmação em vez de um link.
+      default: null
+    edit_url:
+      type: [string, 'null']
+      title: URL para editar
+      description: URL carregada via HTMX para apresentar a edição da publicação.
+      default: null
+    quote_url:
+      type: [string, 'null']
+      title: URL para citar a publicação
+      description: URL carregada via HTMX para iniciar uma resposta com citação da publicação.
+      default: null
+    reply_url:
+      type: [string, 'null']
+      title: URL para responder
+      description: URL carregada via HTMX para abrir a resposta à discussão.
+      default: null
+    target_id:
+      type: [string, 'null']
+      title: ID do elemento alvo para HTMX (ações que abrem o diálogo de resposta)
+      description: ID do contêiner que recebe o fragmento HTMX das ações de excluir, editar, citar e responder.
+      default: 'aculta-reply-dialog-body'
+slots:
+  reply_dialog:
+    title: Popup de resposta
+    description: Conteúdo do popup de resposta (discussion-reply-composer), usado quando reply_with_dialog é verdadeiro.
+  admin_dialog:
+    title: Popup de controles administrativos
+    description: Conteúdo do popup de controles (comment-admin-controls), usado quando admin_with_dialog é verdadeiro.
+  delete_dialog:
+    title: Confirmação de exclusão
+    description: Janela delete-confirm cujo id é delete_target; abre pelo ícone de excluir.

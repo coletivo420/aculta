@@ -6,7 +6,7 @@ namespace Drupal\Tests\aculta_game\Unit;
 
 use Drupal\aculta_game\ForumParticipationPolicy;
 use Drupal\aculta_game\Hook\BadgeEvaluationHooks;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Badge\AchievementDefinitions;
 use Drupal\aculta_user\Badge\BadgeCatalog;
 use Drupal\aculta_user\Badge\BadgeService;
@@ -92,7 +92,7 @@ final class BadgeEvaluationHooksTest extends UnitTestCase {
     );
     $badges = new BadgeService($entities, $lock, $database, $time, $definitions);
 
-    $purpose = new DomainPurposeManager(
+    $purpose = new DomainSiteManager(
       $entities,
       $this->createMock(DomainNegotiatorInterface::class),
       $configFactory,

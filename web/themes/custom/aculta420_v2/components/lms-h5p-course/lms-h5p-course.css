@@ -1,0 +1,5 @@
+.lms-h5p-course__content {
+  display: grid;
+  gap: var(--spacing-base);
+  min-inline-size: 0;
+}

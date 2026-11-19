@@ -8,7 +8,7 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_linkweed\Hook\LinkPageMetatagHooks;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Tests\UnitTestCase;
@@ -43,7 +43,7 @@ final class LinkPageMetatagHooksTest extends UnitTestCase {
     $route_match->method('getRouteName')->willReturn('aculta_linkweed.page_preview');
     $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $config_factory = $this->createMock(ConfigFactoryInterface::class);
-    $domain_manager = new DomainPurposeManager(
+    $domain_manager = new DomainSiteManager(
       $entity_type_manager,
       $this->createMock(DomainNegotiatorInterface::class),
       $config_factory,

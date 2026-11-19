@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_studio\Unit;
 
-use Drupal\aculta_learning_contracts\Learning\CourseJourney;
-use Drupal\aculta_learning_contracts\Learning\CourseJourneyLesson;
+use Drupal\aculta_lms\Learning\CourseJourney;
+use Drupal\aculta_lms\Learning\CourseJourneyLesson;
 use Drupal\aculta_studio\Learning\CourseJourneyComposer;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Url;
@@ -46,7 +46,7 @@ final class CourseJourneyComposerTest extends UnitTestCase {
           state: 'finished',
           isCurrent: FALSE,
           allowed: TRUE,
-          url: Url::fromRoute('lms.group.answer_form', [
+          url: Url::fromRoute('aculta_lms.answer_submission', [
             'group' => 'course-1',
             'lesson_delta' => 0,
             'activity_delta' => 0,
@@ -59,7 +59,7 @@ final class CourseJourneyComposerTest extends UnitTestCase {
           state: 'current',
           isCurrent: TRUE,
           allowed: TRUE,
-          url: Url::fromRoute('lms.group.answer_form', [
+          url: Url::fromRoute('aculta_lms.answer_submission', [
             'group' => 'course-1',
             'lesson_delta' => 1,
             'activity_delta' => 0,
@@ -75,7 +75,7 @@ final class CourseJourneyComposerTest extends UnitTestCase {
           url: NULL,
         ),
       ],
-      continueUrl: Url::fromRoute('lms.course.start', ['group' => 'course-1']),
+      continueUrl: Url::fromRoute('entity.group.canonical', ['group' => 'course-1']),
       cache: new CacheableMetadata(),
     );
   }
@@ -100,7 +100,7 @@ final class CourseJourneyComposerTest extends UnitTestCase {
   }
 
   /**
-   * Wraps the native LMS form in the contextual room shell.
+   * Wraps the ACULTA form in the contextual room shell.
    */
   public function testRoomWrapsContentWithContextHeaderAndOutline(): void {
     $composer = new CourseJourneyComposer($this->getStringTranslationStub());

@@ -53,7 +53,7 @@ acesso a credenciais de outro ambiente e não faz requisição de leitura de val
 - Revisão manual das capturas encontrou a tabela ilegível a 320 px e uma coluna comprimida
   em linhas verticais a 1280 px. Dev.8 ajusta a largura mínima e as colunas; Firefox ESR/X11
   passou 31/31 em 1280/390/320 px com CSS candidato injetado, e a captura 320 px foi inspecionada.
-  O CSS servido pelo candidato, Olivero e Functional de instalação/rollback continuam pendentes.
+  O CSS servido pelo candidato e os testes Functional de instalação/rollback continuam pendentes.
 
 
 Exceção de fronteira: UI administrativa renderizada no Claro mantém CSS mínimo no próprio submódulo, com seletores de classe e `data-portal-ui`. O tema administrativo não executa os hooks do ACULTA420.

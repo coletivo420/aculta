@@ -35,17 +35,17 @@ Não criar chat automático de curso/turma nem caixa educacional paralela.
 
 - Feito (0.1.0-dev.78): `ClassStatusSnapshotEvent` no cron, série diária por turma e situação, sem dado individual.
 - Decidido: a barra de progresso do aluno continua sendo o estado atual, sem série. Série diária **por aluno** não foi criada. Revisão LGPD feita em 2026-10-21: não aprovada para armazenamento (ver `docs/compliance/REVISAO-PROGRESSO-INDIVIDUAL.md`). Aguarda a decisão do responsável entre as opções A, B e C.
-- Pendente: seletor de período no painel da turma, lendo a série do `aculta_statistics` (regra de período em gráficos, ADR-0005).
+- Implementado (0.1.0-dev.198): o painel da turma consulta a série agregada `lms.students.by_status` do `aculta_statistics`, com período GET de 7/14/30 dias segundo ADR-0005. A leitura se limita às seis dimensões do curso/turma e mostra zeros nos dias sem snapshot; não carrega dimensões individuais.
 - Pendente: validar no Runtime com turmas reais (o de teste não tem turmas).
 
 ## Produtores de eventos para estatísticas
 
 - Já emitidos (uso pelo `aculta_statistics`): `CourseEnrollmentEvent` (matrícula, por curso e turma),
   `CourseCompletedEvent` (conclusão, uma vez por status), `CertificateIssuedEvent` (certificado, total).
-- Pendente: instantâneo de situação por turma (`lms.students.by_status`: não iniciados, em andamento,
-  aguardando avaliação, aprovados, reprovados). O painel da turma (`LearningDashboardManager::classDashboard()`)
-  calcula ao vivo; o produtor proposto é um evento `ClassStatusSnapshotEvent` emitido pelo cron, com
-  contagens por turma, sem identificação de aluno.
+- Feito (0.1.0-dev.78): instantâneo diário agregado por turma (`lms.students.by_status`: não iniciados,
+  em andamento, aguardando avaliação, aprovados, reprovados); o cron emite `ClassStatusSnapshotEvent`.
+- Feito (0.1.0-dev.198): painel de educador consulta os snapshots por período com acesso de turma já
+  validado e sem expor UIDs ou dimensões de outras turmas.
 - Decidido (2026-10-21, responsável): série diária por turma, com a supressão de célula pequena (menos de 5
   alunos) já existente em `CellSuppression`.
 - Decidido (2026-10-21, responsável): série diária **por aluno**, sob o aceite único (Termos e Política), sem
@@ -67,7 +67,7 @@ Fonte de verdade: [ADRs XK-01 a XK-03](../../../../../../../docs/architecture/AC
 
 ## Content Index — adapter de curso (IDX 0.1-F)
 
-O provider `Group:lms_course` vive em `aculta_lms_resources`, junto das referências editoriais `field_lms_readings` e `field_lms_galleries`. Ele projeta metadados mínimos e relações para Revista/Wiki/Gallery; não indexa lições, matrículas, progresso, respostas, notas ou certificados. O acesso exige Entity Access mais `CourseInterface::takeAccess()` ou permissão contextual de educador. O Kernel passa pelo filtro do Index, usa Group e Domains persistidos e negotiator real: estudante permitido por `takeAccess()`, educador por permissão contextual e terceiro negado (1/33 MariaDB). Unit cobre o YAML/tag owner (1/4), mas a cadeia completa do módulo ainda não foi inicializada no Kernel. Pendentes: boot/DI completo, reconciliação das referências e smoke no Runtime após preflight. O contrato geral está em [ACULTA Content Index](../../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
+O provider `Group:lms_course` vive em `aculta_lms_resources`, junto das referências editoriais `field_lms_readings` e `field_lms_galleries`. Ele projeta metadados mínimos e relações para Revista/Wiki/Gallery; não indexa lições, matrículas, progresso, respostas, notas ou certificados. O acesso exige Entity Access mais `CourseInterface::takeAccess()` ou permissão contextual de educador. Em 2026-11-04, `LmsCourseContentIndexAccessKernelTest` passou 5/5 testes e 239 assertions com Group/Domain persistidos no MariaDB dedicado; seu fixture não depende mais de `lms` ou `lms_classes` contrib. `ContentIndexOwnerIntegrationKernelTest` passou 2/2 testes e 65 assertions, inicializando a closure real de módulos e descobrindo os providers owner. Permanecem pendentes a reconciliação das referências em configuração instalada e o smoke Runtime específico do provider após preflight. O contrato geral está em [ACULTA Content Index](../../../../../../../docs/portal/ACULTA-CONTENT-INDEX.md).
 
 ## Identidade fiscal no checkout comercial (CPF-CHECKOUT-0.2-I, 2026-10-23)
 
@@ -77,9 +77,9 @@ O provider `Group:lms_course` vive em `aculta_lms_resources`, junto das referên
 - Política central implementada em `aculta_portal`; Unit da política e Kernel do pane passaram. Regressão de UX do checkout gratuito em Functional/Browser isolado e homologação Runtime ainda pendentes. Ver `docs/portal/CPF-CONSOLIDACAO-E-CHECKOUT.md`.
 # Ganjalab Educador — separação da experiência estudante (2026-11-01)
 
-O propósito `courses` mantém duas superfícies: estudante em `/ganjalab` e educador em `/ganjalab/educador`. A criação de curso fica em `/ganjalab/educador/cursos/novo`, dentro do workspace Educador. O formulário volta ao dashboard Educador. Os títulos e a identidade visual distinguem estudante e educador; o acesso continua exigindo os grants Group/LMS existentes, sem papel novo. O Course Builder permanece em planejamento e será implementado somente sobre entidades, Form API e relações já confirmadas.
+O propósito `courses` mantém duas superfícies: estudante em `/ganjalab` e educador em `/ganjalab/educador`. A criação de curso fica em `/ganjalab/educador/cursos/novo`, dentro do workspace Educador. O formulário volta ao dashboard Educador. O acesso exige os grants Group/LMS existentes, sem papel novo. A autoria em `/ganjalab/educador/cursos/{course}/estrutura` usa as entidades ACULTA e Form API para aulas e atividades, com autorização contextual. A ordem é persistida por arrasto nas listas de aulas/atividades e pelos comandos confirmados “Mover acima/abaixo”, disponíveis por teclado e sem JavaScript. A exclusão exige confirmação e preserva respostas/snapshots; aula com atividade ainda vinculada não pode ser removida. O editor de aula e atividade usa rotas Form API próprias; a aula suporta CKEditor 5 com formato filtrado. Os formulários de autoria e ordenação alertam ao sair quando há mudanças não salvas. Permanecem pendentes homologação end-to-end em Runtime e integrações pedagógicas ainda não implementadas.
 
-Consulte o [contrato de fronteiras Studio](../../../../../../docs/portal/ACULTA-STUDIO-EXPERIENCE-BOUNDARIES.md) e o [Course Builder](../../../../../../docs/portal/STUDIO-LMS-COURSE-BUILDER-VISUAL.md). A mudança de rota de criação não muda ownership, membership ou armazenamento. Validação automatizada/Runtime ainda não executada após este ajuste.
+Consulte o [contrato de fronteiras Studio](../../../../../../docs/portal/ACULTA-STUDIO-EXPERIENCE-BOUNDARIES.md) e o [Course Builder](../../../../../../docs/portal/STUDIO-LMS-COURSE-BUILDER-VISUAL.md). A mudança de rota não altera ownership, membership ou armazenamento. Exclusão e movimento revalidam ancestry, e exclusão preserva respostas/snapshots de tentativa. O Course Builder apresenta cartões responsivos, estados vazios e ações contextuais, sem storage paralelo. Aulas e atividades abrem formulários próprios do LMS; aulas usam CKEditor 5 com formato filtrado, sem imagem/mídia incorporada, autorizado ao papel Educador. A prévia privada por aula reaproveita o conteúdo filtrado e enunciados, sem resposta/snapshot de estudante ou submissão; owner Studio mantém a rota, owner LMS fornece acesso e render. O Course Builder lista leituras, galerias, vídeos e documentos ligados ao Group com Entity Access dos owners; a edição contextual desses recursos reusa os widgets do Form Display Group e grava apenas referências, com `CourseAuthoringAccessCheck` revalidado em leitura e gravação. A relação de documento PDF continua gerenciada pelo Group/Document Viewer; embedding de PDF/H5P, alertas de alterações não salvas e integração visual AJAX do editor continuam pendentes. Reordenação drag-and-drop e fallback por teclado estão implementados. Evidências e limites estão no [changelog](../CHANGELOG.md), versão 0.1.0-dev.204.
 
 # ADR-038 — Suite Ganjalab no purpose Courses (2026-10-30)
 

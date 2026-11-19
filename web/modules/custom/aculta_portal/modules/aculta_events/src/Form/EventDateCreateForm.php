@@ -5,20 +5,17 @@ declare(strict_types=1);
 namespace Drupal\aculta_events\Form;
 
 use Drupal\aculta_events\Entity\Event;
+use Drupal\aculta_events\Entity\EventDate;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_events\Event\EventDateListBuilder;
 use Drupal\aculta_events\Plugin\Field\FieldWidget\EventLocationModalWidget;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\CloseModalDialogCommand;
-use Drupal\Core\Ajax\MessageCommand;
-use Drupal\Core\Ajax\ReplaceCommand;
-use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Session\AccountProxyInterface;
-use Drupal\Core\Url;
 use Drupal\aculta_events\Route\EventRouteContext;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -31,10 +28,19 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class EventDateCreateForm extends FormBase {
 
-  public function __construct(
+  use HtmxDateListResponseTrait;
+
+  /**
+   * Wrapper do formulário trocado pelo envio HTMX.
+   */
+  protected const WRAPPER_ID = 'aculta-event-date-form';
+
+  final public function __construct(
     protected readonly EntityTypeManagerInterface $entities,
     protected readonly AccountProxyInterface $currentUserAccount,
     protected readonly EventDateListBuilder $dateListBuilder,
+    protected readonly EventRouteContext $eventRouteContext,
+    protected readonly RendererInterface $renderer,
   ) {}
 
   /**
@@ -45,6 +51,8 @@ class EventDateCreateForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('aculta_events.date_list_builder'),
+      $container->get('aculta_events.route_context'),
+      $container->get('renderer'),
     );
   }
 
@@ -66,6 +74,8 @@ class EventDateCreateForm extends FormBase {
 
     $form_state->set('event_id', (int) $event->id());
 
+    $form['#prefix'] = '<div id="' . static::WRAPPER_ID . '">';
+    $form['#suffix'] = '</div>';
     $form['event_id'] = [
       '#type' => 'hidden',
       '#value' => (string) $event->id(),
@@ -115,16 +125,24 @@ class EventDateCreateForm extends FormBase {
       '#type' => 'container',
       '#attributes' => ['id' => $wrapperId, 'data-portal-ui' => 'event-location-widget'],
       '#attached' => ['library' => ['core/drupal.dialog.ajax']],
-    ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId);
+    ] + EventLocationModalWidget::buildCardOrEmpty($localId, 'local_id', $wrapperId, $this->entities, $this->currentUserAccount, $this->eventRouteContext, $this->getStringTranslation());
 
     $form['actions'] = ['#type' => 'actions'];
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Criar data'),
-      '#ajax' => [
-        'callback' => '::ajaxSubmit',
-      ],
     ];
+    (new Htmx())
+      ->post($this->htmxRouteUrl(
+        'aculta_events.event_date_add',
+        'aculta_events.organizer_event_date_add',
+        ['aculta_event' => $event->id()],
+      ))
+      ->select('#' . static::WRAPPER_ID)
+      ->target('#' . static::WRAPPER_ID)
+      ->swap('outerHTML')
+      ->onlyMainContent()
+      ->applyTo($form['actions']['submit']);
 
     return $form;
   }
@@ -177,8 +195,11 @@ class EventDateCreateForm extends FormBase {
     if (is_array($selectedLocal)) {
       $selectedLocal = $selectedLocal['target_id'] ?? 0;
     }
-    if (!empty($selectedLocal) && is_numeric($selectedLocal) && (int) $selectedLocal > 0) {
-      $locationId = (int) $selectedLocal;
+    if (!empty($selectedLocal) && is_numeric($selectedLocal)) {
+      $selectedLocationId = (int) $selectedLocal;
+      if (($selectedLocationId <=> 0) === 1) {
+        $locationId = $selectedLocationId;
+      }
     }
 
     $dateData = [
@@ -194,33 +215,11 @@ class EventDateCreateForm extends FormBase {
     $date = $this->entities->getStorage('aculta_event_date')->create($dateData);
     $date->save();
     $this->messenger()->addStatus($this->t('A data foi criada.'));
-    $form_state->setRedirect(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
-  }
-
-  /**
-   * Fecha o diálogo e retorna ao Evento de origem.
-   */
-  public function ajaxSubmit(array &$form, FormStateInterface $form_state): AjaxResponse|array {
-    if ($form_state->hasAnyErrors()) {
-      return $form;
+    if ($this->isHtmxRequest()) {
+      $form_state->setResponse($this->htmxDateListResponse($event));
+      return;
     }
-
-    $event = $this->eventFromState($form_state);
-    if (!$event instanceof Event) {
-      $eventId = (int) ($form_state->get('event_id') ?? 0);
-      $response = new AjaxResponse();
-      $response->addCommand(new CloseModalDialogCommand());
-      $response->addCommand(new RedirectCommand(
-        Url::fromRoute(EventRouteContext::route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $eventId])->toString()
-      ));
-      return $response;
-    }
-
-    $response = new AjaxResponse();
-    $response->addCommand(new CloseModalDialogCommand());
-    $response->addCommand(new MessageCommand($this->t('A data foi criada.')));
-    $response->addCommand(new ReplaceCommand('#event-dates-list', $this->dateListBuilder->build($event)));
-    return $response;
+    $form_state->setRedirect($this->eventRouteContext->route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()]);
   }
 
   /**
@@ -234,7 +233,9 @@ class EventDateCreateForm extends FormBase {
       ->execute();
     $max = 0;
     foreach ($storage->loadMultiple($ids) as $date) {
-      $max = max($max, (int) $date->get('field_peso')->value);
+      if ($date instanceof EventDate) {
+        $max = max($max, (int) $date->get('field_peso')->value);
+      }
     }
     return $max + 1;
   }

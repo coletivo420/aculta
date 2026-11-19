@@ -17,8 +17,8 @@ interface MelhorEnvioTokenStoreInterface {
    * @param MelhorEnvioEnvironment $environment
    *   Ambiente.
    *
-   * @return array{access_token:
-   *   string, refresh_token: string, expires_at: int}|null
+   * @return array{access_token: string, refresh_token: string, expires_at: int}|null
+   *   Tokens do ambiente, ou NULL.
    */
   public function load(MelhorEnvioEnvironment $environment): ?array;
 

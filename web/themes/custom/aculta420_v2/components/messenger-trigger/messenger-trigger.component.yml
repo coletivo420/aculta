@@ -1,0 +1,33 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Mensagens no shell institucional
+status: stable
+description: Gatilho com contagem e painel de conversas carregado sob demanda.
+group: Shell institucional
+libraryOverrides:
+  dependencies:
+    - aculta420_v2/utility-drawers
+props:
+  type: object
+  additionalProperties: false
+  required: [href]
+  properties:
+    href:
+      type: string
+      format: uri-reference
+      title: Endereço da caixa de mensagens
+      description: URL carregada sob demanda no conteúdo do drawer de mensagens.
+    all_href:
+      type: string
+      default: ''
+      title: Endereço de todas as mensagens
+      description: Quando informado, aparece no rodapé como link para todas as mensagens.
+    count:
+      type: integer
+      minimum: 0
+      default: 0
+      title: Quantidade de mensagens não lidas
+      description: Quantidade anunciada no nome acessível e mostrada no indicador visual, limitado a 99+.
+assets:
+  css:
+    component:
+      messenger-trigger.css: {}

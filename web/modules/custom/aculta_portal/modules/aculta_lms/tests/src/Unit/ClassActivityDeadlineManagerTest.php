@@ -51,7 +51,7 @@ final class ClassActivityDeadlineManagerTest extends UnitTestCase {
   /**
    * Creates a manager and field-backed entity doubles.
    *
-   * @return array{0: \Drupal\aculta_lms\Deadline\ClassActivityDeadlineManager, 1: \Drupal\group\Entity\GroupInterface, 2: \Drupal\Core\Entity\EntityInterface}
+   * @return array{ClassActivityDeadlineManager, GroupInterface, ContentEntityInterface}
    *   Manager, course, and activity.
    */
   private function managerFixture(bool $lessonPublished, int $lessonCourseId, int $courseId): array {
@@ -79,6 +79,9 @@ final class ClassActivityDeadlineManagerTest extends UnitTestCase {
 
   /**
    * Creates a field item list with one value.
+   *
+   * @return FieldItemListInterface<FieldItemInterface>
+   *   List containing the supplied field item.
    */
   private function fieldList(mixed $value): FieldItemListInterface {
     $item = $this->createMock(FieldItemInterface::class);

@@ -2,13 +2,15 @@
 
 /**
  * @file
- * Gate: existe um único formulário de aceite, e o ledger grava só o aceite único.
+ * Gate: único formulário de aceite e ledger do aceite único.
  *
  * Decisão do responsável (2026-10-21). Ver docs/portal/ACEITE-UNICO.md.
  *
  * Falha quando:
- * - aparece identificador `aculta_user_agreement_*` fora da lista fechada abaixo;
- * - há classe de formulário com nome de aceite, consentimento ou acordo fora de AcultaUserAgreementAcceptForm;
+ * - aparece identificador `aculta_user_agreement_*` fora da lista
+ *   fechada abaixo;
+ * - há classe de formulário com nome de aceite, consentimento ou
+ *   acordo fora de AcultaUserAgreementAcceptForm;
  * - há checkbox de aceite em formulário fora da lista autorizada;
  * - há gravação no ledger fora dos arquivos autorizados;
  * - documento normativo ou regra no AGENTS.md está ausente.
@@ -24,7 +26,8 @@ $check = static function (bool $ok, string $message) use (&$errors): void {
   }
 };
 
-// Identificadores de serviço, rota, menu, tabela, coluna e classes do aceite único. Não são tipos de aceite.
+// Identificadores de serviço, rota, menu, tabela, coluna e classes do
+// aceite único. Não são tipos de aceite.
 const ALLOWED_IDENTIFIERS = [
   'aculta_user_agreement_terms',
   'aculta_user_agreement_accept',
@@ -39,11 +42,14 @@ const ALLOWED_IDENTIFIERS = [
 // Único formulário de aceite permitido.
 const ALLOWED_ACCEPT_FORMS = ['AcultaUserAgreementAcceptForm.php'];
 
-// Checkbox de aceite do mesmo tipo único: o formulário de aceite e o cadastro (FormHooks, user_register_form), que
-// grava `aculta_user_agreement_terms` pelo mesmo callback. É a variante de cadastro, não um segundo aceite.
+// Checkbox de aceite do mesmo tipo único: o formulário de aceite e o
+// cadastro (FormHooks, user_register_form), que grava
+// `aculta_user_agreement_terms` pelo mesmo callback. É a variante de
+// cadastro, não um segundo aceite.
 const ALLOWED_ACCEPT_CHECKBOX_FILES = ['AcultaUserAgreementAcceptForm.php', 'FormHooks.php'];
 
-// Identificadores que existem só no histórico de atualizações (migração legada). Não são usados em código novo.
+// Identificadores que existem só no histórico de atualizações
+// (migração legada). Não são usados em código novo.
 const LEGACY_IDENTIFIERS = [
   'aculta_user.install' => ['aculta_user_agreement_email_tracking', 'aculta_user_agreement_default'],
 ];

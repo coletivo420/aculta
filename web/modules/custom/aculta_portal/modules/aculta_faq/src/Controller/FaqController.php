@@ -21,6 +21,8 @@ final class FaqController extends ControllerBase {
 
   /**
    * Builds the public list from published FAQ nodes accessible to the visitor.
+   *
+   * @return array<string, mixed>
    */
   public function publicList(): array {
     $ids = $this->entityTypeManager()->getStorage('node')->getQuery()
@@ -30,13 +32,19 @@ final class FaqController extends ControllerBase {
       ->sort('title')
       ->execute();
     $nodes = $this->entityTypeManager()->getStorage('node')->loadMultiple($ids);
+    /** @var array<string, mixed> $build */
     $build = $this->entityTypeManager()->getViewBuilder('node')->viewMultiple($nodes, 'default');
-    $build['#cache']['tags'] = ['node_list:aculta_faq'];
+    $cache = isset($build['#cache']) && is_array($build['#cache']) ? $build['#cache'] : [];
+    $tags = isset($cache['tags']) && is_array($cache['tags']) ? $cache['tags'] : [];
+    $cache['tags'] = array_merge($tags, ['node_list:aculta_faq']);
+    $build['#cache'] = $cache;
     return $build;
   }
 
   /**
    * Provides links to the standard Drupal editorial forms.
+   *
+   * @return array<string, mixed>
    */
   public function admin(): array {
     $items = [
@@ -49,9 +57,6 @@ final class FaqController extends ControllerBase {
       ->sort('title')
       ->execute();
     foreach ($this->entityTypeManager()->getStorage('node')->loadMultiple($question_ids) as $question) {
-      if (!$question instanceof NodeInterface) {
-        continue;
-      }
       $items[] = Link::fromTextAndUrl(
         (string) $question->label(),
         Url::fromRoute('aculta_faq.question_edit', ['node' => $question->id()]),
@@ -63,9 +68,6 @@ final class FaqController extends ControllerBase {
       ->sort('info')
       ->execute();
     foreach ($this->entityTypeManager()->getStorage('block_content')->loadMultiple($ids) as $block) {
-      if (!$block instanceof BlockContentInterface) {
-        continue;
-      }
       $items[] = Link::fromTextAndUrl(
         (string) $block->label(),
         Url::fromRoute('aculta_faq.block_edit', ['block_content' => $block->id()]),

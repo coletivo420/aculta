@@ -6,6 +6,10 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 
 ## ADRs
 
+- [ADR-056 — UI Patterns 2 como contrato de apresentação e corte orientado por evidência](ADR-056-ui-patterns-2-recomendacoes-e-corte-documentacao.md) — aceita; primeira fase é reconciliar documentação e roadmaps com o código.
+- [ADR-052 — Modo escuro do envelope de e-mail é exceção ao token-only](ADR-052-modo-escuro-email.md) — aceita; exceção restrita a dois arquivos do e-mail.
+- [ADR-053 — Barra institucional como bloco UI Patterns/SDC](ADR-053-barra-institucional-bloco-ui-patterns.md) — aceita; substitui partes de ADR-046 e ADR-048 sobre a barra.
+- [ADR-051 — CAPTCHA e anti-bot pertencem ao módulo aculta_portal](ADR-051-captcha-no-modulo-aculta-portal.md) — aceita; o tema não carrega CSS nem biblioteca de CAPTCHA.
 - [ADR-041 — xAPI 2.0 com LRS próprio no Drupal, substituindo SCORM](ADR-041-xapi-2-lrs-proprio.md) — aceita nas decisões D-66 a D-69; implementação pendente das fases F1 a F4.
 - [ADR-042 — Remoção das dependências do Drupal LMS contrib no aculta_lms](ADR-042-remocao-dependencias-lms-contrib.md) — proposta; plano em fases P0 a P6, aguardando aprovação por fase.
 
@@ -25,7 +29,7 @@ arquitetura indicado como fonte canônica; changelogs e arquivos em
 
 - [ADR-010 — Hostinger LiteSpeed](ADR-010-hostinger-litespeed.md)
 - [ADR-011 — Kernels ACULTA e Studio](ADR-011-aculta-kernels-studio.md)
-- [ADR-012 — ACULTA420 Mobile First](ADR-012-aculta420-mobile-first.md)
+- [ADR-046 — Desenho do tema ACULTA420 V2](ADR-046-desenho-tema-v2-shell-e-fundacoes.md)
 - [ADR-013 — Portal multi-cart e checkout](ADR-032-portal-multi-cart-checkout.md)
 - [ADR-014 — Google Maps Platform](ADR-014-provedor-mapa-google-maps.md)
 - [ADR-015 — Purpose de eventos](ADR-015-purpose-eventos.md)

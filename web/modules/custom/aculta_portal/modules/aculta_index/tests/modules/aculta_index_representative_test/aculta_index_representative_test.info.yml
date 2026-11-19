@@ -2,4 +2,4 @@ name: 'ACULTA Content Index representative test'
 type: module
 description: 'Synthetic representative providers for Content Index scale and diversity tests.'
 package: Testing
-core_version_requirement: ^11.3
+core_version_requirement: ^11 || ^12

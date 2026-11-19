@@ -45,7 +45,8 @@ final class WikiRevisionReport {
    *   Quantidade de verbetes a devolver; NULL devolve todos.
    *
    * @return array{
-   *   entries: list<array{node: \Drupal\node\NodeInterface, revisions: int, published: int, drafts: int, last_edit: int|null}>,
+   *   entries: list<array{node: \Drupal\node\NodeInterface, revisions: int, published: int, drafts: int,
+   *     last_edit: int|null}>,
    *   total_entries: int,
    *   total_revisions: int,
    *   total_drafts: int,

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Render\PortalLinkElement;
 use Drupal\aculta_user\Account\AccountNames;
 use Drupal\aculta_user\Bio\AccountBioCard;
@@ -21,6 +22,8 @@ use Drupal\aculta_portal\Profile\PerfilDoPapel;
  */
 final class AccountDashboardHooks {
 
+  use \Drupal\Core\StringTranslation\StringTranslationTrait;
+
   public function __construct(
     #[Autowire(service: 'aculta_user.account_bio_card')]
     private readonly AccountBioCard $bioCard,
@@ -28,12 +31,15 @@ final class AccountDashboardHooks {
     private readonly SocialLinksCard $socialCard,
     #[Autowire(service: 'entity_type.manager')]
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $purposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
   /**
    * Adiciona a caixa Bio à visão geral. O Portal dispara aculta_portal_dashboard.
+   *
+   * @param array<array-key, mixed> $build
+   *   Visão geral do painel, alterada no lugar.
    */
   #[Hook('aculta_portal_dashboard_alter')]
   public function dashboardAlter(array &$build, AccountInterface $account): void {
@@ -44,33 +50,45 @@ final class AccountDashboardHooks {
 
   /**
    * Ações do topo da visão geral: "Ver Perfil" leva ao perfil público (purpose main). Sem apelido, nada aparece.
+   *
+   * @return array<array-key, mixed>
+   *   Render array das ações, ou vazio.
    */
   private function overviewActions(AccountInterface $account): array {
     $profile = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $account);
-    $nickname = $profile && $profile->hasField('field_nickname') ? trim((string) $profile->get('field_nickname')->value) : '';
+    $nickname = $profile && $profile->hasField('field_nickname') ? trim($this->textValue($profile->get('field_nickname')->value)) : '';
     // Preserve display casing, but generate the route from its lowercase slug.
     // Invalid legacy values omit this action rather than breaking the overview.
     $publicSlug = AccountNames::publicRouteSlug($nickname);
     if ($publicSlug === NULL) {
       return [];
     }
-    $url = $this->purposeManager->routeUrl('main', 'aculta_user.perfil_publico', ['apelido' => $publicSlug]);
+    $url = $this->siteManager->routeUrl(SiteKey::Main, 'aculta_user.perfil_publico', ['apelido' => $publicSlug]);
     if ($url === NULL) {
       return [];
     }
     $cache = new CacheableMetadata();
-    $cache->addCacheTags($profile->getCacheTags());
+    if ($profile !== NULL) {
+      $cache->addCacheTags($profile->getCacheTags());
+    }
     return [
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'account-overview-actions'],
       '#weight' => -10,
       '#cache' => ['tags' => $cache->getCacheTags()],
       'profile' => PortalLinkElement::build(
-        (string) t('Ver Perfil'),
+        (string) $this->t('Ver Perfil'),
         $url,
-        ['data-portal-ui' => 'account-view-profile', 'title' => (string) t('Abrir o perfil público')],
+        ['data-portal-ui' => 'account-view-profile', 'title' => (string) $this->t('Abrir o perfil público')],
       ),
     ];
+  }
+
+  /**
+   * Texto de um valor de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

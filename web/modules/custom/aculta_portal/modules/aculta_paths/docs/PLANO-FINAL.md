@@ -1,6 +1,6 @@
 # Plano final: superfícies do aculta_portal
 
-Status: **consolidado, não aceito formalmente**. Base: `dev` @ 1034dbb, lido somente leitura. Nada commitado, nenhuma branch criada, nenhum código alterado no repositório. Testes: **DEFERRED** (sem Runtime).
+Status: **consolidado, não aceito formalmente**. Base histórica: `dev` @ 1034dbb. A seção 2 registra fatos medidos naquela revisão; para o estado atual, consulte o README e o changelog do módulo. Testes de Runtime: **DEFERRED**.
 
 ## 1. Decisões registradas
 
@@ -8,7 +8,7 @@ Status: **consolidado, não aceito formalmente**. Base: `dev` @ 1034dbb, lido so
 |---|---|---|
 | D1 | O módulo Domain fica com hosts, aliases de ambiente e configuração por domínio. Não decide superfície. | responsável |
 | D2 | O aculta controla superfície, modo (`subdominio`, `diretorio`, `desativado`) e slug. | responsável |
-| D3 | Modo diretório por **camada própria** no aculta, não por `path_prefix` experimental do Domain. | responsável |
+| D3 | Modo diretório por **camada própria** no aculta, sem delegar a resolução ao `path_prefix` do Domain. | responsável |
 | D4 | Remoção do Domain foi revista: o módulo é mantido. | responsável |
 | D5 | A regra "contrib primeiro" deixou de valer para o mapa de domínios. Não se aplica ao AGENTS.md inteiro sem PR própria. | responsável |
 | D6 | Resolvedor no núcleo `aculta_portal`; configuração de superfície no núcleo, com padrões iguais ao comportamento atual. | análise + ADR |
@@ -18,13 +18,15 @@ Status: **consolidado, não aceito formalmente**. Base: `dev` @ 1034dbb, lido so
 
 ## 2. Fatos medidos no código (dev @ 1034dbb)
 
+Esta fotografia antecede a atualização do contrib Domain e não descreve a versão instalada atualmente.
+
 - 10 purposes: main, account, support, magazine, wiki, shop, courses, forum, links, eventos.
 - 10 registros de domínio em `config/sync`, todos com `path_prefix: ''`.
-- Domain 3.0.1; `path_prefix` é recurso experimental, desligado por padrão.
+- Domain 3.0.1 na revisão histórica; `path_prefix` era tratado como recurso experimental naquele contexto.
 - 161 declarações YAML de `_aculta_domain_purpose`.
 - Atribuição em código por `RoutingEvents::ALTER`: `aculta_mcp` (-2048), `aculta_portal` (-2049), `aculta_messenger` (-2050), `aculta_calendar` (-2050).
 - Cinco mapas por purpose em código: `DOMAIN_IDS`, `FRONT_PATHS`, `CANONICAL_STUDIO_PATHS`, `NO_DA_RAIZ`, `CAMINHOS_LEGADOS`.
-- 12 literais de decisão `'main'` e `'account'` no `DomainPurposeRequestSubscriber`.
+- 12 literais de decisão `'main'` e `'account'` no `DomainSiteRequestSubscriber`.
 - Rota MCP `/integracoes/mcp`: sem sobrescrita hoje, por coincidência de valor com a regra de `/integracoes`.
 - Flag `_aculta_domain_purpose_authoritative`: sem leitor no código atual.
 

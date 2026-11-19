@@ -1,0 +1,9 @@
+name: Fórum
+props:
+  label: Navegação estrutural
+  sessao: forum
+  variant: padrao
+  trail:
+    - label: Fórum
+      url: /discussoes
+  current: Debates antiproibicionistas

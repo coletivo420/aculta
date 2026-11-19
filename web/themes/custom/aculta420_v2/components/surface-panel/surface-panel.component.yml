@@ -1,0 +1,61 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Painel institucional
+description: Painel institucional de superfície com cabeçalho de destaque verde sólido e slots para cabeçalho, conteúdo, rodapé e ações, fiel às referências 05 a 08.
+status: stable
+group: Superfícies
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    header_variant:
+      type: string
+      enum: [institutional, subtle, transparent]
+      default: institutional
+      title: Estilo do cabeçalho
+      description: '`institutional` aplica o bloco verde institucional superior das referências; `subtle` e `transparent` para variações semânticas.'
+    tone:
+      type: string
+      enum: [canvas, raised, subtle, institution, green-soft]
+      default: green-soft
+      title: Fundo do corpo
+      description: Tom semântico do corpo do painel.
+    radius:
+      type: string
+      enum: [sm, md, lg, xl]
+      default: lg
+      title: Raio da borda
+      description: Curvatura dos cantos do painel.
+    spacing:
+      type: string
+      enum: [none, compact, normal, spacious]
+      default: normal
+      title: Espaçamento interno
+      description: Padding interno das regiões.
+    elevation:
+      type: string
+      enum: [none, subtle, raised, floating]
+      default: subtle
+      title: Elevação
+      description: Sombra e profundidade do painel.
+    show_header_placeholder:
+      type: boolean
+      default: false
+      title: Exibir cabeçalho vazio em prévias
+      description: Mantém a faixa verde visível mesmo quando nenhum slot header for passado (ex. em prévias de moldura da biblioteca).
+slots:
+  header:
+    title: Cabeçalho
+    description: Título, ícone ou conteúdo do topo institucional.
+  content:
+    title: Conteúdo
+    description: Corpo principal do painel.
+  footer:
+    title: Rodapé
+    description: Informações de apoio ou metadados de encerramento.
+  actions:
+    title: Ações
+    description: Botões de envio, links ou controles contextuais.
+assets:
+  css:
+    component:
+      surface-panel.css: {}

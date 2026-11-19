@@ -125,15 +125,15 @@ class IcsEventBuilderTest extends UnitTestCase {
   }
 
   /**
-   * A mesma entidade e data mantêm o UID se título e carimbo mudarem.
+   * A mesma entidade mantém o UID após alterações editáveis.
    */
-  public function testUidEstavelParaMesmaEntidadeEdata(): void {
+  public function testUidEstavelParaMesmaEntidade(): void {
     $primeiro = $this->builder->build('node:7', 'Título antigo', '', $this->inicio(), NULL, FALSE, $this->carimbo());
     $segundo = $this->builder->build(
       'node:7',
       'Título novo',
       'Outro local',
-      $this->inicio(),
+      $this->inicio()->modify('+3 days'),
       NULL,
       FALSE,
       new \DateTimeImmutable('2030-01-01 00:00:00', new \DateTimeZone('UTC')),
@@ -146,11 +146,11 @@ class IcsEventBuilderTest extends UnitTestCase {
   }
 
   /**
-   * Outra data, ou outra entidade, gera UID diferente.
+   * Outra entidade gera UID diferente, independentemente da data.
    */
-  public function testUidMudaComDataOuEntidade(): void {
+  public function testUidDistingueEntidades(): void {
     $base = $this->propriedade($this->builder->build('node:7', 'X', '', $this->inicio(), NULL, FALSE, $this->carimbo()), 'UID');
-    $outraData = $this->propriedade($this->builder->build(
+    $mesmaEntidadeOutraData = $this->propriedade($this->builder->build(
       'node:7',
       'X',
       '',
@@ -161,7 +161,7 @@ class IcsEventBuilderTest extends UnitTestCase {
     ), 'UID');
     $outraEntidade = $this->propriedade($this->builder->build('node:8', 'X', '', $this->inicio(), NULL, FALSE, $this->carimbo()), 'UID');
 
-    $this->assertNotSame($base, $outraData);
+    $this->assertSame($base, $mesmaEntidadeOutraData);
     $this->assertNotSame($base, $outraEntidade);
     $this->assertStringEndsWith('@exemplo.invalid', $base[0]);
   }

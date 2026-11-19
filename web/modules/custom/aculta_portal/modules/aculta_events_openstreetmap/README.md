@@ -40,7 +40,7 @@ com `no_cache`. Todas exigem `administer aculta events`.
 ## Regra de domínio (decisão do responsável, 2026-10-30)
 
 As quatro rotas pertencem ao purpose `main`, junto da área administrativa de
-Eventos. O `DomainPurposeRequestSubscriber` nega a integração no host de
+Eventos. O `DomainSiteRequestSubscriber` nega a integração no host de
 Eventos e nos demais domínios, inclusive POST direto. O redirect URI do app
 OAuth do OpenStreetMap deve apontar para o host MAIN do ambiente; o callback é
 montado com `Url::fromRoute(..., ['absolute' => TRUE])`, então usa o host

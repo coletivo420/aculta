@@ -43,7 +43,7 @@ final class MonthGrid {
    * @param \DateTimeImmutable $hoje
    *   Data de referência em horário de Brasília, para marcar o dia de hoje.
    *
-   * @return array{ano: int, mes: int, rotulo: string, semanas: array<int, array<int, array{dia: ?\DateTimeImmutable, itens: array, hoje: bool}>>, quantidade: int, anterior: array{ano: int, mes: int}, seguinte: array{ano: int, mes: int}}
+   * @return array{ano: int, mes: int, rotulo: string, semanas: array<int, array<int, array{dia: ?\DateTimeImmutable, itens: array<int, array<string, mixed>>, hoje: bool}>>, quantidade: int, anterior: array{ano: int, mes: int}, seguinte: array{ano: int, mes: int}}
    *   Grade pronta, com o total de ocorrências e os meses vizinhos.
    */
   public function build(int $ano, int $mes, array $porDia, \DateTimeImmutable $hoje): array {

@@ -1,0 +1,15 @@
+{% set course_content %}
+  <div class="lms-h5p-course__content">
+    {{ title }}
+    {{ course_link }}
+    {{ activities }}
+  </div>
+{% endset %}
+{{ include('aculta420_v2:surface-panel', {
+  header_variant: 'subtle',
+  tone: 'raised',
+  radius: 'lg',
+  spacing: 'normal',
+  elevation: 'subtle',
+  content: course_content
+}, with_context = false) }}

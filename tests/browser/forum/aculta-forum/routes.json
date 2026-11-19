@@ -1,0 +1,10 @@
+{
+  "front": "aculta-forum",
+  "purpose": "forum",
+  "origin_env": "FORUM_BASE",
+  "source": "tests/browser/forum/aculta-forum/README.md (SUITE_BASE, /pesquisar somente leitura) e FRONT_PATHS de DomainSurfaceMap",
+  "public_routes": [
+    { "path": "/pesquisar" }
+  ],
+  "notes": "Só /pesquisar foi confirmado no host de teste growroom420 (FORUM_BASE). /discussoes (FRONT_PATHS) responde 404 nesse host: a entrada pública do purpose forum precisa do host canônico, ainda não confirmado na README. Painel, tópicos e moderação exigem login de teste e ficam nos scripts da frente."
+}

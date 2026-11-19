@@ -15,6 +15,11 @@ final class LearningDashboardHooks {
 
   /**
    * Adds the dashboard section for authenticated account holders.
+   *
+   * @param array<mixed> $sections
+   *   Seções da conta.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta do usuário.
    */
   #[Hook('aculta_portal_account_sections_alter')]
   public function addStudentDashboard(array &$sections, AccountInterface $account): void {

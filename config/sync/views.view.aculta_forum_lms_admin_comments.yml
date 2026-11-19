@@ -9,7 +9,7 @@ dependencies:
     - group.relationship_type.lms_course-3abb8caf7f7d526ecedee
     - node.type.aculta_lms_topic
   module:
-    - aculta_forum_lms
+    - aculta_lms
     - comment
     - gnode
     - group

@@ -29,6 +29,11 @@
   Drupal.behaviors.acultaSearchPreview = {
     attach(context) {
       once('aculta-search-preview', 'input[data-portal-ui~="search-preview-input"]', context).forEach((input) => {
+        // HTMX (ACULTA420 V2) owns the preview request through data-hx-get.
+        // The legacy Fetch path stays for the V1 theme only.
+        if (input.hasAttribute('data-hx-get')) {
+          return;
+        }
         const form = input.form;
         const boxId = input.dataset.previewTarget || 'aculta-search-preview';
         const box = Array.from(form.querySelectorAll('[id]')).find((element) => element.id === boxId);

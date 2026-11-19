@@ -2,7 +2,7 @@
 
 ## Escopo e ambiente
 
-- Seleção expressa pelo responsável: todos os 12 Nodes `revista` atuais no Runtime de teste.
+- Seleção expressa pelo responsável: todos os 12 Nodes `revista` atuais no Runtime de desenvolvimento.
 - Host `toca`; branch `docs/aculta-forum-0.1.0-dev.1`; HEAD antes da limpeza `52defd11138a0de1e2c98b21101420b9c486c818`.
 - Drush confirmou Drupal root `/home/piradopirata/projetos/aculta/web`, URI `https://revista420.aculta.toca.net.br`, banco `aculta_runtime`, driver MySQL.
 - A seleção continha 24 revisões. Quatro Nodes tinham marcadores de embed; nenhum embed apontava a `media_gallery`.

@@ -1,0 +1,11 @@
+.ui-dialog:has(.aculta-photo-dialog, .aculta-avatar-crop-dialog, .aculta-utility-dialog) {
+  inline-size: min(560px, calc(100vw - 2rem)) !important;
+  max-block-size: 75vh !important;
+  overflow-y: auto;
+}
+
+.ui-dialog:has(.aculta-social-link-dialog) {
+  inline-size: min(480px, calc(100vw - 2rem)) !important;
+  max-block-size: 75vh !important;
+  overflow-y: auto;
+}

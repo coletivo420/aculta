@@ -6,12 +6,14 @@ Documentação operacional durável do ACULTA.
 - [HARDENING.md](HARDENING.md) — segurança, cache, performance e failure modes.
 - [SECRETS.md](SECRETS.md) — contrato portátil de credenciais e provisioning por ambiente.
 - [INSPECAO-VISUAL-EMAIL.md](INSPECAO-VISUAL-EMAIL.md) — como ler a caixa de monitoramento (`dmarc@` é alias de `naoresponda@`) e inspecionar o visual dos e-mails.
-- [ATUALIZACAO-TESTE-2026-10-20.md](ATUALIZACAO-TESTE-2026-10-20.md) — atualização do Runtime de teste com as ferramentas previstas; o que foi aplicado, o que ficou de fora (DT-O10) e o que falta em produção.
+- [ATUALIZACAO-TESTE-2026-10-20.md](ATUALIZACAO-TESTE-2026-10-20.md) — atualização do Runtime de desenvolvimento com as ferramentas previstas; o que foi aplicado, o que ficou de fora (DT-O10) e o que falta em produção.
 - [RELEASES.md](RELEASES.md) — gates, SemVer, tags e release.
 - [DEPLOYMENT.md](DEPLOYMENT.md) — deployment, conteúdo, homologação e rollback.
 - [RC-READINESS.md](RC-READINESS.md) — bateria de testes locais, pendências e prontidão para RC (sitemap, descoberta, deployer).
 - [RELEASE-LIFECYCLE.md](RELEASE-LIFECYCLE.md) — fluxo vigente Dev → RC → deploy/validação Alpha e decisão CSP.
 - [Homelab](../../scripts/homelab/README.md) — ambiente de desenvolvimento.
 - Estados — snapshots/estados de desenvolvimento, mantidos fora do Git (pasta `estados/`, ignorada).
+- [AUDITORIA-SKILLS-DRUPAL-2026-11.md](AUDITORIA-SKILLS-DRUPAL-2026-11.md) — inventário de Skills e integrações UI Suite, com limites entre Composer, export e runtime.
+- [TESTES-SKILLS-UI-SUITE.md](TESTES-SKILLS-UI-SUITE.md) — cenários de comportamento e limites das avaliações de Skills.
 
 Histórico de rodadas, SHAs e PRs fica no GitHub/Git, não nesta pasta.

@@ -23,7 +23,7 @@ final class ForumDiscussionWriteGuard {
   /**
    * Locks held for Comment saves until their transaction ends.
    *
-   * @var \WeakMap<\Drupal\comment\CommentInterface, string[]> */
+   * @var \WeakMap<\Drupal\comment\CommentInterface, array<string, bool>> */
   private \WeakMap $pendingCommentLocks;
 
   /**
@@ -41,16 +41,33 @@ final class ForumDiscussionWriteGuard {
   }
 
   /**
-   * Acquires public Forum host locks in stable order. */
+   * Acquires public Forum host locks in stable order.
+   *
+   * @param array<int|string, mixed> $topicIds
+   *   The topic IDs to lock.
+   *
+   * @return list<string>
+   *   The acquired lock names.
+   */
   public function acquireTopics(array $topicIds): array {
-    $topicIds = array_values(array_unique(array_filter(array_map('intval', $topicIds), static fn (int $id): bool => $id > 0)));
-    sort($topicIds, SORT_NUMERIC);
-    $lock_names = array_map(static fn (int $id): string => self::LOCK_PREFIX . $id, $topicIds);
+    $ids = [];
+    foreach ($topicIds as $val) {
+      if (is_numeric($val) && (int) $val > 0) {
+        $ids[] = (int) $val;
+      }
+    }
+    $ids = array_values(array_unique($ids));
+    sort($ids, SORT_NUMERIC);
+    $lock_names = array_map(static fn (int $id): string => self::LOCK_PREFIX . $id, $ids);
     return $this->acquireLocks($lock_names);
   }
 
   /**
-   * Extends move locks before each entity write. */
+   * Extends move locks before each entity write.
+   *
+   * @param list<string>|array<int|string, string> $lockNames
+   *   The lock names to refresh.
+   */
   public function refresh(array $lockNames): void {
     foreach ($lockNames as $lock_name) {
       if (!$this->lock->acquire($lock_name, self::LOCK_TTL)) {
@@ -60,7 +77,11 @@ final class ForumDiscussionWriteGuard {
   }
 
   /**
-   * Releases a set of public Forum host locks. */
+   * Releases a set of public Forum host locks.
+   *
+   * @param list<string>|array<int|string, string> $lockNames
+   *   The lock names to release.
+   */
   public function release(array $lockNames): void {
     foreach ($lockNames as $lock_name) {
       $this->lock->release($lock_name);
@@ -68,10 +89,16 @@ final class ForumDiscussionWriteGuard {
   }
 
   /**
-   * Marks the Comment IDs intentionally rehosted by the current move. */
+   * Marks the Comment IDs intentionally rehosted by the current move.
+   *
+   * @param array<int|string, mixed> $commentIds
+   *   The comment IDs.
+   */
   public function beginMove(array $commentIds): void {
     foreach ($commentIds as $comment_id) {
-      $this->movingCommentIds[(int) $comment_id] = TRUE;
+      if (is_numeric($comment_id)) {
+        $this->movingCommentIds[(int) $comment_id] = TRUE;
+      }
     }
   }
 
@@ -115,8 +142,8 @@ final class ForumDiscussionWriteGuard {
       if (!$this->isIntentionalMove($comment)) {
         $this->assertCurrentRelations($comment);
       }
-      $existing = $this->pendingCommentLocks[$comment] ?? [];
-      $this->pendingCommentLocks[$comment] = array_values(array_unique([...$existing, ...$acquired]));
+      $existing = array_keys($this->pendingCommentLocks[$comment] ?? []);
+      $this->pendingCommentLocks[$comment] = $this->lockMap([...$existing, ...$acquired]);
     }
     catch (\Throwable $exception) {
       $this->release($acquired);
@@ -136,14 +163,15 @@ final class ForumDiscussionWriteGuard {
     $lock_names = [self::LOCK_PREFIX . (int) $comment->getCommentedEntityId()];
     $acquired = $this->acquireLocks($lock_names);
     try {
-      $persisted = $this->entityTypeManager->getStorage('comment')->loadUnchanged($comment->id());
+      $commentId = $comment->id();
+      $persisted = $commentId !== NULL ? $this->entityTypeManager->getStorage('comment')->loadUnchanged($commentId) : NULL;
       if (!$persisted instanceof CommentInterface
         || (int) $persisted->getCommentedEntityId() !== (int) $comment->getCommentedEntityId()
         || (string) $persisted->getThread() !== (string) $comment->getThread()) {
         throw new \InvalidArgumentException('This comment moved while the delete form was open. Reload the discussion and retry.');
       }
-      $existing = $this->pendingCommentLocks[$comment] ?? [];
-      $this->pendingCommentLocks[$comment] = array_values(array_unique([...$existing, ...$acquired]));
+      $existing = array_keys($this->pendingCommentLocks[$comment] ?? []);
+      $this->pendingCommentLocks[$comment] = $this->lockMap([...$existing, ...$acquired]);
     }
     catch (\Throwable $exception) {
       $this->release($acquired);
@@ -154,7 +182,7 @@ final class ForumDiscussionWriteGuard {
   /**
    * Releases write locks only after the outer database transaction ends. */
   public function afterCommentSave(CommentInterface $comment): void {
-    $lock_names = $this->pendingCommentLocks[$comment] ?? [];
+    $lock_names = array_keys($this->pendingCommentLocks[$comment] ?? []);
     if ($lock_names === []) {
       return;
     }
@@ -172,7 +200,14 @@ final class ForumDiscussionWriteGuard {
   }
 
   /**
-   * Gets every comment-thread write lock or releases the partial set. */
+   * Gets every comment-thread write lock or releases the partial set.
+   *
+   * @param list<string> $lockNames
+   *   The lock names to acquire.
+   *
+   * @return list<string>
+   *   The acquired lock names.
+   */
   private function acquireLocks(array $lockNames): array {
     $acquired = [];
     try {
@@ -234,6 +269,23 @@ final class ForumDiscussionWriteGuard {
     return $topic instanceof NodeInterface
       && $topic->bundle() === 'aculta_forum_topic'
       && $topic->hasField(ForumCommentMover::FIELD_NAME);
+  }
+
+  /**
+   * Indexes lock names to maintain the WeakMap's declared value shape.
+   *
+   * @param list<string> $lockNames
+   *   Acquired lock names.
+   *
+   * @return array<string, bool>
+   *   Lock names keyed by themselves.
+   */
+  private function lockMap(array $lockNames): array {
+    $locks = [];
+    foreach ($lockNames as $lockName) {
+      $locks[$lockName] = (bool) TRUE;
+    }
+    return $locks;
   }
 
 }

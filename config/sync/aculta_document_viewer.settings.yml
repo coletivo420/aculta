@@ -26,4 +26,3 @@ docx_render_endnotes: true
 docx_respect_page_breaks: false
 spreadsheet_default_mode: sheet
 spreadsheet_page_size: 50
-

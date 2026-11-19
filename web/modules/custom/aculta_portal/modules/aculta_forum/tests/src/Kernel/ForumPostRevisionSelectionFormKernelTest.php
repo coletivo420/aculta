@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Form\ForumPostRevisionSelectionForm;
+use Drupal\Core\Url;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
@@ -108,12 +109,22 @@ final class ForumPostRevisionSelectionFormKernelTest extends KernelTestBase {
       $this->firstRevision => 'Revisão um',
     ]);
 
-    self::assertSame('number', $build['older_revision']['#type']);
-    self::assertSame($this->firstRevision, $build['older_revision']['#default_value']);
-    self::assertSame($this->secondRevision, $build['newer_revision']['#default_value']);
-    self::assertTrue($build['older_revision']['#required']);
-    self::assertTrue($build['newer_revision']['#required']);
-    self::assertSame('submit', $build['actions']['compare']['#type']);
+    $older = $build['older_revision'] ?? [];
+    self::assertIsArray($older);
+    self::assertSame('number', $older['#type'] ?? NULL);
+    self::assertSame($this->firstRevision, $older['#default_value'] ?? NULL);
+    self::assertTrue($older['#required'] ?? FALSE);
+
+    $newer = $build['newer_revision'] ?? [];
+    self::assertIsArray($newer);
+    self::assertSame($this->secondRevision, $newer['#default_value'] ?? NULL);
+    self::assertTrue($newer['#required'] ?? FALSE);
+
+    $actions = $build['actions'] ?? [];
+    self::assertIsArray($actions);
+    $compare = $actions['compare'] ?? [];
+    self::assertIsArray($compare);
+    self::assertSame('submit', $compare['#type'] ?? NULL);
 
     self::assertSame([], $this->form->buildForm([], new FormState()));
   }
@@ -129,11 +140,13 @@ final class ForumPostRevisionSelectionFormKernelTest extends KernelTestBase {
     $this->form->submitForm($form, $state);
 
     $redirect = $state->getRedirect();
-    self::assertNotNull($redirect);
+    self::assertInstanceOf(Url::class, $redirect);
     self::assertSame('aculta_forum.post_revision_compare', $redirect->getRouteName());
     $parameters = $redirect->getRouteParameters();
-    self::assertSame((string) $this->firstRevision, (string) $parameters['left_revision']);
-    self::assertSame((string) $this->secondRevision, (string) $parameters['right_revision']);
+    $left = $parameters['left_revision'] ?? '';
+    $right = $parameters['right_revision'] ?? '';
+    self::assertSame((string) $this->firstRevision, is_scalar($left) ? (string) $left : '');
+    self::assertSame((string) $this->secondRevision, is_scalar($right) ? (string) $right : '');
   }
 
   /**
@@ -185,6 +198,8 @@ final class ForumPostRevisionSelectionFormKernelTest extends KernelTestBase {
 
   /**
    * Validates a selection and returns the form errors.
+   *
+   * @return array<string, mixed>
    */
   private function selection(string $older, string $newer): array {
     $state = new FormState();
@@ -192,7 +207,9 @@ final class ForumPostRevisionSelectionFormKernelTest extends KernelTestBase {
     $state->setValue('newer_revision', $newer);
     $build = [];
     $this->form->validateForm($build, $state);
-    return $state->getErrors();
+    /** @var array<string, mixed> $errors */
+    $errors = $state->getErrors();
+    return $errors;
   }
 
 }

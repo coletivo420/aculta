@@ -1,0 +1,70 @@
+{
+  "frente": "css-audit",
+  "data": "2026-11-12",
+  "objetivo": "Homologação funcional e visual da auditoria/limpeza de CSS do aculta420_v2.",
+  "ambiente": "servidor de desenvolvimento (*.aculta.toca.net.br)",
+  "metodo": "Firefox ESR visível via X11 (DISPLAY=:0) com geckodriver/wdlib; headless do Playwright apenas para axe WCAG.",
+  "escopo": {
+    "hosts": [
+      "https://aculta.toca.net.br/",
+      "https://conta.aculta.toca.net.br/",
+      "https://revista.aculta.toca.net.br/",
+      "https://wiki420.aculta.toca.net.br/",
+      "https://growroom420.aculta.toca.net.br/",
+      "https://loja.aculta.toca.net.br/",
+      "https://cursos.aculta.toca.net.br/",
+      "https://links.aculta.toca.net.br/",
+      "https://apoio.aculta.toca.net.br/",
+      "https://eventos.aculta.toca.net.br/"
+    ],
+    "larguras_css_px": [320, 375, 768, 1024, 1440],
+    "modos": ["light", "dark"],
+    "estados": "páginas anônimas; autenticação, modais e gavetas não cobertos"
+  },
+  "resultados": {
+    "matriz_paginas": "100/100 PASS (HTTP 200, readyState complete, sem overflow horizontal)",
+    "reflow_320": "PASS nas 8 verificações executadas pelo spec de acessibilidade",
+    "axe_wcag22": {
+      "testes": 16,
+      "falhas": 7,
+      "classificacao": "pré-existentes, não introduzidas por esta refatoração",
+      "achados": [
+        {
+          "regra": "color-contrast",
+          "impacto": "serious",
+          "alvo": ".site-footer",
+          "cores": "texto #0c3c29 sobre fundo #689427",
+          "ratio": 3.45,
+          "minimo": "4.5:1",
+          "hosts": ["main", "forum", "apoio", "wiki"],
+          "observacao": "components/site-footer/site-footer.css, tokens.css e breadcrumb não foram alterados desde e37f3d8."
+        },
+        {
+          "regra": "color-contrast",
+          "impacto": "serious",
+          "alvo": "body e .aculta-breadcrumb__current > span",
+          "cores": "texto #689427 sobre fundo #ffffff",
+          "hosts": ["forum"],
+          "observacao": "mesma origem pré-existente; registrado para correção de contraste fora deste diff."
+        }
+      ]
+    },
+    "css_servido": {
+      "messages--info": "presente no agregado CSS do Runtime",
+      "aculta-wiki-collaboration": "ausente do agregado CSS do Runtime",
+      "conclusao": "o Runtime está servindo o CSS refatorado sem necessidade de drush cr nesta janela"
+    }
+  },
+  "capturas": {
+    "local": "/home/piradopirata/aculta-suite-out/css-audit-visual-20261112",
+    "fora_do_git": true,
+    "arquivos": "40 PNGs (10 páginas × light/dark × 320/1440 px) + results.json",
+    "comparacao_antes_depois": "DEFERRED: não há baseline PNG anterior; a comparação foi feita por contrato (status, overflow, marcadores de CSS servido)."
+  },
+  "runtime_sync": {
+    "resultado": "BLOCKED",
+    "motivo": "worktree com alterações concorrentes e delta cumulativo RX; sem updatedb/config/deploy pendentes no doctor.",
+    "cache_success_sha": "e37f3d8d45ecba9719d4b97dde67effc2236b13f",
+    "checkout_sha": "7c51947043a191a8027f3ac94cddf8c1eeb7b75a"
+  }
+}

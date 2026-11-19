@@ -1,0 +1,360 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_messenger\Plugin\Field\FieldFormatter;
+
+use Drupal\Core\Access\CsrfTokenGenerator;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Field\Attribute\FieldFormatter;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\FormatterBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\Core\Url;
+use Drupal\aculta_messenger\Traits\PrivateMessageSettingsTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
+/**
+ * Defines the private message thread message field formatter.
+ *
+ * @extends \Drupal\Core\Field\FormatterBase<\Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>>
+ *
+ * @phpstan-consistent-constructor
+ */
+#[FieldFormatter(
+  id: 'private_message_thread_message_formatter',
+  label: new TranslatableMarkup('Private Message Messages'),
+  field_types: [
+    'entity_reference',
+  ],
+)]
+class PrivateMessageThreadMessageFormatter extends FormatterBase implements ContainerFactoryPluginInterface {
+
+  use PrivateMessageSettingsTrait;
+
+  /**
+   * Tipagem do porte Private Message.
+   *
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   * @param FieldDefinitionInterface $field_definition
+   *   A definição do campo.
+   * @param array<string, mixed> $settings
+   *   As configurações do componente.
+   * @param string $label
+   *   O rótulo do componente.
+   * @param string $view_mode
+   *   O modo de visualização.
+   * @param array<string, mixed> $third_party_settings
+   *   As configurações de terceiros do componente.
+   * @param EntityTypeManagerInterface $entityTypeManager
+   *   O gerenciador de tipos de entidade.
+   * @param AccountProxyInterface $currentUser
+   *   A conta do usuário atual.
+   * @param CsrfTokenGenerator $csrfTokenGenerator
+   *   O gerador de tokens CSRF.
+   * @param ConfigFactoryInterface $configFactory
+   *   O serviço de configuração do Drupal.
+   * @param EntityDisplayRepositoryInterface $entityDisplayRepository
+   *   O repositório de displays de entidades.
+   */
+  public function __construct(
+    $plugin_id,
+    $plugin_definition,
+    FieldDefinitionInterface $field_definition,
+    array $settings,
+    $label,
+    $view_mode,
+    array $third_party_settings,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected AccountProxyInterface $currentUser,
+    protected CsrfTokenGenerator $csrfTokenGenerator,
+    protected ConfigFactoryInterface $configFactory,
+    protected EntityDisplayRepositoryInterface $entityDisplayRepository,
+  ) {
+    parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   O contêiner de serviços.
+   * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    /** @var \Drupal\Core\Field\FieldDefinitionInterface $field_definition */
+    $field_definition = $configuration['field_definition'];
+    /** @var array<string, mixed> $settings */
+    $settings = $configuration['settings'];
+    /** @var string $label */
+    $label = $configuration['label'];
+    /** @var string $view_mode */
+    $view_mode = $configuration['view_mode'];
+    /** @var array<string, mixed> $third_party_settings */
+    $third_party_settings = $configuration['third_party_settings'];
+
+    return new static(
+      $plugin_id,
+      $plugin_definition,
+      $field_definition,
+      $settings,
+      $label,
+      $view_mode,
+      $third_party_settings,
+      $container->get('entity_type.manager'),
+      $container->get('current_user'),
+      $container->get('csrf_token'),
+      $container->get('config.factory'),
+      $container->get('entity_display.repository')
+    );
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function isApplicable(FieldDefinitionInterface $field_definition): bool {
+    return $field_definition->getFieldStorageDefinition()->getTargetEntityTypeId() === 'private_message_thread' && $field_definition->getFieldStorageDefinition()->getSetting('target_type') === 'private_message';
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @return array<string, mixed>
+   *   A lista com os valores resultantes.
+   */
+  public static function defaultSettings(): array {
+    return [
+      'message_count' => 5,
+      'ajax_previous_load_count' => 5,
+      'message_order' => 'asc',
+      'ajax_refresh_rate' => 20,
+      'view_mode' => 'default',
+      'message_insert_speed' => 300,
+      'message_insert_style' => 'slide',
+    ] + parent::defaultSettings();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsSummary(): array {
+    $summary = [];
+    /** @var array{message_count: int|string, ajax_previous_load_count: int|string, ajax_refresh_rate: int|string, message_order: string|null, view_mode: string, ...<string, mixed>} $settings */
+    $settings = $this->getSettings();
+
+    $summary['message_count'] = $this->t('Number of threads to show on load: @count', ['@count' => $settings['message_count']]);
+    $summary['ajax_previous_load_count'] = $this->t('Number of threads to show when clicking load previous: @count', ['@count' => $settings['ajax_previous_load_count']]);
+    $summary['message_order'] = $this->t('Order of messages: @order', ['@order' => $this->translateKey('order', $settings['message_order']) ?? '']);
+    if ($settings['ajax_refresh_rate']) {
+      $summary['ajax_refresh_rate'] = $this->t('Ajax refresh rate: @count seconds', ['@count' => $settings['ajax_refresh_rate']]);
+    }
+    else {
+      $summary['ajax_refresh_rate'] = $this->t('Ajax refresh rate: Ajax refresh disabled');
+    }
+
+    $summary['view_mode'] = $this->t('Private Message View Mode: @view_mode', ['@view_mode' => $settings['view_mode']]);
+
+    return $summary;
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   O array do formulário.
+   * @param FormStateInterface $form_state
+   *   O estado atual do formulário.
+   *
+   * @return array<string, mixed>
+   *   A lista com os valores resultantes.
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state): array {
+    $element['message_count'] = [
+      '#title' => $this->t('Message Count'),
+      '#type' => 'number',
+      '#default_value' => $this->getSetting('message_count'),
+      '#description' => $this->t('The number of messages to display on load'),
+    ];
+
+    $element['ajax_previous_load_count'] = [
+      '#title' => $this->t('Load Previous Ajax Count'),
+      '#type' => 'number',
+      '#default_value' => $this->getSetting('ajax_previous_load_count'),
+      '#description' => $this->t('The number of previous messages to load using ajax when clicking the load previous link'),
+    ];
+
+    $element['ajax_refresh_rate'] = [
+      '#title' => $this->t('Ajax refresh rate'),
+      '#type' => 'number',
+      '#default_value' => $this->getSetting('ajax_refresh_rate'),
+      '#description' => $this->t('The number of seconds between checks for new messages. Set to zero to disable. Note that a lower number will cause more requests, use more bandwidth, and cause more strain on the server. As such, it is not recommended to set a value lower than five (5) seconds.'),
+    ];
+
+    $element['message_order'] = [
+      '#type' => 'radios',
+      '#title' => $this->t('Message direction'),
+      '#options' => [
+        'asc' => $this->translateKey('order', 'asc'),
+        'desc' => $this->translateKey('order', 'desc'),
+      ],
+      '#description' => $this->t('Whether to show messages first to last, or last to first'),
+      '#default_value' => $this->getSetting('message_order'),
+    ];
+
+    $element['message_insert_style'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Message insert style'),
+      '#options' => [
+        'fade' => $this->t('Fade'),
+        'slide' => $this->t('Slide'),
+      ],
+      '#description' => $this->t('The jQuery insert style for new messages'),
+      '#default_value' => $this->getSetting('message_insert_style'),
+    ];
+
+    $element['message_insert_speed'] = [
+      '#type' => 'number',
+      '#title' => $this->t('Message insert speed'),
+      '#description' => $this->t('Milliseconds of the new message insert effect'),
+      '#default_value' => $this->getSetting('message_insert_speed'),
+    ];
+
+    $element['view_mode'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Private Message view mode'),
+      '#options' => $this->entityDisplayRepository->getViewModeOptions('private_message'),
+      '#default_value' => $this->getSetting('view_mode'),
+    ];
+
+    return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
+   *   A lista de itens do campo.
+   * @param string|null $langcode
+   *   O código do idioma.
+   */
+  public function viewElements(FieldItemListInterface $items, $langcode): array {
+    /** @var \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface $private_message_thread */
+    $private_message_thread = $items->getEntity();
+
+    /** @var array{'#prefix': string, '#suffix': string, '#attached'?: array{drupalSettings?: array<string, mixed>, library?: list<string>, ...<string, mixed>}, ...<string, mixed>} $element */
+    $element = [
+      '#prefix' => '<div class="private-message-thread-messages">',
+      '#suffix' => '</div>',
+    ];
+
+    $view_builder = $this->entityTypeManager->getViewBuilder('private_message');
+
+    /** @var \Drupal\Core\Session\AccountInterface $user */
+    $user = $this->entityTypeManager
+      ->getStorage('user')
+      ->load($this->currentUser->id());
+    $messages = $private_message_thread->filterUserDeletedMessages($user);
+    $total = count($messages);
+    /** @var int|string $message_count */
+    $message_count = $this->getSetting('message_count');
+    $messages = array_slice($messages, -1 * (int) $message_count);
+
+    /** @var string $view_mode */
+    $view_mode = $this->getSetting('view_mode');
+    foreach ($messages as $message) {
+      /** @var \Drupal\aculta_messenger\Entity\PrivateMessageInterface $message */
+      $element[(string) $message->id()] = $view_builder->view($message, $view_mode);
+    }
+
+    if ($this->getSetting('message_order') == 'desc') {
+      $element = array_reverse($element);
+    }
+
+    /** @var int|string $ajax_refresh_rate */
+    $ajax_refresh_rate = $this->getSetting('ajax_refresh_rate');
+
+    $thread_url = Url::fromRoute('entity.private_message_thread.canonical',
+      ['private_message_thread' => $private_message_thread->id()]
+    );
+
+    $new_url = Url::fromRoute('private_message.ajax_callback', ['op' => 'get_new_messages']);
+    $token = $this->csrfTokenGenerator->get($new_url->getInternalPath());
+    $new_url->setOptions(['query' => ['token' => $token]]);
+
+    $prev_url = Url::fromRoute('private_message.ajax_callback', ['op' => 'get_old_messages']);
+    $token = $this->csrfTokenGenerator->get($prev_url->getInternalPath());
+    $prev_url->setOptions(['query' => ['token' => $token]]);
+
+    $load_url = Url::fromRoute('private_message.ajax_callback', ['op' => 'load_thread']);
+    $load_token = $this->csrfTokenGenerator->get($load_url->getInternalPath());
+    $load_url->setOptions(['query' => ['token' => $load_token]]);
+
+    /** @var array{'#attached'?: array{drupalSettings?: array<string, mixed>, library?: list<string>, ...<string, mixed>}, ...<string, mixed>} $element */
+    $element['#attached']['drupalSettings']['privateMessageThread'] = [
+      'threadId' => (int) $private_message_thread->id(),
+      'threadUrl' => $thread_url->toString(),
+      'newMessageCheckUrl' => $new_url->toString(),
+      'previousMessageCheckUrl' => $prev_url->toString(),
+      'messageOrder' => $this->getSetting('message_order'),
+      'refreshRate' => (int) $ajax_refresh_rate * 1000,
+      'loadThreadUrl' => $load_url->toString(),
+      'previousLoadCount' => $this->getSetting('ajax_previous_load_count'),
+      'messageCount' => $this->getSetting('message_count'),
+      'messageTotal' => $total,
+      'insertSpeed' => $this->getSetting('message_insert_speed'),
+      'insertStyle' => $this->getSetting('message_insert_style'),
+    ];
+
+    $element['#attached']['library'][] = 'private_message/private_message_thread_script';
+    $style_disabled = $this->getPrivateMessageSettings()->get('remove_css');
+    if (!$style_disabled) {
+      $element['#attached']['library'][] = 'private_message/private_message_thread_style';
+    }
+
+    return [0 => $element];
+  }
+
+  /**
+   * Translates a given key.
+   *
+   * @param string $type
+   *   The type of string being translated.
+   * @param string|null $value
+   *   The value to be translated.
+   *
+   * @return \Drupal\Core\StringTranslation\TranslatableMarkup|string|null
+   *   - If a translated value exists for the given type/value combination, a
+   *     \Drupal\Core\StringTranslation\TranslatableMarkup object containing the
+   *     translated value is returned.
+   *   - If only the type exists, but not the value, the untranslated value as
+   *     a string is returned.
+   *   - If the type does not exist, the untranslated value is returned.
+   */
+  private function translateKey(string $type, ?string $value): TranslatableMarkup|string|null {
+    if ($type == 'order') {
+      $keys = [
+        'asc' => $this->t('Ascending'),
+        'desc' => $this->t('Descending'),
+      ];
+
+      return $keys[$value] ?? $value;
+    }
+
+    return $value;
+  }
+
+}

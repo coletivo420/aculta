@@ -16,6 +16,13 @@ final class AcultaMailerAdjusterManager extends DefaultPluginManager {
 
   /**
    * Constructor.
+   *
+   * @param \Traversable<string, string> $namespaces
+   *   Namespaces dos plugins.
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler
+   *   Manipulador de módulos.
+   * @param \Drupal\Core\Cache\CacheBackendInterface $cacheBackend
+   *   Backend de cache.
    */
   public function __construct(\Traversable $namespaces, ModuleHandlerInterface $moduleHandler, CacheBackendInterface $cacheBackend) {
     parent::__construct(

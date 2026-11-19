@@ -1,0 +1,6 @@
+.account-terms-modal .portal-terms-modal__documents {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-block-end: 1rem;
+}

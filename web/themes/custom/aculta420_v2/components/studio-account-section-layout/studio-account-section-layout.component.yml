@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Layout de seção da conta
+description: Apresenta navegação contextual e conteúdo de uma seção autenticada da Conta.
+status: stable
+group: Conta
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Seção e navegação
+    description: Render array do controller do Studio com navegação, formulário ou conteúdo do módulo proprietário.
+assets:
+  css:
+    component:
+      studio-account-section-layout.css: {}

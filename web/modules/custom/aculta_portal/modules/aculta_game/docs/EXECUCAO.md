@@ -295,7 +295,7 @@ conforme política existente, inclusive na prévia. Perfil anônimo voltou a res
 - Preferências da conta `teste.comum` e disponibilidade da missão restauradas.
   Nenhuma criação/remoção de usuário, conteúdo ou concessão pelo teste.
 - Capturas e resultados locais: `.suite-out/game/`, fora do Git. Suítes em
-  `tests/browser/aculta-game/smoke.mjs` e `tests/runtime/aculta-game/http-smoke.py`.
+  `tests/browser/aculta-game/smoke.mjs` e `tests/browser/aculta-game/http-smoke.py`.
   Hosts conferidos no Deployer; banco restrito a `aculta_runtime`.
 
 G3 agora tem submissão, privacidade e cache entre sessões verificados. Continuam

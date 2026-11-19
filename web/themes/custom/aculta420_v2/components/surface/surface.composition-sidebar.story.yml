@@ -1,0 +1,12 @@
+name: Composição com coluna lateral
+description: Composição de layout de duas colunas contendo painel institucional na coluna principal e moldura na coluna lateral.
+component: aculta420_v2:layout-two-columns
+props:
+  ratio: wide
+slots:
+  primary:
+    type: inline_template
+    template: '{{ include("aculta420_v2:surface-panel", { header_variant: "institutional", show_header_placeholder: true }, with_context = false) }}'
+  secondary:
+    type: inline_template
+    template: '{{ include("aculta420_v2:surface-accent", { accent: "tricolor" }, with_context = false) }}'

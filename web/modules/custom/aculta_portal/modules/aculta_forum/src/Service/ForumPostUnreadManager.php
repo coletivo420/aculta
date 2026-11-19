@@ -24,7 +24,7 @@ final class ForumPostUnreadManager {
    * public Forum View. Published ForumPosts on those topics inherit public
    * topic visibility from ForumPostAccessHooks.
    *
-   * @param array $topicIds
+   * @param array<int|string, mixed> $topicIds
    *   Topic node IDs from the current View result page.
    *
    * @return array<int, array{count: int, post_id: int, page: int}>
@@ -36,8 +36,14 @@ final class ForumPostUnreadManager {
       return [];
     }
 
-    $topicIds = array_values(array_unique(array_filter(array_map('intval', $topicIds), static fn (int $id): bool => $id > 0)));
-    if ($topicIds === []) {
+    $cleanIds = [];
+    foreach ($topicIds as $val) {
+      if (is_numeric($val) && (int) $val > 0) {
+        $cleanIds[] = (int) $val;
+      }
+    }
+    $cleanIds = array_values(array_unique($cleanIds));
+    if ($cleanIds === []) {
       return [];
     }
 
@@ -78,7 +84,7 @@ final class ForumPostUnreadManager {
         ':count_limit_missing' => HISTORY_READ_LIMIT,
         ':count_limit_old' => HISTORY_READ_LIMIT,
         ':history_uid' => $this->currentUser->id(),
-        ':topic_ids[]' => $topicIds,
+        ':topic_ids[]' => $cleanIds,
         ':history_limit_missing' => HISTORY_READ_LIMIT,
         ':history_limit_old' => HISTORY_READ_LIMIT,
         ':earlier_uid' => $this->currentUser->id(),
@@ -88,13 +94,18 @@ final class ForumPostUnreadManager {
     );
 
     $unread = [];
-    foreach ($result as $first) {
-      $topicId = (int) $first->topic;
-      $unread[$topicId] = [
-        'count' => (int) $first->unread_count,
-        'post_id' => (int) $first->id,
-        'page' => intdiv((int) $first->preceding_count, ForumPostThreadBuilder::POSTS_PER_PAGE),
-      ];
+    if ($result instanceof \Traversable) {
+      foreach ($result as $first) {
+        if (is_object($first) && isset($first->topic) && is_numeric($first->topic)) {
+          $topicId = (int) $first->topic;
+          $preceding = isset($first->preceding_count) && is_numeric($first->preceding_count) ? (int) $first->preceding_count : 0;
+          $unread[$topicId] = [
+            'count' => isset($first->unread_count) && is_numeric($first->unread_count) ? (int) $first->unread_count : 0,
+            'post_id' => isset($first->id) && is_numeric($first->id) ? (int) $first->id : 0,
+            'page' => intdiv($preceding, ForumPostThreadBuilder::POSTS_PER_PAGE),
+          ];
+        }
+      }
     }
 
     return $unread;

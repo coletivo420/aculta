@@ -27,6 +27,8 @@ final class ShipmentAddressBinder {
   ) {}
 
   /**
+   * Monta o par de endereços de origem e destino da remessa.
+   *
    * @param array<string, mixed>|null $destination
    *   Campos do Drupal Address do perfil de envio da remessa (snapshot do pedido). NULL quando o perfil não existe.
    * @param string $purpose
@@ -34,8 +36,17 @@ final class ShipmentAddressBinder {
    */
   public function bind(?array $destination, string $purpose): ShipmentAddressPair {
     $origin = $this->configs->get(self::SETTINGS)->get('origin');
+    $dadosOrigem = NULL;
+    if (is_array($origin)) {
+      $dadosOrigem = [];
+      foreach ($origin as $chave => $valor) {
+        if (is_string($chave)) {
+          $dadosOrigem[$chave] = $valor;
+        }
+      }
+    }
     return new ShipmentAddressPair(
-      from: $this->mapper->map(is_array($origin) ? $origin : NULL, $purpose),
+      from: $this->mapper->map($dadosOrigem, $purpose),
       to: $this->mapper->map($destination, $purpose),
     );
   }

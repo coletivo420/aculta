@@ -1,0 +1,18 @@
+{#
+  Grupos da View de categorias do Fórum.
+
+  Cada grupo hierárquico recebe um H2 pelo SDC heading; as linhas continuam
+  sendo o SDC forum-category renderizado pelo ui_patterns_views.
+#}
+{% if title %}
+  {{ include('aculta420_v2:heading', {
+    text: title,
+    level: 2,
+    style: 'plain'
+  }, with_context = false) }}
+{% endif %}
+<div class="aculta-forum-categories__rows">
+  {% for row in rows %}
+    <div{{ row.attributes.addClass('views-row') }}>{{ row.content }}</div>
+  {% endfor %}
+</div>

@@ -1,6 +1,6 @@
 # ACULTA Studio — Minha Conta e Meu Perfil independentes
 
-**Contrato de ownership vigente; paths atualizados pela ADR-038 em 2026-10-30.** Substitui o antigo
+**Contrato de ownership vigente; paths atualizados pela ADR-038 e retificados pela ADR-048 em 2026-11-05.** Meu Perfil privado usa `/meu-perfil` e filhos, conforme decisão do responsável; a rota pública continua em decisão separada. Substitui o antigo
 planejamento que agrupava Conta e Perfil em `/studio/pessoal` e a hipótese
 de retirar o legado. Entregas de código são distintas de homologação Runtime.
 
@@ -8,9 +8,9 @@ de retirar o legado. Entregas de código são distintas de homologação Runtime
 
 | Área | Entrada canônica | Dono dos dados | O que apresenta |
 | --- | --- | --- | --- |
-| Entrada da Conta | **`/` e `/conta` no Domain ACCOUNT** | Portal + `aculta_studio` | Página própria da Conta, sem hub ou rewrite para `/studio` |
+| Dashboard do Studio | **`/` no Domain ACCOUNT** | Portal + `aculta_studio` | Dashboard privado; path interno protegido contra acesso direto |
 | **Minha Conta** | `/conta` e filhos | Portal, Core User/Profile, Commerce, Auth | Cadastro, endereço, documentos, segurança, conexões, apoio, pedidos e preferências da conta |
-| **Meu Perfil** | `/perfil` e filhos | `aculta_user`, User/Profile, `aculta_image` | Nome público/apelido, foto, avatar, biografia, redes e visibilidade pública |
+| **Meu Perfil** | `/meu-perfil` e filhos | `aculta_studio` compõe; `aculta_user`, User/Profile e `aculta_image` são owners | Edição privada do apelido, foto, avatar, biografia, redes e visibilidade pública |
 | **Minha Conta legada — PERMANENTE** | **`/conta-legada` no Domain ACCOUNT** | `aculta_portal` e owners existentes | Shell, menus, AJAX e formulários atuais, sem alterações |
 | Perfil público | `/u/{apelido}` em MAIN | `aculta_user` e `PublicProfilePolicy` | Apenas informações autorizadas publicamente |
 | Marley | `/marley` · `account` | Owners editoriais | Trabalho editorial |
@@ -24,7 +24,8 @@ em **`/conta-legada`** no domínio ACCOUNT, incluindo `AccountShellBuilder`,
 `PortalController`, `account-navigation.js`, formulários, hooks,
 integrações e estado de navegação. A rota técnica
 `aculta_portal.dashboard` foi movida para `/conta-legada` (versão 0.4.1-dev.26).
-A raiz `/` do Domain ACCOUNT passou a servir o hub do Studio. Requisições
+A raiz `/` do Domain ACCOUNT serve o dashboard privado do Studio; pela ADR-048,
+Minha Conta é `/conta`. Requisições
 HTTP diretas para `/minha-conta` ou filhos respondem 404, sem redirect nem alias.
 Não habilitar esse caminho nem criar redirect/alias.
 A interface legada será usada para comparar versões visual e

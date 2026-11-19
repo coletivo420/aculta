@@ -73,9 +73,6 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
       if ($configured === NULL) {
         return [...$allowed, self::EMAIL_IMMEDIATE];
       }
-      if (!is_array($configured)) {
-        return $allowed;
-      }
       return ($configured[self::EMAIL_IMMEDIATE] ?? FALSE) === TRUE
         ? [...$allowed, self::EMAIL_IMMEDIATE]
         : $allowed;
@@ -86,9 +83,6 @@ final class AvisoPreferencias implements AvisoPreferenciasInterface {
     // A malformed explicit policy must never re-enable modes. Missing config
     // keeps the backwards-compatible defaults above; configured values must
     // be actual booleans as required by the config schema.
-    if (!is_array($configured)) {
-      return $allowed;
-    }
     if (($configured[self::EMAIL_DIGEST] ?? FALSE) === TRUE) {
       $allowed[] = self::EMAIL_DIGEST;
     }

@@ -6,12 +6,14 @@ namespace Drupal\Tests\aculta_user\Kernel;
 
 use Drupal\aculta_user\Account\NicknameClaimConflictException;
 use Drupal\aculta_user\Account\NicknameRegistry;
+use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Database\IntegrityConstraintViolationException;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\profile\Entity\Profile;
+use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\Entity\ProfileType;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
@@ -43,6 +45,9 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
+    if (!$loader instanceof \Composer\Autoload\ClassLoader) {
+      throw new \RuntimeException('Autoloader do Composer indisponível.');
+    }
     $loader->addPsr4('Drupal\\aculta_user\\', dirname(__DIR__, 3) . '/src', TRUE);
     $loader->addPsr4('Drupal\\aculta_portal\\', dirname(__DIR__, 5) . '/src', TRUE);
     $this->installEntitySchema('user');
@@ -51,9 +56,12 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
     $this->installConfig(['system', 'user', 'filter', 'profile']);
 
     require_once dirname(__DIR__, 3) . '/aculta_user.install';
+    $schema = aculta_user_schema();
+    $nicknameTable = $schema['aculta_user_nickname'] ?? NULL;
+    self::assertIsArray($nicknameTable);
     $this->container->get('database')->schema()->createTable(
       'aculta_user_nickname',
-      aculta_user_schema()['aculta_user_nickname'],
+      $nicknameTable,
     );
 
     FieldStorageConfig::create([
@@ -250,8 +258,8 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
     self::assertSame((int) $account->id(), $registry->uidForSlug('segundo'));
 
     $storage = $this->container->get('entity_type.manager')->getStorage('profile');
-    self::assertSame('segundo', $storage->loadUnchanged($older->id())->get('field_nickname')->value);
-    self::assertSame('segundo', $storage->loadUnchanged($newer->id())->get('field_nickname')->value);
+    self::assertSame('segundo', $this->unchangedNickname($storage, $older->id()));
+    self::assertSame('segundo', $this->unchangedNickname($storage, $newer->id()));
     self::assertSame([
       'uids' => 1,
       'profiles' => 2,
@@ -285,8 +293,8 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
     self::assertNull($this->registry()->uidForSlug('anterior'));
     self::assertStringContainsString('1 same-UID conflicts', $result);
     $storage = $this->container->get('entity_type.manager')->getStorage('profile');
-    self::assertSame('atual', $storage->loadUnchanged($older->id())->get('field_nickname')->value);
-    self::assertSame('atual', $storage->loadUnchanged($newer->id())->get('field_nickname')->value);
+    self::assertSame('atual', $this->unchangedNickname($storage, $older->id()));
+    self::assertSame('atual', $this->unchangedNickname($storage, $newer->id()));
   }
 
   /**
@@ -329,10 +337,8 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
     $first->save();
     $transaction->commitOrRelease();
 
-    $unchanged = $this->container->get('entity_type.manager')
-      ->getStorage('profile')
-      ->loadUnchanged($second->id());
-    self::assertSame('depois', $unchanged->get('field_nickname')->value);
+    $unchangedNickname = $this->unchangedNickname($this->container->get('entity_type.manager')->getStorage('profile'), $second->id());
+    self::assertSame('depois', $unchangedNickname);
     self::assertNull($registry->uidForSlug('antes'));
     self::assertSame((int) $account->id(), $registry->uidForSlug('depois'));
   }
@@ -362,8 +368,8 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
     self::assertSame((int) $account->id(), $registry->uidForSlug('antes'));
     self::assertNull($registry->uidForSlug('depois'));
     $storage = $this->container->get('entity_type.manager')->getStorage('profile');
-    self::assertSame('antes', $storage->loadUnchanged($first->id())->get('field_nickname')->value);
-    self::assertSame('antes', $storage->loadUnchanged($second->id())->get('field_nickname')->value);
+    self::assertSame('antes', $this->unchangedNickname($storage, $first->id()));
+    self::assertSame('antes', $this->unchangedNickname($storage, $second->id()));
   }
 
   /**
@@ -457,6 +463,16 @@ final class NicknameRegistryKernelTest extends KernelTestBase {
     ]);
     $profile->save();
     return $profile;
+  }
+
+  /**
+   * Apelido gravado no perfil, lido sem o cache de entidades carregadas.
+   */
+  private function unchangedNickname(EntityStorageInterface $storage, int|string|null $id): mixed {
+    self::assertNotNull($id);
+    $profile = $storage->loadUnchanged($id);
+    self::assertInstanceOf(ProfileInterface::class, $profile);
+    return $profile->get('field_nickname')->value;
   }
 
 }

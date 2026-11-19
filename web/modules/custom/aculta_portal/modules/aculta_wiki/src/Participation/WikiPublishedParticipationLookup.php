@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Participation;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_user\Participation\PublishedParticipationEvidence;
 use Drupal\aculta_user\Participation\PublishedParticipationLookupInterface;
 use Drupal\Core\Cache\Cache;
@@ -18,7 +19,7 @@ final class WikiPublishedParticipationLookup implements PublishedParticipationLo
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly AccountProxyInterface $currentUser,
   ) {}
 
@@ -31,13 +32,13 @@ final class WikiPublishedParticipationLookup implements PublishedParticipationLo
   /**
    * {@inheritdoc} */
   public function lookup(int $accountId): PublishedParticipationEvidence {
-    $wikiDomain = $this->domainPurposeManager->getDomain('wiki');
+    $wikiDomain = $this->siteManager->getDomain(SiteKey::Wiki);
     if ($accountId < 1 || $wikiDomain === NULL || !$wikiDomain->status()) {
       return PublishedParticipationEvidence::unavailable();
     }
 
     try {
-      $found = $this->domainPurposeManager->runInPurpose('wiki', function () use ($accountId, $wikiDomain): bool {
+      $found = $this->siteManager->runInSite(SiteKey::Wiki, function () use ($accountId, $wikiDomain): bool {
         $ids = $this->entityTypeManager->getStorage('node')->getQuery()
           ->accessCheck(FALSE)
           ->condition('type', 'wiki_entry')

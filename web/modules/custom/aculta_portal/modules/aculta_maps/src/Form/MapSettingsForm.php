@@ -19,7 +19,7 @@ final class MapSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $configFactory,
     TypedConfigManagerInterface $typedConfigManager,
-    private readonly ?SecretsManager $secrets,
+    protected readonly ?SecretsManager $secrets,
   ) {
     parent::__construct($configFactory, $typedConfigManager);
   }
@@ -44,6 +44,8 @@ final class MapSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<int, string>
    */
   protected function getEditableConfigNames(): array {
     return ['aculta_maps.settings'];
@@ -51,6 +53,11 @@ final class MapSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $settings = $this->config('aculta_maps.settings');
@@ -115,10 +122,14 @@ final class MapSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
-    $template = trim((string) $form_state->getValue('route_url_template'));
+    $rawValue = $form_state->getValue('route_url_template');
+    $template = trim(is_scalar($rawValue) ? (string) $rawValue : '');
     $parts = parse_url(str_replace('{destino}', 'destination', $template));
     $validHost = in_array($parts['host'] ?? '', ['www.google.com', 'maps.google.com'], TRUE);
     if (!str_contains($template, '{destino}')
@@ -131,6 +142,9 @@ final class MapSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $settings = $this->configFactory()->getEditable('aculta_maps.settings');

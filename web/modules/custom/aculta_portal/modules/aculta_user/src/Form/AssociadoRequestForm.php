@@ -21,12 +21,15 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class AssociadoRequestForm extends FormBase {
 
   public function __construct(
-    private readonly AssociadoMarker $marker,
-    private readonly AccountInterface $currentUserService,
-    private readonly DateFormatterInterface $dateFormatter,
-    private readonly EmailConfirmationPolicy $emailConfirmation,
+    protected readonly AssociadoMarker $marker,
+    protected readonly AccountInterface $currentUserService,
+    protected readonly DateFormatterInterface $dateFormatter,
+    protected readonly EmailConfirmationPolicy $emailConfirmation,
   ) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_user.associado_marker'),
@@ -36,10 +39,22 @@ final class AssociadoRequestForm extends FormBase {
     );
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function getFormId(): string {
     return 'aculta_user_associado_pedido';
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
+   *
+   * @return array<array-key, mixed>
+   *   Estrutura do formulário.
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $uid = (int) $this->currentUserService->id();
     $situacao = $this->marker->situacao($uid);
@@ -58,10 +73,17 @@ final class AssociadoRequestForm extends FormBase {
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Estrutura do formulário.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $this->currentUserService->id();
     // Convite: aceitar ou recusar, sem depender de e-mail confirmado além do que o convite já exige.
-    $acao = (string) ($form_state->getTriggeringElement()['#name'] ?? '');
+    $trigger = $form_state->getTriggeringElement();
+    $acao = is_array($trigger) ? $this->textValue($trigger['#name'] ?? '') : '';
     if ($acao === 'aceitar') {
       $this->messenger()->addStatus($this->marker->aceitarConvite($uid)
         ? $this->t('Convite aceito. Você agora é associado.')
@@ -92,12 +114,14 @@ final class AssociadoRequestForm extends FormBase {
     $form_state->setRedirect('aculta_user.associado_pedido');
   }
 
-  /** Só quem não tem situação ou foi desligado pode pedir. */
+  /**
+   * Só quem não tem situação ou foi desligado pode pedir. */
   private function podePedir(?string $situacao): bool {
     return $situacao === NULL || $situacao === AssociadoMarker::DESLIGADO;
   }
 
-  /** Texto conforme a situação. */
+  /**
+   * Texto conforme a situação. */
   private function texto(?string $situacao, int $uid): string {
     if (!$this->emailConfirmation->isConfirmed($this->currentUserService)) {
       return (string) $this->t('Confirme seu e-mail antes de pedir adesão à associação.');
@@ -110,6 +134,13 @@ final class AssociadoRequestForm extends FormBase {
       AssociadoMarker::CONVIDADO => (string) $this->t('A associação convidou você a ser associado. Aceite ou recuse o convite abaixo.'),
       default => (string) $this->t('Você ainda não é associado. Pedir adesão envia um pedido para a associação analisar; só a administração concede a situação.'),
     };
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

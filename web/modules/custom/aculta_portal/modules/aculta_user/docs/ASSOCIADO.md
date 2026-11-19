@@ -49,7 +49,7 @@ Há pedido de adesão, feito pela própria pessoa. Só o administrador concede, 
 - Administrador suspende: situação `suspenso`; pessoa vê "suspensa"; não é mais associada.
 - Conta comum recebe 403 na tela administrativa; a pessoa não consegue se conceder situação.
 - Páginas (`/associado`, `/atividade/conquistas`, `/configuracoes/privacidade`, relatório e situação) respondem 200 com
-  os temas aculta420 e Olivero.
+  o tema ACULTA ativo.
 - Teste de Kernel dedicado não foi executado: o `aculta_user` depende de serviços do `aculta_portal` (chaves, CAPTCHA,
   OAuth, Commerce), e a montagem do container de teste não fecha com módulos mínimos. Pendência registrada em `PENDENCIAS.md`.
 

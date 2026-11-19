@@ -6,8 +6,9 @@ namespace Drupal\aculta_user;
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
@@ -42,7 +43,7 @@ final class ParticipationEditWindow {
   /**
    * Returns the access restriction for an author update, or neutral otherwise.
    */
-  public function access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResultInterface {
+  public function access(EntityInterface $entity, string $operation, AccountInterface $account): AccessResult {
     if ($operation !== 'update' || !$entity instanceof EntityOwnerInterface || (string) $entity->getOwnerId() !== (string) $account->id()) {
       return AccessResult::neutral();
     }
@@ -56,7 +57,7 @@ final class ParticipationEditWindow {
 
     [$configName, $key] = $this->settingFor($entity);
     $config = $this->configFactory->get($configName);
-    $minutes = max(0, (int) ($config->get($key) ?? 10));
+    $minutes = max(0, $this->intValue($config->get($key) ?? 10));
     $publishedAt = $this->publishedAt($entity);
     $cacheContexts = ['user', 'user.permissions'];
 
@@ -146,20 +147,30 @@ final class ParticipationEditWindow {
    * Reads the immutable first-publication timestamp for the entity.
    */
   private function publishedAt(EntityInterface $entity): ?int {
+    if (!$entity instanceof FieldableEntityInterface) {
+      return NULL;
+    }
     $field = match ($entity->getEntityTypeId()) {
       'comment' => 'field_aculta_published_at',
       'aculta_forum_post' => 'first_published',
       default => NULL,
     };
     if ($field !== NULL && $entity->hasField($field) && !$entity->get($field)->isEmpty()) {
-      return (int) $entity->get($field)->value;
+      return $this->intValue($entity->get($field)->value);
     }
 
     if ($entity->hasField('created') && !$entity->get('created')->isEmpty()) {
-      return (int) $entity->get('created')->value;
+      return $this->intValue($entity->get('created')->value);
     }
 
     return NULL;
+  }
+
+  /**
+   * Inteiro de um valor; zero quando não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

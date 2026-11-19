@@ -6,6 +6,7 @@ namespace Drupal\aculta_wiki\Form;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityFormInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 
 /**
  * Form API submit actions for the native Wiki entry form.
@@ -23,7 +24,11 @@ final class WikiEntryFormActions {
     $form_state->setValue($parents, 'review');
     $formObject = $form_state->getFormObject();
     if ($formObject instanceof EntityFormInterface) {
-      $formObject->getEntity()->set('moderation_state', 'review');
+      $entity = $formObject->getEntity();
+      if (!$entity instanceof FieldableEntityInterface) {
+        throw new \LogicException('The Wiki review action requires a fieldable entity form.');
+      }
+      $entity->set('moderation_state', 'review');
     }
   }
 

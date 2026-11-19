@@ -60,12 +60,19 @@ final class QrCodePresetTest extends UnitTestCase {
 
   /**
    * Rejeita valores fora do formato e do intervalo permitido.
+   *
+   * @param array<string, mixed> $overrides
    */
   #[DataProvider('invalidPresetProvider')]
   public function testRejectsInvalidValues(array $overrides, string $message): void {
     $this->expectException(InvalidQrCodeException::class);
     $this->expectExceptionMessage($message);
-    $this->preset(...$overrides);
+    $foreground = isset($overrides['foreground']) && is_string($overrides['foreground']) ? $overrides['foreground'] : NULL;
+    $background = isset($overrides['background']) && is_string($overrides['background']) ? $overrides['background'] : NULL;
+    $size = isset($overrides['size']) && is_int($overrides['size']) ? $overrides['size'] : NULL;
+    $margin = isset($overrides['margin']) && is_int($overrides['margin']) ? $overrides['margin'] : NULL;
+    $id = isset($overrides['id']) && is_string($overrides['id']) ? $overrides['id'] : NULL;
+    $this->preset($foreground, $background, $size, $margin, $id);
   }
 
   /**

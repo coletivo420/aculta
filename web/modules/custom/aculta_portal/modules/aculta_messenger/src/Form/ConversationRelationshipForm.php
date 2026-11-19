@@ -15,8 +15,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageBanManagerInterface;
 use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -36,12 +36,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class ConversationRelationshipForm extends FormBase {
 
   public function __construct(
-    private readonly FriendshipManagerInterface $friendshipManager,
-    private readonly PrivateMessageBanManagerInterface $banManager,
-    private readonly AccountProxyInterface $currentUser,
-    private readonly EntityTypeManagerInterface $entityTypes,
-    private readonly CacheTagsInvalidatorInterface $cacheTagsInvalidator,
-    private readonly CsrfTokenGenerator $csrfToken,
+    protected readonly FriendshipManagerInterface $friendshipManager,
+    protected readonly PrivateMessageBanManagerInterface $banManager,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly EntityTypeManagerInterface $entityTypes,
+    protected readonly CacheTagsInvalidatorInterface $cacheTagsInvalidator,
+    protected readonly CsrfTokenGenerator $csrfToken,
   ) {}
 
   /**
@@ -50,7 +50,7 @@ final class ConversationRelationshipForm extends FormBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_user.friendship_manager'),
-      $container->get('private_message.ban_manager'),
+      $container->get('aculta_messenger.pm.ban_manager'),
       $container->get('current_user'),
       $container->get('entity_type.manager'),
       $container->get('cache_tags.invalidator'),
@@ -67,6 +67,18 @@ final class ConversationRelationshipForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   * @param ?int $targetUid
+   *   O valor informado para $targetUid.
+   * @param ?string $postUrl
+   *   O valor informado para $postUrl.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   public function buildForm(array $form, FormStateInterface $formState, ?int $targetUid = NULL, ?string $postUrl = NULL): array {
     $postUrl ??= $formState->get('post_url');
@@ -159,6 +171,14 @@ final class ConversationRelationshipForm extends FormBase {
 
   /**
    * The group menu contains only "Limpar histórico" for the current member.
+   *
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   * @param ?string $postUrl
+   *   O valor informado para $postUrl.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function groupForm(FormStateInterface $formState, ?string $postUrl): array {
     $form['#attributes'] = ['data-aculta-drawer-action' => ''];
@@ -176,6 +196,11 @@ final class ConversationRelationshipForm extends FormBase {
 
   /**
    * Renders the two-step clear-history action for the current member.
+   *
+   * @param array<string, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
    */
   private function clearItems(array &$form, FormStateInterface $formState): void {
     if ($formState->get('clear_step') === 'confirm') {
@@ -199,6 +224,12 @@ final class ConversationRelationshipForm extends FormBase {
 
   /**
    * Builds a status line as a neutral paragraph styled by the theme.
+   *
+   * @param string $text
+   *   O valor informado para $text.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function statusLine(string $text): array {
     return [
@@ -230,6 +261,11 @@ final class ConversationRelationshipForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
    */
   public function submitForm(array &$form, FormStateInterface $formState): void {
     if ($formState->get('group') === TRUE) {
@@ -424,6 +460,16 @@ final class ConversationRelationshipForm extends FormBase {
 
   /**
    * Builds a submit action button.
+   *
+   * @param string $name
+   *   O valor informado para $name.
+   * @param mixed $label
+   *   O valor informado para $label.
+   * @param string $token
+   *   O valor informado para $token.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function button(string $name, $label, string $token = 'conversation-action'): array {
     return [

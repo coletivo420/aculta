@@ -141,6 +141,8 @@ final class EventAdminOverviewController extends ControllerBase {
 
     CacheableMetadata::createFromRenderArray($build)->applyTo($build);
 
+    $build['#attached']['library'][] = 'aculta_events/events-portal-ui';
+
     return $build;
   }
 

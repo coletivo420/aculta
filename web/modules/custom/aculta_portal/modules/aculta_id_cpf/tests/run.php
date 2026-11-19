@@ -27,6 +27,7 @@ spl_autoload_register(static function (string $class) use ($root): void {
 
 $validator = new DocumentValidator(new DocumentNormalizer(), new CpfValidator(), new CnpjValidator());
 $formatter = new DocumentFormatter($validator);
+/** @var array{valid: list<array{string, string, string, string}>, invalid: list<array{string, string}>} $fixtures */
 $fixtures = require __DIR__ . '/fixtures/documents.php';
 $checks = 0;
 $failures = [];
@@ -59,8 +60,13 @@ foreach ($fixtures['invalid'] as $i => [$type, $input]) {
 foreach (range(0, 9) as $digit) {
   $check(!$validator->isValid(str_repeat((string) $digit, 11), DocumentType::CPF), "repeated CPF $digit");
 }
-foreach ([[], new stdClass(), NULL, 52998224725] as $i => $input) {
+/** @var list<mixed> $invalidInputs */
+$invalidInputs = [[], new stdClass(), NULL, 52998224725];
+foreach ($invalidInputs as $i => $input) {
   try {
+    if (!is_string($input)) {
+      throw new TypeError('Expected string');
+    }
     $validator->canonicalize($input, DocumentType::CPF);
     $check(FALSE, "non-string input $i");
   }

@@ -1,0 +1,8 @@
+name: Com ícone
+description: Ícone antes e depois do texto.
+props:
+  text: Adicionar evento
+  url: /
+  variant: primary
+  icon_before: plus
+  icon_after: caret-right

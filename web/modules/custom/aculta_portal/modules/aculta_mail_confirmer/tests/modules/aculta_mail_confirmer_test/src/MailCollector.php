@@ -20,7 +20,9 @@ class MailCollector extends MailManager {
    * {@inheritdoc}
    */
   public function doMail($module, $key, $to, $langcode, $params = [], $reply = NULL, $send = TRUE) {
-    $this->emails[] = parent::doMail($module, $key, $to, $langcode, $params, $reply, FALSE);
+    $message = parent::doMail($module, $key, $to, $langcode, $params, $reply, FALSE);
+    $this->emails[] = $message;
+    return $message;
   }
 
   /**

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_messenger\Aviso\PersonalNoticePageState;
 use Drupal\aculta_messenger\Form\FriendRequestsForm;
@@ -35,7 +34,6 @@ final class AvisosMensagensController extends ControllerBase {
 
   public function __construct(
     private readonly UnreadThreadCounter $conversas,
-    private readonly AccountInterface $usuarioAtual,
     private readonly MessagesController $mensagens,
     private readonly FriendshipManagerInterface $friendshipManager,
     private readonly RequestStack $requestStack,
@@ -48,7 +46,6 @@ final class AvisosMensagensController extends ControllerBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_messenger.unread_thread_counter'),
-      $container->get('current_user'),
       $container->get('class_resolver')->getInstanceFromDefinition(MessagesController::class),
       $container->get('aculta_user.friendship_manager'),
       $container->get('request_stack'),

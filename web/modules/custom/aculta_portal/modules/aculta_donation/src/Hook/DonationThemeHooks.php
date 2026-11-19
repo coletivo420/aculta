@@ -15,6 +15,7 @@ class DonationThemeHooks {
    * Implements hook_theme().
    *
    * @return array<string, array<string, mixed>>
+   *   Definições de tema do fluxo de doação.
    */
   #[Hook('theme')]
   public function theme(): array {
@@ -22,31 +23,21 @@ class DonationThemeHooks {
       'aculta_donation_quick' => [
         'variables' => [
           'links' => [],
+          'component' => NULL,
         ],
       ],
       'aculta_donation_donate' => [
         'variables' => [
           'label' => NULL,
           'href' => NULL,
+          'component' => NULL,
         ],
       ],
       'aculta_donation_back' => [
         'variables' => [
           'label' => NULL,
           'href' => NULL,
-        ],
-      ],
-      'aculta_donation_summary' => [
-        'variables' => [
-          'content' => NULL,
-          'order_item' => NULL,
-          'attributes' => NULL,
-        ],
-      ],
-      'aculta_donation_summary_container' => [
-        'variables' => [
-          'content' => NULL,
-          'attributes' => NULL,
+          'component' => NULL,
         ],
       ],
       'commerce_checkout_pane__commerce_donation_pane' => [

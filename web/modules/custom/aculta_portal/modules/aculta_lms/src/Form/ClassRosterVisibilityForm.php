@@ -19,8 +19,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class ClassRosterVisibilityForm extends FormBase {
 
   public function __construct(
-    private readonly CurrentRouteMatch $currentRouteMatch,
-    private readonly ClassDashboardAccessCheck $classAccess,
+    protected readonly CurrentRouteMatch $currentRouteMatch,
+    protected readonly ClassDashboardAccessCheck $classAccess,
   ) {}
 
   /**
@@ -45,6 +45,12 @@ final class ClassRosterVisibilityForm extends FormBase {
 
   /**
    * Builds the per-class setting form.
+   *
+   * @param array<array-key, mixed> $form
+   *   The form render array being built.
+   *
+   * @return array<array-key, mixed>
+   *   The completed form render array.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     [$course, $class] = $this->routeEntities();
@@ -60,7 +66,7 @@ final class ClassRosterVisibilityForm extends FormBase {
       '#title' => $this->t('Permitir que estudantes vejam a lista de participantes'),
       '#description' => $this->t('Quando ativada, cada estudante matriculado nesta turma verá somente os nomes dos colegas da mesma turma na página do curso. A lista fica oculta por padrão e não mostra progresso, notas ou respostas.'),
       '#default_value' => $class->hasField('field_roster_visible')
-        ? (int) $class->get('field_roster_visible')->value
+        ? self::checkboxValue($class->get('field_roster_visible')->value)
         : 0,
     ];
     $form['actions'] = ['#type' => 'actions'];
@@ -70,18 +76,24 @@ final class ClassRosterVisibilityForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Voltar ao painel da turma'),
-      '#url' => Url::fromRoute('aculta_lms.class_dashboard', [
-        'course' => $course->id(),
-        'group' => $class->id(),
-      ]),
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => (string) $this->t('Voltar ao painel da turma'),
+        'url' => Url::fromRoute('aculta_lms.class_dashboard', [
+          'course' => $course->id(),
+          'group' => $class->id(),
+        ])->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     return $form;
   }
 
   /**
    * Saves the visibility preference after rechecking contextual access.
+   *
+   * @param array<array-key, mixed> $form
+   *   The submitted form render array.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     [$course, $class] = $this->routeEntities();
@@ -121,6 +133,16 @@ final class ClassRosterVisibilityForm extends FormBase {
     if (!$this->classAccess->access($course, $class)->isAllowed()) {
       throw new AccessDeniedHttpException();
     }
+  }
+
+  /**
+   * Narrows the stored boolean field value for Form API.
+   */
+  private static function checkboxValue(mixed $value): int {
+    if ($value === TRUE || $value === 1 || $value === '1') {
+      return 1;
+    }
+    return 0;
   }
 
 }

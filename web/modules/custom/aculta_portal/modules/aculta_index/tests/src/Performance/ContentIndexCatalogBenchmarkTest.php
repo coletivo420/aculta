@@ -14,7 +14,7 @@ use Drupal\aculta_index\Query\ContentIndexQueryInterface;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProjection;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\media\Traits\MediaTypeCreationTrait;
@@ -26,8 +26,6 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Opt-in candidate-query benchmark against synthetic catalog rows.
  */
-#[Group('aculta_index')]
-#[Group('performance')]
 #[Group('aculta_index')]
 #[Group('performance')]
 #[RunTestsInSeparateProcesses]
@@ -62,7 +60,7 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->set('aculta_portal.domain_purpose', new DomainPurposeManager(
+    $container->set('aculta_portal.domain_site', new DomainSiteManager(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -74,6 +72,11 @@ final class ContentIndexCatalogBenchmarkTest extends KernelTestBase {
    * {@inheritdoc}
    */
   protected function setUp(): void {
+    // Opt-in guard runs before the database check and parent::setUp() so a
+    // normal run never boots the kernel or touches the database.
+    if (getenv('ACULTA_INDEX_BENCHMARK') !== '1') {
+      self::markTestSkipped('Set ACULTA_INDEX_BENCHMARK=1 to run the 10k/100k/1M catalog benchmark.');
+    }
     $databaseUrl = getenv('SIMPLETEST_DB') ?: '';
     $databaseParts = parse_url($databaseUrl);
     if (!is_array($databaseParts)

@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Página de salvos e recomendações
+description: Apresenta conteúdo salvo, itens seguidos e recomendações montados pelo Studio.
+status: stable
+group: Conta
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Conteúdo da página
+    description: Cabeçalho, abas, cartões, estado vazio e paginação preparados pelo controller.
+assets:
+  css:
+    component:
+      saved-content-page.css: {}

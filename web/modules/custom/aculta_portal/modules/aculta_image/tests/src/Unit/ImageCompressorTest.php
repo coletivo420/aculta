@@ -39,7 +39,6 @@ class ImageCompressorTest extends UnitTestCase {
     $path = $directory . '/inline.png';
     $source = imagecreatetruecolor(48, 24);
     imagepng($source, $path);
-    imagedestroy($source);
 
     $file = $this->createMock(FileInterface::class);
     $file->method('getMimeType')->willReturn('image/png');

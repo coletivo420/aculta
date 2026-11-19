@@ -154,9 +154,20 @@ final class EditorialWorkspaceController {
   /**
    * Builds the native Node creation form in the Marley purpose.
    */
-  public function create(): array {
+  public function createPopup(): array {
     $node = $this->entityTypeManager->getStorage('node')->create(['type' => 'revista']);
-    return $this->entityFormBuilder->getForm($node, 'default');
+    $form = $this->entityFormBuilder->getForm($node, 'default');
+    // Popup Nova publicação: renderizado pelo SDC Compositor de Criação de Conteúdo (UI Library).
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:discussion-content-composer',
+      '#props' => [
+        'target_id' => 'aculta-studio-create-body',
+        'status' => 'editando',
+        'standalone_popup' => FALSE,
+      ],
+      '#slots' => ['form' => $form],
+    ];
   }
 
   /**

@@ -45,9 +45,9 @@ final class AcultaDocumentMediaFormatter extends FormatterBase implements Contai
     $label,
     $view_mode,
     array $third_party_settings,
-    private readonly PdfViewerBuilderInterface $pdfViewerBuilder,
-    private readonly DocxViewerBuilderInterface $docxViewerBuilder,
-    private readonly SpreadsheetViewerBuilderInterface $spreadsheetViewerBuilder,
+    protected readonly PdfViewerBuilderInterface $pdfViewerBuilder,
+    protected readonly DocxViewerBuilderInterface $docxViewerBuilder,
+    protected readonly SpreadsheetViewerBuilderInterface $spreadsheetViewerBuilder,
   ) {
     parent::__construct($plugin_id, $plugin_definition, $field_definition, $settings, $label, $view_mode, $third_party_settings);
   }

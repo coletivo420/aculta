@@ -19,7 +19,7 @@ final class ImageSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config,
-    private readonly ImageCapabilities $capabilities,
+    protected readonly ImageCapabilities $capabilities,
   ) {
     parent::__construct($config_factory, $typed_config);
   }

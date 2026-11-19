@@ -1,6 +1,7 @@
 <?php
 
 /**
+ * @file
  * Reject temporary compatibility routes in all custom ACULTA modules.
  *
  * Permanent functional redirects (authentication, checkout, cross-purpose,
@@ -67,7 +68,7 @@ foreach ($files as $file) {
 
 // Subscribers can publish redirects without separate routing definitions.
 $domainRouteFile = $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainRouteSubscriber.php';
-$domainRequestFile = $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php';
+$domainRequestFile = $root . '/web/modules/custom/aculta_portal/src/EventSubscriber/DomainSiteRequestSubscriber.php';
 $domainRoute = @file_get_contents($domainRouteFile);
 $domainRequest = @file_get_contents($domainRequestFile);
 if ($domainRoute === FALSE || $domainRequest === FALSE) {

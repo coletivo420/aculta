@@ -7,7 +7,8 @@ namespace Drupal\aculta_mailer\Transport;
 /**
  * Gravação de credenciais do contrato no arquivo de segredos do servidor.
  *
- * Implementada pelo aculta_portal (gerenciador de segredos). Credencial gravada aqui nunca vai ao banco nem à configuração.
+ * Implementada pelo aculta_portal (gerenciador de segredos). Credencial gravada aqui nunca vai ao banco
+ * nem à configuração.
  */
 interface SecretWriterInterface {
 

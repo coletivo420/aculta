@@ -5,10 +5,14 @@ Documento para humanos e agentes. **Não contém a senha.** O valor fica em `sec
 ## Dados
 | Campo | Valor |
 | --- | --- |
-| Usuário | `teste.comum` (uid 5) |
+| Usuário do registro | `teste_comum` (uid 268) — valor de `TESTE_COMUM_USER` |
+| Usuário legado em uso | `teste.comum` (uid 5) — usado por scripts que fazem login por `drush uli` |
 | Host de login | `https://conta.aculta.toca.net.br/entrar` |
-| Senha | ler `TESTE_COMUM_PASSWORD` em `secrets/teste_comum.env` |
-| Papéis | `authenticated`, `email_confirmed`, `wiki_contributor` (sem administrador) |
+| Senha | ler `TESTE_COMUM_PASSWORD` em `secrets/teste_comum.env`; desde 2026-11-12 vale para as duas contas |
+| Papéis (uid 268) | `authenticated`, `email_confirmed` (sem administrador) |
+| Papéis (uid 5) | `authenticated`, `gerente_loja`, `email_confirmed`, `content_editor`, `lms_teacher` |
+
+> **Estado Runtime conferido em 2026-11-12:** o registro `secrets/teste_comum.env` aponta para `teste_comum` (uid 268), não para `teste.comum` (uid 5). O `scripts/guard-teste-comum.sh` confere as duas contas; a senha do registro foi regravada no uid 5 em 2026-11-12 para que o login por formulário usado em `tests/browser/transversal/aculta-htmx-f1/visual.py` voltasse a funcionar. `content_editor` do uid 5 concede `moderar denuncias do forum`, portanto a aba Marley de moderação está autorizada para essa conta. A senha continua protegida pela regra abaixo.
 
 ## Regras para agentes
 1. Use a senha de `secrets/teste_comum.env`. Não peça outra nem tente outras.
@@ -17,7 +21,7 @@ Documento para humanos e agentes. **Não contém a senha.** O valor fica em `sec
 4. Não copie a senha para documentos, commits, mensagens ou saídas de comando.
 
 ## E-mail da conta e comprador do Mercado Pago (2026-10-18)
-- E-mail atual da conta `teste.comum` no Runtime de testes: `test_user_fluxo@testuser.com`, salvo pelo caminho de administrador (`email_confirmer`, bypass do `administrator`). A conta continua confirmada.
+- E-mail atual da conta `teste.comum` no Runtime de desenvolvimentos: `test_user_fluxo@testuser.com`, salvo pelo caminho de administrador (`email_confirmer`, bypass do `administrator`). A conta continua confirmada.
 - Sandbox do Mercado Pago (2026-10-18): aceitou como pagador `test_user_fluxo@testuser.com`. Recusou (HTTP 400, `User bad request`) `testecomum@testuser.com`, `teste.comum@testuser.com`, `testecomum1@testuser.com`, `testecomum2@testuser.com` e `teste-comum@testuser.com`.
 - Não é possível criar comprador de teste novo: a API retorna 403 (limite de contas de teste da conta vendedora). Por isso o e-mail usado é o que o sandbox já aceita.
 

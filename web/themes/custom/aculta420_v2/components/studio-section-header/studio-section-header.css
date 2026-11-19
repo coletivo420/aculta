@@ -1,0 +1,32 @@
+.studio-section-header [data-portal-ui="studio-heading"] {
+  margin: 0;
+  font-family: var(--font-family-heading);
+  font-size: 1.375rem;
+}
+
+.studio-section-header .studio__section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  margin-block-end: 1rem;
+}
+
+.studio-section-header .studio__section-header > .item-list {
+  margin: 0;
+}
+
+.studio-section-header .studio__section-header .studio__actions {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.studio-section-header .studio__section-header .studio__actions > li {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}

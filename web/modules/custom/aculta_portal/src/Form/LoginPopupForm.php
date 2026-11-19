@@ -5,21 +5,27 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Form;
 
 use Drupal\aculta_portal\Auth\AuthIntegrationManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Render\Markup;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\BareHtmlPageRendererInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Url;
 use Drupal\user\Form\UserLoginForm;
+use Drupal\user\LoginFinalizer;
 use Drupal\user\UserAuthenticationInterface;
 use Drupal\user\UserAuthInterface;
 use Drupal\user\UserFloodControlInterface;
+use Drupal\user\UserInterface;
 use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Login do popup "Entrar" da barra multidomínio.
@@ -27,10 +33,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Herda do Core a validação (user.auth, flood control e bloqueio de conta).
  * Troca só o ID do formulário, então o desafio Turnstile de user_login_form
  * não se aplica. Exceção registrada em Captcha\TurnstileToggle e no gate
- * validate-turnstile-exceptions.php. O envio é AJAX no mesmo host do link;
- * sucesso redireciona para o destino (mesmo host) e erro recoloca o formulário.
- * O flood do Core responde com página HTML, que o AJAX não aceita; aqui ele
- * vira mensagem de erro no formulário.
+ * validate-turnstile-exceptions.php. O popup usa HTMX para carregar e enviar
+ * o fragmento; V1 mantém o fallback Drupal AJAX e sem JavaScript o fluxo é
+ * um formulário nativo com retorno local validado.
  */
 final class LoginPopupForm extends UserLoginForm {
 
@@ -44,11 +49,12 @@ final class LoginPopupForm extends UserLoginForm {
     UserAuthInterface|UserAuthenticationInterface $user_auth,
     RendererInterface $renderer,
     BareHtmlPageRendererInterface $bare_html_renderer,
-    private readonly DomainPurposeManager $domainPurpose,
-    private readonly AuthIntegrationManager $authIntegration,
-    private readonly ModuleHandlerInterface $moduleHandler,
+    LoginFinalizer $login_finalizer,
+    protected readonly DomainSiteManagerInterface $domainSiteManager,
+    protected readonly AuthIntegrationManager $authIntegration,
+    protected readonly ModuleHandlerInterface $moduleHandler,
   ) {
-    parent::__construct($user_flood_control, $user_storage, $user_auth, $renderer, $bare_html_renderer);
+    parent::__construct($user_flood_control, $user_storage, $user_auth, $renderer, $bare_html_renderer, $login_finalizer);
   }
 
   /**
@@ -61,7 +67,8 @@ final class LoginPopupForm extends UserLoginForm {
       $container->get('user.auth'),
       $container->get('renderer'),
       $container->get('bare_html_page_renderer'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get(LoginFinalizer::class),
+      $container->get('aculta_portal.domain_site'),
       $container->get('aculta_portal.auth_integration'),
       $container->get('module_handler'),
     );
@@ -86,10 +93,13 @@ final class LoginPopupForm extends UserLoginForm {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @return array<mixed>
    */
-  public function buildForm(array $form, FormStateInterface $form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
-    $validators = $form['#validate'] ?? [];
+    $validators = isset($form['#validate']) && is_array($form['#validate']) ? $form['#validate'] : [];
     $authentication_wrapper = 'aculta_portal.form_callbacks:validateLoginAuthentication';
     $authentication_validators = array_values(array_filter(
       $validators,
@@ -103,13 +113,35 @@ final class LoginPopupForm extends UserLoginForm {
       $authentication_validators[$authentication_index] = $authentication_wrapper;
     }
     $form['#validate'] = $authentication_validators;
-    $form['name']['#title'] = $this->t('Nome de usuário, e-mail ou CPF');
-    $form['pass']['#title'] = $this->t('Senha');
-    $form['actions']['submit']['#value'] = $this->t('Entrar');
-    // O wrapper AJAX troca o formulário inteiro em caso de erro.
+    if (isset($form['name']) && is_array($form['name'])) {
+      $form['name']['#title'] = $this->t('Nome de usuário, e-mail ou CPF');
+    }
+    if (isset($form['pass']) && is_array($form['pass'])) {
+      $form['pass']['#title'] = $this->t('Senha');
+    }
+    if (isset($form['actions']) && is_array($form['actions'])) {
+      $actions = &$form['actions'];
+      if (isset($actions['submit']) && is_array($actions['submit'])) {
+        $submit = &$actions['submit'];
+        $submit['#value'] = $this->t('Entrar');
+        if (!isset($submit['#attributes']) || !is_array($submit['#attributes'])) {
+          $submit['#attributes'] = [];
+        }
+        $submit['#attributes']['data-portal-ui'] = 'button-primary';
+      }
+    }
     $form['#prefix'] = '<div id="' . self::WRAPPER_ID . '">';
     $form['#suffix'] = '</div>';
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
     $form['#attributes']['data-portal-ui'] = 'login-popup';
+    if (!isset($form['#cache']) || !is_array($form['#cache'])) {
+      $form['#cache'] = [];
+    }
+    if (!isset($form['#cache']['contexts']) || !is_array($form['#cache']['contexts'])) {
+      $form['#cache']['contexts'] = [];
+    }
     $form['#cache']['contexts'][] = 'domain';
     $form['destination'] = [
       '#type' => 'hidden',
@@ -117,11 +149,11 @@ final class LoginPopupForm extends UserLoginForm {
     ];
 
     $links = [];
-    $passwordUrl = $this->domainPurpose->routeUrl('account', 'user.pass');
+    $passwordUrl = $this->domainSiteManager->routeUrl(SiteKey::Account, 'user.pass');
     if ($passwordUrl !== NULL) {
       $links['password'] = ['#type' => 'link', '#title' => $this->t('Esqueceu sua senha?'), '#url' => $passwordUrl];
     }
-    $registerUrl = $this->domainPurpose->routeUrl('account', 'user.register');
+    $registerUrl = $this->domainSiteManager->routeUrl(SiteKey::Account, 'user.register');
     if ($registerUrl !== NULL) {
       // Divisor entre "Esqueceu sua senha?" e "Cadastre-se", como no anexo.
       $links['divider'] = [
@@ -129,7 +161,12 @@ final class LoginPopupForm extends UserLoginForm {
         '#tag' => 'hr',
         '#attributes' => ['data-portal-ui' => 'login-popup-divider'],
       ];
-      $links['register'] = ['#type' => 'link', '#title' => $this->t('Cadastre-se'), '#url' => $registerUrl];
+      $links['register'] = [
+        '#type' => 'link',
+        '#title' => $this->t('Cadastre-se'),
+        '#url' => $registerUrl,
+        '#attributes' => ['data-portal-ui' => 'button-secondary'],
+      ];
     }
     $form['links'] = [
       '#type' => 'container',
@@ -138,9 +175,10 @@ final class LoginPopupForm extends UserLoginForm {
 
     // Google (Social Auth, mesmo fluxo do /entrar). A rota OAuth é a do host
     // da conta, onde as URIs de retorno estão cadastradas; o retorno volta ao
-    // host de origem pelo destino (aculta_destination_purpose).
+    // host de origem pelo site_key capturado no destino.
     if ($this->moduleHandler->moduleExists('social_auth') && $this->authIntegration->isGoogleConfigured()) {
-      $google = $this->googleButton($form['destination']['#value']);
+      $destinationValue = $form['destination']['#value'];
+      $google = $this->googleButton($destinationValue);
       if ($google !== NULL) {
         $form['social_auth'] = $google;
         $form['social_auth_divider'] = [
@@ -155,62 +193,89 @@ final class LoginPopupForm extends UserLoginForm {
     // Entrar logo após a senha e os links depois dele. O contêiner não é
     // "form-actions": assim o Core não copia o botão para o rodapé do diálogo
     // (dialog.jquery-ui.js, prepareDialogButtons).
-    $form['actions']['#type'] = 'container';
-    $form['actions']['#weight'] = 5;
+    if (isset($form['actions']) && is_array($form['actions'])) {
+      $form['actions']['#type'] = 'container';
+      $form['actions']['#weight'] = 5;
+    }
     $form['links']['#weight'] = 10;
-    $form['actions']['submit']['#ajax'] = [
-      'callback' => '::ajaxSubmit',
-      'wrapper' => self::WRAPPER_ID,
-      'progress' => ['type' => 'throbber'],
-    ];
+    if ($this->isHtmxRequest()) {
+      (new Htmx())
+        ->post(Url::fromRoute('aculta_portal.login_popup'))
+        ->select('.status-message, #' . self::WRAPPER_ID)
+        ->target('#aculta-login-content')
+        ->swap('innerHTML')
+        ->onlyMainContent()
+        ->applyTo($form);
+    }
+    else {
+      // Keep the pre-HTMX contract for the V1 theme while V2 uses HTMX.
+      if (isset($form['actions']) && is_array($form['actions']) && isset($form['actions']['submit']) && is_array($form['actions']['submit'])) {
+        $form['actions']['submit']['#ajax'] = [
+          'callback' => '::ajaxSubmit',
+          'wrapper' => self::WRAPPER_ID,
+          'progress' => ['type' => 'throbber'],
+        ];
+      }
+    }
     return $form;
   }
 
   /**
    * Returns the popup's Google sign-in link when its route exists.
+   *
+   * @return array<string, mixed>|null
    */
   private function googleButton(string $destination): ?array {
-    $url = $this->domainPurpose->routeUrl('account', 'social_auth.network.redirect', ['network' => 'google']);
+    $url = $this->domainSiteManager->routeUrl(SiteKey::Account, 'social_auth.network.redirect', ['network' => 'google']);
     if ($url === NULL) {
       return NULL;
     }
     $query = ['destination' => $destination];
-    $purpose = $this->domainPurpose->getCurrentPurpose();
-    if ($purpose !== NULL) {
-      $query['aculta_destination_purpose'] = $purpose;
+    $siteKey = $this->domainSiteManager->getCurrentSiteKey();
+    if ($siteKey !== NULL) {
+      $query['aculta_destination_site_key'] = $siteKey->value;
     }
     $url->setOption('query', $query);
     $markup = sprintf(
-      '<a href="%s" data-portal-ui="auth-google"><span>%s <strong>Google</strong></span></a>',
+      '<a class="aculta-login-dialog__google-btn" href="%s"><span>%s <strong>Google</strong></span></a>',
       Html::escape($url->toString()),
       Html::escape((string) $this->t('Continuar com')),
     );
     return [
       '#type' => 'container',
       '#weight' => -20,
-      '#attributes' => ['data-portal-ui' => 'auth-provider'],
+      '#attributes' => ['class' => ['aculta-auth-provider']],
       'google' => ['#markup' => Markup::create($markup)],
     ];
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
    */
-  public function validateFinal(array &$form, FormStateInterface $form_state) {
+  public function validateFinal(array &$form, FormStateInterface $form_state): void {
     if ($form_state->get('uid')) {
       parent::validateFinal($form, $form_state);
       return;
     }
     $flood_config = $this->config('user.flood');
-    $this->userFloodControl->register('user.failed_login_ip', $flood_config->get('ip_window'));
-    if ($identifier = $form_state->get('flood_control_user_identifier')) {
-      $this->userFloodControl->register('user.failed_login_user', $flood_config->get('user_window'), $identifier);
+    $rawIp = $flood_config->get('ip_window');
+    $rawUser = $flood_config->get('user_window');
+    $rawLimit = $flood_config->get('user_limit');
+    $ipWindow = is_numeric($rawIp) ? (int) $rawIp : 3600;
+    $userWindow = is_numeric($rawUser) ? (int) $rawUser : 21600;
+    $userLimit = is_numeric($rawLimit) ? (int) $rawLimit : 5;
+    $this->userFloodControl->register('user.failed_login_ip', $ipWindow);
+    $identifier = $form_state->get('flood_control_user_identifier');
+    if (is_string($identifier) && $identifier !== '') {
+      $this->userFloodControl->register('user.failed_login_user', $userWindow, $identifier);
     }
-    $passwordUrl = $this->domainPurpose->routeUrl('account', 'user.pass')?->toString() ?? '#';
+    $passwordUrl = $this->domainSiteManager->routeUrl(SiteKey::Account, 'user.pass')?->toString() ?? '#';
     $triggered = $form_state->get('flood_control_triggered');
     if ($triggered === 'user') {
       $form_state->setErrorByName('name', $this->formatPlural(
-        $flood_config->get('user_limit'),
+        $userLimit,
         'There has been more than one failed login attempt for this account. It is temporarily blocked. Try again later or <a href=":url">request a new password</a>.',
         'There have been more than @count failed login attempts for this account. It is temporarily blocked. Try again later or <a href=":url">request a new password</a>.',
         [':url' => $passwordUrl],
@@ -231,21 +296,33 @@ final class LoginPopupForm extends UserLoginForm {
   /**
    * {@inheritdoc}
    *
-   * Não chama o submitForm do Core: ele define um redirect que o AJAX ignora.
-   * O destino fica no ajaxSubmit.
+   * Preserves the safe return path for native and HTMX submissions.
+   *
+   * @param array<string, mixed> $form
    */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = $form_state->get('uid');
-    if (empty($uid)) {
+    if (empty($uid) || (!is_int($uid) && !is_string($uid))) {
       return;
     }
-    user_login_finalize($this->userStorage->load($uid));
+    $account = $this->userStorage->load($uid);
+    if ($account instanceof UserInterface) {
+      $this->loginFinalizer->finalizeLogin($account);
+    }
+    $destination = self::safeDestination($form_state->getValue('destination'));
+    if ($this->isHtmxRequest()) {
+      $form_state->setResponse(new Response('', Response::HTTP_OK, ['HX-Redirect' => $destination]));
+    }
+    else {
+      $form_state->setRedirectUrl(Url::fromUserInput($destination));
+    }
   }
 
   /**
-   * Processes the popup's AJAX login response.
+   * Keeps the legacy non-HTMX popup response for ACULTA420 V1.
    *
-   * Errors replace the form; success redirects to the safe destination.
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>|AjaxResponse
    */
   public function ajaxSubmit(array &$form, FormStateInterface $form_state): array|AjaxResponse {
     if ($form_state->hasAnyErrors()) {

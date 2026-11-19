@@ -10,6 +10,7 @@ use Drupal\aculta_portal\Sales\SalesPaymentAccess;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_payment\Entity\PaymentInterface;
 use Drupal\Core\Form\ConfirmFormBase;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
@@ -23,9 +24,9 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class SalesPaymentCancelForm extends ConfirmFormBase {
 
   public function __construct(
-    private readonly ?PaymentOperationsInterface $pagamentos,
-    private readonly AccountInterface $usuario,
-    private readonly EntityTypeManagerInterface $entidades,
+    protected readonly ?PaymentOperationsInterface $pagamentos,
+    protected readonly AccountInterface $usuario,
+    protected readonly EntityTypeManagerInterface $entidades,
   ) {}
 
   /**
@@ -51,15 +52,15 @@ final class SalesPaymentCancelForm extends ConfirmFormBase {
   /**
    * Performs the get question operation.
    */
-  public function getQuestion(): string {
-    return (string) $this->t('Cancelar este pagamento pendente no Mercado Pago?');
+  public function getQuestion(): TranslatableMarkup {
+    return $this->t('Cancelar este pagamento pendente no Mercado Pago?');
   }
 
   /**
    * Performs the get description operation.
    */
-  public function getDescription(): string {
-    return (string) $this->t('Só funciona enquanto o pagamento está pendente, em processo ou autorizado. Pagamento aprovado precisa de estorno.');
+  public function getDescription(): TranslatableMarkup {
+    return $this->t('Só funciona enquanto o pagamento está pendente, em processo ou autorizado. Pagamento aprovado precisa de estorno.');
   }
 
   /**
@@ -71,21 +72,30 @@ final class SalesPaymentCancelForm extends ConfirmFormBase {
 
   /**
    * Performs the build form operation.
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?PaymentInterface $commerce_payment = NULL): array {
-    if ($this->pagamentos === NULL) {
+    if ($this->pagamentos === NULL || $commerce_payment === NULL) {
       throw new AccessDeniedHttpException();
     }
     $this->autorizar($commerce_payment);
     $form_state->set('pagamento_id', (int) $commerce_payment->id());
-    return parent::buildForm($form, $form_state);
+    /** @var array<string, mixed> $builtForm */
+    $builtForm = parent::buildForm($form, $form_state);
+    return $builtForm;
   }
 
   /**
    * Performs the submit form operation.
+   *
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $pagamento = $this->entidades->getStorage('commerce_payment')->load((int) $form_state->get('pagamento_id'));
+    $rawId = $form_state->get('pagamento_id');
+    $pagamentoId = is_numeric($rawId) ? (int) $rawId : 0;
+    $pagamento = $this->entidades->getStorage('commerce_payment')->load($pagamentoId);
     if (!$pagamento instanceof PaymentInterface) {
       throw new AccessDeniedHttpException();
     }

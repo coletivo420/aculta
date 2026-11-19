@@ -1,0 +1,17 @@
+name: E-mail institucional
+description: Envelope de mensagem com cabeçalho, corpo e rodapé da marca.
+component: aculta420_v2:mail-envelope
+props:
+  logo: /themes/custom/aculta420_v2/assets/logos/aculta420-horizontal-white-900x300.png
+  colors:
+    light:
+      page: '#f4f4f4'
+      card: '#ffffff'
+      text: '#222222'
+      header: '#214d2b'
+      footer: '#e8eee9'
+      footer_text: '#3a463d'
+slots:
+  body:
+    type: inline_template
+    template: '<h1>Mensagem de exemplo</h1><p>Conteúdo demonstrativo do e-mail institucional.</p>'

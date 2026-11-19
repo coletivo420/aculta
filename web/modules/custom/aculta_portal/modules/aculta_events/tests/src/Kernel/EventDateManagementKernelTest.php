@@ -134,11 +134,11 @@ final class EventDateManagementKernelTest extends KernelTestBase {
     self::assertSame('aculta_events.event_edit', $redirect->getRouteName());
     self::assertSame((string) $event->id(), (string) $redirect->getRouteParameters()['aculta_event']);
 
-    $response = $form->ajaxSubmit($formArray, $state);
-    [$closed, $replaced] = $this->ajaxCommands($response);
-    self::assertTrue($closed);
-    self::assertNotEmpty($replaced);
-    self::assertSame('#event-dates-list', $replaced[0]['selector']);
+    // A resposta HTMX fecha o diálogo e devolve a lista de Datas em OOB.
+    $htmx = $form->htmxDateListResponse($event);
+    self::assertSame('aculta:close-dialog', $htmx->headers->get('HX-Trigger'));
+    self::assertStringContainsString('hx-swap-oob', (string) $htmx->getContent());
+    self::assertStringContainsString('event-dates-list', (string) $htmx->getContent());
   }
 
   /**
@@ -167,7 +167,7 @@ final class EventDateManagementKernelTest extends KernelTestBase {
 
     $storage = $this->container->get('entity_type.manager')->getStorage('aculta_event_date');
     $storage->resetCache([$date->id()]);
-    $reloaded = $storage->load($date->id());
+    $reloaded = $this->reloadedDate($date->id());
     self::assertSame('Sessão revista', (string) $reloaded->label());
     self::assertSame((int) $location->id(), (int) $reloaded->get('field_local')->target_id);
     self::assertSame('aculta_events.event_edit', $state->getRedirect()->getRouteName());
@@ -246,15 +246,14 @@ final class EventDateManagementKernelTest extends KernelTestBase {
 
     $storage = $this->container->get('entity_type.manager')->getStorage('aculta_event_date');
     $storage->resetCache([$first->id(), $second->id(), $third->id()]);
-    self::assertSame(2, (int) $storage->load($first->id())->get('field_peso')->value);
-    self::assertSame(0, (int) $storage->load($second->id())->get('field_peso')->value);
-    self::assertSame(1, (int) $storage->load($third->id())->get('field_peso')->value);
+    self::assertSame(2, (int) $this->reloadedDate($first->id())->get('field_peso')->value);
+    self::assertSame(0, (int) $this->reloadedDate($second->id())->get('field_peso')->value);
+    self::assertSame(1, (int) $this->reloadedDate($third->id())->get('field_peso')->value);
     self::assertSame('aculta_events.event_edit', $state->getRedirect()->getRouteName());
 
-    $response = $form->ajaxSubmit($formArray, $state);
-    [$closed, $replaced] = $this->ajaxCommands($response);
-    self::assertTrue($closed);
-    self::assertNotEmpty($replaced);
+    $htmx = $form->htmxDateListResponse($event);
+    self::assertSame('aculta:close-dialog', $htmx->headers->get('HX-Trigger'));
+    self::assertStringContainsString('event-dates-list', (string) $htmx->getContent());
   }
 
   /**
@@ -281,30 +280,17 @@ final class EventDateManagementKernelTest extends KernelTestBase {
 
     $storage = $this->container->get('entity_type.manager')->getStorage('aculta_event_date');
     $storage->resetCache([$own->id(), $other->id()]);
-    self::assertSame(5, (int) $storage->load($own->id())->get('field_peso')->value);
-    self::assertSame(0, (int) $storage->load($other->id())->get('field_peso')->value);
+    self::assertSame(5, (int) $this->reloadedDate($own->id())->get('field_peso')->value);
+    self::assertSame(0, (int) $this->reloadedDate($other->id())->get('field_peso')->value);
   }
 
-  /**
-   * Extracts close and replace commands from an AJAX response.
-   *
-   * AjaxResponse stores rendered command arrays, not command objects.
-   *
-   * @return array{0: bool, 1: array<int, array>}
-   *   Whether the dialog closes and the replace-with commands.
-   */
-  private function ajaxCommands($response): array {
-    $closed = FALSE;
-    $replaced = [];
-    foreach ($response->getCommands() as $command) {
-      if (($command['command'] ?? '') === 'closeDialog') {
-        $closed = TRUE;
-      }
-      if (($command['command'] ?? '') === 'insert' && ($command['method'] ?? '') === 'replaceWith') {
-        $replaced[] = $command;
-      }
+  private function reloadedDate(int|string|null $id): EventDate {
+    $date = EventDate::load($id);
+    if (!$date instanceof EventDate) {
+      throw new \RuntimeException('A data salva não foi encontrada.');
     }
-    return [$closed, $replaced];
+
+    return $date;
   }
 
   /**

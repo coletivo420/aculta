@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\PathProcessor\SiteFrontPathProcessor;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Plugin\metatag\Tag\PostalAddressTag;
 use Drupal\block_content\BlockContentInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -21,8 +23,8 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 final class EditorialHooks {
 
   public function __construct(
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
     #[Autowire(service: 'path.current')]
     private readonly CurrentPathStack $currentPath,
   ) {}
@@ -31,8 +33,8 @@ final class EditorialHooks {
    * Hands editorial basic blocks to the section theme hook.
    *
    * The Portal prepares neutral section data (title, sub-heading, variant and
-   * body render array). The theme decides the markup in its aculta-section
-   * template.
+   * body render array). The theme adapter composes the shared layout-section
+   * SDC without moving editorial data or access rules into the presentation.
    */
   #[Hook('entity_view_alter')]
   public function entityViewAlter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
@@ -50,7 +52,8 @@ final class EditorialHooks {
     unset($build['body']);
   }
 
-  /** Preserves punctuation in structured postal addresses. */
+  /**
+ * Preserves punctuation in structured postal addresses. */
   #[Hook('metatag_tags_alter')]
   public function metatagTagsAlter(array &$definitions): void {
     foreach (['schema_organization_address', 'schema_event_location'] as $id) {
@@ -60,15 +63,15 @@ final class EditorialHooks {
     }
   }
 
-  /** Adds canonical and structured metadata owned by the Portal. */
+  /**
+ * Adds canonical and structured metadata owned by the Portal. */
   #[Hook('metatags_alter')]
   public function metatagsAlter(array &$tags, array &$context): void {
     $entity = $context['entity'] ?? NULL;
     $node = $entity instanceof NodeInterface ? $entity : NULL;
 
     if ($entity instanceof GroupInterface && $entity->bundle() === 'lms_course') {
-      $canonical = $this->domainPurposeManager->canonicalRouteUrl(
-        'courses',
+      $canonical = $this->siteManager->canonicalRouteUrl(SiteKey::Courses,
         'entity.group.canonical',
         ['group' => $entity->id()],
       );
@@ -79,14 +82,17 @@ final class EditorialHooks {
       }
     }
 
-    // Página que é a raiz do host (caminho interno de FRONT_PATHS, ex.: /loja-da-aculta): o canonical é a raiz do host.
-    $purpose = $this->domainPurposeManager->getCurrentPurpose();
-    $frontPath = \Drupal\aculta_portal\PathProcessor\PurposeFrontPathProcessor::FRONT_PATHS[$purpose] ?? NULL;
+    // A página raiz do host usa um caminho interno em FRONT_PATHS. O canonical
+    // ainda aponta para a raiz pública, não para esse caminho interno.
+    $purpose = $this->siteManager->getCurrentSiteKey()?->value;
+    $frontPath = $purpose === NULL
+      ? NULL
+      : (SiteFrontPathProcessor::FRONT_PATHS[$purpose] ?? NULL);
     $paginaRaiz = $frontPath !== NULL && ($node === NULL
       ? $this->currentPath->getPath() === $frontPath
       : $node->toUrl()->setAbsolute(FALSE)->toString() === $frontPath);
     if ($paginaRaiz) {
-      $root = $this->domainPurposeManager->pathUrl($purpose, '/');
+      $root = $this->siteManager->pathUrl($purpose, '/');
       if ($root !== NULL) {
         $tags['canonical_url'] = $root->toString();
         $tags['og_url'] = $root->toString();
@@ -94,8 +100,7 @@ final class EditorialHooks {
     }
 
     if ($node !== NULL && $node->bundle() === 'wiki_entry') {
-      $canonical = $this->domainPurposeManager->canonicalRouteUrl(
-        'wiki',
+      $canonical = $this->siteManager->canonicalRouteUrl(SiteKey::Wiki,
         'entity.node.canonical',
         ['node' => $node->id()],
       );

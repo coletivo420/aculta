@@ -1,0 +1,7 @@
+name: Pequeno
+description: Mesmo botão em tamanho small; o alvo de toque continua em 44 px.
+props:
+  text: Editar
+  url: /
+  variant: secondary
+  size: small

@@ -8,6 +8,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityAccessControlHandler;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\user\EntityOwnerInterface;
 
 /**
  * Restricts Wiki proposals to their author and authorized editorial staff.
@@ -24,7 +25,8 @@ final class WikiProposalAccessControlHandler extends EntityAccessControlHandler 
 
     if (in_array($operation, ['view', 'view label', 'view revision'], TRUE)) {
       $canViewAny = AccessResult::allowedIfHasPermission($account, 'view any wiki proposals');
-      $isOwner = (int) $entity->getOwnerId() === (int) $account->id();
+      $isOwner = $entity instanceof EntityOwnerInterface
+        && (int) $entity->getOwnerId() === (int) $account->id();
       $canViewOwn = AccessResult::allowedIf($isOwner)
         ->andIf(AccessResult::allowedIfHasPermission($account, 'view own wiki proposals'))
         ->cachePerUser();
@@ -40,6 +42,13 @@ final class WikiProposalAccessControlHandler extends EntityAccessControlHandler 
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta avaliada.
+   * @param array<mixed> $context
+   *   Contexto da criação.
+   * @param string|null $entity_bundle
+   *   Bundle da entidade, quando informado.
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
     return AccessResult::allowedIfHasPermission($account, 'submit wiki proposals')

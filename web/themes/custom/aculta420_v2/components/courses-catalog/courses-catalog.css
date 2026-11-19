@@ -1,0 +1,12 @@
+.courses-home,
+.courses-home__collaboration,
+.courses-home__intro {
+  display: grid;
+  gap: var(--spacing-base);
+}
+
+.courses-home__catalog {
+  display: grid;
+  gap: var(--spacing-base);
+  min-inline-size: 0;
+}

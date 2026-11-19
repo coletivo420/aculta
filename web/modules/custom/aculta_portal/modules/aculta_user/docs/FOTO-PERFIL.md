@@ -2,7 +2,7 @@
 
 Motivo: a regra de cada estado da foto já regrediu duas vezes (remover no avatar do sistema, sortear com foto
 personalizada, recorte que reabre sem novo envio). Este documento é a fonte das regras; o gate
-`scripts/validate-aculta-user-photo.php` e o roteiro de navegador (TESTES-NAVEGADOR, seção P) verificam.
+`scripts/validate-aculta-user-photo.php` e o roteiro de navegador (TESTES-NAVEGADOR-RODADAS, seção P) verificam.
 
 ## Ações
 
@@ -89,7 +89,7 @@ foto ou campo próprios.
 ## Barreiras
 
 1. Gate: `php scripts/validate-aculta-user-photo.php` (estático; falha se um invariante sair do código).
-2. Roteiro de navegador: TESTES-NAVEGADOR, seção P (executado pelo agente de testes após cada alteração na foto).
+2. Roteiro de navegador: TESTES-NAVEGADOR-RODADAS, seção P (executado pelo agente de testes após cada alteração na foto).
 3. Revisão: qualquer diff em `UserPictureForm`, `AvatarCropForm`, `photo-flow.js` ou no gatilho de
    `PhotoEditorHooks` precisa conferir a tabela acima.
 

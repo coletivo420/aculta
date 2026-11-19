@@ -1,0 +1,35 @@
+name: Barra de Reações Recebidas
+props:
+  target_id: discussion-reactions-received-demo
+  reactions:
+    broccoli:
+      id: broccoli
+      count: 3
+    seedling:
+      id: seedling
+      count: 2
+    heart:
+      id: heart
+      count: 5
+    fire:
+      id: fire
+      count: 4
+    clap:
+      id: clap
+      count: 1
+  allowed_reactions:
+    broccoli:
+      icon: broccoli
+      label: Brócolis
+    seedling:
+      icon: seedling
+      label: Cultivo
+    heart:
+      icon: heart
+      label: Curtir
+    fire:
+      icon: fire
+      label: Excelente
+    clap:
+      icon: clapping-hands
+      label: Aplausos

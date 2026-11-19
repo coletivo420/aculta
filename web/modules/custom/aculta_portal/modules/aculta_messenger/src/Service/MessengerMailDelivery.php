@@ -30,7 +30,7 @@ final class MessengerMailDelivery {
    *   Current recipient address, revalidated by the caller.
    * @param string $langcode
    *   Mail language code.
-   * @param array $context
+   * @param array<mixed> $context
    *   Minimal template context for the email.
    * @param string $idempotencyKey
    *   Opaque identity of the logical delivery, stable across retries.

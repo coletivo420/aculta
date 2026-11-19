@@ -15,8 +15,8 @@ use Drupal\user\UserInterface;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_messenger\Service\ConversationWriteLock;
 use Drupal\aculta_user\Social\FriendshipManagerInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageBanManagerInterface;
 
 /**
  * Applies block and send-frequency rules to the native Private Message form. */
@@ -53,7 +53,13 @@ final class PrivateMessageFormValidator {
   ) {}
 
   /**
-   * Rejects recipients who have blocked the current sender. */
+   * Rejects recipients who have blocked the current sender.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   */
   public function validateBlockedRecipients(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()) {
       return;
@@ -64,7 +70,7 @@ final class PrivateMessageFormValidator {
       return;
     }
 
-    foreach ($thread->getMembersId() as $memberId) {
+    foreach ($thread->getMemberIds() as $memberId) {
       $memberId = (int) $memberId;
       // A sender block prevents sending; the conversation remains listed so
       // the member can unblock through its options.
@@ -82,7 +88,13 @@ final class PrivateMessageFormValidator {
   }
 
   /**
-   * Restricts new threads according to the target member's preference. */
+   * Restricts new threads according to the target member's preference.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   */
   public function validateNewConversationPrivacy(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()
       || $formState->get('thread') !== NULL
@@ -110,7 +122,7 @@ final class PrivateMessageFormValidator {
       return TRUE;
     }
 
-    foreach ($thread->getMembersId() as $memberId) {
+    foreach ($thread->getMemberIds() as $memberId) {
       $recipientId = (int) $memberId;
       if ($recipientId < 1 || $recipientId === (int) $this->currentUser->id()) {
         continue;
@@ -124,13 +136,28 @@ final class PrivateMessageFormValidator {
   }
 
   /**
-   * Forces the native long-text field to persist using Drupal's plain format. */
+   * Forces the native long-text field to persist using Drupal's plain format.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   */
   public function enforcePlainTextFormat(array &$form, FormStateInterface $formState): void {
     $formState->setValue(['message', 0, 'format'], 'plain_text');
   }
 
   /**
-   * Hides text-format controls and generic guidelines from the chat composer. */
+   * Hides text-format controls and generic guidelines from the chat composer.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
+   */
   public function hidePlainTextGuidelines(array $form, FormStateInterface $formState): array {
     if (isset($form['message']['widget'][0]['format'])) {
       $form['message']['widget'][0]['format']['#access'] = FALSE;
@@ -144,6 +171,11 @@ final class PrivateMessageFormValidator {
    * Ten valid submissions are allowed per account in a rolling one-hour
    * window; the next submission is rejected. Registration happens only after
    * the message is persisted.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
    */
   public function validateRateLimit(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()) {
@@ -175,7 +207,7 @@ final class PrivateMessageFormValidator {
     $thread = $formState->get('thread');
     if ($thread instanceof PrivateMessageThreadInterface && (int) $thread->id() > 0) {
       $freshThread = $this->acquireThreadWriteLock($thread, $formState);
-      if ($freshThread instanceof PrivateMessageThreadInterface && !$formState->hasAnyErrors()) {
+      if ($freshThread instanceof PrivateMessageThreadInterface) {
         try {
           $sender = $this->entityTypeManager->getStorage('user')->loadUnchanged((int) $this->currentUser->id());
           if (!$sender instanceof UserInterface || !$this->policy->canReceiveMessages($sender)) {
@@ -233,10 +265,12 @@ final class PrivateMessageFormValidator {
     UserInterface $sender,
     bool $allowNewEmptyThread = FALSE,
   ): bool {
-    if ((int) $sender->id() !== (int) $this->currentUser->id()
+    $senderId = $sender->id();
+    if ((int) $senderId !== (int) $this->currentUser->id()
       || !$sender->isActive()
       || !$sender->hasPermission('use private messaging system')
-      || !$thread->isMember($sender->id())) {
+      || $senderId === NULL
+      || !$thread->isMember($senderId)) {
       return FALSE;
     }
 
@@ -255,7 +289,7 @@ final class PrivateMessageFormValidator {
    * Called by the custom first-message workflow after it resolves an existing
    * thread; native replies acquire the same lock in validateRateLimit().
    *
-   * @return \Drupal\private_message\Entity\PrivateMessageThreadInterface|null
+   * @return \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null
    *   Fresh thread when locked, or NULL when another operation owns it or it
    *   was deleted before the lock could be acquired.
    */
@@ -285,6 +319,11 @@ final class PrivateMessageFormValidator {
 
   /**
    * Registers a successfully persisted message in the Core flood backend.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
    */
   public function registerRateLimit(array &$form, FormStateInterface $formState): void {
     $identifier = 'uid:' . $this->currentUser->id();

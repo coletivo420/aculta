@@ -1,0 +1,6 @@
+<div data-drupal-messages>
+  {% for type, messages in message_list %}
+    {% set component_type = type in ['error', 'warning'] ? type : 'status' %}
+    {{ include('aculta420_v2:status-messages', { type: component_type, messages: messages, attributes: attributes|without('role', 'aria-label') }, with_context = false) }}
+  {% endfor %}
+</div>

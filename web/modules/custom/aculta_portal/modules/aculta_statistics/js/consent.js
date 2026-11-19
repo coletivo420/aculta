@@ -61,7 +61,7 @@
 
   Drupal.behaviors.acultaConsentBanner = {
     attach(context) {
-      once('aculta-consent-banner', '[data-portal-ui="consent-banner"]', context).forEach((banner) => {
+      once('aculta-consent-banner', '[data-consent-banner]', context).forEach((banner) => {
         const privacy = banner.querySelector('[data-consent-privacy]');
         if (privacy && settings.privacyUrl) {
           privacy.setAttribute('href', settings.privacyUrl);

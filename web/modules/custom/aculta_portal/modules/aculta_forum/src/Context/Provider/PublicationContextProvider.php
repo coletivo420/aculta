@@ -9,7 +9,9 @@ use Drupal\aculta_forum\Context\DiscussionContextInterface;
 use Drupal\aculta_forum\Context\DiscussionContextProviderInterface;
 use Drupal\comment\CommentingStatus;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 
@@ -35,7 +37,7 @@ final class PublicationContextProvider implements DiscussionContextProviderInter
    * Builds the editorial context and evaluates current access.
    */
   public function getContext(EntityInterface $entity, AccountInterface $account): DiscussionContextInterface {
-    if (!$this->supports($entity)) {
+    if (!$entity instanceof ContentEntityInterface || !$this->supports($entity)) {
       throw new \LogicException('Publication discussion context requires a revista node with the shared Comment field.');
     }
     if ($entity->isNew()) {
@@ -49,8 +51,11 @@ final class PublicationContextProvider implements DiscussionContextProviderInter
     $field = $entity->get(self::FIELD);
     $readAccess = $entity->access('view', $account, TRUE)
       ->andIf($field->access('view', $account, TRUE));
-    $fieldValue = $field->getValue()[0] ?? [];
-    $isOpen = (int) ($fieldValue['status'] ?? CommentingStatus::Closed->value) === CommentingStatus::Open->value;
+    $rawValues = $field->getValue();
+    $fieldValue = is_array($rawValues) && isset($rawValues[0]) && is_array($rawValues[0]) ? $rawValues[0] : [];
+    $rawStatus = $fieldValue['status'] ?? CommentingStatus::Closed->value;
+    $statusInt = is_numeric($rawStatus) ? (int) $rawStatus : CommentingStatus::Closed->value;
+    $isOpen = $statusInt === CommentingStatus::Open->value;
     $writeAccess = $readAccess
       ->andIf(AccessResult::allowedIf($isOpen)->addCacheableDependency($entity))
       ->andIf(AccessResult::allowedIf($account->hasPermission('post comments'))->addCacheContexts(['user.permissions']));

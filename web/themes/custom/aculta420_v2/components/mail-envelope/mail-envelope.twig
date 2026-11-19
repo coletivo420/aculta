@@ -1,0 +1,26 @@
+{% set light = colors.light %}
+<table width="100%" cellpadding="0" cellspacing="0" role="presentation" class="aculta-mail-page" style="background:{{ light.page }};">
+  <tr>
+    <td align="center" style="padding:24px 16px;">
+      <table width="100%" cellpadding="0" cellspacing="0" role="presentation" class="aculta-mail-card" style="max-width:600px;background:{{ light.card }};border-radius:8px;">
+        <tr>
+          <td class="aculta-mail-header" style="background:{{ light.header }};padding:16px 24px;border-radius:8px 8px 0 0;">
+            <img src="{{ logo }}" width="180" alt="ACULTA" style="display:block;border:0;width:180px;height:auto;">
+          </td>
+        </tr>
+        <tr>
+          <td class="aculta-mail-text" style="padding:24px;font-size:16px;line-height:1.5;color:{{ light.text }};">
+            {{ body }}
+          </td>
+        </tr>
+        {% if show_footer %}
+          <tr>
+            <td class="aculta-mail-footer" style="padding:16px 24px;background:{{ light.footer }};color:{{ light.footer_text }};font-size:13px;line-height:1.4;border-radius:0 0 8px 8px;">
+              Associação Cultural Antiproibicionista
+            </td>
+          </tr>
+        {% endif %}
+      </table>
+    </td>
+  </tr>
+</table>

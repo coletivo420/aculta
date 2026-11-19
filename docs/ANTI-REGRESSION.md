@@ -19,7 +19,7 @@ caso de teste no navegador), consulte `docs/portal/ANTI-REGRESSAO.md`.
 
 ## Dependency Injection, hooks e padrão Drupal 11+
 
-O padrão normativo do Portal é `docs/portal/DRUPAL-11-STANDARDS.md` e vale para desenvolvimento humano e por IA.
+O padrão normativo do Portal é `docs/portal/DRUPAL-12-STANDARDS.md` e vale para desenvolvimento humano e por IA.
 
 - baseline arquitetural do `aculta_portal`: Drupal Core 11.3+;
 - preferir DI explícita em classes e não introduzir novos service locators `\Drupal::...` em `src/`;
@@ -31,7 +31,7 @@ O padrão normativo do Portal é `docs/portal/DRUPAL-11-STANDARDS.md` e vale par
 - subscribers implementam `EventSubscriberInterface` e novos registros usam `event_subscriber`; prioridade só muda com justificativa funcional e teste;
 - `max-age: 0` não é substituto automático para contexts/tags corretos; access e cacheability acompanham a decisão funcional;
 - compatibilidade formal com Drupal 12/13 só é declarada após validação de Core e contrib; deprecations são tratadas pelo substituto publicado, não por suposição;
-- o gate progressivo `php scripts/validate-aculta-portal-drupal11.php` congela a dívida atual e impede sua expansão até as fases que a removerão.
+- o gate progressivo `php scripts/validate-aculta-portal-drupal12.php` congela a dívida atual e impede sua expansão até as fases que a removerão.
 
 Refactor de infraestrutura não pode alterar comportamento, access, cache, Domain, Commerce, autenticação ou segurança como efeito colateral.
 
@@ -124,7 +124,7 @@ Refactor de infraestrutura não pode alterar comportamento, access, cache, Domai
 - o shell multidomínio usa um único contrato `domain_presentation`, preparado por um builder/presenter autoritativo no Portal; não espalhar `match ($purpose)` por hooks, controllers ou templates;
 - ACULTA420 pode derivar de `domain_presentation.identity` somente o fallback mínimo realmente consumido (`label` + `home_url`); `purpose` e `logo_alt` não são expostos/repurposed sem consumidor real, e identidade parcial/ausente nunca dispara lookup funcional, hostname inference ou branch visual no tema;
 - o branding Drupal existente continua prioritário durante 0.2-B.3: `page.header` é sempre preservado e o fallback textual só entra na ausência do plugin `system_branding_block`; não inferir branding por truthiness/“vazio visual” do render array;
-- o analyzer `Aculta420ShellContractAnalyzer` é a fonte única das checagens estáticas da fronteira B.4 e deve ser reutilizado por fixtures e gate Runtime; ele bloqueia qualquer namespace/service `aculta_portal`, APIs Domain, service locator/request/hostname, hosts de ambiente hardcoded e branches concretas por purpose em Twig/PHP/JS nos dois sentidos; novas formas de leakage/branch exigem fixture negativa correspondente;
+- o antigo `Aculta420ShellContractAnalyzer` (tema V1, `ThemeHooks.php`) foi aposentado com o contrato B.4; as checagens estáticas que continuam valendo — nenhuma referência a `aculta_portal`, APIs Domain, service locator, hostname ou hosts de ambiente no tema — vivem em `validate-module-theme-boundary.php`, e a estrutura do shell V2 é coberta por `validate-aculta420-shell-regions.php` e `validate-aculta420-foundation.php`; novas formas de leakage exigem fixture negativa no gate correspondente;
 - a ponte oficial é `PortalHooks::preprocessPage()` → variável neutra `domain_presentation` → `ThemeHooks::preprocessPage()`/Twig; módulos preprocessam antes do tema e essa ordem é parte do contrato;
 - `domain_presentation` separa identidade escalar (props-ready) de regiões renderizáveis (slots-ready); menu/actions/brand media não viram HTML/string prematuramente;
 - logo, título, home URL, navegação e ações por purpose chegam ao tema como valores simples/render arrays já resolvidos pelo Portal; nunca escolher por hostname em Twig/PHP do tema;

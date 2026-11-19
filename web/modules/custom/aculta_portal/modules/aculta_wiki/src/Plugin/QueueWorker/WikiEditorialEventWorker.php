@@ -27,7 +27,7 @@ final class WikiEditorialEventWorker extends QueueWorkerBase implements Containe
     array $configuration,
     string $plugin_id,
     mixed $plugin_definition,
-    private readonly EventDispatcherInterface $eventDispatcher,
+    protected readonly EventDispatcherInterface $eventDispatcher,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }

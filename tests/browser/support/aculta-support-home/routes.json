@@ -1,0 +1,10 @@
+{
+  "front": "aculta-support-home",
+  "purpose": "support",
+  "origin_env": "SUPPORT_HOST",
+  "source": "docs/architecture/multidomain.md",
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "notes": "Raiz pública do domínio SUPPORT; somente navegação GET, sem autenticação ou escrita."
+}

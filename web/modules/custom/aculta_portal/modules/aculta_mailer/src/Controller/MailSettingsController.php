@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_mailer\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

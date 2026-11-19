@@ -16,6 +16,9 @@ final class ForumNoticeEventSchema {
 
   /**
    * Returns the Drupal schema definition for the event ledger.
+   *
+   * @return array<mixed>
+   *   Definição do schema.
    */
   public static function definition(): array {
     return [

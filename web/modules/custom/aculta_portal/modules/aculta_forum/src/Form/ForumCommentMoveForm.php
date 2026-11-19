@@ -18,8 +18,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class ForumCommentMoveForm extends FormBase {
 
   public function __construct(
-    private readonly ForumCommentMover $mover,
-    private readonly AccountInterface $account,
+    protected readonly ForumCommentMover $mover,
+    protected readonly AccountInterface $account,
   ) {}
 
   /**
@@ -38,7 +38,11 @@ final class ForumCommentMoveForm extends FormBase {
   }
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
+   */
   public function buildForm(array $form, FormStateInterface $form_state, ?CommentInterface $comment = NULL): array {
     if (!$comment instanceof CommentInterface || !$this->mover->access($comment, $this->account)->isAllowed()) {
       throw new AccessDeniedHttpException();
@@ -56,14 +60,15 @@ final class ForumCommentMoveForm extends FormBase {
     }
 
     $host = $comment->getCommentedEntity();
+    $host_label = $host ? (string) $host->label() : '';
     $form_state->set('comment_id', (int) $comment->id());
-    $count_text = $this->formatPlural($subtree_count, '1 comentário', '@count comentários');
+    $count_text = (string) $this->formatPlural($subtree_count, '1 comentário', '@count comentários');
     $form['summary'] = [
       '#type' => 'item',
       '#title' => $this->t('Comentário selecionado'),
       '#plain_text' => $this->t('“@subject” em “@topic”; serão movidos @count, incluindo todas as respostas descendentes.', [
-        '@subject' => $comment->getSubject(),
-        '@topic' => $host->label(),
+        '@subject' => (string) $comment->getSubject(),
+        '@topic' => $host_label,
         '@count' => $count_text,
       ]),
     ];
@@ -82,22 +87,30 @@ final class ForumCommentMoveForm extends FormBase {
       '#title' => $this->t('Confirmo mover o comentário e todas as respostas indicadas.'),
       '#required' => TRUE,
     ];
-    $form['actions']['#type'] = 'actions';
-    $form['actions']['submit'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Mover comentários'),
-      '#button_type' => 'primary',
-    ];
-    $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Cancelar'),
-      '#url' => Url::fromRoute('aculta_forum.admin'),
+    $form['actions'] = [
+      '#type' => 'actions',
+      'submit' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Mover comentários'),
+        '#button_type' => 'primary',
+      ],
+      'cancel' => [
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Cancelar'),
+          'url' => Url::fromRoute('aculta_forum.admin')->toString(),
+          'variant' => 'secondary',
+        ],
+      ],
     ];
     return $form;
   }
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $destination_id = filter_var($form_state->getValue('destination'), FILTER_VALIDATE_INT);
     if ($destination_id === FALSE || $destination_id <= 0 || !$form_state->getValue('confirm_move')) {
@@ -106,12 +119,21 @@ final class ForumCommentMoveForm extends FormBase {
   }
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
+    $comment_id = filter_var($form_state->get('comment_id'), FILTER_VALIDATE_INT);
+    $destination_id = filter_var($form_state->getValue('destination'), FILTER_VALIDATE_INT);
+    if ($comment_id === FALSE || $destination_id === FALSE) {
+      $form_state->setErrorByName('destination', $this->t('Identificador inválido.'));
+      return;
+    }
     try {
       $count = $this->mover->move(
-        (int) $form_state->get('comment_id'),
-        (int) $form_state->getValue('destination'),
+        (int) $comment_id,
+        (int) $destination_id,
         $this->account,
       );
     }

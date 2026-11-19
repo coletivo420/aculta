@@ -18,7 +18,8 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\user\UserInterface;
 
-/** Adds the current learner's class deadline to the ACULTA answer form. */
+/**
+ * Adds the current learner's class deadline to the ACULTA answer form. */
 final class ActivityDeadlineFormHooks {
 
   use StringTranslationTrait;
@@ -33,6 +34,14 @@ final class ActivityDeadlineFormHooks {
     $this->stringTranslation = $stringTranslation;
   }
 
+  /**
+   * Mostra o prazo da atividade no formulário de resposta.
+   *
+   * @param array $form
+   *   Estrutura do formulário, alterada no lugar.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado do formulário.
+   */
   #[Hook('form_aculta_lms_answer_submission_alter')]
   public function answerFormAlter(array &$form, FormStateInterface $form_state): void {
     $course = $form_state->get('aculta_lms_course');
@@ -54,14 +63,14 @@ final class ActivityDeadlineFormHooks {
       (string) $deadline->get('field_activity_due_at')->value,
       new \DateTimeZone('UTC'),
     );
-    if (!$date instanceof DrupalDateTime || $date->hasErrors()) {
+    if ($date === FALSE || $date->hasErrors()) {
       return;
     }
     $form['aculta_lms_activity_deadline'] = [
       '#type' => 'item',
       '#title' => $this->t('Prazo desta atividade'),
       '#markup' => $this->t('Envie sua resposta até @date.', [
-        '@date' => $this->dateFormatter->format($date->getTimestamp(), 'long', NULL, $learner->getTimeZone()),
+        '@date' => $this->dateFormatter->format($date->getTimestamp(), 'long', '', $learner->getTimeZone()),
       ]),
       '#weight' => -100,
     ];

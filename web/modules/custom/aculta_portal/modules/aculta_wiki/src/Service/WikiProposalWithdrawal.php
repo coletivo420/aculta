@@ -38,12 +38,9 @@ final class WikiProposalWithdrawal {
 
     $transaction = $this->database->startTransaction();
     try {
-      $lockedId = $this->database->select('aculta_wiki_proposal', 'proposal')
-        ->fields('proposal', ['id'])
-        ->condition('id', $proposal->id())
-        ->forUpdate()
-        ->execute()
-        ->fetchField();
+      $select = $this->database->select('aculta_wiki_proposal', 'proposal');
+      $select->fields('proposal', ['id'])->condition('id', $proposal->id())->forUpdate();
+      $lockedId = $select->execute()->fetchField();
       if (!$lockedId) {
         throw new ConflictHttpException('A proposta não está mais disponível para retirada.');
       }

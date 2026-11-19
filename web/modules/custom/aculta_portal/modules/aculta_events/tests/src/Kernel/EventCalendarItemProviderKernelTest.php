@@ -101,7 +101,6 @@ final class EventCalendarItemProviderKernelTest extends KernelTestBase {
     $itens = iterator_to_array($this->container->get('aculta_events.item_provider')->items($this->query()));
     $this->assertCount(1, $itens);
     $item = $itens[0];
-    $this->assertInstanceOf(CalendarItem::class, $item);
     $this->assertSame('eventdate:' . $data->id(), $item->id);
     $this->assertSame('Oficina', $item->titulo);
     $this->assertSame('Sede', $item->local);

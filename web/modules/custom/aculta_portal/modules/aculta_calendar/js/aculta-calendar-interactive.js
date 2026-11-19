@@ -59,6 +59,21 @@
         if (typeof window.scheduler.plugins === 'function') {
           window.scheduler.plugins({ key_nav: true });
         }
+        const normalizarSemanticaDosEventos = () => {
+          const eventos = container.querySelectorAll(
+            '.dhx_cal_data [data-event-id][aria-selected], .dhx_cal_data [event_id][aria-selected]',
+          );
+          eventos.forEach((evento) => {
+            evento.setAttribute('role', 'button');
+            evento.setAttribute('aria-pressed', evento.getAttribute('aria-selected') === 'true' ? 'true' : 'false');
+            evento.removeAttribute('aria-selected');
+            evento.removeAttribute('aria-label');
+          });
+        };
+        const scheduler = window.scheduler;
+        scheduler.attachEvent('onDataRender', normalizarSemanticaDosEventos);
+        scheduler.attachEvent('onEventSelected', () => window.requestAnimationFrame(normalizarSemanticaDosEventos));
+        scheduler.attachEvent('onEventUnselected', () => window.requestAnimationFrame(normalizarSemanticaDosEventos));
         const settings = drupalSettings.acultaCalendar || {};
         const inicio = settings.date ? new Date(settings.date.replace(' ', 'T') + ':00') : new Date();
         window.scheduler.init(container, inicio, 'month');

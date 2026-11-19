@@ -13,7 +13,7 @@
 - Decisão do responsável: manter a permissão `administer aculta secrets` única nesta versão. Separar em
   consultar, gerenciar e revelar fica para uma versão futura, com atualização de perfis e sem concessão
   automática.
-- Revisão visual no Firefox ESR (DISPLAY=:0) em largura de celular, com Olivero e ACULTA420.
+- Revisão visual no Firefox ESR (DISPLAY=:0) em largura de celular, no tema ACULTA ativo.
 - Procedimento de rotação e recuperação (ver docs/operations/SECRETS.md).
 - Guia de migração Portal → submódulo para instalações existentes.
 
@@ -32,7 +32,7 @@
   checkout de teste; não foi instalada dependência nem alterada a fixture.
 - PHP lint, PHPCS Drupal/DrupalPractice com extensão PHP e `node --check` passam.
 - A fase permanece Dev. O ajuste de layout e reteste foram concluídos em Dev.8;
-  CSS servido pelo candidato, Olivero e teste Functional de instalação/rollback
+  CSS servido pelo candidato e teste Functional de instalação/rollback
   continuam pendentes. Não houve alteração funcional no Runtime.
 
 ### Dev.7 — revisão de legibilidade da tabela (2026-10-29)
@@ -43,8 +43,7 @@
 - Firefox ESR com viewport CSS via WebDriver BiDi: 28/28 verificações PASS em
   1280/390/320 px. O script injetou o CSS candidato no HTML real do painel do
   servidor de desenvolvimento; inspeção das capturas confirmou a legibilidade.
-  Isso não comprova o CSS carregado do candidato nem substitui a revisão em
-  Olivero.
+  Isso não comprova o CSS carregado do candidato nem substitui a verificação do CSS efetivamente servido.
 - Unit 13/56 PASS; PHP lint, PHPCS Drupal/DrupalPractice, `node --check`, parse
   Python e `git diff --check` PASS. Kernel Routes continua bloqueado antes das
   asserções por `commerce_shipping` ausente (1 erro, 0 assertions). Functional
@@ -57,7 +56,7 @@
   o resolver de etapas exigido pelo serviço de checkout usado na rota. `commerce_shipping`
   não é dependência desse teste e não está instalado neste checkout.
 - Unit + Kernel Routes: 14 testes / 60 assertions PASS, 58 deprecações e nenhuma falha.
-- CSS servido pelo candidato/Olivero e Functional de instalação, rollback e CSRF ainda
+- CSS servido pelo candidato e Functional de instalação, rollback e CSRF ainda
   precisam de validação antes de avaliar RC.
 
 ### Dev.7 — fixture Kernel das rotas (2026-10-31)
@@ -71,7 +70,7 @@
   interno, ausência de overflow da página e captura começando pela primeira
   coluna. A captura 320 px foi inspecionada manualmente. O teste injeta o CSS
   candidato na sessão do browser; não comprova CSS servido pelo servidor.
-- Permanecem pendentes a validação do CSS servido pelo candidato, Olivero e
+- Permanecem pendentes a validação do CSS servido pelo candidato e
   testes Functional de instalação/rollback antes de avaliar RC.
 
 ### Dev.8 — legibilidade responsiva (2026-10-31)
@@ -81,7 +80,7 @@
 - Firefox ESR/X11: 31/31 verificações em 1280/390/320 px com CSS candidato
   injetado sobre o painel servido. Captura mobile inspecionada; sem scroll
   horizontal residual antes da captura.
-- Não houve alteração de Runtime nem de configuração. Olivero, CSS servido
+- Não houve alteração de Runtime nem de configuração. CSS servido
   pelo candidato e Functional de instalação/rollback permanecem pendentes.
 
 ## Decisão de fronteira

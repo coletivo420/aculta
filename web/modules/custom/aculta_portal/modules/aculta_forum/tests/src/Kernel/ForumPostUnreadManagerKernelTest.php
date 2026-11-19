@@ -9,7 +9,7 @@ use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Plugin\views\field\ForumUnreadPosts;
 use Drupal\aculta_forum\Service\ForumPostThreadBuilder;
 use Drupal\aculta_forum\Service\ForumPostUnreadManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Session\AnonymousUserSession;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
@@ -124,7 +124,9 @@ final class ForumPostUnreadManagerKernelTest extends KernelTestBase {
     self::assertSame(1, $result[(int) $this->topic->id()]['count']);
     self::assertSame((int) $unread->id(), $result[(int) $this->topic->id()]['post_id']);
     self::assertSame(0, $result[(int) $this->topic->id()]['page']);
-    self::assertLessThan((int) $unread->get('first_published')->value, (int) $read->get('first_published')->value);
+    $unreadPublished = is_numeric($unread->get('first_published')->value) ? (int) $unread->get('first_published')->value : 0;
+    $readPublished = is_numeric($read->get('first_published')->value) ? (int) $read->get('first_published')->value : 0;
+    self::assertLessThan($unreadPublished, $readPublished);
   }
 
   /**
@@ -185,10 +187,10 @@ final class ForumPostUnreadManagerKernelTest extends KernelTestBase {
     $plugin->preRender($values);
     $build = $plugin->render($values[0]);
 
-    self::assertSame('2 novas publicações', (string) $build['#title']);
-    self::assertSame('entity.node.canonical', $build['#url']->getRouteName());
-    self::assertSame('forum-post-' . $first->id(), $build['#url']->getOption('fragment'));
-    self::assertArrayHasKey('page', $build['#url']->getOption('query'));
+    $link = (string) $build;
+    self::assertStringContainsString('2 novas publicações', $link);
+    self::assertStringContainsString('page=', $link);
+    self::assertStringContainsString('#forum-post-' . $first->id(), $link);
   }
 
   /**
@@ -199,7 +201,7 @@ final class ForumPostUnreadManagerKernelTest extends KernelTestBase {
     $plugin = $this->unreadField();
     $values = [new ResultRow(['nid' => (int) $this->topic->id()])];
     $plugin->preRender($values);
-    self::assertSame([], $plugin->render($values[0]));
+    self::assertSame('', $plugin->render($values[0]));
   }
 
   /**
@@ -209,15 +211,12 @@ final class ForumPostUnreadManagerKernelTest extends KernelTestBase {
     $manager = new ForumPostUnreadManager($this->container->get('database'), $this->member);
     $builder = new ForumPostThreadBuilder(
       $this->container->get('entity_type.manager'),
-      $this->member,
-      new DomainPurposeManager(
+      new DomainSiteManager(
         $this->container->get('entity_type.manager'),
         $this->container->get('domain.negotiator'),
         $this->container->get('config.factory'),
         new RequestStack(),
       ),
-      new DiscussionContextResolver([]),
-      $this->container->get('pager.manager'),
     );
     $plugin = new ForumUnreadPosts([], 'aculta_forum_unread_posts', [], $manager, $builder);
     $plugin->aliases['nid'] = 'nid';

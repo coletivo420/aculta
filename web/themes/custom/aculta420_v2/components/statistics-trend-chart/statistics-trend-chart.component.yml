@@ -1,0 +1,44 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Série temporal
+description: Série diária acessível com barras e valores textuais.
+status: experimental
+group: Estatísticas
+props:
+  type: object
+  additionalProperties: false
+  required: [title, bars]
+  properties:
+    title:
+      title: Título do gráfico de tendência
+      description: Título visível e nome acessível da lista de barras.
+      type: string
+      minLength: 1
+    caption:
+      title: Legenda do gráfico
+      description: Texto opcional exibido após a lista de dados.
+      type: string
+      default: ''
+    summary:
+      title: Resumo acessível dos dados
+      description: Resumo opcional exibido antes das barras para contextualizar a série.
+      type: string
+      default: ''
+    bars:
+      title: Barras de dados do gráfico
+      description: Pontos da série apresentados em ordem dentro da lista.
+      type: array
+      items:
+        type: object
+        description: Ponto da série temporal com rótulo, valor textual e largura percentual.
+        additionalProperties: false
+        required: [label, value, percent]
+        properties:
+          label:
+            type: string
+            description: Rótulo do período ou categoria representado pela barra.
+          value:
+            type: string
+            description: Valor textual apresentado junto ao rótulo.
+          percent:
+            type: number
+            description: Largura percentual da barra visual, interpolada na propriedade CSS da largura.

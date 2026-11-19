@@ -65,10 +65,7 @@ final class BrevoEventStatus {
       return NULL;
     }
     // A resposta é um objeto com a chave `events` (verificado em 2026-10-20); lista direta também é aceita.
-    $list = is_array($data) && isset($data['events']) && is_array($data['events']) ? $data['events'] : $data;
-    if (!is_array($list)) {
-      return NULL;
-    }
+    $list = isset($data['events']) && is_array($data['events']) ? $data['events'] : $data;
     $events = [];
     foreach ($list as $item) {
       if (is_array($item)) {

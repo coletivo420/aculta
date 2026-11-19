@@ -43,6 +43,23 @@ final class FileReferenceInspectorTest extends UnitTestCase {
   }
 
   /**
+   * Finds Group's custom entity-reference field type.
+   */
+  public function testFindsGroupRelationshipReference(): void {
+    $target = $this->target('media', '50', 'media-uuid');
+    $query = $this->query([101]);
+    $query->expects(self::once())->method('allRevisions');
+    $query->expects(self::once())
+      ->method('condition')
+      ->with('field_attachment.target_id', '50')
+      ->willReturnSelf();
+
+    $inspector = $this->inspector('group_relationship_target', 'media', $query);
+
+    self::assertSame(FileReferenceStatus::Referenced, $inspector->inspect($target));
+  }
+
+  /**
    * Finds formatted-text embeds and includes historical revisions.
    */
   public function testFindsFormattedTextReferenceInAllRevisions(): void {

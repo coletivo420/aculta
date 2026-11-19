@@ -19,9 +19,9 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
-use Drupal\private_message\Service\PrivateMessageBanManagerInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Mapper\PrivateMessageMapperInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageBanManagerInterface;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -63,8 +63,8 @@ final class NewConversationController extends ControllerBase {
       $container->get('entity_type.manager'),
       $container->get('current_user'),
       $container->get('user.data'),
-      $container->get('private_message.ban_manager'),
-      $container->get('private_message.mapper'),
+      $container->get('aculta_messenger.pm.ban_manager'),
+      $container->get('aculta_messenger.pm.mapper'),
       $container->get('aculta_user.friendship_manager'),
       $container->get('form_builder'),
       $container->get('renderer'),
@@ -174,6 +174,9 @@ final class NewConversationController extends ControllerBase {
    *   Members and their policy-approved display names.
    * @param int[] $selectedIds
    *   IDs already selected in the group form.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function memberResults(array $candidates, array $selectedIds = []): array {
     // The drawer turns links into chips. Without JavaScript each link carries
@@ -213,6 +216,9 @@ final class NewConversationController extends ControllerBase {
    *   Current search term.
    * @param int[] $selectedIds
    *   Selected recipients carried across search requests.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function nativeSearchForm(string $term, array $selectedIds): array {
     $form = [
@@ -291,7 +297,14 @@ final class NewConversationController extends ControllerBase {
   }
 
   /**
-   * Members searchable by public nickname and eligible to receive messages. */
+   * Members searchable by public nickname and eligible to receive messages.
+   *
+   * @param string $term
+   *   O valor informado para $term.
+   *
+   * @return array<int, array{user: \Drupal\user\UserInterface, name: string}>
+   *   O resultado da operação.
+   */
   private function candidates(string $term): array {
     $profileStorage = $this->entityTypes->getStorage('profile');
     $profileIds = $profileStorage->getQuery()
@@ -317,9 +330,6 @@ final class NewConversationController extends ControllerBase {
     $users = $this->entityTypes->getStorage('user')->loadMultiple(array_values($userIds));
     $found = [];
     foreach ($users as $user) {
-      if (!$user instanceof UserInterface) {
-        continue;
-      }
       $publicName = $this->eligibleRecipientName($user);
       if ($publicName === NULL || mb_stripos($publicName, $term) === FALSE) {
         continue;
@@ -373,6 +383,9 @@ final class NewConversationController extends ControllerBase {
 
   /**
    * Returns the back link shown beneath the drawer's close button.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function backLink(): array {
     return PortalLinkElement::build($this->t('← Todas as conversas'), Url::fromRoute('aculta_messenger.drawer_conversations'), [
@@ -383,6 +396,9 @@ final class NewConversationController extends ControllerBase {
 
   /**
    * Renders a private, uncached HTML fragment.
+   *
+   * @param array<array-key, mixed> $build
+   *   O valor informado para $build.
    */
   private function fragment(array $build): Response {
     $content = $this->renderer->renderInIsolation($build);

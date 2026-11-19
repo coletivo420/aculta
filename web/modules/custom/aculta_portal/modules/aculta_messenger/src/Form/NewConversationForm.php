@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Form;
 
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\user\UserInterface;
 use Drupal\Core\Form\FormBase;
@@ -14,11 +15,11 @@ use Drupal\Core\Url;
 use Drupal\aculta_messenger\Controller\NewConversationController;
 use Drupal\aculta_messenger\Service\ConversationPolicy;
 use Drupal\aculta_user\Identity\PublicMemberIdentityInterface;
-use Drupal\private_message\Entity\PrivateMessage;
-use Drupal\private_message\Entity\PrivateMessageThread;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
-use Drupal\private_message\Mapper\PrivateMessageMapperInterface;
-use Drupal\private_message\Service\PrivateMessageServiceInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessage;
+use Drupal\aculta_messenger\Entity\PrivateMessageThread;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Mapper\PrivateMessageMapperInterface;
+use Drupal\aculta_messenger\Service\PrivateMessageServiceInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -31,13 +32,13 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class NewConversationForm extends FormBase {
 
   public function __construct(
-    private readonly AccountProxyInterface $currentUser,
-    private readonly PrivateMessageServiceInterface $privateMessageService,
-    private readonly PrivateMessageMapperInterface $privateMessageMapper,
-    private readonly PrivateMessageFormValidator $validator,
-    private readonly EntityTypeManagerInterface $entityTypes,
-    private readonly PublicMemberIdentityInterface $memberIdentity,
-    private readonly ConversationPolicy $policy,
+    protected readonly AccountProxyInterface $currentUser,
+    protected readonly PrivateMessageServiceInterface $privateMessageService,
+    protected readonly PrivateMessageMapperInterface $privateMessageMapper,
+    protected readonly PrivateMessageFormValidator $validator,
+    protected readonly EntityTypeManagerInterface $entityTypes,
+    protected readonly PublicMemberIdentityInterface $memberIdentity,
+    protected readonly ConversationPolicy $policy,
   ) {}
 
   /**
@@ -46,8 +47,8 @@ final class NewConversationForm extends FormBase {
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('current_user'),
-      $container->get('private_message.service'),
-      $container->get('private_message.mapper'),
+      $container->get('aculta_messenger.pm.service'),
+      $container->get('aculta_messenger.pm.mapper'),
       $container->get('aculta_messenger.private_message_form_validator'),
       $container->get('entity_type.manager'),
       $container->get(PublicMemberIdentityInterface::class),
@@ -67,12 +68,21 @@ final class NewConversationForm extends FormBase {
    *
    * A profile's "Iniciar conversa" action fixes the recipient, so that form
    * contains only the message. The group flow uses the recipients in the chips.
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   public function buildForm(array $form, FormStateInterface $formState): array {
     $fixed = $formState->get('recipient') !== NULL;
     $limit = $this->policy->maxRecipients(ConversationPolicy::KIND_GROUP, $this->currentUser);
     $form['#attributes'] = ['data-aculta-new-conversation-form' => ''];
     if (!$fixed) {
+      $form['#attached']['library'][] = 'aculta_messenger/new-conversation-presentation';
       // The drawer reads search/chips and posts to the group route.
       $form['#action'] = Url::fromRoute('aculta_messenger.new_conversation_group')->toString();
       $form['#attributes'] += [
@@ -110,18 +120,20 @@ final class NewConversationForm extends FormBase {
         ],
       ];
       $form['preview'] = [
-        '#type' => 'container',
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:search-preview',
         '#weight' => -9,
-        '#attributes' => [
+        '#props' => ['attributes' => new Attribute([
           'id' => 'aculta-new-conversation-preview',
-          'data-portal-ui' => 'search-preview',
           'role' => 'region',
           'aria-label' => $this->t('Resultados de membros'),
           'aria-live' => 'polite',
           'hidden' => TRUE,
           'data-aculta-js-only' => '',
-        ],
-        'hint' => ['#plain_text' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => NewConversationController::MIN_CHARS])],
+        ])],
+        '#slots' => ['content' => [
+          'hint' => ['#plain_text' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => NewConversationController::MIN_CHARS])],
+        ]],
       ];
     }
     else {
@@ -177,10 +189,19 @@ final class NewConversationForm extends FormBase {
    *
    * The drawer removes the chip in place; the link also works without
    * JavaScript.
+   *
+   * @param UserInterface $user
+   *   O valor informado para $user.
+   * @param array<array-key, mixed> $selectedIds
+   *   O valor informado para $selectedIds.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function chip(UserInterface $user, array $selectedIds): array {
     $name = $this->memberIdentity->publicDisplayName($user) ?? (string) $this->t('Membro');
-    $remaining = array_values(array_diff($selectedIds, [(int) $user->id()]));
+    $selectedKeys = array_map(static fn(mixed $id): string => is_scalar($id) ? (string) $id : '', $selectedIds);
+    $remaining = array_values(array_diff($selectedKeys, [(string) $user->id()]));
     return [
       '#type' => 'container',
       '#attributes' => ['data-aculta-chip' => '', 'data-portal-ui' => 'new-conversation-chip'],
@@ -205,6 +226,11 @@ final class NewConversationForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
    */
   public function validateForm(array &$form, FormStateInterface $formState): void {
     $message = $formState->getValue('message');
@@ -232,10 +258,10 @@ final class NewConversationForm extends FormBase {
     $thread = PrivateMessageThread::create(['members' => $members]);
     $formState->set('pmt_entity', $thread);
     $sender = $this->entityTypes->getStorage('user')->load($this->currentUser->id());
+    /** @var array<int, \Drupal\user\UserInterface> $participants */
+    $participants = $sender instanceof UserInterface ? array_merge([$sender], $recipients) : [];
     if ($sender instanceof UserInterface
-      && $this->privateMessageMapper->getThreadIdForMembers(
-        array_merge([$sender], $recipients),
-      )) {
+      && $this->privateMessageMapper->getThreadIdForMembers($participants)) {
       // Existing threads remain replyable after preference changes.
       $formState->set('existing_conversation', TRUE);
     }
@@ -246,6 +272,11 @@ final class NewConversationForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   O valor informado para $form.
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
    */
   public function submitForm(array &$form, FormStateInterface $formState): void {
     if ($formState->hasAnyErrors()) {
@@ -277,7 +308,9 @@ final class NewConversationForm extends FormBase {
       $this->validator->releaseSubmissionLocks();
       return;
     }
-    $thread = $this->resolveThreadForSubmission(array_merge([$sender], $recipients), $formState);
+    /** @var array<int, \Drupal\user\UserInterface> $submissionMembers */
+    $submissionMembers = array_merge([$sender], $recipients);
+    $thread = $this->resolveThreadForSubmission($submissionMembers, $formState);
     if (!$thread instanceof PrivateMessageThreadInterface) {
       $this->validator->releaseSubmissionLocks();
       return;
@@ -325,12 +358,12 @@ final class NewConversationForm extends FormBase {
    * to follow the established-thread policy, then revalidate preferences and
    * friendship immediately before creating a new thread.
    *
-   * @param \Drupal\user\UserInterface[] $members
+   * @param array<int, \Drupal\user\UserInterface> $members
    *   Sender and recipients in the exact order used by Private Message.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   Current form input and validation state.
    *
-   * @return \Drupal\private_message\Entity\PrivateMessageThreadInterface|null
+   * @return \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null
    *   An existing or newly created thread, or NULL when creation is refused.
    */
   private function resolveThreadForSubmission(array $members, FormStateInterface $formState): ?PrivateMessageThreadInterface {
@@ -348,12 +381,17 @@ final class NewConversationForm extends FormBase {
       $formState->set('aculta_messenger_new_conversation_privacy_rejected', TRUE);
       return NULL;
     }
-    $thread = $this->privateMessageService->getThreadForMembers($members);
-    return $thread instanceof PrivateMessageThreadInterface ? $thread : NULL;
+    return $this->privateMessageService->getThreadForMembers($members);
   }
 
   /**
    * Returns target IDs from the profile route or submitted recipient chips.
+   *
+   * @param FormStateInterface $formState
+   *   O valor informado para $formState.
+   *
+   * @return array<array-key, mixed>
+   *   O resultado da operação.
    */
   private function recipientIds(FormStateInterface $formState): array {
     $single = $formState->get('recipient');

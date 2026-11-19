@@ -46,6 +46,8 @@ final class AuthorIdentityTest extends UnitTestCase {
       'member_since' => '2021',
       'bio' => NULL,
       'social_links' => [],
+      'reactions_received' => 0,
+      'reactions_given' => 0,
     ], $identity->toArray());
     $this->assertSame(['user:42', 'profile:7'], $identity->getCacheTags());
     $this->assertSame(['user.permissions'], $identity->getCacheContexts());
@@ -113,6 +115,8 @@ final class AuthorIdentityTest extends UnitTestCase {
       'member_since' => '2021',
       'bio' => NULL,
       'social_links' => [],
+      'reactions_received' => 0,
+      'reactions_given' => 0,
     ], $identity->toArray());
     $this->assertSame(['user:42', 'profile:7'], $identity->getCacheTags());
   }
@@ -246,6 +250,8 @@ final class AuthorIdentityTest extends UnitTestCase {
 
     $build = (new AuthorCardBuilder($resolver))->build($account, 'author_editorial', [], 'Autora');
 
+    self::assertIsArray($build);
+
     self::assertSame('Joana Cultura', $build['#display_name']);
     self::assertSame('Autora', $build['#designation']);
     self::assertFalse($build['#has_avatar']);
@@ -257,6 +263,7 @@ final class AuthorIdentityTest extends UnitTestCase {
         'url' => 'https://instagram.com/joana',
       ],
     ], $build['#social_links']);
+    self::assertIsArray($build['#cache']);
     self::assertSame(['user:42', 'profile:7'], $build['#cache']['tags']);
   }
 
@@ -284,6 +291,8 @@ final class AuthorIdentityTest extends UnitTestCase {
     );
 
     $build = (new AuthorCardBuilder($resolver))->build($account, 'author_editorial');
+
+    self::assertIsArray($build);
 
     self::assertSame('Autora Revista', $build['#display_name']);
     self::assertNull($build['#profile_url']);
@@ -368,6 +377,9 @@ final class AuthorIdentityTest extends UnitTestCase {
 
   /**
    * Creates a field list mock containing a single field value.
+   */
+  /**
+   * @return FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>
    */
   private function field(mixed $value): FieldItemListInterface {
     $field = $this->createMock(FieldItemListInterface::class);

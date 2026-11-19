@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\aculta_donation\Plugin\Commerce\CheckoutPane;
 
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowInterface;
@@ -11,7 +13,9 @@ use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
 use Drupal\Core\EventSubscriber\AjaxResponseSubscriber;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -28,24 +32,37 @@ class DonationItemPaneBase extends CheckoutPaneBase {
   /**
    * Injected service: Used to detect if Field Group module is installed.
    *
-   * @var \Drupal\Core\Extension\ModuleHandler
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $moduleHandler;
+  protected ModuleHandlerInterface $moduleHandler;
 
   /**
    * FormDisplay object for this pane.
    *
-   * @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface
+   * @var \Drupal\Core\Entity\Display\EntityFormDisplayInterface|null
    */
-  protected $formDisplay;
+  protected ?EntityFormDisplayInterface $formDisplay = NULL;
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   O container de injeção de dependência.
+   * @param array<string, mixed> $configuration
+   *   A configuração do plugin.
+   * @param string $plugin_id
+   *   O identificador do plugin.
+   * @param mixed $plugin_definition
+   *   A definição do plugin.
+   * @param \Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowInterface|null $checkout_flow
+   *   O fluxo de checkout.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition, $checkout_flow);
     // Parent constructor populates $this->order.
-    $instance->moduleHandler = $container->get('module_handler');
+    /** @var \Drupal\Core\Extension\ModuleHandlerInterface $moduleHandler */
+    $moduleHandler = $container->get('module_handler');
+    $instance->moduleHandler = $moduleHandler;
     return $instance;
   }
 
@@ -58,14 +75,13 @@ class DonationItemPaneBase extends CheckoutPaneBase {
    * @throws \LengthException
    */
   protected function getDonationItem(): ?OrderItemInterface {
-    // Guard for missing order in the pane. This plugin seems to occasionally
-    // get instantiated early and then re-instantiated by Commerce.
-    if (!($this->order instanceof OrderInterface)) {
+    // Sift through order items to find donation bundles.
+    if ($this->order === NULL) {
       return NULL;
     }
     // Sift through order items to find donation bundles.
-    $donations = array_filter($this->order->getItems(), function ($item) {
-      return $item->bundle() == 'donation';
+    $donations = array_filter($this->order->getItems(), static function (OrderItemInterface $item): bool {
+      return $item->bundle() === 'donation';
     });
     // Ensure we have only 1.
     $count = count($donations);
@@ -82,7 +98,7 @@ class DonationItemPaneBase extends CheckoutPaneBase {
   /**
    * {@inheritdoc}
    */
-  public function isVisible() {
+  public function isVisible(): bool {
     $item = $this->getDonationItem();
     return $item instanceof OrderItemInterface;
   }
@@ -93,7 +109,7 @@ class DonationItemPaneBase extends CheckoutPaneBase {
    * @param string $displayMode
    *   The display mode id.
    */
-  protected function setFormDisplay($displayMode = 'default') {
+  protected function setFormDisplay(string $displayMode = 'default'): void {
     $donationItem = $this->getDonationItem();
     if ($donationItem instanceof OrderItemInterface) {
       $this->formDisplay = EntityFormDisplay::collectRenderDisplay(
@@ -105,17 +121,27 @@ class DonationItemPaneBase extends CheckoutPaneBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $pane_form
+   *   O formulário da pane.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   O estado do formulário.
+   * @param array<mixed> $complete_form
+   *   O formulário completo.
+   *
+   * @return array<mixed>
+   *   O formulário construído.
    */
-  public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
+  public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form): array {
     $donationItem = $this->getDonationItem();
     if (!($this->formDisplay instanceof EntityFormDisplayInterface)) {
       // Setting this conditionally so that extending classes can explicitly
       // set this service, but we can reliably depend on it being present.
       $this->setFormDisplay();
     }
-    if ($donationItem instanceof OrderItemInterface) {
+    if ($donationItem instanceof OrderItemInterface && $this->formDisplay instanceof EntityFormDisplayInterface) {
       // The purpose of this pane is to display an edit form on the donation
-      // item entity.  This form should not be visible if there is not such
+      // item entity. This form should not be visible if there is not such
       // an entity, however multiple lines below will fail, so setting a
       // guard.
       $pane_form['#title_display'] = 'invisible';
@@ -135,22 +161,40 @@ class DonationItemPaneBase extends CheckoutPaneBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $pane_form
+   *   O formulário da pane.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   O estado do formulário.
+   * @param array<mixed> $complete_form
+   *   O formulário completo.
    */
-  public function validatePaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form) {
+  public function validatePaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form): void {
     // Our form comes from the entity form builder.
     $donationItem = $this->getDonationItem();
-    if ($donationItem instanceof OrderItemInterface) {
+    if (!($this->formDisplay instanceof EntityFormDisplayInterface)) {
+      $this->setFormDisplay();
+    }
+    $formDisplay = $this->formDisplay;
+    if ($donationItem instanceof OrderItemInterface && $formDisplay instanceof EntityFormDisplayInterface) {
       $form_state->cleanValues();
       $this->buildDonationItem($pane_form, $form_state, $donationItem);
-      $this->formDisplay->validateFormValues($donationItem, $pane_form, $form_state);
+      $formDisplay->validateFormValues($donationItem, $pane_form, $form_state);
       $form_state->set('donation_item', $donationItem);
     }
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $pane_form
+   *   O formulário da pane.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   O estado do formulário.
+   * @param array<mixed> $complete_form
+   *   O formulário completo.
    */
-  public function submitPaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form) {
+  public function submitPaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form): void {
     $donationItem = $form_state->get('donation_item');
     if ($donationItem instanceof OrderItemInterface) {
       $donationItem->save();
@@ -167,7 +211,7 @@ class DonationItemPaneBase extends CheckoutPaneBase {
    *
    * Based on \Drupal\inline_entity_form\Form\EntityInlineForm::buildEntity:
    *
-   * @param array $paneForm
+   * @param array<string, mixed> $paneForm
    *   The entity form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
@@ -177,44 +221,62 @@ class DonationItemPaneBase extends CheckoutPaneBase {
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    * @throws \Drupal\Core\TypedData\Exception\ReadOnlyException
    */
-  protected function buildDonationItem(array $paneForm, FormStateInterface $form_state, OrderItemInterface $donationItem) {
+  /**
+   * Builds an updated OrderItem object based upon the submitted form values.
+   *
+   * @param array<mixed> $paneForm
+   *   The entity form.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The current state of the form.
+   * @param \Drupal\commerce_order\Entity\OrderItemInterface $donationItem
+   *   The donation item we are updating.
+   */
+  protected function buildDonationItem(array $paneForm, FormStateInterface $form_state, OrderItemInterface $donationItem): void {
     if (!($this->formDisplay instanceof EntityFormDisplayInterface)) {
       // Setting this conditionally so that extending classes can explicitly
       // set this service, but we can reliably depend on it being present.
       $this->setFormDisplay();
     }
-    $this->formDisplay->extractFormValues($donationItem, $paneForm, $form_state);
-    if ($donationItem->hasField('field_donation_amount') && !$donationItem->field_donation_amount->isEmpty()) {
-      $price = $donationItem->field_donation_amount->first()->toPrice();
-      $donationItem->setUnitPrice($price, TRUE);
+    if ($this->formDisplay instanceof EntityFormDisplayInterface) {
+      $this->formDisplay->extractFormValues($donationItem, $paneForm, $form_state);
     }
-    $donationTitle = $donationItem->getTitle();
-    if ($donationItem->hasField('field_gift_type')) {
-      $donationTitle .= ' - ';
-      $donationTitle .= $donationItem->field_gift_type->value;
-      $recurringValue = NULL;
-      if ($donationItem->hasField('field_recurring_begins') && $donationItem->field_gift_type->value == 'recurring') {
+    if ($donationItem->hasField('field_donation_amount') && !$donationItem->get('field_donation_amount')->isEmpty()) {
+      $firstPriceItem = $donationItem->get('field_donation_amount')->first();
+      /** @var \Drupal\commerce_price\Plugin\Field\FieldType\PriceItem|null $firstPriceItem */
+      if ($firstPriceItem !== NULL) {
+        $price = $firstPriceItem->toPrice();
+        $donationItem->setUnitPrice($price, TRUE);
+      }
+    }
+    $donationTitle = (string) $donationItem->getTitle();
+    if ($donationItem->hasField('field_gift_type') && !$donationItem->get('field_gift_type')->isEmpty()) {
+      $giftVal = $donationItem->get('field_gift_type')->value;
+      $giftTypeStr = is_scalar($giftVal) || $giftVal instanceof \Stringable ? (string) $giftVal : '';
+      $donationTitle .= ' - ' . $giftTypeStr;
+      if ($donationItem->hasField('field_recurring_begins') && $giftTypeStr === 'recurring') {
         $timezone = date_default_timezone_get();
         $setTime = new DrupalDateTime('+1 month', $timezone);
         // Adjust the date for storage.
         $setTime->setTimezone(new \DateTimezone(DateTimeItemInterface::STORAGE_TIMEZONE));
         $recurringValue = $setTime->format(DateTimeItemInterface::DATE_STORAGE_FORMAT);
-        $donationItem->field_recurring_begins->setValue(['value' => $recurringValue]);
+        $donationItem->get('field_recurring_begins')->setValue(['value' => $recurringValue]);
       }
     }
     $donationItem->setTitle($donationTitle);
     // Invoke all specified builders for copying form values to entity fields.
-    if (isset($paneForm['#entity_builders'])) {
+    if (isset($paneForm['#entity_builders']) && is_array($paneForm['#entity_builders'])) {
       foreach ($paneForm['#entity_builders'] as $function) {
-        call_user_func_array(
-          $function,
-          [
-            $donationItem->getEntityTypeId(),
-            $donationItem,
-            &$paneForm,
-            &$form_state,
-          ]
-        );
+        if (is_callable($function)) {
+          call_user_func_array(
+            $function,
+            [
+              $donationItem->getEntityTypeId(),
+              $donationItem,
+              &$paneForm,
+              &$form_state,
+            ]
+          );
+        }
       }
     }
   }
@@ -225,29 +287,27 @@ class DonationItemPaneBase extends CheckoutPaneBase {
    * @param string $viewMode
    *   The view mode to build.
    *
-   * @return array
+   * @return array<string, mixed>
    *   The render array.
    */
-  protected function doSummaryBuild($viewMode) {
+  protected function doSummaryBuild(string $viewMode): array {
     $donationItem = $this->getDonationItem();
     if (!($donationItem instanceof OrderItemInterface)) {
       return [];
     }
     $viewBuilder = $this->entityTypeManager->getViewBuilder($donationItem->getEntityTypeId());
-    $entityView = $viewBuilder->view($donationItem, $viewMode, $donationItem->language()
-      ->getId());
-    $renderArray = $viewBuilder->build($entityView);
-    $build = [
+    $renderArray = $viewBuilder->view($donationItem, $viewMode, $donationItem->language()->getId());
+    return [
       'summary' => [
-        '#theme' => 'aculta_donation_summary',
-        '#content' => $renderArray,
-        '#attributes' => [
-          'data-portal-ui' => 'donation-summary',
-          'data-donation-pane' => $this->getId(),
+        '#type' => 'component',
+        '#component' => 'aculta420_v2:donation-presentation',
+        '#props' => [
+          'variant' => 'summary',
+          'attributes' => new Attribute(['data-donation-pane' => $this->getId()]),
         ],
+        '#slots' => ['content' => $renderArray],
       ],
     ];
-    return $build;
   }
 
 }

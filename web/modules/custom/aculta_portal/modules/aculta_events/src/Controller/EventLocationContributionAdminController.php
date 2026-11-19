@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Controller;
 
+use Drupal\aculta_cgu\Entity\Contribution;
+use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -35,6 +37,9 @@ final class EventLocationContributionAdminController extends ControllerBase {
       ->execute();
     $rows = [];
     foreach ($storage->loadMultiple($ids) as $proposal) {
+      if (!$proposal instanceof Contribution) {
+        continue;
+      }
       if (!$proposal->access('view', $this->currentUser())) {
         continue;
       }
@@ -42,7 +47,8 @@ final class EventLocationContributionAdminController extends ControllerBase {
       $uuid = (string) $proposal->get('target_uuid')->value;
       if ($uuid !== '') {
         $matches = $this->entities->getStorage('aculta_event_location')->loadByProperties(['uuid' => $uuid]);
-        $target = reset($matches);
+        $candidate = reset($matches);
+        $target = $candidate instanceof EventLocation ? $candidate : NULL;
       }
       $author = $this->entities->getStorage('user')->load($proposal->getOwnerId());
       $rows[] = [

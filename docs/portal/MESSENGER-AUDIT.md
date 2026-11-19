@@ -79,7 +79,7 @@ Não há `\Drupal::` em `src/` (zero ocorrências). Os serviços são injetados.
 | `js/counters.js` | Contadores da barra (mensagens e avisos). |
 | `src/Hook/PortalUiHooks.php` | Mapa de tokens `data-portal-ui` do Messenger para classes. |
 | `src/Hook/ThemeHooks.php` | Mapeia as rotas do Messenger para SDCs (`presentMessengerPage`, `presentMessengerTrigger`) e lê `aculta_messenger`, `aculta_messenger_outgoing`, `aculta_messenger_sender_avatar`, `aculta_messenger_read_status`. |
-| `templates/page.html.twig` | Imprime o gatilho `aculta_messenger_trigger`. |
+| `components/multidomain-bar/multidomain-bar.twig` | Imprime o gatilho `messenger-trigger`, dentro da Institution Bar (bloco `aculta_institution_bar`). |
 
 Tudo o que o tema usa do Messenger chega como dado neutro (URL, contagem, textos, render arrays). O tema não lê Domain, hostname nem regra funcional. Isso está correto.
 
@@ -113,7 +113,7 @@ Severidade: **alta** = viola regra do projeto; **média** = dívida que contrari
 | A4 | média | Tema | Regras mortas do menu antigo de linha: `.aculta-messenger-conversation__menu-trigger` e variantes (7 linhas de CSS). Nenhum JS, componente ou módulo usa esses seletores. | `messenger-item.css` linhas 36–38 e vizinhas. | Remover (estilo morto). |
 | A5 | média | Tema | `ThemeHooks::presentMessengerPage` mapeia `private_message.private_message_page` e `private_message.private_message_create` para SDCs. O submódulo remove essas páginas nativas (`NativePrivateMessagePagesSubscriber`, `NativePrivateMessageController`). | `ThemeHooks.php` linhas ~284–290; `NativePrivateMessagePagesSubscriber`. | Confirmar se essas rotas ainda são renderizadas. Se não forem, remover o mapeamento. |
 | A6 | média | Tema | `messenger-drawers.js` mistura a gaveta do Messenger com o comportamento de alertas (`aculta-alert-dismiss`) e contadores. | `js/messenger-drawers.js`, bloco `aculta-alert-dismiss`. | Mover o fechamento de alertas para o arquivo de avisos (`counters.js` ou um `alerts.js`). |
-| A7 | média | Testes | A suíte de navegador (52 verificações) e os scripts de depuração ficam em `scratchpad/`, fora do repositório. Não são versionados. | `docs/portal/TESTES-NAVEGADOR.md`, seção U, cita o resultado, mas não o código. | Versionar a suíte em `tests/browser/aculta-messenger/` com instruções de execução, ou referenciar o local versionado. |
+| A7 | média | Testes | A suíte de navegador (52 verificações) e os scripts de depuração ficam em `scratchpad/`, fora do repositório. Não são versionados. | `docs/history/portal/TESTES-NAVEGADOR-RODADAS.md`, seção U, cita o resultado, mas não o código. | Versionar a suíte em `tests/browser/aculta-messenger/` com instruções de execução, ou referenciar o local versionado. |
 | A8 | baixa | Documentação | `docs/ROADMAP.md` e `docs/ARCHITECTURE.md` do submódulo não citam a gaveta multidomínio, "Opções", a confirmação de bloqueio nem "Nova conversa". `ARCHITECTURE.md` descreve "dois modais Drupal" no menu global, que foi substituído pela gaveta. | Busca por esses termos nos dois arquivos, sem resultado. | Atualizar com a referência de `MESSENGER.md` (ou apontar para ela). |
 | A10 | baixa | Tema | Mapeados em `PortalUiHooks` sem emissor no módulo: `messenger-preview-inbox-link` e `messenger-read-status`. | Busca em todo `web/modules/custom`: nenhuma ocorrência fora do mapa. | Remover do mapa após confirmar. |
 | A9 | baixa | Tema | Nome de componente ambíguo: `messenger-item` é a bolha de mensagem e também o arquivo de CSS da gaveta (A3). | `components/content/messenger-item/`. | Resolve-se com A3. |
@@ -124,7 +124,7 @@ Severidade: **alta** = viola regra do projeto; **média** = dívida que contrari
 - Todos os tokens `data-portal-ui` que o módulo emite (12 tokens) têm mapeamento em `PortalUiHooks`.
 - O tema não contém rota, serviço, lógica de Domain nem `#component: aculta420:*` no módulo.
 - A caixa "Opções" do perfil é oferecida ao tema pelo módulo `aculta_user` (hook de alter), não pelo tema.
-- Os gates passam: `validate-module-theme-boundary` (1028 verificações), `validate-turnstile-exceptions`, `validate-public-slugs`, `validate-aculta-portal-drupal11` e `validate-aculta420-foundation` (344 verificações).
+- Os gates passam: `validate-module-theme-boundary` (1028 verificações), `validate-turnstile-exceptions`, `validate-public-slugs`, `validate-aculta-portal-drupal12` e `validate-aculta420-foundation` (344 verificações).
 
 ## 4. Ordem sugerida de correção
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Domain;
 
+
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Breadcrumb\Breadcrumb;
 use Drupal\Core\Breadcrumb\BreadcrumbBuilderInterface;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -16,15 +18,19 @@ use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-/** Builds concise, domain-aware breadcrumbs for public ACULTA experiences. */
+/**
+ * Builds concise, domain-aware breadcrumbs for public ACULTA experiences. */
 final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
 
   use StringTranslationTrait;
 
-  /** Purposes with a real public experience in this phase. */
-  private const PUBLIC_PURPOSES = ['main', 'account', 'support', 'magazine'];
+  /**
+   * Purposes with a real public experience in this phase. */
+  // Todos os subdomínios públicos; "links" (LinkWeed) fica de fora por decisão do responsável.
+  private const PUBLIC_PURPOSES = ['main', 'account', 'support', 'magazine', 'wiki', 'shop', 'courses', 'forum', 'eventos'];
 
-  /** Routes whose paths or titles may contain tokens or technical identifiers. */
+  /**
+   * Routes whose paths or titles may contain tokens or technical identifiers. */
   private const HIDDEN_ROUTES = [
     'system.403',
     'system.404',
@@ -40,30 +46,36 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   ];
 
   public function __construct(
-    private readonly DomainPurposeManager $domainPurpose,
+    private readonly DomainSiteManager $siteManager,
     private readonly RequestStack $requestStack,
     private readonly TitleResolverInterface $titleResolver,
     private readonly PathMatcherInterface $pathMatcher,
   ) {}
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function applies(RouteMatchInterface $route_match, ?CacheableMetadata $cacheable_metadata = NULL): bool {
     $route = $route_match->getRouteObject();
     // Claro keeps its own breadcrumb behavior.
     if (!$route || $route->getOption('_admin_route')) {
       return FALSE;
     }
-    $purpose = $this->domainPurpose->getCurrentPurpose();
+    // Prioridade alta: as rotas de webform têm builders próprios (1002/1003) e não são sobrescritas.
+    if (str_starts_with((string) $route_match->getRouteName(), 'webform.') || str_starts_with((string) $route_match->getRouteName(), 'entity.webform')) {
+      return FALSE;
+    }
+    $purpose = $this->siteManager->getCurrentSiteKey()?->value;
     $cacheable_metadata?->addCacheContexts(['route', 'domain']);
     return $purpose !== NULL;
   }
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function build(RouteMatchInterface $route_match): Breadcrumb {
     $breadcrumb = (new Breadcrumb())
       ->addCacheContexts(['route', 'url.path', 'domain']);
     $route = $route_match->getRouteObject();
-    $purpose = $this->domainPurpose->getCurrentPurpose();
+    $purpose = $this->siteManager->getCurrentSiteKey()?->value;
     if (!$route || !$purpose || !in_array($purpose, self::PUBLIC_PURPOSES, TRUE)
       || in_array($route_match->getRouteName(), self::HIDDEN_ROUTES, TRUE)
       || $route_match->getRouteName() === 'user.login_status.http'
@@ -73,21 +85,27 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     }
 
     $root = $this->root($purpose);
-    $root_url = $this->domainPurpose->pathUrl($purpose, '/');
+    $root_url = $this->siteManager->pathUrl($purpose, '/');
     if (!$root_url) {
       return $breadcrumb;
     }
     $breadcrumb->addLink(Link::fromTextAndUrl($root, $root_url));
 
     // Only add a parent where the site has a real, stable hierarchy.
-    if ($purpose === 'account' && in_array($route_match->getRouteName(), ['aculta_portal.my_data_address', 'aculta_portal.my_data_other'], TRUE)) {
-      $parent_url = $this->domainPurpose->routeUrl('account', 'aculta_portal.my_data');
+    if ($purpose === 'account' && in_array($route_match->getRouteName(), [
+      'aculta_portal.my_data_address',
+      'aculta_portal.my_data_other',
+    ], TRUE)) {
+      $parent_url = $this->siteManager->routeUrl(SiteKey::Account, 'aculta_portal.my_data');
       if ($parent_url) {
         $breadcrumb->addLink(Link::fromTextAndUrl($this->t('Meus dados'), $parent_url));
       }
     }
-    elseif ($purpose === 'account' && in_array($route_match->getRouteName(), ['aculta_portal.security', 'aculta_portal.security_password'], TRUE)) {
-      $parent_url = $this->domainPurpose->routeUrl('account', 'aculta_portal.security');
+    elseif ($purpose === 'account' && in_array($route_match->getRouteName(), [
+      'aculta_portal.security',
+      'aculta_portal.security_password',
+    ], TRUE)) {
+      $parent_url = $this->siteManager->routeUrl(SiteKey::Account, 'aculta_portal.security');
       if ($parent_url) {
         $breadcrumb->addLink(Link::fromTextAndUrl($this->t('Segurança'), $parent_url));
       }
@@ -104,7 +122,7 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     }
 
     $breadcrumb->addCacheableDependency($route);
-    $domain = $this->domainPurpose->getDomain($purpose);
+    $domain = $this->siteManager->getDomain($purpose);
     if ($domain) {
       $breadcrumb->addCacheableDependency($domain);
     }
@@ -116,10 +134,11 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     return $breadcrumb;
   }
 
-  /** Returns the safely resolved title for the current, non-technical page. */
+  /**
+   * Returns the safely resolved title for the current, non-technical page. */
   public function currentTitle(RouteMatchInterface $route_match): ?string {
     $route = $route_match->getRouteObject();
-    $purpose = $this->domainPurpose->getCurrentPurpose();
+    $purpose = $this->siteManager->getCurrentSiteKey()?->value;
     if (!$route || !$purpose || !in_array($purpose, self::PUBLIC_PURPOSES, TRUE)
       || in_array($route_match->getRouteName(), self::HIDDEN_ROUTES, TRUE)
       || $route_match->getRouteName() === 'user.login_status.http'
@@ -139,7 +158,8 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     return $title !== '' ? $title : NULL;
   }
 
-  /** Gets real taxonomy ancestors from the existing parent relationship. */
+  /**
+   * Gets real taxonomy ancestors from the existing parent relationship. */
   private function taxonomyParents(TermInterface $term): array {
     $parents = [];
     $seen = [];
@@ -155,16 +175,35 @@ final class AcultaBreadcrumbBuilder implements BreadcrumbBuilderInterface {
     return $parents;
   }
 
-  /** Supplies each public domain's own root label. */
+  /**
+   * Supplies each public domain's own root label. */
   private function root(string $purpose): string {
     return match ($purpose) {
       'account' => (string) $this->t('Minha conta'),
       'support' => (string) $this->t('Apoio'),
-      'magazine' => (string) $this->t('Revista 420'),
+      'magazine' => (string) $this->t('Revista'),
+      'wiki' => (string) $this->t('Wiki'),
+      'shop' => (string) $this->t('Loja'),
+      'courses' => (string) $this->t('Cursos'),
+      'forum' => (string) $this->t('Fórum'),
+      'eventos' => (string) $this->t('Eventos'),
       default => (string) $this->t('Início'),
     };
   }
 
+  /**
+   * Sessão visual do breadcrumb para o subdomínio atual.
+   */
+  public function sessao(): string {
+    return $this->siteManager->getCurrentSiteKey()?->breadcrumbSessao() ?? 'portal';
+  }
+
+  /**
+   * Informa se a rota atual é a página inicial.
+   *
+   * @return bool
+   *   TRUE quando é a página inicial.
+   */
   private function isFrontPage(): bool {
     return $this->pathMatcher->isFrontPage();
   }

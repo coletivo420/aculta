@@ -7,7 +7,8 @@ namespace Drupal\aculta_mailer\Monitor;
 /**
  * Cliente IMAP sobre a extensão curl do PHP (protocolo imaps). Não usa biblioteca nova.
  *
- * O progresso é controlado por UID (cursor no State), então o sinalizador \Seen que o FETCH possa marcar não afeta a leitura.
+ * O progresso é controlado por UID (cursor no State), então o sinalizador \Seen que o FETCH possa marcar não afeta a
+ * leitura.
  */
 final class CurlImapClient implements ImapClientInterface {
 
@@ -45,7 +46,7 @@ final class CurlImapClient implements ImapClientInterface {
     preg_match_all('/^\* SEARCH([\d ]*)\r?$/m', $response, $matches);
     $uids = [];
     foreach ($matches[1] as $line) {
-      foreach (array_filter(explode(' ', trim($line)), 'strlen') as $candidate) {
+      foreach (array_filter(explode(' ', trim($line)), static fn(string $candidate): bool => $candidate !== '') as $candidate) {
         if ((int) $candidate > $uid) {
           $uids[] = (int) $candidate;
         }
@@ -100,7 +101,6 @@ final class CurlImapClient implements ImapClientInterface {
     }
     $body = curl_exec($handle);
     $error = curl_error($handle);
-    curl_close($handle);
     if ($overflow) {
       throw new ImapMessageTooLargeException('Mensagem IMAP acima do limite de download.');
     }

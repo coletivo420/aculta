@@ -87,7 +87,8 @@ final class FriendshipFixture extends ContentEntityBase implements AcultaFriends
   /**
    * {@inheritdoc} */
   public function getStatus(): string {
-    return (string) $this->get('status')->value;
+    $statusBruto = $this->get('status')->value;
+    return (is_scalar($statusBruto) ? (string) $statusBruto : '');
   }
 
 }

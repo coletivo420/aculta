@@ -1,0 +1,38 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Editor de foto da Conta
+description: Apresenta a prévia e o formulário de foto fornecidos pelo Portal.
+status: stable
+group: Conta
+props:
+  type: object
+  additionalProperties: false
+  required: [id, title]
+  properties:
+    id:
+      type: string
+      title: ID único do popup
+      description: Identificador associado ao gatilho e ao diálogo de alteração de foto.
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+    title:
+      type: string
+      title: Título do popup
+      description: Título visível e acessível do diálogo de alteração de foto.
+      minLength: 1
+    trigger_aria_label:
+      type: string
+      title: Nome acessível do gatilho
+      description: Nome do gatilho de avatar quando não há texto visível.
+slots:
+  trigger:
+    title: Avatar
+    description: Prévia que funciona como gatilho do popup.
+  content:
+    title: Formulário
+    description: Formulário de alteração de foto com acesso, cache e attachments preservados.
+  footer:
+    title: Rodapé
+    description: Ações opcionais do popup.
+assets:
+  css:
+    component:
+      account-photo-editor.css: {}

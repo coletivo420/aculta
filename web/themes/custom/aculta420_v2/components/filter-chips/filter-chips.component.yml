@@ -1,0 +1,36 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Filter chips
+status: stable
+description: Faixa rolável de filtros com links e estado atual explícito.
+group: Elementos básicos
+props:
+  type: object
+  additionalProperties: false
+  required: [items]
+  properties:
+    items:
+      title: Filtros ativos a exibir
+      description: Links que representam filtros e seus estados atuais.
+      type: array
+      items:
+        type: object
+        description: Filtro apresentado como link, opcionalmente com contagem e estado ativo.
+        additionalProperties: false
+        required: [label, url]
+        properties:
+          label:
+            type: string
+            minLength: 1
+            description: Texto visível do filtro.
+          url:
+            type: string
+            format: uri-reference
+            description: Endereço de destino aplicado ao ativar o filtro.
+          is_active:
+            type: boolean
+            default: false
+            description: Indica o filtro aplicado; adiciona o estado visual ativo e aria-current.
+          count:
+            type: [integer, 'null']
+            minimum: 0
+            description: Quantidade opcional de resultados associados ao filtro.

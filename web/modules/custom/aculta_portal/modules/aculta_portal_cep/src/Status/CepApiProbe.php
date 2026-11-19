@@ -48,6 +48,8 @@ final class CepApiProbe {
 
   /**
    * Checks enabled APIs and saves their results to state.
+   *
+   * @return array<string, array<string, mixed>>
    */
   public function check(): array {
     $result = [];
@@ -100,7 +102,14 @@ final class CepApiProbe {
    */
   public function checkIfDue(): ?array {
     $last = $this->last();
-    $checked = $last === [] ? 0 : max(array_map(static fn (array $api): int => (int) $api['checked_at'], $last));
+    $checked = 0;
+    foreach ($last as $api) {
+      $val = $api['checked_at'] ?? 0;
+      $checkedAt = is_int($val) || is_numeric($val) ? (int) $val : 0;
+      if ($checkedAt > $checked) {
+        $checked = $checkedAt;
+      }
+    }
     if ($checked > 0 && $this->time->getRequestTime() - $checked < self::INTERVAL) {
       return NULL;
     }
@@ -114,7 +123,18 @@ final class CepApiProbe {
    *   Stored provider results, or an empty array before the first check.
    */
   public function last(): array {
-    return $this->state->get(self::STATE_KEY, []);
+    $raw = $this->state->get(self::STATE_KEY, []);
+    if (!is_array($raw)) {
+      return [];
+    }
+    $result = [];
+    foreach ($raw as $key => $item) {
+      if (is_string($key) && is_array($item)) {
+        /** @var array<string, mixed> $item */
+        $result[$key] = $item;
+      }
+    }
+    return $result;
   }
 
 }

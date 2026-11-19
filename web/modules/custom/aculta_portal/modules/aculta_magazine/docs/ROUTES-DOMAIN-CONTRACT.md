@@ -23,7 +23,7 @@ código/Config Sync; não implica importação no Runtime nem homologação visu
 | `config/sync/node.settings.yml` | `use_admin_theme: true` — o assinante está ativo |
 | `web/core/modules/node/src/Entity/NodeRouteProvider.php` e `node.routing.yml` | quais rotas recebem `_node_operation_route` |
 | `web/modules/custom/aculta_portal/src/Domain/ContentPurposeResolver.php` | precedência de `requiredPurpose()` e `canonicalContentPurpose()` |
-| `web/modules/custom/aculta_portal/src/EventSubscriber/DomainPurposeRequestSubscriber.php` | aplicação do purpose, 302/404 e cabeçalhos |
+| `web/modules/custom/aculta_portal/src/EventSubscriber/DomainSiteRequestSubscriber.php` | aplicação do purpose, 302/404 e cabeçalhos |
 | `web/modules/custom/aculta_portal/src/Domain/DomainPurposeManager.php` | geração de URL adaptada ao ambiente e URL canônica de produção |
 | `config/sync/domain.record.*.yml` e `domain_alias.*.yml` | hosts de produção e aliases por ambiente |
 | Tabela `router` e `router.route_provider` no Runtime | opções efetivas de cada rota |
@@ -83,7 +83,7 @@ Leitura da tabela:
 
 ## 4. Semântica de host errado
 
-`DomainPurposeRequestSubscriber` aplica o purpose exigido antes e depois do
+`DomainSiteRequestSubscriber` aplica o purpose exigido antes e depois do
 roteamento:
 
 | Situação | Resultado |

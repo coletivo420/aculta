@@ -1,0 +1,6 @@
+name: ACULTA Brócolis - Light
+description: Desenho original ACULTA Brócolis na variante light.
+props:
+  name: aculta-brocolis
+  variant: light
+  size: xl

@@ -1,0 +1,33 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Listagem da Revista
+description: Cabeçalho editorial e grade responsiva da página de publicações.
+status: stable
+group: Revista
+props:
+  type: object
+  additionalProperties: false
+  required: [eyebrow, title]
+  properties:
+    eyebrow:
+      type: string
+      title: Antetítulo
+      description: Texto editorial opcional exibido acima do título da listagem.
+    title:
+      type: string
+      title: Título da listagem
+      description: Título principal do componente, renderizado pelo SDC heading.
+    title_level:
+      type: string
+      enum: [h1, h2]
+      default: h2
+      title: Nível do título
+      description: O H1 da página pertence ao título da rota; a listagem usa h2 por padrão.
+    has_items:
+      type: boolean
+      title: Existem publicações
+      description: Quando false, omite o contêiner das publicações; quando true, renderiza o slot items.
+      default: true
+slots:
+  items:
+    title: Publicações
+    description: Render array das linhas da View.

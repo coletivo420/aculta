@@ -1,0 +1,9 @@
+name: Resposta nível 2
+description: Primeira resposta do nível 2, com recuo e seta de resposta.
+component: aculta420_v2:reply-indent
+props:
+  depth: 2
+  first: true
+slots:
+  content:
+    '#markup': '<p>Exemplo de resposta no nível 2 da conversa.</p>'

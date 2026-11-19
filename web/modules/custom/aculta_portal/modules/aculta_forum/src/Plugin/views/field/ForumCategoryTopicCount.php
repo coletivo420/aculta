@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Plugin\views\field;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Render\MarkupInterface;
+use Drupal\Core\Render\Markup;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\views\Attribute\ViewsField;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
@@ -27,19 +30,33 @@ final class ForumCategoryTopicCount extends FieldPluginBase implements Container
    *
    * @var array<int, int>
    */
-  private array $counts = [];
+  protected array $counts = [];
 
+  /**
+   * Constructs a ForumCategoryTopicCount object.
+   *
+   * @param array<string, mixed> $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\Core\Database\Connection $database
+   *   The database connection.
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly Connection $database,
+    protected readonly Connection $database,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -65,9 +82,21 @@ final class ForumCategoryTopicCount extends FieldPluginBase implements Container
    * {@inheritdoc}
    */
   public function preRender(&$values): void {
+    if ($this->view !== NULL) {
+      if (!isset($this->view->element['#cache']) || !is_array($this->view->element['#cache'])) {
+        $this->view->element['#cache'] = [];
+      }
+      if (!isset($this->view->element['#cache']['contexts']) || !is_array($this->view->element['#cache']['contexts'])) {
+        $this->view->element['#cache']['contexts'] = [];
+      }
+      $this->view->element['#cache']['contexts'][] = 'user.node_grants:view';
+    }
     $term_ids = [];
     foreach ($values as $row) {
-      $term_ids[] = (int) $this->getValue($row, 'tid');
+      $val = $this->getValue($row, 'tid');
+      if (is_numeric($val)) {
+        $term_ids[] = (int) $val;
+      }
     }
     $this->counts = $this->countByTerm(array_values(array_unique(array_filter($term_ids))));
   }
@@ -75,23 +104,16 @@ final class ForumCategoryTopicCount extends FieldPluginBase implements Container
   /**
    * {@inheritdoc}
    */
-  public function render(ResultRow $values) {
-    $term_id = (int) $this->getValue($values, 'tid');
+  public function render(ResultRow $values): MarkupInterface|string {
+    $val = $this->getValue($values, 'tid');
+    $term_id = is_numeric($val) ? (int) $val : 0;
     $count = $this->counts[$term_id] ?? 0;
     // Portuguese plural rules treat zero as singular, so the zero case needs
     // an explicit string instead of formatPlural().
     $label = $count === 0
       ? $this->t('Nenhum tópico')
       : $this->formatPlural($count, '1 tópico', '@count tópicos');
-    return [
-      '#type' => 'html_tag',
-      '#tag' => 'span',
-      '#attributes' => ['data-portal-ui' => 'forum-category-count'],
-      '#value' => $label,
-      '#cache' => [
-        'contexts' => ['user.node_grants:view'],
-      ],
-    ];
+    return Markup::create('<span data-portal-ui="forum-category-count">' . Html::escape((string) $label) . '</span>');
   }
 
   /**
@@ -120,8 +142,13 @@ final class ForumCategoryTopicCount extends FieldPluginBase implements Container
     $query->addTag('node_access');
     $query->addMetaData('base_table', 'node_field_data');
     $counts = [];
-    foreach ($query->execute() as $row) {
-      $counts[(int) $row->tid] = (int) $row->topic_count;
+    $statement = $query->execute();
+    if ($statement) {
+      foreach ($statement as $row) {
+        if (is_object($row) && isset($row->tid, $row->topic_count) && is_numeric($row->tid) && is_numeric($row->topic_count)) {
+          $counts[(int) $row->tid] = (int) $row->topic_count;
+        }
+      }
     }
     return $counts;
   }

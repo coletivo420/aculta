@@ -82,6 +82,9 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
       $sequence = 1;
       $supersedesId = 0;
       foreach ($previous as $issued_certificate) {
+        if (!$issued_certificate instanceof CourseCertificate) {
+          continue;
+        }
         $sequence = max($sequence, ((int) $issued_certificate->get('sequence')->value) + 1);
         $supersedesId = (int) $issued_certificate->id();
         $issued_certificate->set('state', 'revoked');
@@ -107,6 +110,9 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
         'revoked' => 0,
         'revocation_reason' => '',
       ]);
+      if (!$certificate instanceof CourseCertificate) {
+        throw new \LogicException('The certificate storage returned an unexpected entity.');
+      }
       $certificate->save();
       unset($transaction);
     }
@@ -180,7 +186,10 @@ final class CourseCertificateManager implements CourseCertificateManagerInterfac
       ->condition('uid', $uid)
       ->sort('issued', 'DESC')
       ->execute();
-    return $this->entityTypeManager->getStorage('aculta_lms_certificate')->loadMultiple($ids);
+    return array_values(array_filter(
+      $this->entityTypeManager->getStorage('aculta_lms_certificate')->loadMultiple($ids),
+      static fn ($certificate): bool => $certificate instanceof CourseCertificate,
+    ));
   }
 
   /**

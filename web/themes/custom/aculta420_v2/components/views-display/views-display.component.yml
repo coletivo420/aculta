@@ -1,0 +1,45 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Composição de View
+description: Estrutura os elementos de uma View preservando filtros, resultados, estado vazio, paginação e áreas.
+status: experimental
+group: Layouts
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    title:
+      type: string
+      title: Título do display
+      description: Título gerado pela View após as regras de visibilidade do display.
+slots:
+  attachment_before:
+    title: Anexos anteriores
+    description: Displays anexados antes dos resultados.
+  header:
+    title: Cabeçalho
+    description: Área de cabeçalho configurada na View.
+  exposed:
+    title: Filtros expostos
+    description: Formulário nativo de filtros e ordenação expostos.
+  rows:
+    title: Resultados
+    description: Linhas renderizadas pela View e pelo plugin de estilo.
+  empty:
+    title: Estado vazio
+    description: Área nativa exibida quando não há resultados.
+  pager:
+    title: Paginação
+    description: Paginação nativa do display.
+  more:
+    title: Mais resultados
+    description: Link nativo para mais resultados.
+  footer:
+    title: Rodapé
+    description: Área de rodapé configurada na View.
+  attachment_after:
+    title: Anexos posteriores
+    description: Displays anexados após os resultados.
+assets:
+  css:
+    component:
+      views-display.css: {  }

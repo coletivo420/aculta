@@ -15,6 +15,9 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_portal')]
 final class TestMailRedirectTest extends UnitTestCase {
 
+  /**
+   * Confirma que, sem configuração, a mensagem não é alterada.
+   */
   public function testSemConfiguracaoNaoAlteraAMensagem(): void {
     $mensagem = ['to' => 'pessoa@example.com', 'subject' => 'Pedido', 'headers' => ['Cc' => 'x@example.com']];
     (new TestMailRedirect(new Settings([])))->aplicar($mensagem);
@@ -23,9 +26,15 @@ final class TestMailRedirectTest extends UnitTestCase {
     $this->assertArrayHasKey('Cc', $mensagem['headers']);
   }
 
+  /**
+   * Confirma que, com configuração, o destino é trocado e o original registrado.
+   */
   public function testComConfiguracaoRedirecionaERegistraOOriginal(): void {
     $mensagem = ['to' => 'Teste.Comum@testuser.com', 'subject' => 'Pedido', 'headers' => ['Cc' => 'x@example.com']];
-    $ajuste = new Settings(['aculta_mail_redirect' => '4e20coletivo@gmail.com', 'aculta_mail_redirect_for' => ['teste.comum@testuser.com']]);
+    $ajuste = new Settings([
+      'aculta_mail_redirect' => '4e20coletivo@gmail.com',
+      'aculta_mail_redirect_for' => ['teste.comum@testuser.com'],
+    ]);
     (new TestMailRedirect($ajuste))->aplicar($mensagem);
     $this->assertSame('4e20coletivo@gmail.com', $mensagem['to']);
     $this->assertSame('[TESTE para Teste.Comum@testuser.com] Pedido', $mensagem['subject']);
@@ -33,14 +42,23 @@ final class TestMailRedirectTest extends UnitTestCase {
     $this->assertArrayNotHasKey('Cc', $mensagem['headers']);
   }
 
+  /**
+   * Confirma que outros destinatários não são redirecionados.
+   */
   public function testOutrosDestinatariosNaoSaoRedirecionados(): void {
     $mensagem = ['to' => 'pessoa@example.com', 'subject' => 'Pedido', 'headers' => []];
-    $ajuste = new Settings(['aculta_mail_redirect' => '4e20coletivo@gmail.com', 'aculta_mail_redirect_for' => ['teste.comum@testuser.com']]);
+    $ajuste = new Settings([
+      'aculta_mail_redirect' => '4e20coletivo@gmail.com',
+      'aculta_mail_redirect_for' => ['teste.comum@testuser.com'],
+    ]);
     (new TestMailRedirect($ajuste))->aplicar($mensagem);
     $this->assertSame('pessoa@example.com', $mensagem['to']);
     $this->assertArrayNotHasKey('X-Aculta-Destino-Original', $mensagem['headers']);
   }
 
+  /**
+   * Confirma que uma configuração vazia equivale à ausente.
+   */
   public function testConfiguracaoVaziaEhIgualAAusente(): void {
     $this->assertNull((new TestMailRedirect(new Settings(['aculta_mail_redirect' => '  '])))->destino());
   }

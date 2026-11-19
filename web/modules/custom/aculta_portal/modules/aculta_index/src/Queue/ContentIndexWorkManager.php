@@ -7,6 +7,8 @@ namespace Drupal\aculta_index\Queue;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\IntegrityConstraintViolationException;
+use Drupal\Core\Database\StatementInterface;
+use Drupal\Core\Database\Transaction;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\Core\Queue\QueueFactory;
 use Psr\Log\LoggerInterface;
@@ -78,20 +80,20 @@ final class ContentIndexWorkManager {
       $transaction = $this->database->startTransaction();
       try {
         $this->lockActivationFenceIfNecessary();
-        $existing = $this->database->select('aculta_index_work', 'work')
-          ->fields('work', ['work_id', 'sequence', 'status'])
-          ->condition('provider_id', $providerId)
-          ->condition('entity_type', $entityTypeId)
-          ->condition('entity_id', $entityId)
-          ->condition('langcode', $langcode)
-          ->forUpdate()
-          ->execute()
-          ->fetchAssoc();
+        $existingQuery = $this->database->select('aculta_index_work', 'work');
+        $existingQuery->fields('work', ['work_id', 'sequence', 'status']);
+        $existingQuery->condition('provider_id', $providerId);
+        $existingQuery->condition('entity_type', $entityTypeId);
+        $existingQuery->condition('entity_id', $entityId);
+        $existingQuery->condition('langcode', $langcode);
+        $existingQuery->forUpdate();
+        $existing = self::fetchAssoc($existingQuery->execute());
         $now = $this->time->getRequestTime();
 
         if ($existing) {
-          $workId = (int) $existing['work_id'];
-          $sequence = (int) $existing['sequence'] + 1;
+          $workId = self::integerValue($existing['work_id'] ?? NULL);
+          $existingSequence = self::integerValue($existing['sequence'] ?? NULL);
+          $sequence = $existingSequence + 1;
           $needsDispatch = $existing['status'] !== 'queued';
           $updated = $this->database->update('aculta_index_work')
             ->fields([
@@ -104,10 +106,11 @@ final class ContentIndexWorkManager {
               'updated' => $now,
             ])
             ->condition('work_id', $workId)
-            ->condition('sequence', (int) $existing['sequence'])
+            ->condition('sequence', $existingSequence)
             ->execute();
           if ($updated !== 1) {
             $transaction->rollBack();
+            $transaction = NULL;
             continue;
           }
         }
@@ -129,20 +132,27 @@ final class ContentIndexWorkManager {
             ->execute();
         }
 
-        unset($transaction);
+        $transaction->commitOrRelease();
+        $transaction = NULL;
         if ($needsDispatch) {
           $this->dispatch($workId);
         }
         return $sequence;
       }
       catch (IntegrityConstraintViolationException $exception) {
-        $transaction->rollBack();
+        if ($transaction instanceof Transaction) {
+          $transaction->rollBack();
+          $transaction = NULL;
+        }
         if ($attempt === 2) {
           throw $exception;
         }
       }
       catch (\Throwable $exception) {
-        $transaction->rollBack();
+        if ($transaction instanceof Transaction) {
+          $transaction->rollBack();
+          $transaction = NULL;
+        }
         throw $exception;
       }
     }
@@ -170,8 +180,15 @@ final class ContentIndexWorkManager {
       ->condition('status', ['queued', 'processing', 'retry', 'dead'], 'IN')
       ->groupBy('status');
     $rows->addExpression('COUNT(*)', 'count');
-    foreach ($rows->execute() as $row) {
-      $state[$row->status] = (int) $row->count;
+    $result = $rows->execute();
+    if (!$result instanceof StatementInterface) {
+      throw new \RuntimeException('Could not read Content Index queue state.');
+    }
+    foreach ($result as $row) {
+      if (!is_object($row) || !isset($row->status, $row->count) || !is_string($row->status) || !array_key_exists($row->status, $state) || $row->status === 'ready') {
+        throw new \UnexpectedValueException('Content Index queue state query returned a malformed row.');
+      }
+      $state[$row->status] = self::requiredInteger($row->count);
     }
     $state['ready'] = array_sum(array_slice($state, 1)) === 0;
     return $state;
@@ -187,15 +204,16 @@ final class ContentIndexWorkManager {
     $transaction = $this->database->startTransaction();
     try {
       $this->lockActivationFenceIfNecessary();
-      $work = $this->database->select('aculta_index_work', 'work')
-        ->fields('work', ['provider_id'])
-        ->condition('work_id', $workId)
-        ->condition('status', 'dead')
-        ->forUpdate()
-        ->execute()
-        ->fetchAssoc();
-      if (!$work || !$this->providers->has((string) $work['provider_id'])) {
-        unset($transaction);
+      $workQuery = $this->database->select('aculta_index_work', 'work');
+      $workQuery->fields('work', ['provider_id']);
+      $workQuery->condition('work_id', $workId);
+      $workQuery->condition('status', 'dead');
+      $workQuery->forUpdate();
+      $work = self::fetchAssoc($workQuery->execute());
+      $providerId = self::stringValue($work['provider_id'] ?? NULL);
+      if (!$work || !$this->providers->has($providerId)) {
+        $transaction->commitOrRelease();
+        $transaction = NULL;
         return FALSE;
       }
       $updated = $this->database->update('aculta_index_work')
@@ -209,14 +227,18 @@ final class ContentIndexWorkManager {
         ->condition('work_id', $workId)
         ->condition('status', 'dead')
         ->execute();
-      unset($transaction);
+      $transaction->commitOrRelease();
+      $transaction = NULL;
       if ($updated !== 1) {
         return FALSE;
       }
       return $this->dispatch($workId);
     }
     catch (\Throwable $exception) {
-      $transaction->rollBack();
+      if ($transaction instanceof Transaction) {
+        $transaction->rollBack();
+        $transaction = NULL;
+      }
       throw $exception;
     }
   }
@@ -250,17 +272,23 @@ final class ContentIndexWorkManager {
       ->range(0, $limit)
       ->execute();
     $dead = [];
+    if (!$rows instanceof StatementInterface) {
+      return $dead;
+    }
     foreach ($rows as $row) {
+      if (!is_object($row) || !isset($row->work_id, $row->provider_id, $row->entity_type, $row->entity_id, $row->langcode, $row->sequence, $row->attempts, $row->last_error_code, $row->updated)) {
+        continue;
+      }
       $dead[] = [
-        'work_id' => (int) $row->work_id,
-        'provider_id' => (string) $row->provider_id,
-        'entity_type' => (string) $row->entity_type,
-        'entity_id' => (string) $row->entity_id,
-        'langcode' => (string) $row->langcode,
-        'sequence' => (int) $row->sequence,
-        'attempts' => (int) $row->attempts,
-        'last_error_code' => (string) $row->last_error_code,
-        'updated' => (int) $row->updated,
+        'work_id' => self::integerValue($row->work_id),
+        'provider_id' => self::stringValue($row->provider_id),
+        'entity_type' => self::stringValue($row->entity_type),
+        'entity_id' => self::stringValue($row->entity_id),
+        'langcode' => self::stringValue($row->langcode),
+        'sequence' => self::integerValue($row->sequence),
+        'attempts' => self::integerValue($row->attempts),
+        'last_error_code' => self::stringValue($row->last_error_code),
+        'updated' => self::integerValue($row->updated),
       ];
     }
     return $dead;
@@ -275,15 +303,15 @@ final class ContentIndexWorkManager {
   public function claim(int $workId): ?array {
     $transaction = $this->database->startTransaction();
     try {
-      $work = $this->database->select('aculta_index_work', 'work')
-        ->fields('work', ['provider_id', 'entity_type', 'entity_id', 'langcode', 'sequence', 'operation'])
-        ->condition('work_id', $workId)
-        ->condition('status', 'queued')
-        ->forUpdate()
-        ->execute()
-        ->fetchAssoc();
+      $workQuery = $this->database->select('aculta_index_work', 'work');
+      $workQuery->fields('work', ['provider_id', 'entity_type', 'entity_id', 'langcode', 'sequence', 'operation']);
+      $workQuery->condition('work_id', $workId);
+      $workQuery->condition('status', 'queued');
+      $workQuery->forUpdate();
+      $work = self::fetchAssoc($workQuery->execute());
       if (!$work) {
-        unset($transaction);
+        $transaction->commitOrRelease();
+        $transaction = NULL;
         return NULL;
       }
 
@@ -293,27 +321,32 @@ final class ContentIndexWorkManager {
           'updated' => $this->time->getRequestTime(),
         ])
         ->condition('work_id', $workId)
-        ->condition('sequence', (int) $work['sequence'])
+        ->condition('sequence', self::integerValue($work['sequence'] ?? NULL))
         ->condition('status', 'queued')
         ->execute();
       if ($claimed !== 1) {
         $transaction->rollBack();
+        $transaction = NULL;
         return NULL;
       }
 
-      unset($transaction);
+      $transaction->commitOrRelease();
+      $transaction = NULL;
       return [
         'work_id' => $workId,
-        'provider_id' => (string) $work['provider_id'],
-        'entity_type' => (string) $work['entity_type'],
-        'entity_id' => (string) $work['entity_id'],
-        'langcode' => (string) $work['langcode'],
-        'sequence' => (int) $work['sequence'],
-        'operation' => (string) $work['operation'],
+        'provider_id' => self::stringValue($work['provider_id'] ?? NULL),
+        'entity_type' => self::stringValue($work['entity_type'] ?? NULL),
+        'entity_id' => self::stringValue($work['entity_id'] ?? NULL),
+        'langcode' => self::stringValue($work['langcode'] ?? NULL),
+        'sequence' => self::integerValue($work['sequence'] ?? NULL),
+        'operation' => self::stringValue($work['operation'] ?? NULL),
       ];
     }
     catch (\Throwable $exception) {
-      $transaction->rollBack();
+      if ($transaction instanceof Transaction) {
+        $transaction->rollBack();
+        $transaction = NULL;
+      }
       throw $exception;
     }
   }
@@ -340,18 +373,17 @@ final class ContentIndexWorkManager {
    * Records a failed attempt with backoff or dead-letter status.
    */
   public function fail(int $workId, int $sequence, string $errorCode): bool {
-    $work = $this->database->select('aculta_index_work', 'work')
-      ->fields('work', ['attempts'])
-      ->condition('work_id', $workId)
-      ->condition('sequence', $sequence)
-      ->condition('status', 'processing')
-      ->execute()
-      ->fetchAssoc();
+    $workQuery = $this->database->select('aculta_index_work', 'work');
+    $workQuery->fields('work', ['attempts']);
+    $workQuery->condition('work_id', $workId);
+    $workQuery->condition('sequence', $sequence);
+    $workQuery->condition('status', 'processing');
+    $work = self::fetchAssoc($workQuery->execute());
     if (!$work) {
       return FALSE;
     }
 
-    $attempts = (int) $work['attempts'] + 1;
+    $attempts = self::integerValue($work['attempts'] ?? NULL) + 1;
     $dead = $attempts >= self::MAX_ATTEMPTS;
     $delay = min(self::INITIAL_BACKOFF * (2 ** ($attempts - 1)), self::MAX_BACKOFF);
     $normalizedCode = preg_match('/^[a-z][a-z0-9_]{0,63}$/', $errorCode) === 1 ? $errorCode : 'worker_failure';
@@ -382,19 +414,24 @@ final class ContentIndexWorkManager {
     $now = $this->time->getRequestTime();
     $dispatched = 0;
 
-    $retryIds = $this->database->select('aculta_index_work', 'work')
-      ->fields('work', ['work_id', 'sequence'])
-      ->condition('status', 'retry')
-      ->condition('available_at', $now, '<=')
-      ->orderBy('available_at')
-      ->range(0, $limit)
-      ->execute()
-      ->fetchAllKeyed(0, 1);
+    $retryQuery = $this->database->select('aculta_index_work', 'work');
+    $retryQuery->fields('work', ['work_id', 'sequence']);
+    $retryQuery->condition('status', 'retry');
+    $retryQuery->condition('available_at', $now, '<=');
+    $retryQuery->orderBy('available_at');
+    $retryQuery->range(0, $limit);
+    $retryResult = $retryQuery->execute();
+    $retryIds = $retryResult instanceof StatementInterface ? $retryResult->fetchAllKeyed(0, 1) : [];
     foreach ($retryIds as $workId => $sequence) {
+      $retryId = self::storageId($workId);
+      $retrySequence = self::storageId($sequence);
+      if ($retryId === NULL || $retrySequence === NULL) {
+        continue;
+      }
       $updated = $this->database->update('aculta_index_work')
         ->fields(['status' => 'queued', 'available_at' => 0, 'updated' => $now])
-        ->condition('work_id', $workId)
-        ->condition('sequence', $sequence)
+        ->condition('work_id', $retryId)
+        ->condition('sequence', $retrySequence)
         ->condition('status', 'retry')
         ->condition('available_at', $now, '<=')
         ->execute();
@@ -406,22 +443,27 @@ final class ContentIndexWorkManager {
     $remaining = max(0, $limit - $dispatched);
     if ($remaining > 0) {
       $cutoff = $now - self::STUCK_QUEUE_AGE;
-      $queuedIds = $this->database->select('aculta_index_work', 'work')
-        ->fields('work', ['work_id', 'updated'])
-        ->condition('status', 'queued')
-        ->condition('updated', $cutoff, '<=')
-        ->orderBy('updated')
-        ->range(0, $remaining)
-        ->execute()
-        ->fetchAllKeyed(0, 1);
+      $queuedQuery = $this->database->select('aculta_index_work', 'work');
+      $queuedQuery->fields('work', ['work_id', 'updated']);
+      $queuedQuery->condition('status', 'queued');
+      $queuedQuery->condition('updated', $cutoff, '<=');
+      $queuedQuery->orderBy('updated');
+      $queuedQuery->range(0, $remaining);
+      $queuedResult = $queuedQuery->execute();
+      $queuedIds = $queuedResult instanceof StatementInterface ? $queuedResult->fetchAllKeyed(0, 1) : [];
       foreach ($queuedIds as $workId => $updatedAt) {
+        $queuedId = self::storageId($workId);
+        $queuedUpdated = self::storageId($updatedAt);
+        if ($queuedId === NULL || $queuedUpdated === NULL) {
+          continue;
+        }
         $claimed = $this->database->update('aculta_index_work')
           ->fields(['updated' => $now])
-          ->condition('work_id', $workId)
+          ->condition('work_id', $queuedId)
           ->condition('status', 'queued')
-          ->condition('updated', $updatedAt)
+          ->condition('updated', $queuedUpdated)
           ->execute();
-        if ($claimed === 1 && $this->dispatch((int) $workId)) {
+        if ($claimed === 1 && $this->dispatch(self::integerValue($queuedId))) {
           $dispatched++;
         }
       }
@@ -436,8 +478,20 @@ final class ContentIndexWorkManager {
         ->orderBy('updated')
         ->range(0, $remaining)
         ->execute();
+      if (!$staleProcessing instanceof StatementInterface) {
+        return $dispatched;
+      }
       foreach ($staleProcessing as $work) {
-        $attempts = (int) $work->attempts + 1;
+        if (!is_object($work) || !isset($work->attempts, $work->work_id, $work->sequence, $work->updated)) {
+          continue;
+        }
+        $workId = self::storageId($work->work_id);
+        $sequence = self::storageId($work->sequence);
+        $updatedAt = self::storageId($work->updated);
+        if ($workId === NULL || $sequence === NULL || $updatedAt === NULL) {
+          continue;
+        }
+        $attempts = self::integerValue($work->attempts) + 1;
         $dead = $attempts >= self::MAX_ATTEMPTS;
         $delay = min(self::INITIAL_BACKOFF * (2 ** ($attempts - 1)), self::MAX_BACKOFF);
         $this->database->update('aculta_index_work')
@@ -448,10 +502,10 @@ final class ContentIndexWorkManager {
             'last_error_code' => 'worker_timeout',
             'updated' => $now,
           ])
-          ->condition('work_id', $work->work_id)
-          ->condition('sequence', $work->sequence)
+          ->condition('work_id', $workId)
+          ->condition('sequence', $sequence)
           ->condition('status', 'processing')
-          ->condition('updated', $work->updated)
+          ->condition('updated', $updatedAt)
           ->execute();
       }
     }
@@ -466,22 +520,30 @@ final class ContentIndexWorkManager {
    *   Minimal work state, or NULL when the work identity has not been seen.
    */
   public function getStatus(string $providerId, string $entityTypeId, string $entityId, string $langcode): ?array {
-    $result = $this->database->select('aculta_index_work', 'work')
-      ->fields('work', ['work_id', 'sequence', 'operation', 'status', 'attempts', 'available_at', 'last_error_code'])
-      ->condition('provider_id', $providerId)
-      ->condition('entity_type', $entityTypeId)
-      ->condition('entity_id', $entityId)
-      ->condition('langcode', $langcode)
-      ->execute()
-      ->fetchAssoc();
+    $statusQuery = $this->database->select('aculta_index_work', 'work');
+    $statusQuery->fields('work', ['work_id', 'sequence', 'operation', 'status', 'attempts', 'available_at', 'last_error_code']);
+    $statusQuery->condition('provider_id', $providerId);
+    $statusQuery->condition('entity_type', $entityTypeId);
+    $statusQuery->condition('entity_id', $entityId);
+    $statusQuery->condition('langcode', $langcode);
+    $result = self::fetchAssoc($statusQuery->execute());
     if (!$result) {
       return NULL;
     }
-    $result['work_id'] = (int) $result['work_id'];
-    $result['sequence'] = (int) $result['sequence'];
-    $result['attempts'] = (int) $result['attempts'];
-    $result['available_at'] = (int) $result['available_at'];
-    return $result;
+    foreach (['work_id', 'sequence', 'operation', 'status', 'attempts', 'available_at', 'last_error_code'] as $field) {
+      if (!array_key_exists($field, $result)) {
+        throw new \UnexpectedValueException(sprintf('Content Index work status is missing the %s field.', $field));
+      }
+    }
+    return [
+      'work_id' => self::requiredInteger($result['work_id']),
+      'sequence' => self::requiredInteger($result['sequence']),
+      'operation' => self::requiredString($result['operation']),
+      'status' => self::requiredString($result['status']),
+      'attempts' => self::requiredInteger($result['attempts']),
+      'available_at' => self::requiredInteger($result['available_at']),
+      'last_error_code' => self::requiredString($result['last_error_code']),
+    ];
   }
 
   /**
@@ -504,24 +566,110 @@ final class ContentIndexWorkManager {
    * Serializes scheduling with rebuild and retained-generation activation.
    */
   private function lockActivationFenceIfNecessary(): void {
-    $fenced = $this->database->select('aculta_index_generation', 'generation')
-      ->fields('generation', ['generation_id'])
-      ->condition('status', ['building', 'validated', 'retained'], 'IN')
-      ->range(0, 1)
-      ->execute()
-      ->fetchField();
-    if ($fenced === FALSE) {
+    $fenceQuery = $this->database->select('aculta_index_generation', 'generation');
+    $fenceQuery->fields('generation', ['generation_id']);
+    $fenceQuery->condition('status', ['building', 'validated', 'retained'], 'IN');
+    $fenceQuery->range(0, 1);
+    $fenced = $fenceQuery->execute();
+    if (!$fenced instanceof StatementInterface) {
+      throw new \RuntimeException('Could not read the ACULTA Content Index activation fence.');
+    }
+    $fence = $fenced->fetchField();
+    if ($fence === FALSE) {
       return;
     }
-    $state = $this->database->select('aculta_index_state', 'state')
-      ->fields('state', ['state_id'])
-      ->condition('state_id', 1)
-      ->forUpdate()
-      ->execute()
-      ->fetchField();
-    if ($state === FALSE) {
+    if (!is_int($fence) && !is_string($fence)) {
+      throw new \UnexpectedValueException('The ACULTA Content Index activation fence returned an invalid generation ID.');
+    }
+    $stateQuery = $this->database->select('aculta_index_state', 'state');
+    $stateQuery->fields('state', ['state_id']);
+    $stateQuery->condition('state_id', 1);
+    $stateQuery->forUpdate();
+    $state = $stateQuery->execute();
+    if (!$state instanceof StatementInterface) {
+      throw new \RuntimeException('Could not read the ACULTA Content Index activation state.');
+    }
+    $stateId = $state->fetchField();
+    if ($stateId === FALSE) {
       throw new \LogicException('The ACULTA Content Index activation fence is missing.');
     }
+    if (!is_int($stateId) && !is_string($stateId)) {
+      throw new \UnexpectedValueException('The ACULTA Content Index activation state returned an invalid ID.');
+    }
+  }
+
+  /**
+   * Fetches a database row as an associative array when the query is valid.
+   *
+   * @return array<mixed>|null
+   *   The row, or NULL when the query is invalid or has no result.
+   */
+  private static function fetchAssoc(mixed $result): ?array {
+    if (!$result instanceof StatementInterface) {
+      return NULL;
+    }
+    $row = $result->fetchAssoc();
+    return is_array($row) ? $row : NULL;
+  }
+
+  /**
+   * Converts database values to integers without casting malformed data.
+   */
+  private static function integerValue(mixed $value): int {
+    if (is_int($value)) {
+      return $value;
+    }
+    if (is_string($value)) {
+      $integer = filter_var($value, FILTER_VALIDATE_INT);
+      return $integer === FALSE ? 0 : $integer;
+    }
+    return 0;
+  }
+
+  /**
+   * Converts a required database integer or fails on malformed data.
+   */
+  private static function requiredInteger(mixed $value): int {
+    if (is_int($value)) {
+      return $value;
+    }
+    if (is_string($value)) {
+      $integer = filter_var($value, FILTER_VALIDATE_INT);
+      if ($integer !== FALSE) {
+        return $integer;
+      }
+    }
+    throw new \UnexpectedValueException('Content Index database query returned an invalid integer.');
+  }
+
+  /**
+   * Converts a required database string or integer to text.
+   */
+  private static function requiredString(mixed $value): string {
+    if (is_string($value) || is_int($value)) {
+      return (string) $value;
+    }
+    throw new \UnexpectedValueException('Content Index database query returned an invalid string.');
+  }
+
+  /**
+   * Narrows database IDs to values supported by query conditions.
+   */
+  private static function storageId(mixed $value): int|string|null {
+    if (is_int($value)) {
+      return $value;
+    }
+    return is_string($value) ? $value : NULL;
+  }
+
+  /**
+   * Converts a database value to text without stringifying structures.
+   */
+  private static function stringValue(mixed $value): string {
+    if (is_scalar($value)) {
+      return (string) $value;
+    }
+    return $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

@@ -45,14 +45,15 @@ final class PublicProfilePolicy {
    * Perfil público (padrão de todos) segue a escolha de cada item. Perfil privado, ou sem escolha, mostra
    * somente foto e apelido. Sem apelido, nada aparece.
    *
-   * @param array{publico: bool, obrigatorio?: bool, apelido: string, exibir_foto: bool, exibir_bio: bool, exibir_email: bool, exibir_redes: bool} $perfil
+   * @param array<string, mixed> $perfil
    *   Valores do perfil: visibilidade do perfil inteiro, obrigação de público por papel e escolha de cada item.
    *
    * @return array<string, bool>
    *   Mapa item => TRUE para os itens que podem aparecer. Vazio se não houver apelido.
    */
   public function publicItems(array $perfil): array {
-    if (trim((string) ($perfil['apelido'] ?? '')) === '') {
+    $apelido = is_scalar($perfil['apelido'] ?? NULL) ? (string) $perfil['apelido'] : '';
+    if (trim($apelido) === '') {
       return [];
     }
 

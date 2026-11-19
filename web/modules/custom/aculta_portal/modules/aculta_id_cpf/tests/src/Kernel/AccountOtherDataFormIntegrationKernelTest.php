@@ -92,21 +92,29 @@ final class AccountOtherDataFormIntegrationKernelTest extends KernelTestBase {
     $state->setValue('document', '529.982.247-25');
 
     $build = $form->buildForm([], $state);
-    self::assertSame('textfield', $build['document']['#type']);
-    self::assertTrue($build['document']['#required']);
+    $documentField = $build['document'] ?? [];
+    self::assertIsArray($documentField);
+    self::assertSame('textfield', $documentField['#type'] ?? NULL);
+    self::assertTrue((bool) ($documentField['#required'] ?? FALSE));
     $form->validateForm($build, $state);
     self::assertSame('52998224725', $state->get('canonical'));
     self::assertSame([], $state->getErrors());
     $form->submitForm($build, $state);
 
-    $profile = $this->container->get('entity_type.manager')->getStorage('profile')
-      ->loadByUser($user, 'associado');
-    self::assertNotSame('52998224725', $profile->get('field_documento')->value);
-    self::assertSame(64, strlen($profile->get('field_documento_indice')->value));
+    /** @var \Drupal\profile\ProfileStorageInterface $profileStorage */
+    $profileStorage = $this->container->get('entity_type.manager')->getStorage('profile');
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile */
+    $profile = $profileStorage->loadByUser($user, 'associado');
+    $docVal = $profile->get('field_documento')->value;
+    $indexVal = $profile->get('field_documento_indice')->value;
+    self::assertNotSame('52998224725', is_scalar($docVal) ? (string) $docVal : '');
+    self::assertSame(64, strlen(is_scalar($indexVal) ? (string) $indexVal : ''));
 
     $saved_build = $form->buildForm([], new FormState());
-    self::assertSame('529.98*.***-**', $saved_build['saved']['#default_value']);
-    self::assertTrue($saved_build['saved']['#disabled']);
+    $savedField = $saved_build['saved'] ?? [];
+    self::assertIsArray($savedField);
+    self::assertSame('529.98*.***-**', $savedField['#default_value'] ?? NULL);
+    self::assertTrue((bool) ($savedField['#disabled'] ?? FALSE));
     self::assertArrayNotHasKey('document', $saved_build);
   }
 
@@ -124,7 +132,7 @@ final class AccountOtherDataFormIntegrationKernelTest extends KernelTestBase {
     $messages = $this->createMock(MessengerInterface::class);
     $messages->expects(self::once())
       ->method('addError')
-      ->with(self::callback(static fn($message): bool => !str_contains((string) $message, '52998224725')));
+      ->with(self::callback(static fn($message): bool => !str_contains(is_scalar($message) || $message instanceof \Stringable ? (string) $message : '', '52998224725')));
     $form = $this->form($store, $other, $messages);
     $state = new FormState();
     $state->setValue('document', '52998224725');

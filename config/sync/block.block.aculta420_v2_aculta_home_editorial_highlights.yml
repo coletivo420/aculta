@@ -1,0 +1,35 @@
+uuid: a7185ae8-ed0e-49a4-930d-b828577d3797
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - views.view.home_editorial_highlights
+  module:
+    - aculta_portal
+    - system
+    - views
+  theme:
+    - aculta420_v2
+id: aculta420_v2_aculta_home_editorial_highlights
+theme: aculta420_v2
+region: content
+weight: 50
+provider: null
+plugin: 'views_block:home_editorial_highlights-block_1'
+settings:
+  id: 'views_block:home_editorial_highlights-block_1'
+  label: 'Destaques editoriais da Home'
+  label_display: '0'
+  provider: views
+  views_label: ''
+  items_per_page: null
+  exposed: {  }
+visibility:
+  aculta_domain_site:
+    id: aculta_domain_site
+    site_key: main
+    negate: false
+  request_path:
+    id: request_path
+    negate: false
+    pages: '<front>'

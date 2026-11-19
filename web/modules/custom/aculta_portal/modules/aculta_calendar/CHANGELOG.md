@@ -1,3 +1,8 @@
+## 0.1.0-rc.2 — instala fonte de calendário no schema de entidades
+
+- Update `10004` registra o tipo de configuração `aculta_calendar_import_source` em instalações já ativas.
+- Não cria fontes nem altera dados de calendário.
+
 ## Revalidação 2026-11-02 — motor e agenda contextual
 
 - Unit: 98 testes / 299 assertions PASS; Kernel: 30 testes / 134 assertions PASS, duas depreciações Core.

@@ -1,0 +1,101 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Cartão de autoria
+description: Identidade pública preparada pelo módulo aculta_user, sem leitura de entidades no tema.
+status: stable
+group: Conteúdo
+props:
+  type: object
+  additionalProperties: false
+  required: [variant, display_name]
+  properties:
+    variant:
+      type: string
+      title: Contexto de autoria
+      description: Seleciona a classe de contexto e, conforme a variante, o rótulo e os dados contextuais exibidos.
+      enum: [profile_full, profile_compact, author_editorial, author_comment, author_forum, author_forum_stacked, author_lms, author_wiki, author_growroom_historico, author_minimal]
+    size:
+      type: string
+      title: Tamanho
+      description: Variante de tamanho aplicada à classe do cartão.
+      enum: [sm, md, lg]
+      default: md
+    display_name:
+      type: string
+      title: Nome público
+      description: Nome exibido para a pessoa autora.
+    profile_url:
+      type: [string, 'null']
+      title: Perfil público
+      description: Quando informado, transforma o nome público em link para o perfil.
+      format: uri-reference
+      default: null
+    source_label:
+      type: [string, 'null']
+      title: Origem histórica
+      description: Texto contextual opcional exibido junto à identidade.
+      default: null
+    has_avatar:
+      type: boolean
+      title: Avatar disponível
+      description: Quando true, renderiza o slot avatar.
+      default: false
+    has_actions:
+      type: boolean
+      title: Ações disponíveis
+      description: Quando true, renderiza o slot actions.
+      default: false
+    member_since:
+      type: [string, 'null']
+      title: Ano de entrada
+      description: Ano exibido nas variantes author_forum e author_forum_stacked.
+      default: null
+    designation:
+      type: [string, 'null']
+      title: Designação contextual
+      description: Texto opcional de designação exibido sob a identidade.
+      default: null
+    bio:
+      type: [string, 'null']
+      title: Biografia autorizada
+      description: Biografia preparada pelo proprietário funcional e exibida como texto.
+      default: null
+    reactions_received:
+      type: integer
+      title: Reações recebidas
+      description: Quantidade exibida nas variantes author_forum, author_forum_stacked e profile_full quando maior que zero.
+      default: 0
+    reactions_given:
+      type: integer
+      title: Reações dadas
+      description: Quantidade de reações dadas, exibida nas variantes author_forum, author_forum_stacked e profile_full quando maior que zero.
+      default: 0
+    social_links:
+      type: array
+      title: Redes públicas
+      description: Links públicos de Instagram, Facebook ou Reddit preparados pelo proprietário funcional.
+      default: []
+      items:
+        type: object
+        additionalProperties: false
+        description: Link individual de uma rede social.
+        required: [network, label, url]
+        properties:
+          network:
+            type: string
+            description: Identifica o ícone da rede exibido pelo componente.
+            enum: [instagram, facebook, reddit]
+          label:
+            type: string
+            description: Nome acessível e título do link da rede.
+            minLength: 1
+          url:
+            type: string
+            description: Destino público do perfil naquela rede.
+            format: uri
+slots:
+  avatar:
+    title: Avatar
+    description: Render array autorizado pelo aculta_user.
+  actions:
+    title: Ações
+    description: Render arrays de ações fornecidos pelo proprietário funcional.

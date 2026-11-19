@@ -17,12 +17,14 @@ final class CheckoutPolicyManager {
     private readonly CheckoutSettings $settings,
   ) {}
 
-  /** Contexto desconhecido nunca libera checkout. */
+  /**
+   * Contexto desconhecido nunca libera checkout. */
   public function allowsDedicated(string $contextId): bool {
     return $this->resolver->resolve($contextId)?->mode->allowsDedicated() ?? FALSE;
   }
 
-  /** Contexto desconhecido nunca libera checkout; com a chave global desligada, nenhum contexto usa o comum. */
+  /**
+   * Contexto desconhecido nunca libera checkout; com a chave global desligada, nenhum contexto usa o comum. */
   public function allowsCommon(string $contextId): bool {
     return $this->settings->commonCheckoutEnabled() && ($this->resolver->resolve($contextId)?->mode->allowsCommon() ?? FALSE);
   }

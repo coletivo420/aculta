@@ -1,0 +1,4 @@
+contribution-workspace:
+  css:
+    theme:
+      css/contribution-workspace.css: {}

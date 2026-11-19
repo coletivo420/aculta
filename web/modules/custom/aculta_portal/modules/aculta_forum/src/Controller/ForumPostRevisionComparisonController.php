@@ -38,6 +38,8 @@ final class ForumPostRevisionComparisonController extends ControllerBase {
 
   /**
    * Builds a read-only subject/body comparison for two post revisions.
+   *
+   * @return array<mixed>
    */
   public function compare(ForumPost $aculta_forum_post, string $left_revision, string $right_revision): array {
     $storage = $this->forumEntityTypeManager->getStorage('aculta_forum_post');
@@ -65,21 +67,27 @@ final class ForumPostRevisionComparisonController extends ControllerBase {
     $rows = [];
     foreach ($labels as $field_name => $label) {
       $key = $aculta_forum_post->id() . ':aculta_forum_post.' . $field_name;
-      if (!isset($fields[$key])) {
+      if (!isset($fields[$key]) || !is_array($fields[$key])) {
         continue;
       }
 
       $field = $fields[$key];
-      $field['#data']['#left'] = MailFormatHelper::htmlToText((string) ($field['#data']['#left'] ?? ''));
-      $field['#data']['#right'] = MailFormatHelper::htmlToText((string) ($field['#data']['#right'] ?? ''));
-      if ($field['#data']['#left'] === $field['#data']['#right']) {
+      $data = isset($field['#data']) && is_array($field['#data']) ? $field['#data'] : [];
+      $rawLeft = $data['#left'] ?? '';
+      $rawRight = $data['#right'] ?? '';
+      $leftText = MailFormatHelper::htmlToText(is_scalar($rawLeft) ? (string) $rawLeft : '');
+      $rightText = MailFormatHelper::htmlToText(is_scalar($rawRight) ? (string) $rawRight : '');
+      $data['#left'] = $leftText;
+      $data['#right'] = $rightText;
+      $field['#data'] = $data;
+      if ($leftText === $rightText) {
         continue;
       }
 
       $this->entityComparison->processStateLine($field);
       $field_rows = $this->entityComparison->getRows(
-        $field['#data']['#left'],
-        $field['#data']['#right'],
+        $leftText,
+        $rightText,
       );
       $rows[] = [
         [

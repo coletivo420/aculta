@@ -29,7 +29,7 @@ final readonly class MailMessage {
    *   Destinatário. Deve ser um endereço de e-mail válido.
    * @param string $langcode
    *   Idioma BCP 47 simplificado, por exemplo `pt-br`.
-   * @param array<string, mixed> $context
+   * @param array<array-key, mixed> $context
    *   Valores autorizados para o template. Chaves em snake_case; ver a classe para o formato permitido.
    * @param string $correlationId
    *   UUID v4 ou v5 minúsculo do `MessageIdFactory`.

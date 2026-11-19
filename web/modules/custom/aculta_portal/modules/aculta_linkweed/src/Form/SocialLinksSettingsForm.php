@@ -6,6 +6,8 @@ namespace Drupal\aculta_linkweed\Form;
 
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Htmx\Htmx;
+use Drupal\Core\Url;
 
 /**
  * Configures the public social profile links shown in LINKS.
@@ -76,6 +78,13 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
       $form_state->set('aculta_social_links_button_next_id', $button_ids === [] ? 0 : max(array_map('intval', $button_ids)) + 1);
     }
 
+    // Rota que devolve o formulário como fragmento nas requisições HTMX
+    // (ADR-050). O wrapper envolve o formulário inteiro para que o
+    // form_build_id renovado acompanhe a troca; sem JavaScript, o mesmo envio
+    // recarrega a página inteira.
+    $buttonsUrl = Url::fromRoute('aculta_linkweed.social_links_settings');
+    $form['#prefix'] = '<div id="aculta-social-links-settings">';
+    $form['#suffix'] = '</div>';
     $form['buttons_wrapper'] = [
       '#type' => 'container',
       '#tree' => TRUE,
@@ -110,23 +119,25 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
           '#name' => 'remove_social_button_' . $id,
           '#submit' => ['aculta_linkweed.social_links_form_callbacks:removeButton'],
           '#limit_validation_errors' => [],
-          '#ajax' => [
-            'callback' => 'aculta_linkweed.social_links_form_callbacks:buttonsAjax',
-            'wrapper' => 'aculta-social-links-buttons-wrapper',
-          ],
+          // O envio dinâmico não deve ser barrado pela validação do navegador;
+          // a validação do servidor continua limitada aos campos deste botão.
+          '#attributes' => ['formnovalidate' => 'formnovalidate', 'data-portal-ui' => 'button-danger'],
         ],
       ];
+      $this->applyHtmxSubmit($form['buttons_wrapper']['items'][$id]['remove'], $buttonsUrl);
     }
     $form['buttons_wrapper']['add'] = [
       '#type' => 'submit',
       '#value' => $this->t('+ Adicionar botão'),
+      // Nome próprio: o HTMX envia só _triggering_element_name, sem o valor.
+      // Com name "op" compartilhado, o Salvar (posterior na árvore) viraria o
+      // disparador e o formulário seria salvo em vez de adicionar a linha.
+      '#name' => 'add_social_button',
       '#submit' => ['aculta_linkweed.social_links_form_callbacks:addButton'],
       '#limit_validation_errors' => [],
-      '#ajax' => [
-        'callback' => 'aculta_linkweed.social_links_form_callbacks:buttonsAjax',
-        'wrapper' => 'aculta-social-links-buttons-wrapper',
-      ],
+      '#attributes' => ['formnovalidate' => 'formnovalidate'],
     ];
+    $this->applyHtmxSubmit($form['buttons_wrapper']['add'], $buttonsUrl);
     return parent::buildForm($form, $form_state);
   }
 
@@ -192,6 +203,25 @@ final class SocialLinksSettingsForm extends ConfigFormBase {
       ->setData($config->getRawData())
       ->save();
     parent::submitForm($form, $form_state);
+  }
+
+  /**
+   * Troca o formulário pelo fragmento devolvido pela sua própria rota.
+   *
+   * Reaproveita os callbacks Form API de adicionar/remover: o envio continua
+   * sendo um submit do Form API (com #name, #value e formnovalidate); só o
+   * mecanismo de resposta deixa de ser Drupal AJAX. O bloco atualizado contém
+   * o wrapper de botões que o callback AJAX devolvia, mais o form_build_id
+   * renovado que acompanha a reconstrução.
+   */
+  private function applyHtmxSubmit(array &$button, Url $url): void {
+    (new Htmx())
+      ->post($url)
+      ->select('#aculta-social-links-settings')
+      ->target('#aculta-social-links-settings')
+      ->swap('outerHTML')
+      ->onlyMainContent()
+      ->applyTo($button);
   }
 
   /**

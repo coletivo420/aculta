@@ -48,7 +48,7 @@ foreach (['GalleryPurposeAccessHooks.php', 'GalleryListingHooks.php'] as $restri
 }
 
 $list_builder = file_get_contents($root . '/src/ListBuilder/AcultaGalleryListBuilder.php');
-if (str_contains($list_builder, 'DomainPurposeManager') || str_contains($list_builder, "'magazine'")) {
+if (str_contains($list_builder, 'DomainSiteManager') || str_contains($list_builder, "'magazine'")) {
   $errors[] = 'link da coleção administrativa ainda força o purpose magazine';
 }
 

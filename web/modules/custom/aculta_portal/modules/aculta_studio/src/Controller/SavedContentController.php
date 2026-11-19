@@ -20,6 +20,14 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Controller for personal saved items, followed content, and recommendations.
+ *
+ * @phpstan-type SavedRecommendation array{
+ *   entity: \Drupal\Core\Entity\EntityInterface,
+ *   entity_type: string,
+ *   entity_id: string|int,
+ *   reason: string,
+ *   score: int
+ * }
  */
 class SavedContentController {
 
@@ -59,7 +67,8 @@ class SavedContentController {
 
     $page = max(0, (int) ($request?->query->get('page', 0) ?? 0));
     $bundle = $request?->query->get('bundle');
-    $purpose = $request?->query->get('purpose');
+    // Keep the public query parameter; use the canonical name internally.
+    $siteKey = $request?->query->get('purpose');
     $limit = 15;
     $offset = $page * $limit;
 
@@ -84,7 +93,6 @@ class SavedContentController {
       ],
     ];
 
-    $itemsList = [];
     $pagination = [];
     $cacheContexts = [
       'user',
@@ -110,7 +118,7 @@ class SavedContentController {
         account: $this->account,
         category: $category,
         bundle: $bundle ? (string) $bundle : NULL,
-        purpose: $purpose ? (string) $purpose : NULL,
+        siteKey: $siteKey ? (string) $siteKey : NULL,
         limit: $limit,
         offset: $offset,
       );
@@ -119,7 +127,7 @@ class SavedContentController {
       $queryResult = $queryService->query($filter);
 
       $itemsList = $this->buildCardsFromQueryResult($queryResult);
-      $pagination = $this->buildPagination($queryResult, $page, $limit, $activeTab, $bundle, $purpose);
+      $pagination = $this->buildPagination($queryResult, $page, $limit, $activeTab, $bundle, $siteKey);
 
       $cacheTags = array_unique(array_merge($cacheTags, $queryResult->getCacheTags()));
       $cacheContexts = array_unique(array_merge($cacheContexts, $queryResult->getCacheContexts()));
@@ -146,38 +154,40 @@ class SavedContentController {
     };
 
     return [
-      '#type' => 'container',
-      '#attributes' => [
-        'data-portal-ui' => 'studio-saved-content',
-      ],
-      'header' => [
-        '#type' => 'html_tag',
-        '#tag' => 'h1',
-        '#value' => $this->t('Meu espaço: salvos e recomendações'),
-        '#attributes' => ['data-portal-ui' => 'studio-page-title'],
-      ],
-      'tabs' => [
-        '#theme' => 'item_list',
-        '#items' => $tabLinks,
-        '#attributes' => ['data-portal-ui' => 'studio-saved-tabs'],
-      ],
-      'content' => [
-        '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'studio-saved-list-wrapper'],
-        'list' => empty($itemsList)
-          ? [
-            '#type' => 'container',
-            '#attributes' => ['data-portal-ui' => 'studio-saved-empty'],
-            'message' => [
-              '#markup' => '<p>' . $emptyMessage . '</p>',
-            ],
-          ]
-          : [
-            '#theme' => 'item_list',
-            '#items' => $itemsList,
-            '#attributes' => ['data-portal-ui' => 'studio-card-compact-list'],
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:saved-content-page',
+      '#slots' => [
+        'content' => [
+          'header' => [
+            '#type' => 'html_tag',
+            '#tag' => 'h1',
+            '#value' => $this->t('Meu espaço: salvos e recomendações'),
+            '#attributes' => ['data-portal-ui' => 'studio-page-title'],
           ],
-        'pager' => $pagination,
+          'tabs' => [
+            '#theme' => 'item_list',
+            '#items' => $tabLinks,
+            '#attributes' => ['data-portal-ui' => 'studio-saved-tabs'],
+          ],
+          'content' => [
+            '#type' => 'container',
+            '#attributes' => ['data-portal-ui' => 'studio-saved-list-wrapper'],
+            'list' => empty($itemsList)
+              ? [
+                '#type' => 'container',
+                '#attributes' => ['data-portal-ui' => 'studio-saved-empty'],
+                'message' => [
+                  '#markup' => '<p>' . $emptyMessage . '</p>',
+                ],
+              ]
+              : [
+                '#theme' => 'item_list',
+                '#items' => $itemsList,
+                '#attributes' => ['data-portal-ui' => 'studio-card-compact-list'],
+              ],
+            'pager' => $pagination,
+          ],
+        ],
       ],
       '#cache' => [
         'contexts' => $cacheContexts,
@@ -203,13 +213,13 @@ class SavedContentController {
       $url = $item->getUrl() ?? Url::fromRoute('<front>');
 
       $metaHtml = '<span data-portal-ui="studio-saved-meta">' . $this->t('Salvo em @date', ['@date' => $dateStr]) . '</span>';
-      if ($item->getPurpose() !== NULL) {
-        $metaHtml .= ' <span data-portal-ui="studio-saved-purpose">' . htmlspecialchars(strtoupper($item->getPurpose()), ENT_QUOTES, 'UTF-8') . '</span>';
+      if ($item->getSiteKey() !== NULL) {
+        $metaHtml .= ' <span data-portal-ui="studio-saved-site-key">' . htmlspecialchars(strtoupper($item->getSiteKey()), ENT_QUOTES, 'UTF-8') . '</span>';
       }
 
       $cards[] = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'studio-card-compact saved-item'],
+        '#attributes' => ['data-portal-ui' => 'studio-card-compact'],
         'link' => [
           '#type' => 'link',
           '#title' => $item->getTitle() ?: $this->t('Sem título'),
@@ -238,8 +248,8 @@ class SavedContentController {
    *   Current active tab.
    * @param mixed $bundle
    *   Optional bundle filter.
-   * @param mixed $purpose
-   *   Optional purpose filter.
+   * @param mixed $siteKey
+   *   Optional site key filter. The public URL query name remains `purpose`.
    *
    * @return array<string, mixed>
    *   Pagination render array.
@@ -250,7 +260,7 @@ class SavedContentController {
     int $limit,
     string $activeTab,
     mixed $bundle,
-    mixed $purpose,
+    mixed $siteKey,
   ): array {
     $totalCount = $queryResult->getTotalCount();
     $totalPages = (int) ceil($totalCount / $limit);
@@ -265,7 +275,7 @@ class SavedContentController {
         'tab' => $activeTab,
         'page' => $page > 1 ? $page - 1 : NULL,
         'bundle' => $bundle,
-        'purpose' => $purpose,
+        'purpose' => $siteKey,
       ]);
       $links[] = [
         '#type' => 'link',
@@ -291,7 +301,7 @@ class SavedContentController {
         'tab' => $activeTab,
         'page' => $page + 1,
         'bundle' => $bundle,
-        'purpose' => $purpose,
+        'purpose' => $siteKey,
       ]);
       $links[] = [
         '#type' => 'link',
@@ -311,7 +321,7 @@ class SavedContentController {
   /**
    * Builds recommendation cards with transparent explanations.
    *
-   * @param array<int, array<string, mixed>> $recommendations
+   * @param array<int, SavedRecommendation> $recommendations
    *   Items from RecommendationService.
    *
    * @return array<int, array<string, mixed>>
@@ -320,13 +330,12 @@ class SavedContentController {
   protected function buildRecommendationCards(array $recommendations): array {
     $cards = [];
     foreach ($recommendations as $rec) {
-      /** @var \Drupal\Core\Entity\EntityInterface $entity */
       $entity = $rec['entity'];
       $reason = $rec['reason'];
 
       $cards[] = [
         '#type' => 'container',
-        '#attributes' => ['data-portal-ui' => 'studio-card-compact recommendation-item'],
+        '#attributes' => ['data-portal-ui' => 'studio-card-compact'],
         'link' => [
           '#type' => 'link',
           '#title' => $entity->label() ?? $this->t('Sem título'),

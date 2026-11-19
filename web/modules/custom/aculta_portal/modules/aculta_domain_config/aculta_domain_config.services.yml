@@ -1,0 +1,33 @@
+services:
+  _defaults:
+    autoconfigure: true
+    autowire: true
+
+  Drupal\aculta_domain_config\EventSubscriber\DomainConfigEditingSubscriber:
+    arguments:
+      $configStorage: '@config.storage'
+      $routeProvider: '@router.route_provider'
+      $entityTypeManager: '@entity_type.manager'
+
+  Drupal\aculta_domain_config\Hook\BlockDomainConfigFormHooks:
+    arguments:
+      $configStorage: '@config.storage'
+      $switcher: '@Drupal\domain_config_switcher\DomainConfigSwitcherInterface'
+      $editContext: '@Drupal\domain_config_ui\DomainConfigEditContextInterface'
+      $manager: '@Drupal\domain_config_ui\DomainConfigUIManagerInterface'
+
+  # Decora o converter do domain_config_entity_ui para ler o override com
+  # loadOverrideFree(), em vez do load() que devolve a entidade base.
+  aculta_domain_config.paramconverter.configentity_admin:
+    class: Drupal\aculta_domain_config\ParamConverter\BlockDomainOverrideConfigEntityConverter
+    decorates: domain_config_entity_ui.paramconverter.configentity_admin
+    decoration_priority: 1
+    arguments:
+      - '@entity_type.manager'
+      - '@config.factory'
+      - '@router.admin_context'
+      - '@entity.repository'
+      - '@domain_config_ui.manager'
+    tags:
+      - { name: paramconverter, priority: 10 }
+

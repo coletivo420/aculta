@@ -12,7 +12,7 @@ ausência de rolagem horizontal em 1280, 390 e 320 px.
 - **Capturas:** o script oculta visualmente a barra administrativa Claro e centraliza a tabela apenas na sessão do navegador; o layout é medido pelo DOM (rolagem, largura das colunas e altura das linhas) e também inspecionado nas capturas.
 - **Critério mobile:** em cada viewport a tabela deve iniciar na primeira coluna (`scrollLeft=0`), manter cinco colunas com largura mínima legível e rolar somente dentro do contêiner. A inspeção das capturas é parte do gate, além das métricas DOM.
 - **Limites:** não altera dados no servidor. A injeção de CSS serve para validar a apresentação candidata sobre o HTML real, mas não confirma cache/build no host. Não cobre o conteúdo das credenciais (isso está no teste HTTP documentado em
-  `docs/operations/SECRETS-SM9-INTEGRACAO.md`), nem o tema Olivero (pendente).
+  `docs/operations/SECRETS-SM9-INTEGRACAO.md`).
 
 ## Popups (somente leitura): `popups-visual.py`
 
@@ -43,7 +43,7 @@ ausência de rolagem horizontal em 1280, 390 e 320 px.
   Firefox ESR/X11 passou 31/31 em 1280/390/320 px, incluindo a primeira coluna visível, larguras das cinco colunas,
   altura das linhas e rolagem interna. Capturas em `/home/piradopirata/private/aculta/test-evidence/secrets-manager-20261031-candidate-fix-3`.
   A captura 320 px foi inspecionada manualmente e começa pela primeira coluna. Isto valida o CSS candidato sobre o DOM servido,
-  mas não comprova que o servidor já serve o CSS nem valida Olivero; esses gates permanecem pendentes.
+  mas não comprova que o servidor já serve o CSS.
 
 
 ## Foco por teclado, alvos e cor do ícone de apagar (Claro): `claro-foco-alvos.py`

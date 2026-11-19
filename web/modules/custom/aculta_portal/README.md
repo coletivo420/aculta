@@ -1,9 +1,33 @@
 # ACULTA Portal (`aculta_portal`)
 
+## RN-01 — API tipada de `site_key` (em andamento)
+
+`SiteKey` e `SiteKeyRegistry` representam as dez chaves funcionais sem copiar
+Domain IDs ou paths. `DomainSiteManagerInterface` define métodos tipados e
+`DomainSiteManager` os implementa para resolução, contexto e URLs, delegando ao
+`DomainPurposeManagerInterface` temporário para
+preservar resultados existentes. O serviço e os consumidores antigos continuam
+disponíveis durante os lotes RN-02/RN-03; nenhuma rota, configuração, State,
+sessão ou dado persistido foi migrado nesta fase.
+
+Evidência inicial: Unit focal 7/84 PASS. Paridade integral e execução Runtime
+permanecem pendentes; veja `docs/architecture/ACULTA-PORTAL-PURPOSE-PARA-SITE-KEY.md`.
+
 Módulo de integração do site institucional ACULTA. Conecta capacidades do Drupal
 Core e de módulos contrib para as experiências de conta, conteúdo, Commerce,
 aprendizagem e domínios. Core/contrib continuam donos das entidades e regras que
 já fornecem.
+
+## Preferência de modo de cor
+
+`ColorModePreference` continua sendo a fonte de verdade das preferências
+`light`, `dark` ou `auto` em `user.data` (`aculta_portal:color_mode`). O
+endpoint `POST /preferencias/modo-de-cor` aceita apenas `{ "mode": ... }` da
+conta autenticada atual, exige token CSRF no cabeçalho `X-CSRF-Token` e
+invalida `user:<uid>`. O formulário de Aparência lê e grava a mesma chave.
+O SDC do tema só chama o endpoint no contexto `site`; prévias `library` e
+`demo` são isoladas. A resolução de `auto` em `data-theme` fica no navegador;
+`data-color-preference` preserva o valor escolhido.
 
 ## Situação vigente — Portal `0.4.1-dev.48` (2026-11-01)
 
@@ -72,6 +96,16 @@ navegação. O campo permanece um searchbox nativo; Tab percorre os resultados e
 as setas continuam disponíveis para edição do texto. Não declarar esses links
 como opções de combobox.
 
+## Contrato de apresentação para a navegação de sites
+
+`DomainPresentationBuilder` fornece `domain_presentation.identity.site_key` como
+chave neutra estável e `domain_presentation.domain_sites` como lista dos Domains
+ativos: `site_key`, `title`, `url` absoluta resolvida por `DomainSiteManager`
+e `current`. `PortalHooks::preprocessPage()` também expõe a lista como
+`aculta_domain_sites`. A lista herda cache tags dos Domains e os contexts do
+contrato de apresentação; o tema apenas apresenta os links, sem descobrir hosts
+ou site keys. O contrato não carrega dados de conta.
+
 ## Fronteira
 
 ```text
@@ -114,7 +148,7 @@ atende a página. Mapas explícitos atribuem os pacotes de `aculta_image` e
 
 - [Índice normativo do Portal](../../../../docs/portal/README.md) — contratos,
   políticas e padrões de implementação.
-- [Padrão Drupal 11+](../../../../docs/portal/DRUPAL-11-STANDARDS.md) — APIs,
+- [Padrão Drupal 11+](../../../../docs/portal/DRUPAL-12-STANDARDS.md) — APIs,
   DI, hooks, EntityQuery, render e cache.
 - [Guardrails](../../../../docs/portal/GUARDRAILS.md) — regras funcionais por área.
 - [Fonte de verdade](../../../../docs/portal/SOURCE-OF-TRUTH.md) — ownership de
@@ -145,7 +179,7 @@ em classes, APIs públicas do Drupal e declarações conscientes de access/cache
 Gate arquitetural obrigatório para mudanças do Portal:
 
 ```sh
-php scripts/validate-aculta-portal-drupal11.php
+php scripts/validate-aculta-portal-drupal12.php
 ```
 
 Gates específicos de fronteira, mapa, segurança ou rotas estão referenciados nos
@@ -204,7 +238,7 @@ cursos pagos não alteram essa regra.
 
 O módulo base `aculta_portal` não declara mais dependência de `lms:lms` nem
 injeta `lms.training_manager`. A seção Cursos da Conta lê o contrato neutro
-`AccountCoursesReaderInterface`; sem provider educacional, a Conta mostra o
+`Drupal\aculta_portal\Learning\AccountCoursesReaderInterface`; sem provider educacional, a Conta mostra o
 estado vazio. A leitura Group/LMS, os slugs amigáveis de curso/aula/atividade e
 a alteração da rota nativa foram movidos para o adaptador `aculta_lms`.
 IDs históricos de serviço e parâmetros de rota foram preservados para reduzir

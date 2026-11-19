@@ -53,7 +53,7 @@ O início do fluxo é `/oauth/google`; o retorno é
 | Ambiente | URI de callback | Origem JavaScript |
 | --- | --- | --- |
 | Homelab | `https://conta.aculta.toca.net.br/oauth/google/retorno` | `https://conta.aculta.toca.net.br` |
-| Produção | `https://conta.aculta.org/oauth/google/retorno` | `https://conta.aculta.org` |
+| Produção futura (sem host ainda) | `https://conta.aculta.org/oauth/google/retorno` | `https://conta.aculta.org` |
 
 Client ID e segredo não são documentados nem impressos. O responsável
 configurou o cliente OAuth Google; nenhuma alteração foi feita na Hostinger ou

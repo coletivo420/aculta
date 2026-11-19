@@ -57,6 +57,9 @@ final class BrevoSecretTransportFactory extends AbstractTransportFactory {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<int, string>
+   *   Esquemas suportados.
    */
   protected function getSupportedSchemes(): array {
     return [self::SCHEME];

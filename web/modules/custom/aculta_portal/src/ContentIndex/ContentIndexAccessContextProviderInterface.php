@@ -20,6 +20,6 @@ interface ContentIndexAccessContextProviderInterface {
    *
    * Return NULL when normal active-request context is appropriate.
    */
-  public function getAccessPurpose(ContentEntityInterface $entity): ?string;
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string;
 
 }

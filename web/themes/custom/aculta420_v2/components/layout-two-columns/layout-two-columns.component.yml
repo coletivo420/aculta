@@ -1,0 +1,26 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Duas colunas
+description: Conteúdo principal e coluna complementar; uma coluna no mobile e duas a partir de 60rem.
+status: experimental
+group: Layouts
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    ratio:
+      type: string
+      enum: [equal, wide]
+      default: equal
+      title: Proporção das colunas
+      description: '`equal` divide em partes iguais; `wide` dá mais espaço à coluna principal.'
+slots:
+  primary:
+    title: Coluna principal
+    description: Conteúdo principal da seção.
+  secondary:
+    title: Coluna complementar
+    description: Conteúdo de apoio, filtros ou relacionados.
+assets:
+  css:
+    component:
+      layout-two-columns.css: {}

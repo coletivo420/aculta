@@ -8,6 +8,8 @@ use Drupal\aculta_portal\Search\SearchPageController;
 use Drupal\aculta_wiki\Presentation\WikiSearchFormBuilder;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Template\Attribute;
+use Drupal\Core\Template\AttributeValueBase;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -74,18 +76,84 @@ final class WikiSearchFormBuilderTest extends UnitTestCase {
     $this->assertSame(['role' => 'search'], $build['#attributes']);
     $this->assertSame(['url.query_args:q'], $build['#cache']['contexts']);
     $this->assertSame(['aculta_portal/search-preview'], $build['#attached']['library']);
-    $this->assertSame('', $build['q']['#value']);
-    $this->assertSame('q', $build['q']['#name']);
-    $this->assertSame(SearchPageController::MAX_CHARS, $build['q']['#maxlength']);
-    // O módulo expõe só o marcador neutro; a classe visual é do tema (PortalUiHooks).
-    $this->assertSame('search-preview-input', $build['q']['#attributes']['data-portal-ui']);
-    $this->assertSame('/busca-wiki/previa', $build['q']['#attributes']['data-preview-url']);
-    $this->assertSame((string) SearchPageController::MIN_CHARS, $build['q']['#attributes']['data-min-chars']);
-    $this->assertSame('aculta-wiki-search-preview', $build['preview']['#attributes']['id']);
-    $this->assertSame('region', $build['preview']['#attributes']['role']);
-    $this->assertSame('Prévia dos resultados da busca', $build['preview']['#attributes']['aria-label']);
-    $this->assertSame('polite', $build['preview']['#attributes']['aria-live']);
-    $this->assertTrue($build['preview']['#attributes']['hidden']);
+    $queryInput = $build['q'] ?? NULL;
+    self::assertIsArray($queryInput);
+    self::assertSame('', $queryInput['#value']);
+    self::assertSame('q', $queryInput['#name']);
+    self::assertSame(SearchPageController::MAX_CHARS, $queryInput['#maxlength']);
+    self::assertArrayNotHasKey('#title', $queryInput, 'O rótulo explícito é a única label do campo.');
+    $queryAttributes = $queryInput['#attributes'] ?? NULL;
+    self::assertIsArray($queryAttributes);
+    self::assertSame('aculta-wiki-search-header-q', $queryAttributes['id']);
+    // O módulo expõe só marcadores neutros; as classes visuais são do tema.
+    self::assertSame('search-preview-input', $queryAttributes['data-portal-ui']);
+    self::assertSame('/busca-wiki/previa', $queryAttributes['data-preview-url']);
+    self::assertSame((string) SearchPageController::MIN_CHARS, $queryAttributes['data-min-chars']);
+    $label = $build['q_label'] ?? NULL;
+    self::assertIsArray($label);
+    $labelAttributes = $label['#attributes'] ?? NULL;
+    self::assertIsArray($labelAttributes);
+    self::assertSame('aculta-wiki-search-header-q', $labelAttributes['for']);
+    self::assertSame('label', $label['#tag']);
+    self::assertSame('Pesquisar na Wiki420', $label['#value']);
+    self::assertIsArray($labelAttributes['class']);
+    self::assertContains('visually-hidden', $labelAttributes['class']);
+    $this->assertSame('aculta420_v2:hint', $build['preview']['#slots']['content']['hint']['#component']);
+    $attributes = $build['preview']['#props']['attributes'];
+    $this->assertSame('aculta-wiki-search-header-preview', $attributes['id']->value());
+    $this->assertSame('region', $attributes['role']->value());
+    $this->assertSame('Prévia dos resultados da busca', $attributes['aria-label']->value());
+    $this->assertSame('polite', $attributes['aria-live']->value());
+    $this->assertTrue($attributes['hidden']->value());
+  }
+
+  /**
+   * Header and route body forms receive separate IDs and preview targets.
+   */
+  public function testFormInstancesHaveUniqueIds(): void {
+    $builder = $this->builder(NULL);
+    $header = $builder->build('header');
+    $page = $builder->build('page');
+
+    $headerInput = $header['q'] ?? NULL;
+    $pageInput = $page['q'] ?? NULL;
+    self::assertIsArray($headerInput);
+    self::assertIsArray($pageInput);
+    $headerInputAttributes = $headerInput['#attributes'] ?? NULL;
+    $pageInputAttributes = $pageInput['#attributes'] ?? NULL;
+    self::assertIsArray($headerInputAttributes);
+    self::assertIsArray($pageInputAttributes);
+    self::assertSame('aculta-wiki-search-header-q', $headerInputAttributes['id'] ?? NULL);
+    self::assertSame('aculta-wiki-search-page-q', $pageInputAttributes['id'] ?? NULL);
+
+    $headerPreview = $header['preview'] ?? NULL;
+    $pagePreview = $page['preview'] ?? NULL;
+    self::assertIsArray($headerPreview);
+    self::assertIsArray($pagePreview);
+    $headerPreviewProps = $headerPreview['#props'] ?? NULL;
+    $pagePreviewProps = $pagePreview['#props'] ?? NULL;
+    self::assertIsArray($headerPreviewProps);
+    self::assertIsArray($pagePreviewProps);
+    $headerPreviewAttributes = $headerPreviewProps['attributes'] ?? NULL;
+    $pagePreviewAttributes = $pagePreviewProps['attributes'] ?? NULL;
+    self::assertInstanceOf(Attribute::class, $headerPreviewAttributes);
+    self::assertInstanceOf(Attribute::class, $pagePreviewAttributes);
+    $headerIdAttribute = $headerPreviewAttributes['id'] ?? NULL;
+    $pageIdAttribute = $pagePreviewAttributes['id'] ?? NULL;
+    self::assertInstanceOf(AttributeValueBase::class, $headerIdAttribute);
+    self::assertInstanceOf(AttributeValueBase::class, $pageIdAttribute);
+    $headerPreviewId = $headerIdAttribute->value();
+    $pagePreviewId = $pageIdAttribute->value();
+    self::assertSame('aculta-wiki-search-header-preview', $headerPreviewId);
+    self::assertSame('aculta-wiki-search-page-preview', $pagePreviewId);
+    self::assertSame(
+      $headerPreviewId,
+      $headerInputAttributes['data-preview-target'] ?? NULL,
+    );
+    self::assertSame(
+      $pagePreviewId,
+      $pageInputAttributes['data-preview-target'] ?? NULL,
+    );
   }
 
   /**

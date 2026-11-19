@@ -8,10 +8,11 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -101,10 +102,12 @@ final class WikiProposalStatusController extends ControllerBase {
     if ((int) $proposal->getOwnerId() === (int) $account->id()
       && in_array($state, ['submitted', 'needs_changes'], TRUE)) {
       $build['header']['#slots']['actions'] = [
-        '#type' => 'link',
-        '#title' => $this->t('Retirar proposta'),
-        '#url' => Url::fromRoute('aculta_wiki.proposal_withdraw', ['proposal' => $proposal->id()]),
-        '#attributes' => ['data-portal-ui' => 'wiki-proposal-contribute'],
+        '#type' => 'aculta_portal_button',
+        '#props' => [
+          'text' => (string) $this->t('Retirar proposta'),
+          'url' => Url::fromRoute('aculta_wiki.proposal_withdraw', ['proposal' => $proposal->id()])->toString(),
+          'variant' => 'secondary',
+        ],
       ];
     }
 
@@ -115,7 +118,7 @@ final class WikiProposalStatusController extends ControllerBase {
     $sourceLinks = [];
     $sourceUris = $proposal instanceof Contribution
       ? (array) ($sourceData['source_uris'] ?? [])
-      : array_map(static fn ($item): string => (string) $item->value, iterator_to_array($proposal->get('source_uri')));
+      : array_map(static fn (array $item): string => (string) ($item['value'] ?? ''), $proposal->get('source_uri')->getValue());
     foreach ($sourceUris as $sourceUri) {
       $uri = is_string($sourceUri) ? $sourceUri : '';
       if (!filter_var($uri, FILTER_VALIDATE_URL)
@@ -205,6 +208,9 @@ final class WikiProposalStatusController extends ControllerBase {
       $revisionIds = array_map('strval', array_keys($queryRows));
       if ($revisionIds === []) {
         $hasMoreCandidates = FALSE;
+        break;
+      }
+      if (!$storage instanceof RevisionableStorageInterface) {
         break;
       }
       $revisions = $storage->loadMultipleRevisions($revisionIds);

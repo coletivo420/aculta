@@ -8,9 +8,15 @@ use Drupal\aculta_portal\Routing\PublicRouteSlug;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * Normalização de slug de rota pública.
+ */
 #[Group('aculta_portal')]
 final class PublicRouteSlugTest extends UnitTestCase {
 
+  /**
+   * Confirma que caixa e espaços externos são normalizados sem reescrever o conteúdo.
+   */
   public function testNormalizesCaseAndOuterWhitespaceWithoutRewritingContent(): void {
     $this->assertSame('piradopirata', PublicRouteSlug::normalize('  PiradoPirata  '));
     $this->assertSame('ação-com-caixa', PublicRouteSlug::normalize('ação-com-Caixa'));

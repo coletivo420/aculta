@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Service;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\content_moderation\StateTransitionValidationInterface;
@@ -34,7 +37,7 @@ final class WikiEditorialQueue {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountInterface $currentUser,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly StateTransitionValidationInterface $transitionValidation,
   ) {}
 
@@ -82,8 +85,8 @@ final class WikiEditorialQueue {
       $ids = array_values($query->execute());
       $candidates = [...$candidates, ...array_values($storage->loadMultiple($ids))];
     }
-    usort($candidates, static function (WikiProposal|Contribution $left, WikiProposal|Contribution $right): int {
-      $created = (int) $right->get('created')->value <=> (int) $left->get('created')->value;
+    usort($candidates, function (EntityInterface $left, EntityInterface $right): int {
+      $created = $this->createdTimestamp($right) <=> $this->createdTimestamp($left);
       if ($created !== 0) {
         return $created;
       }
@@ -95,16 +98,16 @@ final class WikiEditorialQueue {
     });
     $unique = [];
     foreach ($candidates as $candidate) {
-      if ((!$candidate instanceof WikiProposal && !$candidate instanceof Contribution)
-        || ($candidate instanceof Contribution && $candidate->get('source')->value !== 'wiki')) {
+      $proposalCandidate = $this->proposalCandidate($candidate);
+      if ($proposalCandidate === NULL
+        || ($proposalCandidate instanceof Contribution && $proposalCandidate->get('source')->value !== 'wiki')) {
         continue;
       }
-      $unique[$candidate->uuid()] ??= $candidate;
+      $unique[$proposalCandidate->uuid()] ??= $proposalCandidate;
     }
     $items = [];
     foreach ($unique as $proposal) {
-      if ((!$proposal instanceof WikiProposal && !$proposal instanceof Contribution)
-        || !$proposal->isDefaultRevision()
+      if (!$proposal->isDefaultRevision()
         || !in_array($proposal->get('state')->value, ['submitted', 'needs_changes'], TRUE)) {
         continue;
       }
@@ -122,8 +125,10 @@ final class WikiEditorialQueue {
     $hasMore = count($items) > self::PAGE_SIZE;
     if ($hasMore) {
       $items = array_slice($items, 0, self::PAGE_SIZE);
-      $last = $items[array_key_last($items)];
-      $nextCursor = $last->get('created')->value . '-' . $last->id();
+      $last = $items[array_key_last($items)] ?? NULL;
+      $nextCursor = $last instanceof WikiProposal || $last instanceof Contribution
+        ? $this->createdTimestamp($last) . '-' . $last->id()
+        : NULL;
     }
     else {
       $nextCursor = NULL;
@@ -160,8 +165,8 @@ final class WikiEditorialQueue {
       ])
       ->addCacheTags(['node_list:wiki_entry', 'content_moderation_state_list']);
 
-    $result = $this->domainPurposes->runInPurpose('wiki', function () use ($cursor, $cacheability): WikiEditorialQueuePage {
-      $wikiDomain = $this->domainPurposes->getDomain('wiki');
+    $result = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($cursor, $cacheability): WikiEditorialQueuePage {
+      $wikiDomain = $this->siteManagers->getDomain(SiteKey::Wiki);
       if ($wikiDomain === NULL) {
         return new WikiEditorialQueuePage([], NULL, $cacheability);
       }
@@ -183,7 +188,7 @@ final class WikiEditorialQueue {
           // Core denies access to ContentModerationState. This query discovers
           // candidate VIDs only; every Node is revalidated below.
           ->accessCheck(FALSE)
-          ->aggregate('content_entity_id', 'MAX')
+          ->aggregate('content_entity_revision_id', 'MAX')
           ->groupBy('content_entity_revision_id')
           ->condition('content_entity_type_id', 'node')
           ->condition('workflow', 'wiki_editorial')
@@ -194,8 +199,7 @@ final class WikiEditorialQueue {
           $query->condition('content_entity_revision_id', $scanCursor, '<');
         }
 
-        $queryRows = $query->execute();
-        $revisionIds = array_map('strval', array_column($queryRows, 'content_entity_revision_id'));
+        $revisionIds = $this->revisionIdsFromAggregateRows($query->execute());
         if ($revisionIds === []) {
           $hasMoreCandidates = FALSE;
           break;
@@ -206,8 +210,12 @@ final class WikiEditorialQueue {
           $scanCursor = (int) $revisionId;
           $candidateCount++;
           $revision = $revisions[$revisionId] ?? NULL;
-          if (!$revision instanceof NodeInterface
-            || (string) $storage->getLatestRevisionId($revision->id()) !== $revisionId
+          if (!$revision instanceof NodeInterface) {
+            continue;
+          }
+          $nodeId = $revision->id();
+          if ((!is_int($nodeId) && !is_string($nodeId))
+            || (string) $storage->getLatestRevisionId($nodeId) !== $revisionId
             || $revision->bundle() !== 'wiki_entry'
             || !$revision->hasField('field_domain_source')
             || $revision->get('field_domain_source')->target_id !== $wikiDomain->id()
@@ -241,8 +249,8 @@ final class WikiEditorialQueue {
 
       if ($hasExtraAuthorizedItem) {
         $items = array_slice($items, 0, self::PAGE_SIZE);
-        $last = $items[array_key_last($items)];
-        $nextCursor = (string) $last->getRevisionId();
+        $last = $items[array_key_last($items)] ?? NULL;
+        $nextCursor = $last instanceof NodeInterface ? (string) $last->getRevisionId() : NULL;
       }
       elseif ($hasMoreCandidates && $scanCursor !== NULL) {
         // A bounded scan can return fewer than PAGE_SIZE rows when access
@@ -259,6 +267,57 @@ final class WikiEditorialQueue {
     return $result instanceof WikiEditorialQueuePage
       ? $result
       : new WikiEditorialQueuePage([], NULL, $cacheability);
+  }
+
+  /**
+   * Gets a created timestamp from a content entity candidate.
+   */
+  private function createdTimestamp(EntityInterface $entity): int {
+    if (!$entity instanceof ContentEntityInterface || !$entity->hasField('created')) {
+      return 0;
+    }
+    $value = $entity->get('created')->value;
+    if (is_int($value)) {
+      return $value;
+    }
+    return is_string($value) && ctype_digit($value) ? (int) $value : 0;
+  }
+
+  /**
+   * Extracts revision IDs from Content Moderation aggregate query rows.
+   *
+   * @param mixed $rows
+   *   Rows returned by the aggregate entity query.
+   *
+   * @return list<string>
+   *   Revision IDs kept as strings for revision storage.
+   */
+  private function revisionIdsFromAggregateRows(mixed $rows): array {
+    if (!is_array($rows)) {
+      return [];
+    }
+
+    $revisionIds = [];
+    foreach ($rows as $row) {
+      if (!is_array($row)) {
+        continue;
+      }
+      $revisionId = $row['content_entity_revision_id'] ?? NULL;
+      if (is_int($revisionId) || is_string($revisionId)) {
+        $revisionIds[] = (string) $revisionId;
+      }
+    }
+    return $revisionIds;
+  }
+
+  /**
+   * Narrows a loaded entity to one of the proposal types owned by the Wiki.
+   */
+  private function proposalCandidate(EntityInterface $entity): WikiProposal|Contribution|null {
+    if ($entity instanceof WikiProposal || $entity instanceof Contribution) {
+      return $entity;
+    }
+    return NULL;
   }
 
   /**

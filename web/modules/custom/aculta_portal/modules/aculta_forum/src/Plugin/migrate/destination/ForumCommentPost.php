@@ -32,10 +32,36 @@ final class ForumCommentPost extends EntityContentBase {
   /**
    * The entity type manager used to resolve embedded references.
    */
-  private EntityTypeManagerInterface $entityTypeManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * {@inheritdoc}
+   */
+  /**
+   * Constructs a ForumCommentPost destination plugin.
+   *
+   * @param array<string, mixed> $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Drupal\migrate\Plugin\MigrationInterface $migration
+   *   The migration entity.
+   * @param \Drupal\Core\Entity\EntityStorageInterface $storage
+   *   The entity storage.
+   * @param array<string> $bundles
+   *   The list of bundles.
+   * @param \Drupal\Core\Entity\EntityFieldManagerInterface $entity_field_manager
+   *   The entity field manager.
+   * @param \Drupal\Core\Field\FieldTypePluginManagerInterface $field_type_manager
+   *   The field type manager.
+   * @param \Drupal\Core\Session\AccountSwitcherInterface|null $account_switcher
+   *   The account switcher.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface|null $entity_type_bundle_info
+   *   The bundle info service.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface|null $entity_type_manager
+   *   The entity type manager.
    */
   public function __construct(
     array $configuration,
@@ -70,8 +96,13 @@ final class ForumCommentPost extends EntityContentBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?MigrationInterface $migration = NULL): static {
+    if (!$migration instanceof MigrationInterface) {
+      throw new \InvalidArgumentException('MigrationInterface é obrigatória.');
+    }
     $entity_type_id = 'aculta_forum_post';
     $entity_type_manager = $container->get('entity_type.manager');
     $bundle_info = $container->get('entity_type.bundle.info');
@@ -94,15 +125,21 @@ final class ForumCommentPost extends EntityContentBase {
   /**
    * {@inheritdoc}
    *
+   * @param array<int|string, mixed> $old_destination_id_values
+   * @return array<int|string, mixed>
+   *
    * @throws \Drupal\migrate\MigrateException
    *   When source translations do not satisfy the Forum post contract.
    * @throws \Drupal\migrate\Exception\EntityValidationException
    *   When configured entity validation fails.
    */
   public function import(Row $row, array $old_destination_id_values = []): array {
-    $source_id = (string) $row->getSourceProperty('cid');
-    $owner_id = (int) $row->getSourceProperty('uid');
-    $legacy_author_id = (int) $row->getSourceProperty('legacy_author_id');
+    $cidVal = $row->getSourceProperty('cid');
+    $uidVal = $row->getSourceProperty('uid');
+    $legacyVal = $row->getSourceProperty('legacy_author_id');
+    $source_id = is_scalar($cidVal) ? (string) $cidVal : '';
+    $owner_id = is_numeric($uidVal) ? (int) $uidVal : 0;
+    $legacy_author_id = is_numeric($legacyVal) ? (int) $legacyVal : 0;
     if ($owner_id <= 0 && ($legacy_author_id <= 0
       || $this->entityTypeManager->getStorage('aculta_legado_autor')->load($legacy_author_id) === NULL)) {
       throw new MigrateException(sprintf(
@@ -110,13 +147,16 @@ final class ForumCommentPost extends EntityContentBase {
         $source_id,
       ));
     }
-    $default_langcode = (string) $row->getSourceProperty('langcode');
+    $langVal = $row->getSourceProperty('langcode');
+    $default_langcode = is_scalar($langVal) ? (string) $langVal : '';
     $translations = $row->getSourceProperty('translations');
     if ($default_langcode === '' || !is_array($translations) || !isset($translations[$default_langcode])) {
       throw new MigrateException(sprintf('Comment %s não contém sua tradução padrão.', $source_id));
     }
 
     $rejected = (bool) $row->getSourceProperty('rejected');
+    /** @var array<string, array<string, mixed>> $typed_translations */
+    $typed_translations = [];
     foreach ($translations as $langcode => $translation) {
       if (!is_array($translation) || !array_key_exists('published', $translation)) {
         throw new MigrateException(sprintf('Comment %s contém dados de tradução inválidos.', $source_id));
@@ -124,17 +164,22 @@ final class ForumCommentPost extends EntityContentBase {
       if ($rejected && (bool) $translation['published']) {
         throw new MigrateException(sprintf('Comment %s combina publicação com rejeição histórica.', $source_id));
       }
-      if (trim((string) ($translation['body_value'] ?? '')) === '') {
-        throw new MigrateException(sprintf('Comment %s tem corpo vazio no idioma %s.', $source_id, $langcode));
+      $rawBody = $translation['body_value'] ?? '';
+      $bodyStr = is_scalar($rawBody) ? (string) $rawBody : '';
+      if (trim($bodyStr) === '') {
+        throw new MigrateException(sprintf('Comment %s tem corpo vazio no idioma %s.', $source_id, (string) $langcode));
       }
       if (($translation['body_format'] ?? NULL) !== 'forum') {
-        throw new MigrateException(sprintf('Comment %s usa formato de texto incompatível no idioma %s.', $source_id, $langcode));
+        throw new MigrateException(sprintf('Comment %s usa formato de texto incompatível no idioma %s.', $source_id, (string) $langcode));
       }
+      /** @var array<string, mixed> $translation */
+      $typed_translations[(string) $langcode] = $translation;
     }
-    $this->validateEmbeddedEntities($source_id, $translations);
+    $this->validateEmbeddedEntities($source_id, $typed_translations);
 
     if ($old_destination_id_values !== []) {
-      $existing = $this->storage->load(reset($old_destination_id_values));
+      $oldId = reset($old_destination_id_values);
+      $existing = is_string($oldId) || is_int($oldId) ? $this->storage->load($oldId) : NULL;
       if ($existing instanceof ForumPost && $existing->language()->getId() !== $default_langcode) {
         throw new MigrateException(sprintf(
           'Comment %s mudou o idioma padrão de %s para %s; a migration não pode trocar a tradução padrão do post existente.',
@@ -155,7 +200,7 @@ final class ForumCommentPost extends EntityContentBase {
       throw new MigrateException(sprintf('Comment %s não corresponde ao idioma padrão do post de destino.', $source_id));
     }
 
-    $source_langcodes = array_map('strval', array_keys($translations));
+    $source_langcodes = array_map('strval', array_keys($typed_translations));
     foreach ($entity->getTranslationLanguages() as $language) {
       $langcode = $language->getId();
       if ($langcode !== $default_langcode && !in_array($langcode, $source_langcodes, TRUE)) {
@@ -163,17 +208,20 @@ final class ForumCommentPost extends EntityContentBase {
       }
     }
 
-    foreach ($translations as $langcode => $values) {
-      if (!$entity->hasTranslation((string) $langcode)) {
-        $entity->addTranslation((string) $langcode);
+    foreach ($typed_translations as $langcode => $values) {
+      if (!$entity->hasTranslation($langcode)) {
+        $entity->addTranslation($langcode);
       }
-      $translation = $entity->getTranslation((string) $langcode);
-      $translation->set('subject', (string) ($values['subject'] ?? ''));
+      $translation = $entity->getTranslation($langcode);
+      $subjVal = $values['subject'] ?? '';
+      $bodyVal = $values['body_value'] ?? '';
+      $fmtVal = $values['body_format'] ?? '';
+      $translation->set('subject', is_scalar($subjVal) ? (string) $subjVal : '');
       $translation->set('body', [
-        'value' => (string) $values['body_value'],
-        'format' => (string) $values['body_format'],
+        'value' => is_scalar($bodyVal) ? (string) $bodyVal : '',
+        'format' => is_scalar($fmtVal) ? (string) $fmtVal : '',
       ]);
-      $published = (bool) $values['published'];
+      $published = !empty($values['published']);
       $translation->set('status', $published ? 1 : 0);
       $translation->set('moderation_state', $rejected ? 'rejected' : ($published ? 'published' : 'review'));
     }
@@ -186,6 +234,8 @@ final class ForumCommentPost extends EntityContentBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
   public function fields(): array {
     return [];
@@ -205,7 +255,9 @@ final class ForumCommentPost extends EntityContentBase {
   private function validateEmbeddedEntities(string $source_id, array $translations): void {
     $uuids = ['media' => [], 'media_gallery' => []];
     foreach ($translations as $translation) {
-      $document = Html::load((string) ($translation['body_value'] ?? ''));
+      $rawBody = $translation['body_value'] ?? '';
+      $bodyStr = is_scalar($rawBody) ? (string) $rawBody : '';
+      $document = Html::load($bodyStr);
       $xpath = new \DOMXPath($document);
       foreach ($xpath->query('//*[@data-entity-type="media" or @data-entity-type="media_gallery"]') ?: [] as $element) {
         if (!$element instanceof \DOMElement) {

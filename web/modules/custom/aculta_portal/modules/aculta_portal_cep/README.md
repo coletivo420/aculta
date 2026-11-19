@@ -51,7 +51,7 @@ Baseado no módulo `drupal/cep_autocomplete` 1.0.0 (GPL-2.0-or-later). O aviso d
 ## Validação
 
 - Gate: `php scripts/validate-account-address.php` (sem navegador).
-- Navegador (Firefox pelo X11, conta de teste): `scripts/test-account-address-browser.py`, 17 verificações. O link de login é de uso único.
+- Navegador (Firefox pelo X11, conta de teste): `tests/browser/aculta-portal-cep/test-account-address-browser.py`, 17 verificações. O link de login é de uso único.
 
 
 ## Escopo de consumidores e Local de Events

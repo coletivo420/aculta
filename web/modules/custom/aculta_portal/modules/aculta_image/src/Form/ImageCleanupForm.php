@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * Tela de execução manual das rotinas automáticas seguras de limpeza. */
 final class ImageCleanupForm extends ConfirmFormBase {
 
-  public function __construct(private readonly ImageCleanup $cleanup) {}
+  public function __construct(protected readonly ImageCleanup $cleanup) {}
 
   /**
    * Creates the object with its injected services.

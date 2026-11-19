@@ -1,0 +1,9 @@
+uuid: 6ae50473-e573-4bc6-81f5-6df7004a6d1f
+langcode: pt-br
+status: true
+dependencies: {  }
+id: aculta-footer-legal
+label: 'Rodapé legal'
+description: 'Links legais exibidos no rodapé institucional'
+locked: false
+

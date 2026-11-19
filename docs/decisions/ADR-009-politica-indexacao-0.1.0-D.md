@@ -66,7 +66,7 @@ o submódulo não cria outra.
 
 ## Confirmação do padrão noindex (R5)
 
-Verificação somente leitura feita em 2026-10-09 no runtime e no servidor de testes.
+Verificação somente leitura feita em 2026-10-09 no runtime e no servidor de desenvolvimento.
 
 ### Padrão existente no projeto
 
@@ -81,11 +81,11 @@ Verificação somente leitura feita em 2026-10-09 no runtime e no servidor de te
 - Os 12 registros de `node__field_meta_tags` no runtime: **nenhuma diretiva `robots` ou `noindex`**.
 - Conclusão: hoje não há nó com `noindex`. A regra R5 precisa ser verificada no código do sitemap, para o caso de algum nó receber a diretiva no futuro.
 
-### Achado crítico: noindex global no servidor de testes
+### Achado crítico: noindex global no servidor de desenvolvimento
 
 - Todas as páginas testadas (`/contato`, `/institucional`, `/projetos/carnareggae-bloco-sativa`
   e as páginas do apoio) respondem `X-Robots-Tag: noindex, nofollow, noarchive`.
-- A origem é o VirtualHost do Apache do servidor de testes (`aculta.toca.net.br.conf`, linhas 3 e 95,
+- A origem é o VirtualHost do Apache do servidor de desenvolvimento (`aculta.toca.net.br.conf`, linhas 3 e 95,
   e `toca.net.br.conf`, linhas 42 e 87). A configuração não está no repositório.
 - Isso é regra do Homelab (`docs/architecture/environments.md`). **Se o cabeçalho for copiado
   para produção, o site inteiro deixa de ser indexado.**

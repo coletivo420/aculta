@@ -11,7 +11,8 @@ use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\group\Entity\GroupInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
-/** Adds the course overview to the existing Group canonical page. */
+/**
+ * Adds the course overview to the existing Group canonical page. */
 final class CourseRoomHooks {
 
   public function __construct(
@@ -45,6 +46,15 @@ final class CourseRoomHooks {
 
   /**
    * Adds the overview only when its extra field is enabled in the display.
+   *
+   * @param array<mixed> $build
+   *   Render array da entidade.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entidade renderizada.
+   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+   *   Display da visualização.
+   * @param string $viewMode
+   *   Modo de visualização.
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $viewMode): void {

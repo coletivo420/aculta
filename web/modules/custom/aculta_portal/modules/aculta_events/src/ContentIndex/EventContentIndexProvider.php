@@ -49,7 +49,7 @@ final class EventContentIndexProvider implements ContentIndexProviderInterface, 
   /**
    * {@inheritdoc}
    */
-  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string {
     return $entity instanceof Event ? 'eventos' : NULL;
   }
 

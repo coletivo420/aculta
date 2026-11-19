@@ -1,0 +1,11 @@
+{
+  "front": "aculta-events",
+  "purpose": "eventos",
+  "origin_env": "EVENTOS_BASE",
+  "source": "tests/browser/eventos/aculta-events/README.md",
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
+  "notes": "Sem rota pública declarada na README. A suíte cobre formulários de organizador e fluxos com sessão. Cobertura fica no script da frente."
+}

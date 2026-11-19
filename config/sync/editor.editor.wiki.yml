@@ -16,6 +16,7 @@ settings:
       - code
       - '|'
       - link
+      - acultaFluentEmoji
       - bulletedList
       - numberedList
       - blockQuote
@@ -44,17 +45,17 @@ settings:
       multiBlock: true
     ckeditor5_sourceEditing:
       allowed_tags:
+        - '<a hreflang title>'
+        - '<blockquote cite>'
+        - '<cite>'
+        - '<dd>'
+        - '<dl>'
+        - '<dt>'
         - '<h2 id>'
         - '<h3 id>'
         - '<h4 id>'
         - '<h5 id>'
         - '<h6 id>'
-        - '<a hreflang title>'
-        - '<blockquote cite>'
-        - '<cite>'
-        - '<dl>'
-        - '<dt>'
-        - '<dd>'
     media_media:
       allow_view_mode_override: false
 image_upload:

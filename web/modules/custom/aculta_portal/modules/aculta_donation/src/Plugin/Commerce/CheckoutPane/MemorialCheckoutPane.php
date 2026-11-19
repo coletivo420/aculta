@@ -30,8 +30,15 @@ class MemorialCheckoutPane extends DonationItemPaneBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin ID for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL) {
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL): static {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition, $checkout_flow);
     $instance->setFormDisplay('memorial');
     return $instance;
@@ -40,31 +47,38 @@ class MemorialCheckoutPane extends DonationItemPaneBase {
   /**
    * {@inheritdoc}
    */
-  public function isVisible() {
+  public function isVisible(): bool {
     $donationItem = $this->getDonationItem();
     if (
       $donationItem instanceof OrderItemInterface
       && $donationItem->hasField('field_designated')
     ) {
       /** @var \Drupal\Core\Field\Plugin\Field\FieldType\BooleanItem|null $designated */
-      $designated = $donationItem->field_designated->first();
-      return !is_null($designated) && $designated->value == 1;
+      $designated = $donationItem->get('field_designated')->first();
+      $val = $designated !== NULL ? $designated->get('value')->getValue() : NULL;
+      return $val === 1 || $val === '1' || $val === TRUE;
     }
     return FALSE;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $pane_form
+   * @param array<mixed> $complete_form
+   * @return array<mixed>
    */
-  public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
+  public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form): array {
     $this->setFormDisplay($this->formMode);
     return parent::buildPaneForm($pane_form, $form_state, $complete_form);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<mixed>
    */
-  public function buildPaneSummary() {
+  public function buildPaneSummary(): array {
     if (!$this->isVisible()) {
       return [];
     }

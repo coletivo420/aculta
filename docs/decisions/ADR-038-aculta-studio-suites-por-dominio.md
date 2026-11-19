@@ -1,3 +1,5 @@
+> **Retificação de 2026-11-05 (responsável):** no purpose `account`, `/` é o Studio (dashboard) e a Conta fica em `/conta`. Ambas em `conta.aculta.*`. A linha da tabela que dizia que `/` é a entrada da Conta fica substituída por esta retificação. `/conta-legada` continua como antes.
+
 # ADR-038 - Suites do ACULTA Studio distribuídas por domínio
 
 > **Retificação de 2026-11-02 (responsável):** os caminhos `/studio/we-sativa` e `/studio/green-stash` foram substituídos. A entrada da Wiki (wiki420) é a raiz `/`; a da loja (loja420) também. WE SATIVA fica em `/we-sativa` (purpose `wiki`) e GREEN STASH em `/green-stash` (purpose `shop`). Os caminhos antigos `/wesativa` e `/greenstash` respondem 404 sem redirect. `/studio` e todos os `/studio/*` respondem 404. O corpo abaixo é o registro histórico da decisão de 2026-10-30 e fica como estava.

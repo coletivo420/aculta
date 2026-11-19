@@ -145,15 +145,19 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
     ]);
 
     $ids = $this->destination->import($row);
-    self::assertGreaterThan(0, (int) $ids[0]);
+    $firstId = reset($ids);
+    self::assertIsNumeric($firstId);
+    self::assertGreaterThan(0, (int) $firstId);
 
-    $post = $this->loadPost((int) reset($ids));
+    $post = $this->loadPost((int) $firstId);
     self::assertSame('en', $post->language()->getId());
     self::assertTrue($post->isPublished());
     self::assertSame('First reply', $post->get('subject')->value);
     self::assertSame((int) $topic->id(), (int) $post->get('topic')->target_id);
-    self::assertSame(10, (int) $post->get('thread_position')->value);
+    $threadPos = $post->get('thread_position')->value;
+    self::assertSame(10, is_numeric($threadPos) ? (int) $threadPos : 0);
     self::assertTrue($post->getEntityType()->hasHandlerClass('moderation'), 'Entity type has moderation handler.');
+    /** @var array<string, array<string, mixed>> $bundles */
     $bundles = $this->container->get('entity_type.bundle.info')->getBundleInfo('aculta_forum_post');
     self::assertSame('aculta_forum_post', $bundles['aculta_forum_post']['workflow'] ?? NULL, 'Bundle workflow exists.');
     self::assertTrue($this->container->get('content_moderation.moderation_information')->isModeratedEntity($post), 'Entity is moderated.');
@@ -172,12 +176,16 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
     [$author, $topic] = $this->prepareForumFixture();
     $original = $this->destinationRow($author, $topic, [], $this->bilingualTranslations('First reply'));
     $ids = $this->destination->import($original);
-    $post_id = (int) reset($ids);
+    $firstId = reset($ids);
+    self::assertIsNumeric($firstId);
+    $post_id = (int) $firstId;
 
     $updated = $this->destinationRow($author, $topic, [], $this->bilingualTranslations('Edited reply'));
     $ids = $this->destination->import($updated, [$post_id]);
+    $updatedId = reset($ids);
+    self::assertIsNumeric($updatedId);
 
-    self::assertSame($post_id, (int) reset($ids));
+    self::assertSame($post_id, (int) $updatedId);
     self::assertSame(1, (int) $this->container->get('entity_type.manager')
       ->getStorage('aculta_forum_post')->getQuery()->accessCheck(FALSE)->count()->execute());
     $post = $this->loadPost($post_id);
@@ -192,7 +200,9 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
     [$author, $topic] = $this->prepareForumFixture();
     $original = $this->destinationRow($author, $topic, [], $this->bilingualTranslations('First reply'));
     $ids = $this->destination->import($original);
-    $post_id = (int) reset($ids);
+    $firstId = reset($ids);
+    self::assertIsNumeric($firstId);
+    $post_id = (int) $firstId;
 
     $changed = $this->destinationRow($author, $topic, ['langcode' => 'pt-br'], [
       'pt-br' => [
@@ -220,11 +230,16 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
     $root_ids = $this->destination->import(
       $this->destinationRow($author, $topic, [], $this->bilingualTranslations('Root')),
     );
-    $root_id = (int) reset($root_ids);
+    $rootFirstId = reset($root_ids);
+    self::assertIsNumeric($rootFirstId);
+    $root_id = (int) $rootFirstId;
+
     $reply_ids = $this->destination->import(
       $this->destinationRow($author, $topic, [], $this->bilingualTranslations('Reply')),
     );
-    $reply_id = (int) reset($reply_ids);
+    $replyFirstId = reset($reply_ids);
+    self::assertIsNumeric($replyFirstId);
+    $reply_id = (int) $replyFirstId;
     self::assertTrue($this->loadPost($reply_id)->get('parent')->isEmpty());
 
     $parent_update = $this->destinationRow($author, $topic, ['cid' => 999], $this->bilingualTranslations('Reply'));
@@ -261,7 +276,9 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
    */
   public function testBodyContractIsEnforced(): void {
     $this->assertRejected($this->row(['translations' => $this->translations(['body_value' => ''])]), 'corpo vazio');
-    $this->assertRejected($this->row(['translations' => $this->translations(['body_format' => 'basic_html'])]), 'formato de texto incompatível');
+    /** @var array<string, mixed> $translations */
+    $translations = $this->translations(['body_format' => 'basic_html']);
+    $this->assertRejected($this->row(['translations' => $translations]), 'formato de texto incompatível');
   }
 
   /**
@@ -332,8 +349,10 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
     );
     $translations = $this->translations(['body_value' => $body]);
     $ids = $this->destination->import($this->destinationRow($author, $topic, [], $translations));
+    $firstId = reset($ids);
+    self::assertIsNumeric($firstId);
 
-    self::assertSame($body, $this->loadPost((int) reset($ids))->get('body')->value);
+    self::assertSame($body, $this->loadPost((int) $firstId)->get('body')->value);
   }
 
   /**
@@ -359,6 +378,9 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
 
   /**
    * Builds the destination row the process pipeline would produce.
+   *
+   * @param array<string, mixed> $source
+   * @param array<string, mixed> $translations
    */
   private function destinationRow(User $author, Node $topic, array $source, array $translations): Row {
     $row = $this->row($source + [
@@ -382,6 +404,8 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
 
   /**
    * Builds English and Portuguese translations with the given subject.
+   *
+   * @return array<string, array<string, mixed>>
    */
   private function bilingualTranslations(string $subject): array {
     return [
@@ -447,6 +471,8 @@ final class ForumCommentMigrationDestinationKernelTest extends KernelTestBase {
    *
    * @param array<string, mixed> $overrides
    *   Translation values that replace the defaults.
+   *
+   * @return array<string, array<string, mixed>>
    */
   private function translations(array $overrides = []): array {
     return [

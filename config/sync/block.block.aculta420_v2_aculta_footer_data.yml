@@ -1,0 +1,23 @@
+uuid: e325f84e-4d28-40b0-b080-b916d15e0c87
+langcode: pt-br
+status: true
+dependencies:
+  content:
+    - 'block_content:aculta_institution:80f3fc02-39b5-4386-8a32-78301b635007'
+  module:
+    - block_content
+  theme:
+    - aculta420_v2
+id: aculta420_v2_aculta_footer_data
+theme: aculta420_v2
+region: footer
+weight: 0
+provider: null
+plugin: 'block_content:80f3fc02-39b5-4386-8a32-78301b635007'
+settings:
+  id: 'block_content:80f3fc02-39b5-4386-8a32-78301b635007'
+  label: 'Associação Cultural Antiproibicionista'
+  label_display: '0'
+  provider: block_content
+  view_mode: footer
+visibility: {  }

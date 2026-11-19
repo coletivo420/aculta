@@ -38,7 +38,7 @@ class CepLookupServiceTest extends UnitTestCase {
   /**
    * URLs externas chamadas pelo cliente HTTP simulado.
    *
-   * @var array
+   * @var array<int, string>
    */
   private array $httpCalls = [];
 
@@ -120,7 +120,7 @@ class CepLookupServiceTest extends UnitTestCase {
     );
 
     $address = $service->lookup('13010999');
-
+    $this->assertNotNull($address);
     $this->assertSame('Rua Nova', $address['address_line1']);
     $this->assertSame('Campinas', $address['locality']);
     $this->assertSame(['https://viacep.com.br/ws/13010999/json/'], $this->httpCalls);
@@ -145,7 +145,7 @@ class CepLookupServiceTest extends UnitTestCase {
     );
 
     $address = $service->lookup('13010999');
-
+    $this->assertNotNull($address);
     $this->assertSame('Rua B', $address['address_line1']);
     $this->assertSame(
       ['https://viacep.com.br/ws/13010999/json/', 'https://brasilapi.com.br/api/cep/v2/13010999'],
@@ -177,7 +177,7 @@ class CepLookupServiceTest extends UnitTestCase {
     $cache->expects($this->never())->method('set');
 
     $address = $this->service(cache: $cache)->lookup('13010999');
-
+    $this->assertNotNull($address);
     $this->assertSame('Do cache', $address['address_line1']);
     $this->assertSame([], $this->httpCalls);
   }
@@ -207,7 +207,7 @@ class CepLookupServiceTest extends UnitTestCase {
     );
 
     $address = $service->lookup('13010999');
-
+    $this->assertNotNull($address);
     $this->assertSame('Campinas', $address['locality']);
     $this->assertSame(['https://brasilapi.com.br/api/cep/v2/13010999'], $this->httpCalls);
   }

@@ -16,6 +16,8 @@ final class CourseAnswer {
   public const STATE_GRADED = 'graded';
 
   /**
+   * Constrói uma resposta de aluno.
+   *
    * @param int $id
    *   Identificador da resposta na fonte atual.
    * @param int $activityId

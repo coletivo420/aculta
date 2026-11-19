@@ -601,8 +601,6 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    *   The form array, modified by reference.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
-   *
-   * @phpstan-ignore-next-line missingType.iterableValue (Form API passes untyped array)
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
     // Remove card method IDs that are no longer valid for selected types.
@@ -658,8 +656,6 @@ class CheckoutPro extends OffsitePaymentGatewayBase implements SupportsRefundsIn
    *   The form array, modified by reference.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
-   *
-   * @phpstan-ignore-next-line missingType.iterableValue (Form API passes untyped array)
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     parent::submitConfigurationForm($form, $form_state);

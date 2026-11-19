@@ -1,0 +1,40 @@
+/* Cartão do Post do Fórum Espelhado: mesmo layout espelhado dos comentários pares.
+   Desktop: autor, faixa e reações à direita; ações à esquerda. Mobile: só a faixa muda de lado. */
+.forum-reply-mirror > .forum-post-card {
+  position: relative;
+}
+
+.forum-reply-mirror > .forum-post-card > .forum-post-card__stripe {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+  inline-size: .25rem;
+  block-size: auto;
+  background-color: var(--button-danger-bg);
+}
+
+.forum-reply-mirror > .forum-post-card > .forum-post-card__inner > .forum-post-card__footer {
+  border-block-start-color: var(--color-brand-primary);
+}
+
+@media (min-width: 48rem) {
+  .forum-reply-mirror > .forum-post-card > .forum-post-card__inner {
+    grid-template-areas:
+      "body author"
+      "body author"
+      "footer author";
+    grid-template-columns: minmax(0, 1fr) 14rem;
+  }
+
+  .forum-reply-mirror > .forum-post-card > .forum-post-card__inner > .forum-post-card__header {
+    padding-inline-start: var(--spacing-lg);
+    padding-inline-end: 0;
+    border-inline-end: 0;
+    border-inline-start: 1px solid var(--color-border-subtle);
+  }
+
+  .forum-reply-mirror > .forum-post-card > .forum-post-card__inner > .forum-post-card__footer {
+    flex-direction: row-reverse;
+  }
+}

@@ -1,0 +1,9 @@
+{% set classes = ['statistics-metric-card', 'statistics-metric-card--' ~ tone] %}
+<article{{ attributes.addClass(classes) }}>
+  <p class="statistics-metric-card__label">{{ label }}</p>
+  <p class="statistics-metric-card__value">
+    <span class="statistics-metric-card__number">{{ value }}</span>
+    {% if unit %}<span class="statistics-metric-card__unit">{{ unit }}</span>{% endif %}
+  </p>
+  {% if hint %}<p class="statistics-metric-card__hint">{{ hint }}</p>{% endif %}
+</article>

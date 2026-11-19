@@ -135,14 +135,12 @@ final class aculta_H5PLibraryAdmin implements ContainerInjectionInterface {
     $build['title_add'] = [
       '#type' => 'html_tag',
       '#tag' => 'h3',
-      '#attributes' => ['data-portal-ui' => 'h5p-admin-header'],
       '#value' => $this->translation->translate('Adicionar bibliotecas'),
     ];
     $build['form'] = $this->h5pFormBuilder->getForm('Drupal\aculta_lms_h5p\Form\aculta_H5PLibraryUploadForm');
     $build['title_installed'] = [
       '#type' => 'html_tag',
       '#tag' => 'h3',
-      '#attributes' => ['data-portal-ui' => 'h5p-admin-header'],
       '#value' => $this->translation->translate('Bibliotecas instaladas'),
     ];
     $build['container'] = ['#markup' => '<div id="h5p-admin-container"></div>'];

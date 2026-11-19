@@ -1,17 +1,22 @@
 <?php
 
 /**
- * Exclui usuários de teste criados por agentes (regra em docs/portal/GUARDRAILS.md).
+ * @file
+ * Exclui usuários de teste criados por agentes.
+ *
+ * Regra em docs/portal/GUARDRAILS.md.
  *
  * Executar pelo Drush, com Drupal inicializado:
- *   php vendor/drush/drush/drush.php php:script scripts/cleanup-agent-test-users.php          (simulação)
- *   php vendor/drush/drush/drush.php php:script scripts/cleanup-agent-test-users.php -- --apply
+ *   php vendor/drush/drush/drush.php php:script
+ *     scripts/cleanup-agent-test-users.php          (simulação)
+ *   php vendor/drush/drush/drush.php php:script
+ *     scripts/cleanup-agent-test-users.php -- --apply.
  *
- * Critério (os dois precisam valer): nome começa com "agente-teste-" E e-mail termina em "@testuser.invalid".
- * Contas que não cumprem os dois critérios (ex.: teste.comum, autores, administradores) não são tocadas.
+ * Critério (os dois precisam valer): nome começa com "agente-teste-" E
+ * e-mail termina em "@testuser.invalid".
+ * Contas que não cumprem os dois critérios (ex.: teste.comum, autores,
+ * administradores) não são tocadas.
  */
-
-use Drupal\user\Entity\User;
 
 $apply = in_array('--apply', $_SERVER['argv'] ?? [], TRUE);
 $storage = \Drupal::entityTypeManager()->getStorage('user');

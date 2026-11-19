@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_mailer\Api;
 
+
+use Drupal\aculta_portal\Domain\SiteKey;
 /**
  * URL absoluta de caminhos do site público para e-mails, pelo propósito principal do ambiente.
  *
@@ -13,17 +15,17 @@ namespace Drupal\aculta_mailer\Api;
 final class PublicUrl implements PublicUrlInterface {
 
   public function __construct(
-    private readonly ?object $domainPurposes = NULL,
+    private readonly ?object $siteManagers = NULL,
   ) {}
 
   /**
    * {@inheritdoc}
    */
   public function absolute(string $path): string {
-    if ($this->domainPurposes === NULL || !method_exists($this->domainPurposes, 'pathUrl')) {
+    if ($this->siteManagers === NULL || !method_exists($this->siteManagers, 'pathUrl')) {
       return '';
     }
-    $url = $this->domainPurposes->pathUrl('main', $path);
+    $url = $this->siteManagers->pathUrl(SiteKey::Main, $path);
     return $url === NULL ? '' : $url->setAbsolute(TRUE)->toString();
   }
 

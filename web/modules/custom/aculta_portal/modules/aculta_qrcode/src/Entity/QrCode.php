@@ -74,21 +74,24 @@ final class QrCode extends EditorialContentEntityBase implements EntityOwnerInte
    * Código público de 12 caracteres (minúsculas e dígitos).
    */
   public function getCode(): string {
-    return (string) $this->get('code')->value;
+    $val = $this->get('code')->value;
+    return is_scalar($val) ? (string) $val : '';
   }
 
   /**
    * Destino absoluto `http` ou `https`, validado na gravação.
    */
   public function getTargetUrl(): string {
-    return (string) $this->get('target_url')->value;
+    $val = $this->get('target_url')->value;
+    return is_scalar($val) ? (string) $val : '';
   }
 
   /**
    * Identificador do preset visual associado.
    */
   public function getPresetId(): string {
-    return (string) $this->get('preset')->value;
+    $val = $this->get('preset')->value;
+    return is_scalar($val) ? (string) $val : '';
   }
 
   /**
@@ -96,7 +99,7 @@ final class QrCode extends EditorialContentEntityBase implements EntityOwnerInte
    */
   public function getForeground(): ?string {
     $value = $this->get('foreground')->value;
-    return $value === NULL || $value === '' ? NULL : (string) $value;
+    return is_scalar($value) && (string) $value !== '' ? (string) $value : NULL;
   }
 
   /**
@@ -104,7 +107,7 @@ final class QrCode extends EditorialContentEntityBase implements EntityOwnerInte
    */
   public function getBackground(): ?string {
     $value = $this->get('background')->value;
-    return $value === NULL || $value === '' ? NULL : (string) $value;
+    return is_scalar($value) && (string) $value !== '' ? (string) $value : NULL;
   }
 
   /**
@@ -112,7 +115,7 @@ final class QrCode extends EditorialContentEntityBase implements EntityOwnerInte
    */
   public function getCaption(): ?string {
     $value = $this->get('caption')->value;
-    return $value === NULL || $value === '' ? NULL : (string) $value;
+    return is_scalar($value) && (string) $value !== '' ? (string) $value : NULL;
   }
 
   /**
@@ -126,18 +129,24 @@ final class QrCode extends EditorialContentEntityBase implements EntityOwnerInte
    * Início da validade em timestamp Unix, ou NULL para sem início.
    */
   public function getValidFrom(): ?int {
-    return $this->get('valid_from')->date?->getTimestamp();
+    $field = $this->get('valid_from');
+    $date = $field->date ?? NULL;
+    return $date instanceof \Drupal\Core\Datetime\DrupalDateTime ? $date->getTimestamp() : NULL;
   }
 
   /**
    * Fim da validade em timestamp Unix, ou NULL para sem fim.
    */
   public function getValidUntil(): ?int {
-    return $this->get('valid_until')->date?->getTimestamp();
+    $field = $this->get('valid_until');
+    $date = $field->date ?? NULL;
+    return $date instanceof \Drupal\Core\Datetime\DrupalDateTime ? $date->getTimestamp() : NULL;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<\Drupal\Core\Field\FieldDefinitionInterface>
    */
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
@@ -226,8 +235,12 @@ final class QrCode extends EditorialContentEntityBase implements EntityOwnerInte
       ->setDisplayConfigurable('form', TRUE)
       ->setDisplayConfigurable('view', TRUE);
 
-    $fields['uid']->setRevisionable(TRUE);
-    $fields['status']->setRevisionable(TRUE);
+    if ($fields['uid'] instanceof BaseFieldDefinition) {
+      $fields['uid']->setRevisionable(TRUE);
+    }
+    if ($fields['status'] instanceof BaseFieldDefinition) {
+      $fields['status']->setRevisionable(TRUE);
+    }
 
     $fields['created'] = BaseFieldDefinition::create('created')
       ->setLabel(new TranslatableMarkup('Criado em'))

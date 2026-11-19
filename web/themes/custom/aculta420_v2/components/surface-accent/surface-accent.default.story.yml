@@ -1,0 +1,14 @@
+name: Moldura tricolor contínua
+description: Moldura com faixa superior tricolor e lateral esquerda verde contínua, fiel ao bloco tricolor.
+component: aculta420_v2:surface-accent
+props:
+  accent: tricolor
+  position: top
+  tone: green-soft
+  radius: lg
+  spacing: normal
+  elevation: subtle
+slots:
+  content:
+    type: inline_template
+    template: '<p>Superfície com faixa tricolor contínua superior e lateral verde contínua.</p>'

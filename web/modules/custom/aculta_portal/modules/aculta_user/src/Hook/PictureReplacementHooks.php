@@ -21,7 +21,8 @@ use Drupal\user\UserInterface;
  */
 final class PictureReplacementHooks {
 
-  /** Pasta das cópias do acervo de avatares. Essas não são fotos enviadas pela pessoa. */
+  /**
+   * Pasta das cópias do acervo de avatares. Essas não são fotos enviadas pela pessoa. */
   private const ACERVO_PREFIX = 'public://pictures/acervo/';
 
   public function __construct(
@@ -48,7 +49,7 @@ final class PictureReplacementHooks {
       return;
     }
     $file = $this->entityTypeManager->getStorage('file')->load($old);
-    if ($file !== NULL && !str_starts_with($file->getFileUri(), self::ACERVO_PREFIX) && !$this->isUsedByOthers($old)) {
+    if ($file !== NULL && !$this->isAcervoUri($file->getFileUri()) && !$this->isUsedByOthers($old)) {
       $this->fileRemover->delete($file, 'troca de foto de perfil');
     }
   }
@@ -67,12 +68,13 @@ final class PictureReplacementHooks {
     }
     $old = (int) ($original->get('user_picture')->target_id ?? 0);
     $file = $old > 0 ? $this->entityTypeManager->getStorage('file')->load($old) : NULL;
-    if ($file !== NULL && !str_starts_with($file->getFileUri(), self::ACERVO_PREFIX)) {
+    if ($file !== NULL && !$this->isAcervoUri($file->getFileUri())) {
       $this->avatarPool->assignPresave($account);
     }
   }
 
-  /** Verdadeiro se alguma conta ainda referencia a foto. */
+  /**
+   * Verdadeiro se alguma conta ainda referencia a foto. */
   private function isUsedByOthers(int $fid): bool {
     return $this->entityTypeManager->getStorage('user')->getQuery()
       ->accessCheck(FALSE)
@@ -80,6 +82,13 @@ final class PictureReplacementHooks {
       ->range(0, 1)
       ->count()
       ->execute() > 0;
+  }
+
+  /**
+   * Verdadeiro se a URI é do acervo do sistema (URI nula não é).
+   */
+  private function isAcervoUri(?string $uri): bool {
+    return is_string($uri) && str_starts_with($uri, self::ACERVO_PREFIX);
   }
 
 }

@@ -8,7 +8,8 @@ use Drupal\aculta_events\Entity\Event;
 use Drupal\aculta_events\Entity\EventLocation;
 use Drupal\aculta_index\Plugin\Block\RelatedContentBlock;
 use Drupal\aculta_index\Queue\ContentIndexWorkManager;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_user\Organization\OrganizationAccessService;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Render\Element;
@@ -51,6 +52,8 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     'aculta_calendar',
     'aculta_index',
     'aculta_events',
+    'aculta_file_uploader',
+    'file',
   ];
 
   /**
@@ -58,7 +61,12 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
-    $container->setDefinition('aculta_portal.domain_purpose', (new Definition(DomainPurposeManager::class, [
+    // This partial Kernel does not install aculta_user's full dependency graph.
+    $container->setDefinition(
+      'aculta_user.organization_access_service',
+      (new Definition(OrganizationAccessService::class))->setSynthetic(TRUE)->setPublic(TRUE),
+    );
+    $container->setDefinition('aculta_portal.domain_site', (new Definition(DomainSiteManager::class, [
       new Reference('entity_type.manager'),
       new Reference('domain.negotiator'),
       new Reference('config.factory'),
@@ -71,6 +79,10 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->container->set(
+      'aculta_user.organization_access_service',
+      (new \ReflectionClass(OrganizationAccessService::class))->newInstanceWithoutConstructor(),
+    );
     $this->installEntitySchema('user');
     $this->installEntitySchema('taxonomy_term');
     $this->installEntitySchema('domain');
@@ -116,7 +128,6 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     $blockManager = $this->container->get('plugin.manager.block');
     $this->assertTrue($blockManager->hasDefinition('aculta_index_related_content'));
 
-    /** @var \Drupal\aculta_index\Plugin\Block\RelatedContentBlock $block */
     $block = $blockManager->createInstance('aculta_index_related_content');
     $this->assertInstanceOf(RelatedContentBlock::class, $block);
 
@@ -232,32 +243,52 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
 
     $build = $block->build();
     $this->assertNotEmpty($build);
-    $this->assertSame('item_list', $build['#theme']);
-    $this->assertSame('Locais do Festival', (string) $build['#title']);
-    $this->assertCount(2, $build['#items']);
-    $this->assertSame('related-content-block', $build['#attributes']['data-portal-ui']);
+    $this->assertSame('component', $build['#type']);
+    $this->assertSame('aculta420_v2:related-content', $build['#component']);
+    $content = $this->contentSlot($build);
+    $this->assertSame('item_list', $content['#theme'] ?? NULL);
+    $contentTitle = $content['#title'] ?? NULL;
+    self::assertIsString($contentTitle);
+    $this->assertSame('Locais do Festival', $contentTitle);
+    $items = $this->contentItems($build);
+    $this->assertCount(2, $items);
     $this->assertArrayNotHasKey('#attached', $build);
 
     // Check rendered item attributes and sub-elements.
-    $firstItem = $build['#items'][0];
+    $firstItem = $items[0] ?? NULL;
+    self::assertIsArray($firstItem);
     $this->assertSame('container', $firstItem['#type']);
-    $this->assertSame('related-content-item', $firstItem['#attributes']['data-portal-ui']);
-    $this->assertSame('aculta_event_location', $firstItem['#attributes']['data-entity-type']);
+    $attributes = $firstItem['#attributes'] ?? NULL;
+    self::assertIsArray($attributes);
+    $this->assertSame('related-content-item', $attributes['data-portal-ui'] ?? NULL);
+    $this->assertSame('aculta_event_location', $attributes['data-entity-type'] ?? NULL);
     $this->assertArrayHasKey('title', $firstItem);
     $this->assertArrayHasKey('badge', $firstItem);
     $this->assertArrayHasKey('summary', $firstItem);
-    $this->assertSame('related-content-link', $firstItem['title']['#attributes']['data-portal-ui']);
-    $this->assertSame('related-content-badge', $firstItem['badge']['#attributes']['data-portal-ui']);
-    $this->assertSame('related-content-summary', $firstItem['summary']['#attributes']['data-portal-ui']);
+    foreach ([
+      'title' => 'related-content-link',
+      'badge' => 'related-content-badge',
+      'summary' => 'related-content-summary',
+    ] as $key => $expected) {
+      $element = $firstItem[$key] ?? NULL;
+      self::assertIsArray($element);
+      $elementAttributes = $element['#attributes'] ?? NULL;
+      self::assertIsArray($elementAttributes);
+      $this->assertSame($expected, $elementAttributes['data-portal-ui'] ?? NULL);
+    }
 
     // Verify cache tags include source event and both location entities.
-    $cacheTags = $build['#cache']['tags'];
+    $cache = $build['#cache'] ?? NULL;
+    self::assertIsArray($cache);
+    $cacheTags = $cache['tags'] ?? NULL;
+    self::assertIsArray($cacheTags);
     $this->assertContains('aculta_event:' . $event->id(), $cacheTags);
     $this->assertContains('aculta_event_location:' . $loc1->id(), $cacheTags);
     $this->assertContains('aculta_event_location:' . $loc2->id(), $cacheTags);
 
     // Verify cache contexts include languages and user permissions.
-    $cacheContexts = $build['#cache']['contexts'];
+    $cacheContexts = $cache['contexts'] ?? NULL;
+    self::assertIsArray($cacheContexts);
     $this->assertContains('languages:language_interface', $cacheContexts);
     $this->assertContains('user.permissions', $cacheContexts);
   }
@@ -308,8 +339,15 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
 
     $build = $block->build();
     $this->assertNotEmpty($build);
-    $this->assertCount(1, $build['#items']);
-    $this->assertSame('Casa de Cultura', (string) $build['#items'][0]['title']['#title']);
+    $items = $this->contentItems($build);
+    $this->assertCount(1, $items);
+    $firstItem = $items[0] ?? NULL;
+    self::assertIsArray($firstItem);
+    $title = $firstItem['title'] ?? NULL;
+    self::assertIsArray($title);
+    $titleValue = $title['#title'] ?? NULL;
+    self::assertIsString($titleValue);
+    $this->assertSame('Casa de Cultura', $titleValue);
   }
 
   /**
@@ -352,7 +390,7 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
 
     $build = $block->build();
     $this->assertNotEmpty($build);
-    $this->assertCount(1, $build['#items']);
+    $this->assertCount(1, $this->contentItems($build));
   }
 
   /**
@@ -397,8 +435,15 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
 
     $build = $block->build();
     $this->assertNotEmpty($build);
-    $this->assertCount(1, $build['#items']);
-    $this->assertSame('Praça Pública', (string) $build['#items'][0]['title']['#title']);
+    $items = $this->contentItems($build);
+    $this->assertCount(1, $items);
+    $firstItem = $items[0] ?? NULL;
+    self::assertIsArray($firstItem);
+    $title = $firstItem['title'] ?? NULL;
+    self::assertIsArray($title);
+    $titleValue = $title['#title'] ?? NULL;
+    self::assertIsString($titleValue);
+    $this->assertSame('Praça Pública', $titleValue);
 
     // Make first location private as well.
     $locPublic->set('field_status', 'privado');
@@ -408,14 +453,14 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     // All targets private => block fails closed and returns empty renderable.
     $this->assertTrue(Element::isEmpty($buildAllPrivate));
     $this->assertArrayNotHasKey('#theme', $buildAllPrivate);
-    $this->assertArrayNotHasKey('#items', $buildAllPrivate);
+    $this->assertArrayNotHasKey('#slots', $buildAllPrivate);
   }
 
   /**
    * Builds and activates an index generation from existing entities.
    */
   private function buildAndActivateGeneration(): void {
-    /** @var \Drupal\aculta_index\Maintenance\ContentIndexRebuilder $rebuilder */
+    /** @var \Drupal\aculta_index\Rebuild\ContentIndexRebuilder $rebuilder */
     $rebuilder = $this->container->get('aculta_index.rebuilder');
     $generationId = $rebuilder->start();
     $complete = FALSE;
@@ -435,10 +480,49 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
     $worker = $this->container->get('plugin.manager.queue_worker')
       ->createInstance(ContentIndexWorkManager::QUEUE_ID);
     $queue = $this->container->get('queue')->get(ContentIndexWorkManager::QUEUE_ID);
-    while ($item = $queue->claimItem()) {
-      $worker->processItem($item->data);
+    while (TRUE) {
+      $item = $queue->claimItem();
+      if (!is_object($item)) {
+        break;
+      }
+      $data = get_object_vars($item)['data'] ?? NULL;
+      $worker->processItem($data);
       $queue->deleteItem($item);
     }
+  }
+
+  /**
+   * Gets the component's content slot after validating its render-array shape.
+   *
+   * @param mixed $build
+   *   Block render array.
+   *
+   * @return array<mixed>
+   *   Content slot values.
+   */
+  private function contentSlot(mixed $build): array {
+    self::assertIsArray($build);
+    $slots = $build['#slots'] ?? NULL;
+    self::assertIsArray($slots);
+    $content = $slots['content'] ?? NULL;
+    self::assertIsArray($content);
+    return $content;
+  }
+
+  /**
+   * Gets the items from the related-content render slot.
+   *
+   * @param mixed $build
+   *   Block render array.
+   *
+   * @return array<mixed>
+   *   Render items.
+   */
+  private function contentItems(mixed $build): array {
+    $content = $this->contentSlot($build);
+    $items = $content['#items'] ?? NULL;
+    self::assertIsArray($items);
+    return $items;
   }
 
 }

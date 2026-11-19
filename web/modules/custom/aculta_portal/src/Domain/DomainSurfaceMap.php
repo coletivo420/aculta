@@ -7,17 +7,21 @@ namespace Drupal\aculta_portal\Domain;
 /**
  * Mapa único de superfícies do aculta_portal (Fase 3.1, sem mudança de valor).
  *
- * Antes desta classe, os mapas viviam em DomainPurposeManager, em
- * PurposeFrontPathProcessor e em FrontPathPolicy. Os valores são os mesmos.
+ * Antes desta classe, os mapas viviam em DomainSiteManager, em
+ * SiteFrontPathProcessor e em FrontPathPolicy. Os valores são os mesmos.
  * Quem consome deve ler daqui. A configuração por ambiente virá nas fases
  * seguintes (docs do submódulo aculta_paths).
  */
 final class DomainSurfaceMap {
 
-  /** Superfície protegida: domínio principal (painel, carrinho, pagamento). */
+  /**
+   * Superfície protegida: domínio principal (painel, carrinho, pagamento).
+   */
   public const MAIN = 'main';
 
-  /** Superfície de Conta. */
+  /**
+   * Superfície de Conta.
+   */
   public const ACCOUNT = 'account';
 
   /**
@@ -46,7 +50,8 @@ final class DomainSurfaceMap {
     'shop' => '/loja',
     'forum' => '/discussoes',
     'links' => '/redes-sociais',
-    'account' => '/conta',
+    // Internal route used to serve the Studio dashboard at the account root.
+    'account' => '/aculta-studio-dashboard',
     'eventos' => '/eventos',
   ];
 

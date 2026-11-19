@@ -251,7 +251,7 @@ Riscos abertos da estado B:
 ## 0.1.0-dev.5 — spike de isolamento do DOCX (evidência)
 
 Medido no Chromium 155 com a sessão X11 do sistema (`DISPLAY=:0`, janela visível, depuração remota
-via CDP). Servidor de teste local em 127.0.0.1, sem o Runtime. Cada caso rodou duas vezes; os
+via CDP). Servidor de desenvolvimento local em 127.0.0.1, sem o Runtime. Cada caso rodou duas vezes; os
 resultados foram idênticos.
 
 | Caso | Sandbox | Renderizou | Script do `altChunk` executou | Acesso ao DOM do pai | Requisição a rastreador externo |
@@ -389,7 +389,7 @@ O status atual do componente está em [`status/aculta_document_viewer.yml`](../o
 | Fronteira módulo-tema | 1 falha: `aculta_mailer` | dívida preexistente de outra frente |
 | Pacotes próprios | 3 falhas em fixtures de outros módulos de teste | dívida preexistente; os fixtures do spike foram corrigidos |
 | Atributos documentados (`validate-portal-ui-docs`) | 13 falhas, nenhuma dos atributos do leitor | dívida preexistente de outras frentes |
-| Drupal 11+ do Portal (`validate-aculta-portal-drupal11`) | falhava só pelo índice de status | corrigido pelo status do módulo |
+| Drupal 11+ do Portal (`validate-aculta-portal-drupal12`) | falhava só pelo índice de status | corrigido pelo status do módulo |
 | Endereços de ambiente | 26 ocorrências em `aculta_statistics` e `aculta_qrcode` | dívida preexistente; nenhuma no leitor |
 | `.htaccess` (diretiva `.mjs`) | 2 falhas: a regra existe no `HEAD`, mas foi removida na árvore de trabalho por uma alteração não commitada de outra frente | **risco de release**: não é desta frente, e não foi revertido |
 | `aculta_image` | PASS | verificado |

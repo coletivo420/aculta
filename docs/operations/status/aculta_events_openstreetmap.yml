@@ -7,9 +7,10 @@ progress_note: >-
   (changeset 191197897), atualizado pelo caminho real do módulo
   (OpenStreetMapApiClient::update, changeset 191197899, versão 2) e removido
   (changeset 191197900); a verificação posterior confirmou a ausência do nó.
+  A triagem Semgrep escapou lat/lon na tela de revisão após validação numérica e geográfica.
   Nenhum token ou corpo sensível foi impresso. Dev.1: E10-A/E10-B com OAuth2
   pelo popup, endpoint explícito por ambiente, token cifrado no State e Kernel
   de segurança 4 testes/53 assertions PASS (12 depreciações); a credencial única
   de produção é a exceção registrada em docs/operations/SECRETS.md; token
   conectado e leitura da API ativa confirmada.
-next_phase: 'Revisar termos ODbL e atribuição antes de qualquer envio fora do teste; depois avaliar o fechamento do E10 e a promoção junto do Events.'
+next_phase: 'Continuar a triagem Semgrep/refatoração de serviços do módulo; depois revisar termos ODbL e atribuição antes de qualquer envio fora do teste e avaliar o fechamento do E10 junto do Events.'

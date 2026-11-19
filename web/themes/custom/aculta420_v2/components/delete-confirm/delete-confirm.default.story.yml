@@ -1,0 +1,10 @@
+name: Confirmação de exclusão
+description: Janela de confirmação de exclusão de resposta, com ação vermelha e cancelar secundário.
+component: aculta420_v2:delete-confirm
+props:
+  target_id: delete-confirm-story
+  title: Excluir resposta?
+  message: Esta ação não pode ser desfeita.
+  confirm_label: Excluir
+  cancel_label: Cancelar
+  confirm_url: /example/confirm-delete

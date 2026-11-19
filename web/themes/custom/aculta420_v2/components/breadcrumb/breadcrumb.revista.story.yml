@@ -1,0 +1,9 @@
+name: Revista
+props:
+  label: Navegação estrutural
+  sessao: revista
+  variant: padrao
+  trail:
+    - label: Revista 420
+      url: /revista
+  current: Cultura e território

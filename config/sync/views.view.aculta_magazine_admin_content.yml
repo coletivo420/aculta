@@ -11,9 +11,9 @@ dependencies:
 _core:
   default_config_hash: VhgEYFEzezna1qjycmr6NgssQgyiLfUvOv-iB_a_I6o
 id: aculta_magazine_admin_content
-label: Revista — conteúdo editorial
+label: 'Revista — conteúdo editorial'
 module: node
-description: Conteúdo editorial da Revista ACULTA, separado dos demais conteúdos administrativos.
+description: 'Conteúdo editorial da Revista ACULTA, separado dos demais conteúdos administrativos.'
 tag: default
 base_table: node_field_data
 base_field: nid
@@ -24,7 +24,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: Conteúdo da Revista
+      title: 'Conteúdo da Revista'
       fields:
         node_bulk_form:
           id: node_bulk_form
@@ -72,7 +72,7 @@ display:
           entity_type: node
           entity_field: type
           plugin_id: field
-          label: Tipo de conteúdo
+          label: 'Tipo de conteúdo'
           exclude: false
           alter:
             alter_text: false
@@ -118,7 +118,7 @@ display:
           settings:
             link: false
           group_column: target_id
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
@@ -168,7 +168,7 @@ display:
           type: boolean
           settings:
             format: custom
-            format_custom_false: Não publicado
+            format_custom_false: 'Não publicado'
             format_custom_true: Publicado
         changed:
           id: changed
@@ -258,7 +258,7 @@ display:
             link_to_entity: false
             native_language: false
           group_column: value
-          group_columns: {}
+          group_columns: {  }
           group_rows: true
           delta_limit: 0
           delta_offset: 0
@@ -323,24 +323,24 @@ display:
           pagination_heading_level: h4
           items_per_page: 50
           tags:
-            next: Avançar ›
-            previous: ‹ Voltar
-            first: « Primeiro
-            last: Último »
+            next: 'Avançar ›'
+            previous: '‹ Voltar'
+            first: '« Primeiro'
+            last: 'Último »'
       exposed_form:
         type: basic
         options:
           submit_button: Filtrar
           reset_button: true
           reset_button_label: Redefinir
-          exposed_sorts_label: Ordenar por
+          exposed_sorts_label: 'Ordenar por'
           expose_sort_order: true
           sort_asc_label: Ascendente
           sort_desc_label: Decrescente
       access:
         type: perm
         options:
-          perm: administer site configuration
+          perm: 'administer site configuration'
       cache:
         type: tag
       empty:
@@ -350,9 +350,9 @@ display:
           field: area_text_custom
           plugin_id: text_custom
           empty: true
-          content: No content available.
-      sorts: {}
-      arguments: {}
+          content: 'No content available.'
+      sorts: {  }
+      arguments: {  }
       filters:
         title:
           id: title
@@ -375,7 +375,7 @@ display:
             use_operator: false
             operator: title_op
             operator_limit_selection: false
-            operator_list: {}
+            operator_list: {  }
             identifier: title
             required: false
             remember: false
@@ -392,8 +392,8 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {}
-            group_items: {}
+            default_group_multiple: {  }
+            group_items: {  }
         type:
           id: type
           table: node_field_data
@@ -411,12 +411,12 @@ display:
           exposed: false
           expose:
             operator_id: type_op
-            label: Tipo de conteúdo
+            label: 'Tipo de conteúdo'
             description: ''
             use_operator: false
             operator: type_op
             operator_limit_selection: false
-            operator_list: {}
+            operator_list: {  }
             identifier: type
             required: false
             remember: false
@@ -434,8 +434,8 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {}
-            group_items: {}
+            default_group_multiple: {  }
+            group_items: {  }
         status:
           id: status
           table: node_field_data
@@ -457,7 +457,7 @@ display:
             use_operator: false
             operator: status_op
             operator_limit_selection: false
-            operator_list: {}
+            operator_list: {  }
             identifier: status
             required: false
             remember: false
@@ -474,14 +474,14 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {}
+            default_group_multiple: {  }
             group_items:
               1:
                 title: Publicado
                 operator: '='
                 value: '1'
               2:
-                title: Não publicado
+                title: 'Não publicado'
                 operator: '='
                 value: '0'
         langcode:
@@ -495,7 +495,7 @@ display:
           entity_field: langcode
           plugin_id: language
           operator: in
-          value: {}
+          value: {  }
           group: 1
           exposed: true
           expose:
@@ -505,7 +505,7 @@ display:
             use_operator: false
             operator: langcode_op
             operator_limit_selection: false
-            operator_list: {}
+            operator_list: {  }
             identifier: langcode
             required: false
             remember: false
@@ -523,20 +523,8 @@ display:
             multiple: false
             remember: false
             default_group: All
-            default_group_multiple: {}
-            group_items: {}
-        status_extra:
-          id: status_extra
-          table: node_field_data
-          field: status_extra
-          entity_type: node
-          plugin_id: node_status
-          operator: '='
-          value: false
-          group: 1
-          expose:
-            operator_limit_selection: false
-            operator_list: {}
+            default_group_multiple: {  }
+            group_items: {  }
       filter_groups:
         operator: AND
         groups:
@@ -544,7 +532,7 @@ display:
       style:
         type: table
         options:
-          grouping: {}
+          grouping: {  }
           row_class: ''
           default_row_class: true
           columns:
@@ -648,42 +636,42 @@ display:
           plugin_id: standard
           required: true
       show_admin_links: false
-      display_extenders: {}
+      display_extenders: {  }
     cache_metadata:
       max-age: 0
       contexts:
-      - languages:language_content
-      - languages:language_interface
-      - url
-      - url.query_args
-      - user
-      - user.node_grants:view
-      - user.permissions
-      tags: {}
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
   page_magazine:
     id: page_magazine
     display_title: Revista
     display_plugin: page
     position: 1
     display_options:
-      display_extenders: {}
+      display_extenders: {  }
       path: painel-administrativo/revista/publicacoes
       menu:
         type: none
       tab_options:
         type: normal
         title: Conteúdo
-        description: Find and manage content
+        description: 'Find and manage content'
         weight: -10
         menu_name: admin
     cache_metadata:
       max-age: 0
       contexts:
-      - languages:language_content
-      - languages:language_interface
-      - url
-      - url.query_args
-      - user
-      - user.node_grants:view
-      - user.permissions
-      tags: {}
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - user
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }

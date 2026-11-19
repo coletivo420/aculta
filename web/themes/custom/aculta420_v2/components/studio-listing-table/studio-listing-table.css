@@ -1,0 +1,46 @@
+.studio__listing-wrap {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+
+.studio__listing {
+  color: var(--color-text-primary);
+  border-collapse: collapse;
+  font-family: var(--font-family-base);
+  inline-size: 100%;
+  max-inline-size: none;
+  margin-block: var(--spacing-lg);
+}
+
+.studio__listing :is(td, th) {
+  padding-block: .5em;
+  padding-inline: 1em;
+  vertical-align: top;
+  border-block-end: 1px solid var(--color-border);
+}
+
+.studio__listing tbody tr:hover {
+  background: var(--color-surface-highlight);
+}
+
+.studio__listing :is(td, th):first-child {
+  padding-inline-start: 0;
+}
+
+.studio__listing :is(td, th):last-child {
+  padding-inline-end: 0;
+}
+
+.studio__listing th {
+  text-align: start;
+  font-weight: 600;
+}
+
+.studio__listing thead th {
+  border-block-end-color: var(--color-border);
+}
+
+.studio__listing p {
+  margin: 0;
+}

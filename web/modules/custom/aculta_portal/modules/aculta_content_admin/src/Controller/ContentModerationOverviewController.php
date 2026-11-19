@@ -29,6 +29,9 @@ final class ContentModerationOverviewController extends ControllerBase {
 
   /**
    * Builds the moderated-area links with access-aware cache metadata.
+   *
+   * @return array<mixed>
+   *   Render array.
    */
   public function overview(): array {
     $result = $this->collectionRegistry->forAccount($this->currentUser());

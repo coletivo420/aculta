@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_paths\Service;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -22,19 +23,24 @@ final class DnsStatusChecker {
   private const TTL = 300;
 
   public function __construct(
-    private readonly DomainPurposeManager $purposes,
+    private readonly DomainSiteManager $sites,
     private readonly CacheBackendInterface $cache,
   ) {}
 
   /**
+   * Retorna a situação do DNS de um host, com cache curto.
+   *
+   * @param string $host
+   *   Host cuja situação de DNS será verificada.
+   *
    * @return array{classe: string, texto: string}
-   *   classe: ok, erro ou aviso.
+   *   Classe (ok, erro ou aviso) e texto descritivo da situação.
    */
   public function status(string $host): array {
     $cid = 'aculta_paths:dns:' . $host;
     $cache = $this->cache->get($cid);
-    if ($cache && is_array($cache->data)) {
-      return $cache->data;
+    if ($cache && is_array($cache->data) && isset($cache->data['classe'], $cache->data['texto']) && is_string($cache->data['classe']) && is_string($cache->data['texto'])) {
+      return ['classe' => $cache->data['classe'], 'texto' => $cache->data['texto']];
     }
     $resultado = $this->verificar($host);
     $this->cache->set($cid, $resultado, time() + self::TTL);
@@ -42,10 +48,16 @@ final class DnsStatusChecker {
   }
 
   /**
+   * Classifica o DNS do host em relação ao domínio principal.
+   *
+   * @param string $host
+   *   Host a verificar.
+   *
    * @return array{classe: string, texto: string}
+   *   Classe (ok, erro ou aviso) e texto descritivo da situação.
    */
   private function verificar(string $host): array {
-    $principal = $this->purposes->getDomain(DomainSurfaceMap::MAIN)?->getHostname();
+    $principal = $this->sites->getDomain(SiteKey::Main)?->getHostname();
     if ($principal === NULL || $principal === '') {
       return ['classe' => 'aviso', 'texto' => (string) $this->t('Não verificado: o principal não tem Domain.')];
     }
@@ -61,7 +73,13 @@ final class DnsStatusChecker {
   }
 
   /**
+   * Coleta os registros A e CNAME de um nome.
+   *
+   * @param string $nome
+   *   Nome DNS consultado.
+   *
    * @return array{ips: string[], cnames: string[]}
+   *   Endereços IP e destinos de CNAME encontrados.
    */
   private function registros(string $nome): array {
     $ips = [];
@@ -71,10 +89,10 @@ final class DnsStatusChecker {
       return ['ips' => [], 'cnames' => []];
     }
     foreach ($registros as $registro) {
-      if (($registro['type'] ?? '') === 'A' && isset($registro['ip'])) {
+      if (($registro['type'] ?? '') === 'A' && isset($registro['ip']) && is_scalar($registro['ip'])) {
         $ips[] = (string) $registro['ip'];
       }
-      if (($registro['type'] ?? '') === 'CNAME' && isset($registro['target'])) {
+      if (($registro['type'] ?? '') === 'CNAME' && isset($registro['target']) && is_scalar($registro['target'])) {
         $cnames[] = strtolower(rtrim((string) $registro['target'], '.'));
       }
     }

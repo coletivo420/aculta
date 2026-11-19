@@ -1,0 +1,16 @@
+name: Aula com atividades
+description: Composição da prévia de aula com render array autorizado, conteúdo editorial e tabela de atividades.
+component: aculta420_v2:lms-lesson-page
+slots:
+  content:
+    type: inline_template
+    template: |
+      <div data-aculta-lms="course-preview" class="aculta-lms-course-preview">
+        <a href="/ganjalab">Curso de cultivo responsável</a>
+        <p>Prévia de estudante — somente educadores do curso</p>
+        <h1>Introdução ao cultivo</h1>
+        <p>Conteúdo da aula com links e texto longo que deve refluir sem ampliar a página.</p>
+        <h2>Atividades</h2>
+        <div data-portal-ui="aculta-lms-lesson-preview--activity">Verdadeiro ou falso: o cultivo responsável protege o solo?</div>
+        <p>A prévia não carrega respostas, notas ou dados de estudantes, nem permite enviar respostas.</p>
+      </div>

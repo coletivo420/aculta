@@ -17,6 +17,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
 #[CoversClass(\Drupal\aculta_lms\Access\CertificateIssueAccessCheck::class)]
 final class CertificateIssueAccessCheckTest extends UnitTestCase {
 
+  /**
+   * O acesso por permissão de grupo declara o contexto de permissões do usuário.
+   */
   public function testGroupPermissionAccessDeclaresGroupPermissionContext(): void {
     $account = $this->createMock(AccountProxyInterface::class);
     $account->method('hasPermission')->willReturn(FALSE);

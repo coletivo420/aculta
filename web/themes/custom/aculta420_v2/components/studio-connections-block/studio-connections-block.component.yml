@@ -1,0 +1,59 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Bloco Conexões do Studio Dashboard
+description: Bloco de conexões para o Studio Dashboard com resumo das 3 primeiras conexões ou estado vazio.
+group: Studio
+status: experimental
+props:
+  type: object
+  additionalProperties: false
+  required: [title, empty_message, find_connections_label, find_connections_url]
+  properties:
+    title:
+      title: Título do bloco de conexões
+      type: string
+      default: CONEXÕES
+      description: Cabeçalho apresentado acima da lista ou do estado vazio.
+    connections:
+      title: Conexões aceitas
+      type: array
+      description: Dados das conexões aceitas do usuário atual preparados pelo composer; lista vazia ativa o estado vazio.
+      items:
+        type: object
+        description: Dados de apresentação de uma conexão aceita.
+        required: [name, profile_url]
+        properties:
+          name:
+            type: string
+            description: Nome público da conexão, exibido e usado como texto alternativo padrão do avatar.
+          profile_url:
+            type: string
+            description: Destino do link que permite abrir o perfil público da conexão.
+          avatar_url:
+            type: [string, 'null']
+            description: URL opcional da imagem de perfil preparada pelo producer; null deixa o avatar sem foto.
+          avatar_alt:
+            type: [string, 'null']
+            description: Texto alternativo da imagem de perfil; quando null, o template usa name.
+    empty_message:
+      title: Mensagem sem conexões
+      type: string
+      default: Você ainda não tem conexões
+      description: Mensagem apresentada quando a lista connections está vazia.
+    find_connections_label:
+      title: Texto do link para buscar conexões
+      type: string
+      default: Encontrar conexões
+      description: Rótulo do botão que leva à página para encontrar conexões; aparece no estado vazio.
+    find_connections_url:
+      title: Endereço para buscar conexões
+      type: string
+      description: Destino do botão de busca exibido quando o usuário ainda não tem conexões.
+    all_connections_label:
+      title: Texto do link para todas as conexões
+      type: string
+      default: Ver todas
+      description: Rótulo do botão para abrir a lista completa quando há conexões.
+    all_connections_url:
+      title: Endereço de todas as conexões
+      type: [string, 'null']
+      description: Destino opcional do botão da lista completa; o botão é omitido quando null ou vazio.

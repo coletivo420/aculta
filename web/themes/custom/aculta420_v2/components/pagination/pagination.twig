@@ -1,0 +1,16 @@
+{% if links %}
+  <nav{{ attributes.addClass('pagination') }} aria-label="{{ 'Pagination'|t }}">
+    <p class="visually-hidden">{% if total_pages %}{{ 'Page @current of @total'|t({'@current': current_page, '@total': total_pages}) }}{% else %}{{ 'Page @current'|t({'@current': current_page}) }}{% endif %}</p>
+    <ul class="pagination__list">
+      {% for link in links %}
+        <li class="pagination__item">
+          {% if link.is_active|default(true) %}
+            <a class="pagination__link{{ link.is_current|default(false) ? ' is-current' }}" href="{{ link.url }}"{% if link.is_current|default(false) %} aria-current="page"{% endif %}>{{ link.label }}</a>
+          {% else %}
+            <span class="pagination__link is-disabled" aria-disabled="true">{{ link.label }}</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+{% endif %}

@@ -6,20 +6,31 @@ namespace Drupal\aculta_portal\EventSubscriber;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\social_auth\Event\LoginEvent;
+use Drupal\social_auth\Entity\SocialAuth;
 use Drupal\social_auth\Event\SocialAuthEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-/** Stores the Google account email needed by the private Connections page. */
+/**
+ * Stores the Google account email needed by the private Connections page. */
 final class SocialAuthProfileSubscriber implements EventSubscriberInterface {
 
   private const GOOGLE_PLUGIN_ID = 'social_auth_google';
 
   public function __construct(private readonly EntityTypeManagerInterface $entityTypeManager) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function getSubscribedEvents(): array {
     return [SocialAuthEvents::USER_LOGIN => 'onUserLogin'];
   }
 
+  /**
+   * Guarda o e-mail do Google na conta após o login social.
+   *
+   * @param \Drupal\social_auth\Event\LoginEvent $event
+   *   Evento de login social.
+   */
   public function onUserLogin(LoginEvent $event): void {
     if ($event->getPluginId() !== self::GOOGLE_PLUGIN_ID) {
       return;
@@ -30,7 +41,7 @@ final class SocialAuthProfileSubscriber implements EventSubscriberInterface {
       return;
     }
 
-    $providerId = (string) $event->getSocialAuthUser()->getId();
+    $providerId = (string) $event->getSocialAuthUser()->getProviderId();
     if ($providerId === '') {
       return;
     }
@@ -43,6 +54,9 @@ final class SocialAuthProfileSubscriber implements EventSubscriberInterface {
     ]);
 
     foreach ($records as $record) {
+      if (!$record instanceof SocialAuth) {
+        continue;
+      }
       $additionalData = $record->getAdditionalData();
       if (($additionalData['provider_email'] ?? NULL) === $email) {
         continue;

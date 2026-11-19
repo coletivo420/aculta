@@ -1,0 +1,11 @@
+/* Moldura de celular do tema: componentes com densidade compacta (versão mobile) ocupam
+   a largura de um celular e ficam centralizados, também na tela desktop. Um único lugar
+   para a regra; os componentes só recebem a classe quando density = compact. */
+:root {
+  --mobile-frame-width: 390px;
+}
+
+.aculta-mobile-frame {
+  max-inline-size: var(--mobile-frame-width);
+  margin-inline: auto;
+}

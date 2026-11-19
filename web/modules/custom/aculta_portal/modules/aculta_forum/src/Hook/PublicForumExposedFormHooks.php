@@ -13,7 +13,6 @@ use Drupal\Core\Hook\Order\Order;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslationInterface;
-use Drupal\taxonomy\TermStorageInterface;
 use Drupal\views\ViewExecutable;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
@@ -43,6 +42,8 @@ final class PublicForumExposedFormHooks {
    * The forms only query public topics and cannot mutate content. The search
    * category selector uses current Taxonomy labels and access, never TIDs in
    * the visible interface.
+   *
+   * @param array<mixed> $form
    */
   #[Hook('form_alter', order: Order::Last)]
   public function formViewsExposedFormAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
@@ -65,7 +66,7 @@ final class PublicForumExposedFormHooks {
     }
 
     unset($form['captcha']);
-    if (!$isSearch || !isset($form['categoria'])) {
+    if (!$isSearch || !isset($form['categoria']) || !is_array($form['categoria'])) {
       return;
     }
 
@@ -97,21 +98,29 @@ final class PublicForumExposedFormHooks {
    */
   private function categoryOptions(): array {
     $storage = $this->entityTypeManager->getStorage('taxonomy_term');
-    assert($storage instanceof TermStorageInterface);
     $cacheability = (new CacheableMetadata())
       ->addCacheContexts(['user.permissions'])
       ->addCacheTags($this->entityTypeManager->getDefinition('taxonomy_term')->getListCacheTags());
     $options = [];
-    foreach ($storage->loadTree('aculta_forum_categories', 0, NULL, TRUE) as $term) {
+    /** @var list<mixed> $terms */
+    $terms = $storage->loadTree('aculta_forum_categories', 0, NULL, TRUE);
+    foreach ($terms as $term) {
+      if (!$term instanceof \Drupal\taxonomy\TermInterface) {
+        continue;
+      }
       $access = $term->access('view', $this->currentUser, TRUE);
       $cacheability->addCacheableDependency($term)->addCacheableDependency($access);
       if (!$access->isAllowed()) {
         continue;
       }
 
+      /** @var \Drupal\taxonomy\TermInterface $translated */
       $translated = $this->entityRepository->getTranslationFromContext($term);
-      $depth = isset($term->depth) ? (int) $term->depth : 0;
-      $options[(int) $term->id()] = str_repeat('— ', $depth) . $translated->label();
+      $treeProperties = get_object_vars($term);
+      $depth = isset($treeProperties['depth']) && is_int($treeProperties['depth']) ? $treeProperties['depth'] : 0;
+      $termId = (int) $term->id();
+      $label = (string) $translated->label();
+      $options[$termId] = str_repeat('— ', $depth) . $label;
     }
 
     return [$options, $cacheability];

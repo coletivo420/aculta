@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Hook;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -29,7 +30,7 @@ final class WikiEntryTitleSuggestions {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly DomainPurposeManager $domainPurposes,
+    private readonly DomainSiteManager $siteManagers,
     private readonly Connection $database,
     private readonly AccountInterface $currentUser,
     TranslationInterface $stringTranslation,
@@ -39,6 +40,8 @@ final class WikiEntryTitleSuggestions {
 
   /**
    * Adds the optional title-check action to the native creation form.
+   *
+   * @param array<mixed> $form
    */
   #[Hook('form_node_wiki_entry_form_alter')]
   #[Hook('form_node_wiki_entry_edit_form_alter')]
@@ -51,11 +54,23 @@ final class WikiEntryTitleSuggestions {
       return;
     }
 
-    if (isset($form['title'], $form['actions']['submit'])) {
-      $titleParents = $form['title']['widget'][0]['value']['#parents']
-        ?? $form['title']['#parents']
-        ?? ['title'];
-      $form['actions']['check_similar_titles'] = [
+    if (isset($form['title']) && is_array($form['title']) && isset($form['actions']) && is_array($form['actions']) && isset($form['actions']['submit'])) {
+      $titleElement = &$form['title'];
+      $titleParents = null;
+      if (isset($titleElement['widget']) && is_array($titleElement['widget']) && isset($titleElement['widget'][0]) && is_array($titleElement['widget'][0])) {
+        $firstWidget = &$titleElement['widget'][0];
+        if (isset($firstWidget['value']) && is_array($firstWidget['value']) && isset($firstWidget['value']['#parents']) && is_array($firstWidget['value']['#parents'])) {
+          $titleParents = $firstWidget['value']['#parents'];
+        }
+      }
+      if ($titleParents === null && isset($titleElement['#parents']) && is_array($titleElement['#parents'])) {
+        $titleParents = $titleElement['#parents'];
+      }
+      if ($titleParents === null) {
+        $titleParents = ['title'];
+      }
+      $actions = &$form['actions'];
+      $actions['check_similar_titles'] = [
         '#type' => 'submit',
         '#value' => $this->t('Verificar títulos parecidos'),
         '#submit' => [self::class . ':checkSimilarTitles'],
@@ -65,15 +80,15 @@ final class WikiEntryTitleSuggestions {
     }
 
     $results = $form_state->get(self::STORAGE_KEY);
-    if (!is_array($results) || !isset($results['term'], $results['ids']) || !isset($form['title'])) {
+    if (!is_array($results) || !isset($results['term'], $results['ids']) || !is_scalar($results['term']) || !isset($form['title'])) {
       return;
     }
 
     $submittedTitle = $this->submittedTitle($form_state, $form);
-    if (mb_strtolower($submittedTitle) !== mb_strtolower((string) $results['term'])) {
+    $termStr = trim((string) $results['term']);
+    if (mb_strtolower($submittedTitle) !== mb_strtolower($termStr)) {
       return;
     }
-
     $form['similar_titles'] = [
       '#type' => 'container',
       '#weight' => 0.5,
@@ -84,10 +99,17 @@ final class WikiEntryTitleSuggestions {
         '#tag' => 'h2',
         '#value' => $this->t('Verifique se algum verbete já aborda este tema'),
       ],
-      'term' => ['#plain_text' => $this->t('Títulos relacionados a “@title”', ['@title' => $results['term']])],
+      'term' => ['#plain_text' => $this->t('Títulos relacionados a “@title”', ['@title' => $termStr])],
     ];
 
-    $items = $this->loadVisibleSuggestions($results['ids']);
+    $rawIds = is_array($results['ids']) ? $results['ids'] : [];
+    $ids = [];
+    foreach ($rawIds as $id) {
+      if (is_int($id) || is_string($id)) {
+        $ids[] = $id;
+      }
+    }
+    $items = $this->loadVisibleSuggestions($ids);
     if (isset($results['notice'])) {
       $form['similar_titles']['empty'] = [
         '#plain_text' => $results['notice'] === 'too_long'
@@ -109,6 +131,8 @@ final class WikiEntryTitleSuggestions {
 
   /**
    * Stores visible title matches and rebuilds without saving the Node.
+   *
+   * @param array<mixed> $form
    */
   public function checkSimilarTitles(array &$form, FormStateInterface $form_state): void {
     $title = $this->submittedTitle($form_state, $form);
@@ -122,8 +146,8 @@ final class WikiEntryTitleSuggestions {
       return;
     }
 
-    $ids = $this->domainPurposes->runInPurpose('wiki', function () use ($title): array {
-      $domain = $this->domainPurposes->getDomain('wiki');
+    $ids = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($title): array {
+      $domain = $this->siteManagers->getDomain(SiteKey::Wiki);
       if ($domain === NULL) {
         return [];
       }
@@ -150,18 +174,18 @@ final class WikiEntryTitleSuggestions {
   /**
    * Loads and revalidates public matches before rendering links.
    *
-   * @param array $ids
+   * @param array<int|string> $ids
    *   Candidate node IDs from the private Form API state.
    *
-   * @return array
+   * @return array<mixed>
    *   Renderable, access-checked title links.
    */
   private function loadVisibleSuggestions(array $ids): array {
-    return $this->domainPurposes->runInPurpose('wiki', function () use ($ids): array {
+    $result = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($ids): array {
       $storage = $this->entityTypeManager->getStorage('node');
       $items = [];
       foreach ($storage->loadMultiple($ids) as $node) {
-        if (!$node instanceof NodeInterface || !$node->isPublished() || !$node->access('view')) {
+        if (!$node->isPublished() || !$node->access('view')) {
           continue;
         }
         $items[] = [
@@ -171,11 +195,14 @@ final class WikiEntryTitleSuggestions {
         ];
       }
       return $items;
-    }) ?? [];
+    });
+    return is_array($result) ? $result : [];
   }
 
   /**
    * Reads the title from Core's scalar widget or a structured field value.
+   *
+   * @param array<mixed> $form
    */
   private function submittedTitle(FormStateInterface $form_state, array $form): string {
     $value = $form_state->getValue(['title', 0, 'value']);
@@ -183,12 +210,29 @@ final class WikiEntryTitleSuggestions {
       $value = $form_state->getValue(['title'], NULL);
     }
     if (is_array($value)) {
-      $value = $value[0]['value'] ?? $value['value'] ?? '';
+      if (isset($value[0]) && is_array($value[0])) {
+        $value = $value[0]['value'] ?? '';
+      }
+      elseif (isset($value['value'])) {
+        $value = $value['value'];
+      }
+      else {
+        $value = '';
+      }
     }
     if (!is_scalar($value) || trim((string) $value) === '') {
-      $value = $form['title']['widget'][0]['value']['#value']
-        ?? $form['title']['#value']
-        ?? '';
+      if (isset($form['title']) && is_array($form['title'])) {
+        $titleElement = &$form['title'];
+        if (isset($titleElement['widget']) && is_array($titleElement['widget']) && isset($titleElement['widget'][0]) && is_array($titleElement['widget'][0])) {
+          $firstWidget = &$titleElement['widget'][0];
+          if (isset($firstWidget['value']) && is_array($firstWidget['value']) && isset($firstWidget['value']['#value'])) {
+            $value = $firstWidget['value']['#value'];
+          }
+        }
+        if ((!is_scalar($value) || trim((string) $value) === '') && isset($titleElement['#value'])) {
+          $value = $titleElement['#value'];
+        }
+      }
     }
     return is_scalar($value) ? trim((string) $value) : '';
   }

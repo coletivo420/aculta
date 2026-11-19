@@ -17,11 +17,25 @@ use PHPUnit\Framework\Attributes\Group;
 #[Group('aculta_portal')]
 final class CartSiteTest extends UnitTestCase {
 
+  /**
+   * Confere que cada tipo de pedido vai para o separador esperado.
+   *
+   * @param string $tipo
+   *   Tipo de pedido informado.
+   * @param string $esperado
+   *   Separador esperado.
+   */
   #[DataProvider('tiposDePedido')]
   public function testTipoDePedidoVaiParaOSeparador(string $tipo, string $esperado): void {
     $this->assertSame($esperado, CartSite::paraTipo($tipo));
   }
 
+  /**
+   * Fornece os tipos de pedido e os separadores esperados.
+   *
+   * @return array<string, array{string, string}>
+   *   Casos de teste nomeados.
+   */
   public static function tiposDePedido(): array {
     return [
       'padrão da loja' => ['default', CartSite::LOJA],
@@ -33,10 +47,16 @@ final class CartSiteTest extends UnitTestCase {
     ];
   }
 
+  /**
+   * Confere a ordem fixa dos separadores.
+   */
   public function testOrdemDosSeparadores(): void {
     $this->assertSame(['loja', 'cursos', 'apoio', 'assinatura'], CartSite::ORDEM);
   }
 
+  /**
+   * Confere os rótulos visíveis de cada separador.
+   */
   public function testRotulosVisiveisDoPainel(): void {
     $this->assertSame('Loja', CartSite::rotulo(CartSite::LOJA));
     $this->assertSame('Cursos', CartSite::rotulo(CartSite::CURSOS));
@@ -44,6 +64,9 @@ final class CartSiteTest extends UnitTestCase {
     $this->assertSame('Assinatura', CartSite::rotulo(CartSite::ASSINATURA));
   }
 
+  /**
+   * Confere que todo separador da ordem possui rótulo não vazio.
+   */
   public function testTodoSeparadorDaOrdemTemRotulo(): void {
     foreach (CartSite::ORDEM as $site) {
       $this->assertNotSame('', CartSite::rotulo($site));

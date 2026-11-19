@@ -1,3 +1,8 @@
+## 0.1.0-dev.79 — instala as entidades de configuração do Mailer
+
+- Update `10008` registra transporte, modelo, layout e marca como tipos de configuração Drupal em instalações existentes.
+- Nenhuma configuração ativa foi sobrescrita; o Config Sync continua dependendo de importação revisada.
+
 ## 0.1.0-dev.78 — fixtures Kernel registram dependências de ingestão
 
 - Os Kernels do Mailer habilitam `file` e `aculta_file_uploader`, necessários

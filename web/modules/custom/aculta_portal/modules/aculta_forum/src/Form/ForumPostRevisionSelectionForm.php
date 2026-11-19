@@ -19,8 +19,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class ForumPostRevisionSelectionForm extends FormBase {
 
   public function __construct(
-    private readonly RouteMatchInterface $forumRouteMatch,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly RouteMatchInterface $forumRouteMatch,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -42,12 +42,25 @@ final class ForumPostRevisionSelectionForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @param array<int|string, mixed> $revisionOptions
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, array $revisionOptions = [], ?int $olderRevisionId = NULL): array {
     if ($revisionOptions === []) {
       return $form;
     }
-    $revisionIds = array_map('intval', array_keys($revisionOptions));
+    $revisionIds = [];
+    foreach (array_keys($revisionOptions) as $key) {
+      $id = filter_var($key, FILTER_VALIDATE_INT);
+      if ($id !== FALSE && $id > 0) {
+        $revisionIds[] = (int) $id;
+      }
+    }
+    if ($revisionIds === []) {
+      return $form;
+    }
     sort($revisionIds, SORT_NUMERIC);
     $olderDefault = count($revisionIds) === 1 && $olderRevisionId !== NULL
       ? $olderRevisionId
@@ -73,20 +86,25 @@ final class ForumPostRevisionSelectionForm extends FormBase {
       '#step' => 1,
       '#required' => TRUE,
     ];
-    $form['actions']['compare'] = [
-      '#type' => 'submit',
-      '#value' => $this->t('Comparar revisões selecionadas'),
-      '#button_type' => 'primary',
+    $form['actions'] = [
+      '#type' => 'actions',
+      'compare' => [
+        '#type' => 'submit',
+        '#value' => $this->t('Comparar revisões selecionadas'),
+        '#button_type' => 'primary',
+      ],
     ];
     return $form;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
-    $older = filter_var((string) $form_state->getValue('older_revision'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
-    $newer = filter_var((string) $form_state->getValue('newer_revision'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+    $older = filter_var($form_state->getValue('older_revision'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
+    $newer = filter_var($form_state->getValue('newer_revision'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
     if ($older === FALSE) {
       $form_state->setErrorByName('older_revision', $this->t('Informe um ID numérico de revisão válido.'));
     }
@@ -118,6 +136,8 @@ final class ForumPostRevisionSelectionForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $post = $this->forumRouteMatch->getParameter('aculta_forum_post');
@@ -125,7 +145,13 @@ final class ForumPostRevisionSelectionForm extends FormBase {
       $form_state->setErrorByName('newer_revision', $this->t('Não foi possível identificar a publicação.'));
       return;
     }
-    $revisionIds = [(int) $form_state->getValue('older_revision'), (int) $form_state->getValue('newer_revision')];
+    $older = filter_var($form_state->getValue('older_revision'), FILTER_VALIDATE_INT);
+    $newer = filter_var($form_state->getValue('newer_revision'), FILTER_VALIDATE_INT);
+    if ($older === FALSE || $newer === FALSE) {
+      $form_state->setErrorByName('newer_revision', $this->t('Não foi possível identificar as revisões.'));
+      return;
+    }
+    $revisionIds = [(int) $older, (int) $newer];
     sort($revisionIds, SORT_NUMERIC);
     $form_state->setRedirectUrl(Url::fromRoute('aculta_forum.post_revision_compare', [
       'aculta_forum_post' => $post->id(),

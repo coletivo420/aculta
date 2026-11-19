@@ -61,7 +61,7 @@ são a interface administrativa dos contextos de discussão.
 | Fórum público Growroom420 | `/painel-administrativo/forum` é a entrada canônica e mostra resumo público e links para a experiência Growroom420; as abas administrativas Drupal e o menu lateral abrem Tópicos, Comentários e Configurações. As filas de comentários são subabas; Revista, LMS e Wiki mantêm administração contextual própria. | Views reativadas como páginas dentro da seção, com filtro fixo do Domain ativo; settings usa `ForumSettingsForm`. Runtime/X11 validado em dev.122; movimento em lote validado em dev.123. Rotas genéricas Core e participação compartilhada permanecem fora da seção. |
 | Publicações | A supervisão administrativa está em `/painel-administrativo/revista`; o trabalho cotidiano, a discussão e a moderação contextual ficam no ACULTA Studio Marley (`account:/marley`). Nunca aparecem na seção Growroom. | `PublicationContextProvider` resolve `revista` com `field_aculta_discussion`; o Studio usa `DiscussionContextResolver`, acesso da publicação/campo e Comment nativo. Não converte para `ForumPost`, não cria tópico e não usa a fila Growroom. A View administrativa `aculta_magazine_admin_comments` continua específica da Revista. |
 | LMS | Espaço administrativo próprio em `/painel-administrativo/lms/forum`, com discussões de curso, turma e atividade separadas e autorização contextual de Educador. | Contrato para o adapter LMS; não criar listagem global até haver filtro por Group/Entity Access demonstrado. Comentários de avaliação (`lms_answer_comment`) são um recurso distinto e não viram comentários do Fórum. |
-| Wiki420 | O adaptador `aculta_forum_wiki` hospeda uma discussão por verbete no campo `field_aculta_discussion` do Node `wiki_entry`, renderizada dentro do próprio verbete; a revisão editorial permanece separada e nenhum tópico público é criado. | Provider `wiki` e campo instalados pela configuração; ainda não há rota/listagem administrativa própria da Wiki. Criá-la exige filtro de contexto instalável e access validado, como nas demais filas. |
+| Wiki420 | O módulo `aculta_wiki` hospeda uma discussão por verbete no campo `field_aculta_discussion` do Node `wiki_entry`, renderizada dentro do próprio verbete; a revisão editorial permanece separada e nenhum tópico público é criado. | Provider `wiki` e campo instalados pela configuração; ainda não há rota/listagem administrativa própria da Wiki. Criá-la exige filtro de contexto instalável e access validado, como nas demais filas. |
 
 ### Inventário administrativo do Growroom420
 
@@ -178,7 +178,7 @@ Views permanece responsável pela consulta, filtros fixos, acesso e cache. Para 
 
 ### `wiki`
 
-- Implementado pelo adaptador `aculta_forum_wiki` (tipo `wiki`): uma discussão
+- Implementado pelo `aculta_wiki` (tipo `wiki`): uma discussão
   por verbete, no campo `field_aculta_discussion` do Node `wiki_entry`.
   `stableId` é `wiki:node:{uuid}` e a URL canônica é a do próprio verbete.
 - Renderizado dentro do verbete; comentários não alteram a revisão editorial

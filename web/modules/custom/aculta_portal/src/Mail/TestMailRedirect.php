@@ -30,6 +30,7 @@ class TestMailRedirect {
    * Endereços de contas de teste cujas mensagens são redirecionadas (minúsculas).
    *
    * @return string[]
+   *   Endereços de teste normalizados para minúsculas.
    */
   public function enderecosDeTeste(): array {
     $lista = $this->settings->get('aculta_mail_redirect_for', []);
@@ -40,6 +41,7 @@ class TestMailRedirect {
    * Reescreve a mensagem para o endereço de teste, quando o destinatário está na lista de contas de teste.
    *
    * @param array<string, mixed> $message
+   *   Mensagem de e-mail a reescrever, recebida por referência.
    */
   public function aplicar(array &$message): void {
     $destino = $this->destino();

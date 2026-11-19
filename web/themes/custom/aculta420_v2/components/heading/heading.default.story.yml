@@ -1,0 +1,6 @@
+name: Título H2 com faixa tricolor
+description: H2 de seção principal, Oswald 700, com a faixa tricolor acima.
+component: aculta420_v2:heading
+props:
+  text: Revista ACULTA
+  level: 2

@@ -1,0 +1,6 @@
+name: Badge de destaque
+description: Etiqueta renderizada pelo SDC de badge.
+props:
+  label: Destaque
+  variant: highlight
+  icon_name: null

@@ -1,0 +1,9 @@
+name: Apresentação de doação
+description: Confirmação de doação com nome e agradecimento.
+component: aculta420_v2:donation-presentation
+props:
+  variant: thanks
+slots:
+  content:
+    type: inline_template
+    template: '<p class="donation-presentation__donor">Pessoa de exemplo</p><p class="donation-presentation__clause">Agradecemos sua contribuição.</p>'

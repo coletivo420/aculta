@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Search;
 
-use Drupal\Core\Template\Attribute;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -16,8 +16,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Prévia da busca (popup): HTML da lista de resultados para o termo, carregado pelo script do Portal depois de
- * uma pausa na digitação. Sem Form API: a rota não depende do objeto do formulário, então não há estado a
+ * Prévia da busca (popup): HTML da lista de resultados.
+ *
+ * Carregado pelo script do Portal depois de uma pausa na digitação. Sem
+ * Form API: a rota não depende do objeto do formulário, então não há estado a
  * restaurar no cache de formulários.
  */
 final class SearchPreviewController implements ContainerInjectionInterface {
@@ -28,22 +30,34 @@ final class SearchPreviewController implements ContainerInjectionInterface {
 
   public function __construct(
     private readonly SearchResults $searchResults,
-    private readonly DomainPurposeManager $domainPurposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly RendererInterface $renderer,
     TranslationInterface $translation,
   ) {
     $this->setStringTranslation($translation);
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_portal.search_results'),
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('renderer'),
       $container->get('string_translation'),
     );
   }
 
+  /**
+   * Devolve o HTML da prévia de resultados para o termo pesquisado.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   Requisição com o termo no parâmetro de consulta q.
+   *
+   * @return \Symfony\Component\HttpFoundation\Response
+   *   Resposta HTML sem cache.
+   */
   public function preview(Request $request): Response {
     $term = mb_substr(trim((string) $request->query->get('q', '')), 0, SearchPageController::MAX_CHARS);
     $html = (string) $this->renderer->renderInIsolation($this->build($term));
@@ -52,12 +66,27 @@ final class SearchPreviewController implements ContainerInjectionInterface {
     return $response;
   }
 
-  /** @return array<string, mixed> */
+  /**
+   * Monta o render array da prévia de resultados.
+   *
+   * @param string $term
+   *   Termo pesquisado.
+   *
+   * @return array<string, mixed>
+   *   Render array da lista, com dica ou estado vazio quando aplicável.
+   */
   private function build(string $term): array {
     if (mb_strlen($term) < SearchPageController::MIN_CHARS) {
       return [
         '#cache' => ['max-age' => 0],
-        'hint' => ['#theme' => 'aculta_portal_element', '#tag' => 'p', '#element_attributes' => new Attribute(['data-portal-ui' => 'hint']), '#value' => $this->t('Digite pelo menos @n caracteres para ver resultados.', ['@n' => SearchPageController::MIN_CHARS])],
+        'hint' => [
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:hint',
+          '#slots' => ['content' => ['#plain_text' => $this->t(
+            'Digite pelo menos @n caracteres para ver resultados.',
+            ['@n' => SearchPageController::MIN_CHARS],
+          )]],
+        ],
       ];
     }
     $preview = $this->searchResults->search($term, self::PREVIEW_LIMIT);
@@ -76,17 +105,24 @@ final class SearchPreviewController implements ContainerInjectionInterface {
       ];
     }
     // Como na Wikipedia: a última linha leva à pesquisa completa pelo mesmo termo, com o total.
-    $full = $this->domainPurposeManager->routeUrl('main', 'aculta_portal.search') ?? Url::fromRoute('aculta_portal.search');
+    $full = $this->siteManager->routeUrl(SiteKey::Main, 'aculta_portal.search') ?? Url::fromRoute('aculta_portal.search');
     $full->setOption('query', ['q' => $term]);
     return [
       '#cache' => ['max-age' => 0, 'contexts' => ['domain', 'user.permissions']],
-      'list' => ['#theme' => 'item_list', '#items' => $items, '#attributes' => ['data-portal-ui' => 'search-preview-list']],
+      'list' => [
+        '#theme' => 'item_list',
+        '#items' => $items,
+        '#attributes' => ['data-portal-ui' => 'search-preview-list'],
+      ],
       'full' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'search-preview-footer'],
         'link' => [
           '#type' => 'link',
-          '#title' => $this->t('Pesquisa completa por «@term» (@total resultados)', ['@term' => $term, '@total' => $preview['total']]),
+          '#title' => $this->t(
+            'Pesquisa completa por «@term» (@total resultados)',
+            ['@term' => $term, '@total' => $preview['total']],
+          ),
           '#url' => $full,
           '#attributes' => ['data-portal-ui' => 'search-preview-full'],
         ],

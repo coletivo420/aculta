@@ -20,8 +20,8 @@ final class SimplifiedAccountPasswordForm extends FormBase {
    * Cria o formulário.
    */
   public function __construct(
-    private readonly UserDataInterface $userData,
-    private readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly UserDataInterface $userData,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
   ) {}
 
   /**
@@ -40,6 +40,9 @@ final class SimplifiedAccountPasswordForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['intro'] = ['#markup' => '<p>' . $this->t('Seu e-mail foi confirmado. Crie uma senha para acessar sua conta.') . '</p>'];
@@ -55,14 +58,17 @@ final class SimplifiedAccountPasswordForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $this->currentUser()->id();
     $account = $uid > 0 ? $this->entityTypeManager->getStorage('user')->load($uid) : NULL;
-    if ($account === NULL) {
+    if (!$account instanceof \Drupal\user\UserInterface) {
       return;
     }
-    $account->setPassword((string) $form_state->getValue('pass'));
+    $rawPass = $form_state->getValue('pass');
+    $account->setPassword(is_string($rawPass) ? $rawPass : '');
     $account->save();
     $this->userData->delete('aculta_portal', (int) $account->id(), SimplifiedAccountCheckoutSubscriber::FLAG);
     $this->messenger()->addStatus($this->t('Senha criada. Bem-vindo!'));

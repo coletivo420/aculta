@@ -15,6 +15,7 @@ use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Derived LMS slugs are Portuguese, ASCII, lowercase and unique within scope.
@@ -32,9 +33,9 @@ final class LmsFriendlySlugsTest extends UnitTestCase {
   /**
    * Entity manager double used by the slug service.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface&\PHPUnit\Framework\MockObject\MockObject
    */
-  private EntityTypeManagerInterface $entityTypeManager;
+  private EntityTypeManagerInterface&MockObject $entityTypeManager;
 
   /**
    * {@inheritdoc} */
@@ -146,7 +147,16 @@ final class LmsFriendlySlugsTest extends UnitTestCase {
 
   /**
    * Creates storage and query doubles for ordered entity results. */
-  private function storage(array $ids, array $entities): EntityStorageInterface {
+  /**
+   * @param list<int> $ids
+   *   Ordered entity IDs.
+   * @param array<int, ContentEntityInterface> $entities
+   *   Entities keyed by ID.
+   *
+   * @return EntityStorageInterface&MockObject
+   *   Storage and query test double.
+   */
+  private function storage(array $ids, array $entities): EntityStorageInterface&MockObject {
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();

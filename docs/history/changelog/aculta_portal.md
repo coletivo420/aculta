@@ -318,7 +318,7 @@ Classificação: PATCH na linha aberta, decidida pelo responsável.
 - Magazine usa `author_editorial` do `aculta_user`; identidade, avatar, bio e
   redes respeitam a política de perfil, enquanto o consumidor fornece apenas
   Autor/Coautor. O cartão SDC apresenta a inicial quando o slot de avatar está
-  ausente.
+  ausente. *(Correção 2026-11-04: a inicial do nome nunca é usada; sem foto, o acervo é o último fallback obrigatório. Ver `docs/architecture/avatar.md`.)*
 - User Unit 63/222, Magazine Unit 7/31, PHPCS direcionado, Portal Drupal 11+
   (988), mapa módulo/tema (153) e SDC schema (543) PASS. Runtime de teste:
   cache rebuild e render de publicação PASS sem escrita; Firefox/X11 claro/escuro

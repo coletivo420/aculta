@@ -11,3 +11,24 @@ services:
     arguments: ['@entity_type.manager']
     tags:
       - { name: paramconverter }
+
+  Drupal\aculta_mail_confirmer\Hook\UserEmailChangeHooks:
+    class: Drupal\aculta_mail_confirmer\Hook\UserEmailChangeHooks
+    arguments: ['@config.factory', '@current_user', '@user.data', '@aculta_mail_confirmer', '@entity_type.manager', '@messenger', '@logger.factory', '@plugin.manager.mail', '@language_manager', '@cache.memory']
+
+  Drupal\aculta_mail_confirmer\Hook\UserEmailChangeFormHooks:
+    class: Drupal\aculta_mail_confirmer\Hook\UserEmailChangeFormHooks
+    arguments: ['@config.factory', '@user.data', '@aculta_mail_confirmer', '@redirect.destination']
+
+  Drupal\aculta_mail_confirmer\Hook\UserLoginConfirmationHooks:
+    class: Drupal\aculta_mail_confirmer\Hook\UserLoginConfirmationHooks
+    arguments: ['@config.factory', '@aculta_mail_confirmer', '@datetime.time', '@current_route_match']
+
+  Drupal\aculta_mail_confirmer\Hook\UserEmailChangeEntityTypeHooks:
+    class: Drupal\aculta_mail_confirmer\Hook\UserEmailChangeEntityTypeHooks
+
+  access_check.aculta_mail_confirmer_user_email_change:
+    class: Drupal\aculta_mail_confirmer\Access\UserEmailPendingChangeAccess
+    tags:
+      - { name: access_check, applies_to: _aculta_mail_confirmer_user_email_pending_change }
+    arguments: ['@config.factory', '@user.data']

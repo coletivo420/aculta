@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_messenger\Mapper;
 
 use Drupal\Core\Database\Query\SelectInterface;
-use Drupal\private_message\Mapper\PrivateMessageMapper;
 
 /**
  * The Private Message mapper with the ACULTA rule for blocks: blocking a member does not hide the conversation.

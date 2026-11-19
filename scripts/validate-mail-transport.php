@@ -3,11 +3,16 @@
 declare(strict_types=1);
 
 /**
- * Gate do transporte de e-mail (F15, docs/portal/EMAIL-TRANSPORT.md): o envio do site é a camada de envio E-Mails
- * ACULTA (aculta_mailer), com transportes aculta_mailer_transport e credenciais no arquivo de segredos.
+ * Gate do transporte de e-mail do Portal (F15).
  *
- * Confere: contrib de envio removido (composer e configuração); system.mail no módulo do projeto; transportes sem
- * senha versionada; TLS e verificação de certificado do SMTP; formulário de contato em texto simples.
+ * O envio do site é a camada de envio E-Mails ACULTA (aculta_mailer),
+ * com transportes aculta_mailer_transport e credenciais no arquivo de
+ * segredos.
+ *
+ * Confere: contrib de envio removido (composer e configuração);
+ * system.mail no módulo do projeto; transportes sem senha versionada;
+ * TLS e verificação de certificado do SMTP; formulário de contato em
+ * texto simples.
  */
 
 $root = dirname(__DIR__);
@@ -19,7 +24,8 @@ $check = static function (bool $ok, string $message) use (&$failures): void {
   }
 };
 
-// F15: o pacote de envio do contrib saiu do composer.json e do composer.lock. O Symfony Mailer continua vindo do Core.
+// F15: o pacote de envio do contrib saiu do composer.json e do
+// composer.lock. O Symfony Mailer continua vindo do Core.
 $composer = json_decode((string) file_get_contents($root . '/composer.json'), true);
 $check(!isset($composer['require']['drupal/symfony_mailer']), 'composer.json não pode exigir drupal/symfony_mailer (removido na F15).');
 $check(!isset($composer['require']['drupal/smtp']), 'composer.json não pode exigir drupal/smtp (legado removido na M2).');
@@ -31,7 +37,8 @@ $check(isset($locked['symfony/mailer']), 'composer.lock deve conter symfony/mail
 $system_mail = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/system.mail.yml') ?: [];
 $check(($system_mail['interface']['default'] ?? NULL) === 'aculta_mailer', 'system.mail deve usar a camada de envio E-Mails ACULTA (aculta_mailer).');
 
-// Formulário de contato: notificação pública em texto simples, sem Twig de submissão e sem destinatário de teste.
+// Formulário de contato: notificação pública em texto simples, sem
+// Twig de submissão e sem destinatário de teste.
 $contact = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/webform.webform.aculta_contact.yml') ?: [];
 $contact_handler = $contact['handlers']['institutional_notification']['settings'] ?? [];
 $check(($contact_handler['html'] ?? NULL) === FALSE, 'A notificação pública do contato deve permanecer em texto simples até haver sanitização HTML validada.');
@@ -41,7 +48,8 @@ $check(($contact_handler['reply_to'] ?? NULL) === '[webform_submission:values:em
 $check(($contact_handler['to_mail'] ?? NULL) !== 'advfjpm@gmail.com', 'A configuração exportada não pode enviar notificações ao endereço de teste histórico.');
 $check(!is_file($root . '/config/sync/webform.webform.aculta_participation.yml'), 'O formulário de participação foi removido; não há notificações de participação a validar.');
 
-// Transportes da camada de envio: entidades sem senha versionada; credenciais só por nome no arquivo de segredos.
+// Transportes da camada de envio: entidades sem senha versionada;
+// credenciais só por nome no arquivo de segredos.
 $hostinger = \Symfony\Component\Yaml\Yaml::parseFile($root . '/config/sync/aculta_mailer.transport.smtp_hostinger.yml') ?: [];
 $check(($hostinger['plugin'] ?? NULL) === 'smtp' && ($hostinger['host'] ?? NULL) === 'smtp.hostinger.com' && ($hostinger['port'] ?? NULL) === 465, 'Transporte Hostinger: plugin smtp, smtp.hostinger.com, porta 465.');
 $check(($hostinger['password_secret'] ?? NULL) === 'SMTP_PASSWORD', 'Transporte Hostinger: a senha vem de SMTP_PASSWORD (arquivo de segredos).');
@@ -74,11 +82,17 @@ foreach (['symfony_mailer', 'mailer_override', 'mailer_transport', 'mailer_polic
 }
 
 // Sem Keys: nenhum override de Key nem Key de SMTP2GO pode existir.
-foreach (['key.config_override.mailer_smtp2go_username', 'key.config_override.mailer_smtp2go_password', 'key.key.smtp2go_username', 'key.key.smtp2go_password'] as $removed) {
+foreach ([
+  'key.config_override.mailer_smtp2go_username',
+  'key.config_override.mailer_smtp2go_password',
+  'key.key.smtp2go_username',
+  'key.key.smtp2go_password',
+] as $removed) {
   $check(!is_file($root . '/config/sync/' . $removed . '.yml'), "$removed não pode existir: o envio não usa Keys.");
 }
 
-// Prontidão de e-mail do Portal: checa o transporte novo e a senha pelo arquivo de segredos.
+// Prontidão de e-mail do Portal: checa o transporte novo e a senha
+// pelo arquivo de segredos.
 $controller = (string) file_get_contents($root . '/web/modules/custom/aculta_portal/src/Controller/PortalController.php');
 preg_match('/private function transactionalMailReady\(\): bool \{(.*?)\n  \}/s', $controller, $match);
 $body = $match[1] ?? '';

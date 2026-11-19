@@ -8,7 +8,7 @@ use Drupal\aculta_forum\Form\ForumCommentMoveForm;
 use Drupal\aculta_forum\Event\ForumCommentSubtreeMovedEvent;
 use Drupal\aculta_forum\Service\ForumCommentMover;
 use Drupal\aculta_forum\Service\ForumDiscussionWriteGuard;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
@@ -23,6 +23,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\file\Entity\File;
+use Drupal\flag\FlaggingInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\flag\Entity\Flag;
@@ -72,6 +73,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     'search_api',
     'search_api_test',
     'options',
+    'aculta_forum_test_routes',
     'aculta_forum_comment_move_test',
   ];
 
@@ -193,7 +195,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $this->account->method('isAuthenticated')->willReturn(TRUE);
 
     $manager = $this->container->get('entity_type.manager');
-    $purpose = new DomainPurposeManager(
+    $purpose = new DomainSiteManager(
       $manager,
       $this->createMock(DomainNegotiatorInterface::class),
       $this->createMock(ConfigFactoryInterface::class),
@@ -260,9 +262,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     );
 
     $storage = $this->container->get('entity_type.manager')->getStorage('comment');
-    $moved_root = $storage->load($root->id());
-    $moved_child = $storage->load($child->id());
-    $moved_grandchild = $storage->load($grandchild->id());
+    $moved_root = $this->requireComment($storage->load($this->entityId($root)));
+    $moved_child = $this->requireComment($storage->load($this->entityId($child)));
+    $moved_grandchild = $this->requireComment($storage->load($this->entityId($grandchild)));
     self::assertSame((int) $destination->id(), (int) $moved_root->getCommentedEntityId());
     self::assertNull($moved_root->getParentComment());
     self::assertSame('02/', $moved_root->getThread());
@@ -271,8 +273,8 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertSame('comment-' . $moved_root->id(), $permalink->getOption('fragment'));
     self::assertSame('02.00/', $moved_child->getThread());
     self::assertSame('02.00.00/', $moved_grandchild->getThread());
-    self::assertSame((int) $moved_root->id(), (int) $moved_child->getParentComment()->id());
-    self::assertSame((int) $moved_child->id(), (int) $moved_grandchild->getParentComment()->id());
+    self::assertSame((int) $moved_root->id(), (int) $this->requireComment($moved_child->getParentComment())->id());
+    self::assertSame((int) $moved_child->id(), (int) $this->requireComment($moved_grandchild->getParentComment())->id());
 
     foreach ([$moved_root, $moved_child, $moved_grandchild] as $moved) {
       self::assertSame($identities[(int) $moved->id()]['uuid'], $moved->uuid());
@@ -280,10 +282,10 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       self::assertSame((string) $identities[(int) $moved->id()]['changed'], (string) $moved->getChangedTime());
       self::assertSame($identities[(int) $moved->id()]['subject'], $moved->getSubject());
       self::assertSame($identities[(int) $moved->id()]['body'], $moved->get('comment_body')->value);
-      self::assertSame(CommentInterface::PUBLISHED, (int) $moved->get('status')->value);
+      self::assertSame(CommentInterface::PUBLISHED, $this->integerValue($moved->get('status')->value));
     }
-    self::assertSame((int) $source_keeper->id(), (int) Comment::load($source_keeper->id())->id());
-    self::assertSame((int) $destination_existing->id(), (int) Comment::load($destination_existing->id())->id());
+    self::assertSame((int) $source_keeper->id(), (int) $this->loadComment($source_keeper->id())->id());
+    self::assertSame((int) $destination_existing->id(), (int) $this->loadComment($destination_existing->id())->id());
     self::assertSame(1, $this->commentCount($source));
     self::assertSame(4, $this->commentCount($destination));
   }
@@ -304,21 +306,21 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertSame(5, $this->mover->move((int) $root->id(), (int) $destination->id(), $this->account));
 
     $storage = $this->container->get('entity_type.manager')->getStorage('comment');
-    $moved_root = $storage->load($root->id());
-    $moved_left = $storage->load($left->id());
-    $moved_left_leaf = $storage->load($left_leaf->id());
-    $moved_right = $storage->load($right->id());
-    $moved_right_leaf = $storage->load($right_leaf->id());
+    $moved_root = $this->requireComment($storage->load($this->entityId($root)));
+    $moved_left = $this->requireComment($storage->load($this->entityId($left)));
+    $moved_left_leaf = $this->requireComment($storage->load($this->entityId($left_leaf)));
+    $moved_right = $this->requireComment($storage->load($this->entityId($right)));
+    $moved_right_leaf = $this->requireComment($storage->load($this->entityId($right_leaf)));
 
     self::assertSame('02/', $moved_root->getThread());
     self::assertSame('02.00/', $moved_left->getThread());
     self::assertSame('02.00.00/', $moved_left_leaf->getThread());
     self::assertSame('02.01/', $moved_right->getThread());
     self::assertSame('02.01.00/', $moved_right_leaf->getThread());
-    self::assertSame((int) $moved_root->id(), (int) $moved_left->getParentComment()->id());
-    self::assertSame((int) $moved_root->id(), (int) $moved_right->getParentComment()->id());
-    self::assertSame((int) $moved_left->id(), (int) $moved_left_leaf->getParentComment()->id());
-    self::assertSame((int) $moved_right->id(), (int) $moved_right_leaf->getParentComment()->id());
+    self::assertSame((int) $moved_root->id(), (int) $this->requireComment($moved_left->getParentComment())->id());
+    self::assertSame((int) $moved_root->id(), (int) $this->requireComment($moved_right->getParentComment())->id());
+    self::assertSame((int) $moved_left->id(), (int) $this->requireComment($moved_left_leaf->getParentComment())->id());
+    self::assertSame((int) $moved_right->id(), (int) $this->requireComment($moved_right_leaf->getParentComment())->id());
     self::assertSame(0, $this->commentCount($source));
     self::assertSame(6, $this->commentCount($destination));
   }
@@ -340,8 +342,8 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
 
     $this->mover->move((int) $pending->id(), (int) $destination->id(), $this->account);
     self::assertFalse($event_dispatched);
-    self::assertSame(CommentInterface::NOT_PUBLISHED, (int) Comment::load($pending->id())->get('status')->value);
-    self::assertSame(CommentInterface::NOT_PUBLISHED, (int) Comment::load($child->id())->get('status')->value);
+    self::assertSame(CommentInterface::NOT_PUBLISHED, $this->integerValue($this->loadComment($pending->id())->get('status')->value));
+    self::assertSame(CommentInterface::NOT_PUBLISHED, $this->integerValue($this->loadComment($child->id())->get('status')->value));
     self::assertSame(0, $this->commentCount($source));
     self::assertSame(0, $this->commentCount($destination));
 
@@ -367,7 +369,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
         self::fail('A closed or cross-purpose destination must be rejected.');
       }
       catch (\InvalidArgumentException) {
-        self::assertSame((int) $source->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+        self::assertSame((int) $source->id(), (int) $this->loadComment($comment->id())->getCommentedEntityId());
       }
     }
   }
@@ -399,11 +401,14 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertSame(1, $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account));
 
     $stored_flagging = $this->container->get('entity_type.manager')->getStorage('flagging')->load($flagging_id);
-    self::assertNotFalse($stored_flagging);
+    self::assertInstanceOf(FlaggingInterface::class, $stored_flagging);
+    $stored_flagging = $this->requireFlagging($stored_flagging);
     self::assertSame('comment', $stored_flagging->getFlaggableType());
     self::assertSame((int) $comment->id(), (int) $stored_flagging->getFlaggableId());
-    self::assertSame((int) $destination->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
-    self::assertSame($flagging_id, (int) $this->container->get('flag')->getFlagging($flag, Comment::load($comment->id()), $flagger)->id());
+    self::assertSame((int) $destination->id(), (int) $this->loadComment($comment->id())->getCommentedEntityId());
+    $current_flagging = $this->container->get('flag')->getFlagging($flag, $this->loadComment($comment->id()), $flagger);
+    self::assertInstanceOf(FlaggingInterface::class, $current_flagging);
+    self::assertSame($flagging_id, (int) $this->requireFlagging($current_flagging)->id());
   }
 
   /**
@@ -412,7 +417,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
   public function testMoveTransfersUnreadCommentToDestinationWithoutChangingHistory(): void {
     $source = $this->topic('Source');
     $destination = $this->topic('Destination');
-    $role = $this->container->get('entity_type.manager')->getStorage('user_role')->load('authenticated');
+    $role = $this->requireRole($this->container->get('entity_type.manager')->getStorage('user_role')->load('authenticated'));
     $role->grantPermission('access content');
     $role->grantPermission('access comments');
     $role->save();
@@ -438,10 +443,10 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
 
     $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
 
-    self::assertSame(0, $history->getCountNewComments(Node::load($source->id()), ForumCommentMover::FIELD_NAME));
-    self::assertSame(1, $history->getCountNewComments(Node::load($destination->id()), ForumCommentMover::FIELD_NAME));
+    self::assertSame(0, $history->getCountNewComments($this->loadNode($source->id()), ForumCommentMover::FIELD_NAME));
+    self::assertSame(1, $history->getCountNewComments($this->loadNode($destination->id()), ForumCommentMover::FIELD_NAME));
     self::assertSame($receipts_before, history_read_multiple([(int) $source->id(), (int) $destination->id()]));
-    self::assertSame((int) $destination->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+    self::assertSame((int) $destination->id(), (int) $this->loadComment($comment->id())->getCommentedEntityId());
   }
 
   /**
@@ -454,7 +459,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertSame('pt-br', $comment->language()->getId());
     self::assertSame(1, $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account));
 
-    $moved = Comment::load($comment->id());
+    $moved = $this->loadComment($comment->id());
     self::assertSame((int) $destination->id(), (int) $moved->getCommentedEntityId());
     self::assertSame('pt-br', $moved->language()->getId());
     self::assertSame('Reply subject', $moved->getUntranslated()->getSubject());
@@ -478,14 +483,15 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $file->save();
     $comment->set('field_test_attachment', ['target_id' => $file->id()])->save();
     $file_usage = $this->container->get('file.usage');
-    self::assertSame('1', $file_usage->listUsage($file)['file']['comment'][$comment->id()]);
+    $comment_id = $this->entityId($comment);
+    $this->assertFileCommentUsage($file_usage->listUsage($file), $comment_id);
 
     $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
 
-    $stored_file = File::load($file->id());
-    $stored_comment = Comment::load($comment->id());
+    $stored_file = $this->loadFile($file->id());
+    $stored_comment = $this->loadComment($comment->id());
     self::assertSame((int) $file->id(), (int) $stored_comment->get('field_test_attachment')->target_id);
-    self::assertSame('1', $file_usage->listUsage($stored_file)['file']['comment'][$comment->id()]);
+    $this->assertFileCommentUsage($file_usage->listUsage($stored_file), $comment_id);
     self::assertSame((int) $destination->id(), (int) $stored_comment->getCommentedEntityId());
   }
 
@@ -515,10 +521,14 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
 
     $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
 
-    $stored_file = File::load($file->id());
-    $stored_comment = Comment::load($comment->id());
+    $stored_file = $this->loadFile($file->id());
+    $stored_comment = $this->loadComment($comment->id());
     self::assertSame($expected_usage, $file_usage->listUsage($stored_file));
-    self::assertStringContainsString($file->uuid(), (string) $stored_comment->get('comment_body')->value);
+    $body = $stored_comment->get('comment_body')->value;
+    $uuid = $file->uuid();
+    self::assertIsString($uuid);
+    self::assertIsString($body);
+    self::assertStringContainsString($uuid, $body);
     self::assertSame((int) $destination->id(), (int) $stored_comment->getCommentedEntityId());
   }
 
@@ -599,7 +609,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       self::fail('A user without the move permission must be denied.');
     }
     catch (\InvalidArgumentException) {
-      self::assertSame((int) $source->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+      self::assertSame((int) $source->id(), (int) $this->loadComment($comment->id())->getCommentedEntityId());
     }
   }
 
@@ -629,14 +639,14 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       self::fail('The form must not expose destinations without source access.');
     }
     catch (AccessDeniedHttpException) {
-      self::assertSame((int) $source->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+      self::assertSame((int) $source->id(), (int) $this->loadComment($comment->id())->getCommentedEntityId());
     }
     try {
       $this->mover->move((int) $comment->id(), (int) $destination->id(), $without_topic_access);
       self::fail('Move permission must not grant access to the source topic.');
     }
     catch (\InvalidArgumentException) {
-      self::assertSame((int) $source->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+      self::assertSame((int) $source->id(), (int) $this->loadComment($comment->id())->getCommentedEntityId());
     }
   }
 
@@ -657,7 +667,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $this->container->get('form_builder')->submitForm($form, $form_state, $comment);
 
     self::assertSame([], $form_state->getErrors());
-    self::assertSame((int) $destination->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+    self::assertSame((int) $destination->id(), (int) $this->loadComment($comment->id())->getCommentedEntityId());
   }
 
   /**
@@ -676,7 +686,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $this->container->get('form_builder')->submitForm($form, $form_state, $comment);
 
     self::assertNotSame([], $form_state->getErrors());
-    self::assertSame((int) $source->id(), (int) Comment::load($comment->id())->getCommentedEntityId());
+    self::assertSame((int) $source->id(), (int) $this->loadComment($comment->id())->getCommentedEntityId());
   }
 
   /**
@@ -702,7 +712,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $source = $this->topic('Source');
     $destination = $this->topic('Destination');
     $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
-    $stale_comment = Comment::load($comment->id());
+    $stale_comment = $this->loadComment($comment->id());
 
     $this->mover->move((int) $comment->id(), (int) $destination->id(), $this->account);
 
@@ -726,7 +736,6 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       'status' => CommentInterface::PUBLISHED,
     ]);
     $lock_name = 'aculta_forum:topic-write:' . $topic->id();
-    self::assertInstanceOf(DatabaseLockBackend::class, $this->container->get('lock'));
     self::assertSame(ForumCommentMover::COMMENT_TYPE, $comment->bundle());
     self::assertSame('node', $comment->getCommentedEntityTypeId());
     self::assertSame((int) $topic->id(), (int) $comment->getCommentedEntityId());
@@ -774,10 +783,10 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       $this->container->get('state')->delete('aculta_forum_comment_move_test.destination');
     }
 
-    self::assertSame((int) $source->id(), (int) Comment::load($root->id())->getCommentedEntityId());
-    self::assertSame((int) $source->id(), (int) Comment::load($child->id())->getCommentedEntityId());
-    self::assertSame('01/', Comment::load($root->id())->getThread());
-    self::assertSame('01.00/', Comment::load($child->id())->getThread());
+    self::assertSame((int) $source->id(), (int) $this->loadComment($root->id())->getCommentedEntityId());
+    self::assertSame((int) $source->id(), (int) $this->loadComment($child->id())->getCommentedEntityId());
+    self::assertSame('01/', $this->loadComment($root->id())->getThread());
+    self::assertSame('01.00/', $this->loadComment($child->id())->getThread());
     self::assertSame(2, $this->commentCount($source));
     self::assertSame(0, $this->commentCount($destination));
   }
@@ -823,8 +832,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
   private function commentCount(Node $host): int {
     $records = $this->container->get('comment.statistics')->read([(int) $host->id() => $host], 'node');
     foreach ($records as $record) {
-      if ($record->field_name === ForumCommentMover::FIELD_NAME) {
-        return (int) $record->comment_count;
+      $values = get_object_vars($record);
+      if (($values['field_name'] ?? NULL) === ForumCommentMover::FIELD_NAME) {
+        return $this->integerValue($values['comment_count'] ?? NULL);
       }
     }
     return 0;
@@ -832,6 +842,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
 
   /**
    * Adds a field storage and its bundle field configuration.
+   *
+   * @param array<string, mixed> $settings
+   *   Field storage settings.
    */
   private function addField(string $type, string $name, array $settings): void {
     FieldStorageConfig::create([
@@ -846,6 +859,93 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       'field_name' => $name,
       'label' => $name,
     ])->save();
+  }
+
+  private function loadComment(int|string|null $id): Comment {
+    if ($id === NULL) {
+      throw new \UnexpectedValueException('The saved comment has no ID.');
+    }
+    $comment = Comment::load($id);
+    if (!$comment instanceof Comment) {
+      throw new \UnexpectedValueException('The saved comment could not be loaded.');
+    }
+    return $comment;
+  }
+
+  private function requireComment(mixed $entity): Comment {
+    if (!$entity instanceof Comment) {
+      throw new \UnexpectedValueException('Expected a saved Comment entity.');
+    }
+    return $entity;
+  }
+
+  private function loadNode(int|string|null $id): Node {
+    if ($id === NULL) {
+      throw new \UnexpectedValueException('The saved topic has no ID.');
+    }
+    $node = Node::load($id);
+    if (!$node instanceof Node) {
+      throw new \UnexpectedValueException('The saved topic could not be loaded.');
+    }
+    return $node;
+  }
+
+  private function loadFile(int|string|null $id): File {
+    if ($id === NULL) {
+      throw new \UnexpectedValueException('The saved file has no ID.');
+    }
+    $file = File::load($id);
+    if (!$file instanceof File) {
+      throw new \UnexpectedValueException('The saved file could not be loaded.');
+    }
+    return $file;
+  }
+
+  private function requireFlagging(mixed $entity): FlaggingInterface {
+    if (!$entity instanceof FlaggingInterface) {
+      throw new \UnexpectedValueException('Expected a saved Flagging entity.');
+    }
+    return $entity;
+  }
+
+  private function requireRole(mixed $entity): \Drupal\user\Entity\Role {
+    if (!$entity instanceof \Drupal\user\Entity\Role) {
+      throw new \UnexpectedValueException('The authenticated role could not be loaded.');
+    }
+    return $entity;
+  }
+
+  private function entityId(CommentInterface $comment): int|string {
+    $id = $comment->id();
+    if (!is_int($id) && !is_string($id)) {
+      throw new \UnexpectedValueException('The saved comment has no scalar ID.');
+    }
+    return $id;
+  }
+
+  private function integerValue(mixed $value): int {
+    if (is_int($value)) {
+      return $value;
+    }
+    if (is_string($value) && preg_match('/^-?\\d+$/D', $value) === 1) {
+      return (int) $value;
+    }
+    throw new \UnexpectedValueException('Expected an integer value.');
+  }
+
+  /**
+   * @param array<mixed> $usage
+   */
+  private function assertFileCommentUsage(array $usage, int|string $commentId): void {
+    $file_usage = $usage['file'] ?? NULL;
+    if (!is_array($file_usage)) {
+      throw new \UnexpectedValueException('File usage data is missing.');
+    }
+    $comment_usage = $file_usage['comment'] ?? NULL;
+    if (!is_array($comment_usage)) {
+      throw new \UnexpectedValueException('Comment file usage data is missing.');
+    }
+    self::assertSame('1', $comment_usage[$commentId] ?? NULL);
   }
 
 }

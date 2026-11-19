@@ -1,0 +1,11 @@
+name: 'Moldura tricolor na lateral esquerda'
+description: 'Moldura com ênfase tricolor vertical na lateral esquerda (vermelho no topo, amarelo intermediário e verde na base).'
+props:
+  accent: 'tricolor'
+  position: 'start'
+  tone: 'raised'
+  radius: 'lg'
+  spacing: 'normal'
+  elevation: 'subtle'
+slots:
+  content: 'Superfície com destaque tricolor na lateral esquerda (vermelho, amarelo e verde).'

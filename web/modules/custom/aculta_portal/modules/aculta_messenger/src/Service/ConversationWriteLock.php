@@ -6,7 +6,7 @@ namespace Drupal\aculta_messenger\Service;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 
 /**
  * Serializes private-message writes against retention for each thread.
@@ -27,7 +27,7 @@ final class ConversationWriteLock {
    *
    * A new, unsaved thread needs no lock because retention cannot select it.
    *
-   * @return \Drupal\private_message\Entity\PrivateMessageThreadInterface|null
+   * @return \Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface|null
    *   Fresh thread when the lock was acquired, the original unsaved thread, or
    *   NULL when another operation owns the lock or the persisted thread
    *   vanished.

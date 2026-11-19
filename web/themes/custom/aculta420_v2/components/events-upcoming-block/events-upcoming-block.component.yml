@@ -1,0 +1,31 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Bloco de Próximos Eventos
+description: Lista resumida somente leitura de próximos eventos com link para a rota canônica em Eventos.
+group: Conteúdo
+status: experimental
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    title:
+      title: Título da lista de eventos
+      type: string
+      description: Cabeçalho opcional da lista; pode ficar vazio quando o próprio bloco fornece o título.
+      default: Próximos eventos
+    empty_text:
+      title: Mensagem quando não há eventos
+      type: string
+      description: Texto exibido quando a lista de links items está vazia.
+      default: Nenhum evento publicado no momento.
+    items:
+      title: Eventos a exibir
+      description: Lista de links de eventos, com o nome e o endereço canônico de cada evento.
+      $ref: 'ui-patterns://links'
+slots:
+  header_actions:
+    title: Ações do cabeçalho
+    description: Link ou botão opcional para ver a agenda completa.
+assets:
+  css:
+    component:
+      events-upcoming-block.css: {}

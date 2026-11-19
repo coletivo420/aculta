@@ -1,0 +1,13 @@
+name: Superfície padrão
+description: Superfície base com elevação sutil e cantos arredondados padrão.
+component: aculta420_v2:surface
+props:
+  tone: green-soft
+  radius: lg
+  spacing: normal
+  elevation: subtle
+  border: subtle
+slots:
+  content:
+    type: inline_template
+    template: '<p>Superfície semântica neutra adaptável a qualquer conteúdo.</p>'

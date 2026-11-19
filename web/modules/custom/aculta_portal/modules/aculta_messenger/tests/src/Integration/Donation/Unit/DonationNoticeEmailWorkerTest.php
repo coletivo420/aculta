@@ -25,6 +25,7 @@ use Drupal\message\MessageInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserDataInterface;
 use Drupal\user\UserInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\DependencyInjection\Container;
@@ -267,7 +268,7 @@ final class DonationNoticeEmailWorkerTest extends UnitTestCase {
 
   /**
    * Creates a pending Donation Message fixture. */
-  private function message(string $delivery, int $attempts = 0): MessageInterface {
+  private function message(string $delivery, int $attempts = 0): MessageInterface&MockObject {
     $message = $this->createMock(MessageInterface::class);
     $message->method('bundle')->willReturn(DonationNoticeManager::TEMPLATE);
     $message->method('getOwnerId')->willReturn(27);

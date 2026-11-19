@@ -20,6 +20,7 @@ use Drupal\group\Entity\GroupRelationshipInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group as TestGroup;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests order and payment state rules for course enrollment entitlements.
@@ -386,7 +387,7 @@ final class CourseOrderEnrollmentManagerTest extends UnitTestCase {
   /**
    * Creates an order double with the requested state and paid status.
    */
-  private function createOrder(string $stateId, bool $isPaid): OrderInterface {
+  private function createOrder(string $stateId, bool $isPaid): OrderInterface&MockObject {
     $state = new class($stateId) {
 
       public function __construct(private string $id) {}

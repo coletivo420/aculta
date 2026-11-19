@@ -1,0 +1,65 @@
+services:
+  # Logging
+  logger.channel.aculta_cgu:
+    parent: logger.channel_base
+    arguments: ['aculta_cgu']
+
+  # Contributions / Propostas
+  aculta_cgu.contribution_adapter_registry:
+    class: Drupal\aculta_cgu\Adapter\ContributionAdapterRegistry
+    tags:
+      - { name: service_collector, tag: aculta_cgu.contribution_adapter, call: addAdapter }
+
+  aculta_cgu.contribution_state_machine:
+    class: Drupal\aculta_cgu\Service\ContributionStateMachine
+
+  aculta_cgu.contribution_lifecycle:
+    class: Drupal\aculta_cgu\Service\ContributionLifecycle
+    arguments:
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@aculta_cgu.contribution_adapter_registry'
+      - '@aculta_cgu.contribution_state_machine'
+      - '@flood'
+      - '@lock'
+      - '@database'
+      - '@config.factory'
+      - '@logger.channel.aculta_cgu'
+
+  # Moderação e Denúncias (UGC)
+  aculta_cgu.moderation_notifier:
+    class: Drupal\aculta_cgu\Service\ModerationNotifier
+    arguments:
+      - '@entity_type.manager'
+      - '@logger.channel.aculta_cgu'
+      - '@?aculta_mailer.mailer'
+
+  aculta_cgu.report_service:
+    class: Drupal\aculta_cgu\Service\ReportService
+    arguments:
+      - '@entity_type.manager'
+      - '@datetime.time'
+      - '@aculta_cgu.moderation_notifier'
+      - '@lock'
+      - '@logger.channel.aculta_cgu'
+
+  aculta_cgu.report_queue:
+    class: Drupal\aculta_cgu\Service\CguReportQueue
+    arguments:
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@database'
+
+  aculta_cgu.mail_type.report_notice:
+    class: Drupal\aculta_cgu\Mail\CguReportNoticeMailType
+    arguments: ['@string_translation']
+    tags:
+      - { name: aculta_mailer.type }
+
+  # Indicadores internos de moderação do Fórum; descobertos só quando o
+  # Statistics está presente, pela tag opcional.
+  aculta_cgu.forum_moderation_metrics:
+    class: Drupal\aculta_cgu\Statistics\ForumModerationMetricsProvider
+    arguments: ['@database']
+    tags:
+      - { name: aculta_statistics.metric_provider }

@@ -66,6 +66,7 @@ final class AttemptRuleTest extends UnitTestCase {
       ['score' => 95.0, 'finished' => 100],
       ['score' => 40.0, 'finished' => 200],
     ], AttemptRule::KEEP_LATEST);
+    $this->assertNotNull($kept);
     $this->assertSame(40.0, $kept['score']);
   }
 
@@ -77,6 +78,7 @@ final class AttemptRuleTest extends UnitTestCase {
       ['score' => 95.0, 'finished' => 100],
       ['score' => 40.0, 'finished' => 200],
     ], AttemptRule::KEEP_BEST);
+    $this->assertNotNull($kept);
     $this->assertSame(95.0, $kept['score']);
   }
 
@@ -89,6 +91,7 @@ final class AttemptRuleTest extends UnitTestCase {
       ['score' => 80.0, 'finished' => 300],
       ['score' => 80.0, 'finished' => 200],
     ], AttemptRule::KEEP_BEST);
+    $this->assertNotNull($kept);
     $this->assertSame(300, $kept['finished']);
   }
 

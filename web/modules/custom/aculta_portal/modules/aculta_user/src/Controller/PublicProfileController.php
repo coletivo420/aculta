@@ -9,7 +9,7 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Url;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Account\AccountNames;
 use Drupal\aculta_user\Account\NicknameRegistry;
 use Drupal\aculta_user\Avatar\AvatarResolver;
@@ -22,6 +22,7 @@ use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Template\Attribute;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
@@ -40,7 +41,7 @@ final class PublicProfileController extends ControllerBase {
   private const PURPOSE = 'main';
 
   public function __construct(
-    private readonly DomainPurposeManager $purposeManager,
+    private readonly DomainSiteManager $siteManager,
     private readonly EntityTypeManagerInterface $entityTypeManagerService,
     private readonly PublicProfilePolicy $policy,
     private readonly SocialNetworks $networks,
@@ -57,7 +58,7 @@ final class PublicProfileController extends ControllerBase {
    */
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_portal.domain_purpose'),
+      $container->get('aculta_portal.domain_site'),
       $container->get('entity_type.manager'),
       $container->get('aculta_user.public_profile_policy'),
       $container->get('aculta_user.social_networks'),
@@ -72,9 +73,12 @@ final class PublicProfileController extends ControllerBase {
 
   /**
    * Renderiza o perfil público do apelido informado.
+   *
+   * @return array<array-key, mixed>
+   *   Render array do perfil público.
    */
   public function view(string $apelido): array {
-    if ($this->purposeManager->getCurrentPurpose() !== self::PURPOSE) {
+    if ($this->siteManager->getCurrentSiteKey()?->value !== self::PURPOSE) {
       throw new NotFoundHttpException();
     }
 
@@ -85,7 +89,7 @@ final class PublicProfileController extends ControllerBase {
 
     // The URL slug is canonical lowercase, while the stored nickname is the
     // user-facing display value and may retain uppercase characters.
-    $displayNickname = (string) $profile->get('field_nickname')->value;
+    $displayNickname = $this->textValue($profile->get('field_nickname')->value);
 
     $account = $profile->getOwner();
     $cache = (new CacheableMetadata())
@@ -122,7 +126,7 @@ final class PublicProfileController extends ControllerBase {
       $build['bio'] = [
         '#theme' => 'aculta_portal_element',
         '#tag' => 'p',
-        '#value' => (string) $profile->get('field_bio')->value,
+        '#value' => $this->textValue($profile->get('field_bio')->value),
         '#element_attributes' => new Attribute(['data-portal-ui' => 'public-profile-bio']),
       ];
     }
@@ -133,10 +137,10 @@ final class PublicProfileController extends ControllerBase {
         $links[] = $this->socialLink($key, $uri);
       }
     }
-    if (isset($items['email']) && $account !== NULL && $account->getEmail() !== '') {
+    if (isset($items['email']) && $account->getEmail() !== '') {
       $links[] = $this->emailLink((string) $account->getEmail());
     }
-    if ($account !== NULL && $this->account->isAuthenticated() && (int) $this->account->id() !== (int) $account->id()) {
+    if ($this->account->isAuthenticated() && (int) $this->account->id() !== (int) $account->id()) {
       $relationship = $this->friendshipManager->getRelationshipWith((int) $account->id());
       $build['header']['actions'] = [
         '#type' => 'container',
@@ -166,15 +170,23 @@ final class PublicProfileController extends ControllerBase {
       ];
     }
 
-    $this->modules->alter('aculta_user_public_profile', $build, $profile);
+    // alter() recebe o array por referência: a cópia alterada é validada antes de voltar ao render.
+    $alterable = $build;
+    $this->modules->alter('aculta_user_public_profile', $alterable, $profile);
+    if (is_array($alterable)) {
+      $build = $alterable;
+    }
     $cache->applyTo($build);
     return $build;
   }
 
   /**
    * Builds a permitted photo or archive avatar for the profile.
+   *
+   * @return array<array-key, mixed>
+   *   Render array do avatar.
    */
-  private function avatar($account, string $apelido, bool $showPhoto): array {
+  private function avatar(?UserInterface $account, string $apelido, bool $showPhoto): array {
     $wrap = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'public-profile-avatar']];
     $cacheability = new CacheableMetadata();
     $image = $this->avatars->build($account, $apelido, $showPhoto, $cacheability, ['data-portal-ui' => 'public-profile-avatar-image']);
@@ -187,6 +199,9 @@ final class PublicProfileController extends ControllerBase {
 
   /**
    * Builds a social network link with icon, name and a new tab.
+   *
+   * @return array<array-key, mixed>
+   *   Render array do link.
    */
   private function socialLink(string $key, string $uri): array {
     $label = (string) SocialNetworks::NETWORKS[$key]['label'];
@@ -200,6 +215,9 @@ final class PublicProfileController extends ControllerBase {
 
   /**
    * Builds the profile email link using a mailto URI.
+   *
+   * @return array<array-key, mixed>
+   *   Render array do link de e-mail.
    */
   private function emailLink(string $email): array {
     $label = (string) $this->t('E-mail');
@@ -236,7 +254,7 @@ final class PublicProfileController extends ControllerBase {
    * @return array{publico: bool, obrigatorio: bool, apelido: string, exibir_foto: bool, exibir_bio: bool,
    *   exibir_email: bool, exibir_redes: bool}
    */
-  private function valuesOf(ProfileInterface $profile, $account): array {
+  private function valuesOf(ProfileInterface $profile, ?UserInterface $account): array {
     $flag = static function (string $field, bool $default) use ($profile): bool {
       if (!$profile->hasField($field) || $profile->get($field)->isEmpty()) {
         return $default;
@@ -246,13 +264,39 @@ final class PublicProfileController extends ControllerBase {
 
     return [
       'publico' => $flag('field_perfil_publico', TRUE),
-      'obrigatorio' => $account !== NULL && PublicProfilePolicy::isObrigatorioPublico($account->getRoles()),
-      'apelido' => (string) $profile->get('field_nickname')->value,
+      'obrigatorio' => $account !== NULL && PublicProfilePolicy::isObrigatorioPublico($this->stringsOf($account->getRoles())),
+      'apelido' => $this->textValue($profile->get('field_nickname')->value),
       'exibir_foto' => $flag('field_exibir_foto', FALSE),
       'exibir_bio' => $flag('field_exibir_bio', FALSE),
       'exibir_email' => $flag('field_exibir_email', FALSE),
       'exibir_redes' => $flag('field_exibir_redes', FALSE),
     ];
+  }
+
+  /**
+   * Só os itens textuais de uma lista (papéis de conta são sempre strings).
+   *
+   * @param array<array-key, mixed> $values
+   *   Lista de valores não tipados.
+   *
+   * @return list<string>
+   *   Itens que são strings, na mesma ordem.
+   */
+  private function stringsOf(array $values): array {
+    $strings = [];
+    foreach ($values as $value) {
+      if (is_string($value)) {
+        $strings[] = $value;
+      }
+    }
+    return $strings;
+  }
+
+  /**
+   * Texto de um valor de campo; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

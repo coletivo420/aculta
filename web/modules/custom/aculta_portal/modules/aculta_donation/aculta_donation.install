@@ -31,3 +31,16 @@ function aculta_donation_update_11001(): string {
 
   return 'Migrated donation settings to aculta_donation.settings.';
 }
+
+/**
+ * Installs the donation campaign configuration entity type.
+ */
+function aculta_donation_update_11003(): string {
+  $entity_type_id = 'aculta_donation_campaign';
+  $manager = \Drupal::entityDefinitionUpdateManager();
+  if ($manager->getEntityType($entity_type_id) === NULL) {
+    $manager->installEntityType(\Drupal::entityTypeManager()->getDefinition($entity_type_id));
+  }
+
+  return 'Installed the ACULTA donation campaign entity type.';
+}

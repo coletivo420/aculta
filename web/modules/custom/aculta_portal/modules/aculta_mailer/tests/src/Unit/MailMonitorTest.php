@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_mailer\Unit;
 
-use Drupal\aculta_file_uploader\IngestionLimits;
 use Drupal\aculta_mailer\Alert\MailAlerts;
 use Drupal\aculta_mailer\Delivery\AdministratorRecipients;
 use Drupal\aculta_mailer\Delivery\MailSuppression;
@@ -36,6 +35,14 @@ use Psr\Log\LoggerInterface;
 #[CoversClass(MailMonitor::class)]
 #[Group('aculta_mailer')]
 final class MailMonitorTest extends UnitTestCase {
+
+  /**
+   * @return array<string, mixed>
+   *   Empty state store with dynamic string keys.
+   */
+  private function newStateStore(): array {
+    return [];
+  }
 
   private const NOW = 1800000000;
 
@@ -78,8 +85,8 @@ MAIL;
   /**
    * Monitor com configuração e estado em memória, e tempo fixo.
    */
-  private function monitor(?ImapClientInterface $unused = NULL): MailMonitor {
-    $store = [];
+  private function monitor(): MailMonitor {
+    $store = $this->newStateStore();
     $state = $this->createMock(StateInterface::class);
     $state->method('get')->willReturnCallback(static function (string $key, mixed $default = NULL) use (&$store): mixed {
       return $store[$key] ?? $default;
@@ -102,7 +109,7 @@ MAIL;
       $this->createMock(LoggerInterface::class),
       $applier,
       new BounceParser(),
-      new DmarcReportParser(IngestionLimits::defaults()),
+      new DmarcReportParser(),
       NULL,
       new MailAlerts(
         $configFactory,
@@ -113,7 +120,6 @@ MAIL;
         $this->createMock(AdministratorRecipients::class),
       ),
       $this->createMock(QuotaSignal::class),
-      IngestionLimits::defaults(),
     );
   }
 
@@ -208,7 +214,7 @@ MAIL;
    * IMAP exception text is excluded from persistent state and operational logs.
    */
   public function testCronStoresOnlyImapFailureClass(): void {
-    $stateValues = [];
+    $stateValues = $this->newStateStore();
     $state = $this->createMock(StateInterface::class);
     $state->method('get')->willReturnCallback(static fn(string $key, mixed $default = NULL): mixed => $stateValues[$key] ?? $default);
     $state->method('set')->willReturnCallback(static function (string $key, mixed $value) use (&$stateValues): void {
@@ -246,7 +252,7 @@ MAIL;
       $logger,
       new DeliveryEventApplier($this->createMock(EntityTypeManagerInterface::class), $suppression),
       new BounceParser(),
-      new DmarcReportParser(IngestionLimits::defaults()),
+      new DmarcReportParser(),
       $secrets,
       new MailAlerts(
         $configFactory,
@@ -257,7 +263,6 @@ MAIL;
         $this->createMock(AdministratorRecipients::class),
       ),
       $this->createMock(QuotaSignal::class),
-      IngestionLimits::defaults(),
     );
 
     $monitor->cron();

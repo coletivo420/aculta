@@ -8,6 +8,7 @@ use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Provider\BrevoEventStatus;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -58,6 +59,7 @@ final class MailStatusController extends ControllerBase {
     if ($log === NULL) {
       throw new NotFoundHttpException();
     }
+    assert($log instanceof ContentEntityInterface);
     $status = (string) $log->get('status')->value;
     $transport = (string) $log->get('transport')->value;
     $providerId = (string) $log->get('provider_message_id')->value;

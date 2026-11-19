@@ -252,7 +252,7 @@ class AcultaMailConfirmation extends ContentEntityBase implements AcultaMailConf
     $data_field = $this->get('data');
     $values = $data_field->isEmpty() ? [] : $data_field->first()->toArray();
     if ($key) {
-      return isset($values[$key]) ? $values[$key] : NULL;
+      return $values[$key] ?? NULL;
     }
     return $values;
   }

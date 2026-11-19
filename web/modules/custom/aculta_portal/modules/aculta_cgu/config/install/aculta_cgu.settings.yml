@@ -1,0 +1,2 @@
+flood_limit: 10
+flood_window: 3600

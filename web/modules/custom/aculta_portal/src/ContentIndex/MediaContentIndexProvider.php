@@ -54,7 +54,7 @@ final class MediaContentIndexProvider implements ContentIndexProviderInterface, 
 
   /**
    * {@inheritdoc} */
-  public function getAccessPurpose(ContentEntityInterface $entity): ?string {
+  public function getAccessSiteKey(ContentEntityInterface $entity): ?string {
     return $entity instanceof MediaInterface && $entity->bundle() === $this->bundle
       ? $this->accessPurpose
       : NULL;
@@ -70,7 +70,7 @@ final class MediaContentIndexProvider implements ContentIndexProviderInterface, 
   /**
    * {@inheritdoc} */
   public function project(ContentEntityInterface $entity): ?ContentIndexProjection {
-    if (!$this->isIndexable($entity)) {
+    if (!$entity instanceof MediaInterface || !$this->isIndexable($entity)) {
       return NULL;
     }
 

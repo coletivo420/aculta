@@ -11,7 +11,7 @@ use Drupal\aculta_mailer\Transport\SecretProviderInterface;
 use Drupal\aculta_mailer\Log\MailLogRecorder;
 use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\aculta_mailer\Queue\MailQueue;
-use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\aculta_mailer\Entity\MailLog;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\State\StateInterface;
@@ -25,7 +25,6 @@ final class MailDiagnostics {
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypes,
-    private readonly ConfigFactoryInterface $configFactory,
     private readonly StateInterface $state,
     private readonly QueueFactory $queues,
     private readonly TransportFailover $failover,
@@ -76,6 +75,9 @@ final class MailDiagnostics {
   private function transports(): array {
     $rows = [];
     foreach ($this->entityTypes->getStorage(MailTransport::ENTITY_TYPE)->loadMultiple() as $transport) {
+      if (!$transport instanceof MailTransport) {
+        throw new \UnexpectedValueException('O armazenamento de transportes retornou uma entidade inesperada.');
+      }
       $rows[$transport->id()] = [
         'label' => (string) $transport->label(),
         'plugin' => $transport->plugin(),
@@ -124,7 +126,11 @@ final class MailDiagnostics {
     if ($ids === []) {
       return NULL;
     }
-    $log = $storage->load(reset($ids));
+    $id = reset($ids);
+    $log = $storage->load($id);
+    if (!$log instanceof MailLog) {
+      return NULL;
+    }
     return (int) $log->get($sortField)->value ?: NULL;
   }
 

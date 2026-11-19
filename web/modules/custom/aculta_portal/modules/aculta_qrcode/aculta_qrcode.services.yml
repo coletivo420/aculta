@@ -14,7 +14,7 @@ services:
 
   aculta_qrcode.url_resolver:
     class: Drupal\aculta_qrcode\Service\QrCodeUrlResolver
-    arguments: ['@?aculta_portal.domain_purpose']
+    arguments: ['@?aculta_portal.domain_site']
 
   aculta_qrcode.redirect_controller:
     class: Drupal\aculta_qrcode\Controller\QrCodeRedirectController

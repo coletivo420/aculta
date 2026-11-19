@@ -1,0 +1,5 @@
+.badge { display: inline-flex; align-items: center; padding: .25rem .625rem; border: 1px solid transparent; border-radius: var(--radius-full); font-size: var(--font-size-xs); font-weight: 700; line-height: 1.25; gap: var(--spacing-xs); max-inline-size: 100%; overflow-wrap: anywhere; }
+.badge__label { min-inline-size: 0; overflow-wrap: anywhere; }
+.badge--primary { color: var(--color-on-brand); background: var(--color-brand-primary); }
+.badge--highlight { color: var(--color-on-highlight); background: var(--color-brand-highlight); }
+.badge--neutral { color: var(--color-text-primary); border-color: var(--color-border); background: var(--color-surface-raised); }

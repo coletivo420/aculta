@@ -1,0 +1,8 @@
+name: Progresso indeterminado
+description: Informa uma tarefa em andamento sem alegar percentual conhecido.
+component: aculta420_v2:progress
+props:
+  id: progresso-carregamento
+  label: Carregando conteúdo
+  value: null
+  max: 100

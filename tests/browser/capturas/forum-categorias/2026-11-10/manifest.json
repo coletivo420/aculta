@@ -1,0 +1,29 @@
+{
+  "front": "forum-categorias",
+  "phase": "before-ui-patterns-views-cutover",
+  "method": "Xvfb com WebDriver Firefox ESR; execução local via host ACULTA resolvido para loopback",
+  "browser": "Mozilla Firefox 153.6.0esr",
+  "tested_commit": "eb7f0bc117d1c684ba8966b986bfd747f1b0c847",
+  "url_path": "/categorias",
+  "runtime_state": "Configuração Runtime anterior ao UI Patterns row preparado em Config Sync; saída de baseline apenas",
+  "color_mode": "tema claro padrão do Runtime; modo escuro não verificado",
+  "viewports": [
+    {"requested_css_px": 1024, "effective_inner_width_css_px": 1024, "capture": "before/1024px.png"},
+    {"requested_css_px": 390, "effective_inner_width_css_px": 500, "capture": "before/estreito-firefox-500px.png"}
+  ],
+  "assertions": {
+    "page_and_host": "PASS",
+    "single_h1_and_main": "PASS",
+    "aculta420_v2_assets": "PASS (12 referências)",
+    "category_cards_and_links": "PASS (12)",
+    "topic_counters": "PASS (12)",
+    "visible_errors": "PASS (nenhum)",
+    "horizontal_overflow": "PASS (0px e sem overflow nos dois viewports)",
+    "total": "9/9"
+  },
+  "limitations": [
+    "Firefox limita o viewport estreito a 500 CSS px nesta execução.",
+    "Não valida o novo row UI Patterns, pois Config Sync não foi importado.",
+    "Não mede contraste, foco/teclado ou modo escuro."
+  ]
+}

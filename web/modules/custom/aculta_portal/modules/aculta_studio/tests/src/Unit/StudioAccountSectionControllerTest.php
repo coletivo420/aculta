@@ -201,7 +201,7 @@ final class StudioAccountSectionControllerTest extends UnitTestCase {
       $page['navigation']['links']['#items']);
       self::assertSame('aculta-studio-account-root', $page['#attributes']['id']);
       self::assertSame([
-        'aculta_studio.account_data',
+        'aculta_studio.account',
         'aculta_studio.account_address',
         'aculta_studio.account_documents',
         'aculta_studio.account_security',

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Form;
 
-use Drupal\Core\Datetime\DateTimeItemInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -15,6 +14,7 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupRelationshipInterface;
+use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,9 +22,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 final class ClassActivityDeadlineForm extends FormBase {
 
   public function __construct(
-    private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly CurrentRouteMatch $deadlineRouteMatch,
-    private readonly AccountProxyInterface $account,
+    protected readonly EntityTypeManagerInterface $entityTypeManager,
+    protected readonly CurrentRouteMatch $deadlineRouteMatch,
+    protected readonly AccountProxyInterface $account,
   ) {}
 
   /**
@@ -50,25 +50,38 @@ final class ClassActivityDeadlineForm extends FormBase {
 
   /**
    * Builds the deadline editor for the activity in the requested class.
+   *
+   * @param array<array-key, mixed> $form
+   *   The form render array being built.
+   *
+   * @return array<array-key, mixed>
+   *   The completed deadline form render array.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     [$course, $class, $activity, $relationship] = $this->routeEntities();
     $timezone = $this->accountTimezone();
     $default = NULL;
     if ($relationship instanceof GroupRelationshipInterface && !$relationship->get('field_activity_due_at')->isEmpty()) {
-      $parsed = DrupalDateTime::createFromFormat(
-        DateTimeItemInterface::DATETIME_STORAGE_FORMAT,
-        (string) $relationship->get('field_activity_due_at')->value,
-        new \DateTimeZone('UTC'),
-      );
-      if ($parsed instanceof DrupalDateTime) {
-        $default = $parsed->setTimezone(new \DateTimeZone($timezone));
+      $storedDueAt = $relationship->get('field_activity_due_at')->value;
+      if (is_string($storedDueAt) && $storedDueAt !== '') {
+        try {
+          $parsed = DrupalDateTime::createFromFormat(
+            DateTimeItemInterface::DATETIME_STORAGE_FORMAT,
+            $storedDueAt,
+            new \DateTimeZone('UTC'),
+          );
+          $default = $parsed->setTimezone(new \DateTimeZone($timezone));
+        }
+        catch (\InvalidArgumentException | \UnexpectedValueException) {
+          // Ignore malformed persisted dates and leave the form field empty.
+        }
       }
     }
 
+    $classLabel = self::stringLabel($class->label());
     $form['intro'] = [
       '#type' => 'item',
-      '#title' => $this->t('Prazo da atividade na turma @class', ['@class' => $class->label()]),
+      '#title' => $this->t('Prazo da atividade na turma @class', ['@class' => $classLabel]),
       '#description' => $this->t('A mesma atividade pode ter prazos diferentes em cada turma. O horário usa o fuso da sua conta: @timezone.', ['@timezone' => $timezone]),
     ];
     $form['activity'] = [
@@ -95,18 +108,25 @@ final class ClassActivityDeadlineForm extends FormBase {
         '#value' => $this->t('Remover prazo'),
         '#submit' => ['::clearDeadline'],
         '#limit_validation_errors' => [],
+        '#attributes' => ['data-portal-ui' => 'button-danger'],
       ];
     }
     $form['actions']['cancel'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Voltar ao painel da turma'),
-      '#url' => Url::fromRoute('aculta_lms.class_dashboard', ['course' => $course->id(), 'group' => $class->id()]),
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => (string) $this->t('Voltar ao painel da turma'),
+        'url' => Url::fromRoute('aculta_lms.class_dashboard', ['course' => $course->id(), 'group' => $class->id()])->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     return $form;
   }
 
   /**
    * Rejects invalid dates and dates that have already passed.
+   *
+   * @param array<array-key, mixed> $form
+   *   The form render array being validated.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $date = $form_state->getValue(['due_at', 'object']);
@@ -124,6 +144,9 @@ final class ClassActivityDeadlineForm extends FormBase {
 
   /**
    * Persists the date on the Group relationship for this class and activity.
+   *
+   * @param array<array-key, mixed> $form
+   *   The submitted form render array.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     [$course, $class, $activity, $relationship] = $this->routeEntities();
@@ -147,7 +170,11 @@ final class ClassActivityDeadlineForm extends FormBase {
   }
 
   /**
-   * Clears the deadline relation while preserving the LMS activity. */
+   * Clears the deadline relation while preserving the LMS activity.
+   *
+   * @param array<array-key, mixed> $form
+   *   The submitted form render array.
+   */
   public function clearDeadline(array &$form, FormStateInterface $form_state): void {
     [$course, $class, , $relationship] = $this->routeEntities();
     if ($relationship instanceof GroupRelationshipInterface) {
@@ -158,7 +185,11 @@ final class ClassActivityDeadlineForm extends FormBase {
   }
 
   /**
-   * Returns the route's class, activity, and existing due-date relation. */
+   * Returns the route's class, activity, and existing due-date relation.
+   *
+   * @return array{0: \Drupal\group\Entity\GroupInterface, 1: \Drupal\group\Entity\GroupInterface, 2: \Drupal\Core\Entity\ContentEntityInterface, 3: ?\Drupal\group\Entity\GroupRelationshipInterface}
+   *   The course, class, activity, and optional existing deadline relation.
+   */
   private function routeEntities(): array {
     $class = $this->deadlineRouteMatch->getParameter('group');
     $course = $this->deadlineRouteMatch->getParameter('course');
@@ -168,7 +199,8 @@ final class ClassActivityDeadlineForm extends FormBase {
       throw new \LogicException('The class activity deadline route requires a course, class and activity.');
     }
     $relationships = $class->getRelationshipsByEntity($activity, 'lms_class_activity_due');
-    $relationship = $relationships === [] ? NULL : reset($relationships);
+    $candidate = $relationships === [] ? NULL : reset($relationships);
+    $relationship = $candidate instanceof GroupRelationshipInterface ? $candidate : NULL;
     return [$course, $class, $activity, $relationship];
   }
 
@@ -177,6 +209,16 @@ final class ClassActivityDeadlineForm extends FormBase {
   private function accountTimezone(): string {
     $account = $this->entityTypeManager->getStorage('user')->load($this->account->id());
     return $account && $account->getTimeZone() ? $account->getTimeZone() : 'UTC';
+  }
+
+  /**
+   * Returns a safe text value for labels from mixed entity APIs.
+   */
+  private static function stringLabel(mixed $label): string {
+    if (is_string($label)) {
+      return $label;
+    }
+    return $label instanceof \Stringable ? (string) $label : '';
   }
 
 }

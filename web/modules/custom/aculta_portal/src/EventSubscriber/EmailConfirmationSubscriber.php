@@ -16,6 +16,9 @@ final class EmailConfirmationSubscriber implements EventSubscriberInterface {
 
   public function __construct(private readonly EmailConfirmationPolicy $policy) {}
 
+  /**
+   * {@inheritdoc}
+   */
   public static function getSubscribedEvents(): array {
     return [
       SocialAuthEvents::USER_CREATED => 'markConfirmed',
@@ -23,6 +26,12 @@ final class EmailConfirmationSubscriber implements EventSubscriberInterface {
     ];
   }
 
+  /**
+   * Marca o e-mail do usuário como confirmado após login social.
+   *
+   * @param \Drupal\social_auth\Event\UserEvent $event
+   *   Evento de autenticação social.
+   */
   public function markConfirmed(UserEvent $event): void {
     $this->policy->markConfirmed((int) $event->getUser()->id());
   }

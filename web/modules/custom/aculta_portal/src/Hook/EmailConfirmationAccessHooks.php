@@ -18,10 +18,12 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  */
 final class EmailConfirmationAccessHooks {
 
-  /** Entidades de progresso de curso, respostas, pedidos e itens (loja e apoio). */
+  /**
+   * Entidades de progresso de curso, respostas, pedidos e itens (loja e apoio). */
   private const BLOCKED_CREATE = ['lms_course_status', 'lms_answer', 'commerce_order', 'commerce_order_item'];
 
-  /** Bundles de wiki: verbetes (node) e categorias (taxonomy). */
+  /**
+   * Bundles de wiki: verbetes (node) e categorias (taxonomy). */
   private const WIKI = [
     'node' => ['wiki_entry'],
     'taxonomy_term' => ['wiki_category'],
@@ -32,6 +34,19 @@ final class EmailConfirmationAccessHooks {
     private readonly EmailConfirmationPolicy $policy,
   ) {}
 
+  /**
+   * Restringe a criação de entidades para quem não confirmou o e-mail.
+   *
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta que tenta criar a entidade.
+   * @param array $context
+   *   Contexto do hook, com o tipo de entidade.
+   * @param string|null $entity_bundle
+   *   Bundle da entidade, quando houver.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   Proibição quando a política restringe, neutro caso contrário.
+   */
   #[Hook('entity_create_access')]
   public function createAccess(AccountInterface $account, array $context, ?string $entity_bundle): AccessResultInterface {
     if (!$this->isRestricted($context['entity_type_id'] ?? '', $entity_bundle, $account)) {
@@ -40,7 +55,8 @@ final class EmailConfirmationAccessHooks {
     return AccessResult::forbidden('E-mail não confirmado.')->addCacheContexts(['user'])->cachePerUser();
   }
 
-  /** Verdadeiro para escrita de wiki ou comentário por usuário autenticado sem e-mail confirmado. */
+  /**
+   * Verdadeiro para escrita de wiki ou comentário por usuário autenticado sem e-mail confirmado. */
   private function isRestricted(string $entityTypeId, ?string $bundle, AccountInterface $account): bool {
     if ($account->isAnonymous() || $this->policy->isConfirmed($account)) {
       return FALSE;

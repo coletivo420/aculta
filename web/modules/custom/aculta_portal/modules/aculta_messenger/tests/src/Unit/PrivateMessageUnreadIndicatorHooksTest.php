@@ -10,8 +10,8 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\private_message\Entity\PrivateMessageInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
@@ -66,7 +66,9 @@ final class PrivateMessageUnreadIndicatorHooksTest extends UnitTestCase {
 
     $this->hooks()->entityViewAlter($build, $thread, $this->display('inbox'));
 
-    self::assertStringContainsString('unread-thread', $build['#prefix']);
+    $prefix = $build['#prefix'];
+    self::assertIsString($prefix);
+    self::assertStringContainsString('unread-thread', $prefix);
   }
 
   /**
@@ -91,7 +93,15 @@ final class PrivateMessageUnreadIndicatorHooksTest extends UnitTestCase {
   }
 
   /**
-   * Creates a thread fixture for the counter. */
+   * Creates a thread fixture for the counter.
+   *
+   * @param int $updated
+   *   O valor informado para $updated.
+   * @param int $lastAccess
+   *   O valor informado para $lastAccess.
+   * @param array<array-key, mixed> $messages
+   *   O valor informado para $messages.
+   */
   private function thread(int $updated, int $lastAccess, array $messages): PrivateMessageThreadInterface {
     $thread = $this->createMock(PrivateMessageThreadInterface::class);
     $field = new \stdClass();

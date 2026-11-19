@@ -2,6 +2,8 @@
 
 namespace Drupal\aculta_donation\Plugin\Block;
 
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_donation\Form\DonationSettingsForm;
 use Drupal\Core\Block\Attribute\Block;
 use Drupal\Core\Block\BlockBase;
@@ -37,7 +39,7 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
   /**
    * Injected service.
    *
-   * @var \Drupal\path_alias\AliasManagerInterface
+   * @var \Drupal\path_alias\AliasManagerInterface|null
    */
   protected $aliasManager;
 
@@ -51,12 +53,16 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
   /**
    * Gerenciador de domínio: o botão Doar aponta para o domínio de apoio.
    */
-  protected \Drupal\aculta_portal\Domain\DomainPurposeManager $purposes;
+  protected DomainSiteManager $purposes;
 
   // phpcs:disable Generic.CodeAnalysis.UselessOverridingMethod.Found
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   final public function __construct(array $configuration, $plugin_id, $plugin_definition) {
     // @see https://phpstan.org/blog/solving-phpstan-error-unsafe-usage-of-new-static
@@ -65,6 +71,10 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = new static(
@@ -77,7 +87,7 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
       $instance->aliasManager = $container->get('path_alias.manager');
     }
     $instance->configFactory = $container->get('config.factory');
-    $instance->purposes = $container->get('aculta_portal.domain_purpose');
+    $instance->purposes = $container->get('aculta_portal.domain_site');
     return $instance;
   }
 
@@ -85,9 +95,13 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
    * URL do passo inicial da doação, no domínio de apoio, com a query de retorno quando houver.
    *
    * @param array<string, mixed> $options
+   *   Opções adicionais da URL, como a query de retorno.
+   *
+   * @return string
+   *   URL do passo inicial da doação.
    */
   private function urlDoacao(array $options): string {
-    $url = $this->purposes->routeUrl('support', 'aculta_donation.donation.default') ?? Url::fromRoute('aculta_donation.donation.default');
+    $url = $this->purposes->routeUrl(SiteKey::Support, 'aculta_donation.donation.default') ?? Url::fromRoute('aculta_donation.donation.default');
     if (isset($options['query'])) {
       $url->setOption('query', $options['query']);
     }
@@ -96,8 +110,10 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<mixed>
    */
-  public function defaultConfiguration() {
+  public function defaultConfiguration(): array {
     $config = parent::defaultConfiguration();
     $config['return_path'] = FALSE;
     return $config;
@@ -105,8 +121,11 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @return array<mixed>
    */
-  public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
+  public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildConfigurationForm($form, $form_state);
     $form['return_path'] = [
       '#type' => 'checkbox',
@@ -119,30 +138,37 @@ class DonateBlock extends BlockBase implements ContainerFactoryPluginInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
    */
-  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
     $donationConfig = $this->configFactory->get('aculta_donation.settings');
     $use_route = $donationConfig->get('donation_route');
     $route_allowed = $use_route === DonationSettingsForm::ROTA_DONATE || $use_route === DonationSettingsForm::ROTA_AMBAS;
     if (!$route_allowed) {
-      $form_state->setError($form['label'], $this->t('The Donate block is only usable if donations are configured in Commerce to use the /donate route. Adjust the donation configuration before configuring this block.'));
+      $labelElement = isset($form['label']) && is_array($form['label']) ? $form['label'] : [];
+      $form_state->setError($labelElement, $this->t('The Donate block is only usable if donations are configured in Commerce to use the /donate route. Adjust the donation configuration before configuring this block.'));
     }
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
    */
-  public function blockSubmit($form, FormStateInterface $form_state) {
+  public function blockSubmit($form, FormStateInterface $form_state): void {
     $this->configuration['return_path'] = $form_state->getValue('return_path') ? TRUE : FALSE;
     parent::blockSubmit($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
    */
-  public function build() {
+  public function build(): array {
     $options = [];
-    if ($this->configuration['return_path']) {
+    if (!empty($this->configuration['return_path'])) {
       $returnPath = ['donate_return' => $this->determineReturnPath()];
       $options = ['query' => $returnPath];
     }

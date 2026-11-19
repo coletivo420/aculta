@@ -94,7 +94,7 @@ Critérios específicos:
 - Unit: gerador `.ics` (quebra de linha, escape de vírgula e ponto e vírgula).
 - Navegador (Firefox ESR, `DISPLAY=:0`): agenda e grade em 320 px e 1280 px, teclado na grade,
   download do `.ics`, iframe carregando. Scripts em `tests/browser/aculta-calendar/` com `README.md`.
-- Temas: ACULTA420 e Olivero.
+- Tema de validação: ACULTA ativo.
 
 ## Riscos específicos
 

@@ -29,19 +29,25 @@ final class ForumPublicPostStatistics {
    * Forum View. Published ForumPosts inherit their public visibility from the
    * accessible topic according to ForumPostAccessHooks.
    *
-   * @param array $topicIds
+   * @param array<int|string, mixed> $topicIds
    *   Node IDs from the current public Forum View result page.
    *
    * @return array<int, array{count: int, last_activity: int, last_post_id: int}>
    *   Aggregate data keyed by topic ID.
    */
   public function getByTopics(array $topicIds): array {
-    $topicIds = array_values(array_unique(array_filter(array_map('intval', $topicIds), static fn (int $id): bool => $id > 0)));
-    if ($topicIds === []) {
+    $cleanIds = [];
+    foreach ($topicIds as $val) {
+      if (is_numeric($val) && (int) $val > 0) {
+        $cleanIds[] = (int) $val;
+      }
+    }
+    $cleanIds = array_values(array_unique($cleanIds));
+    if ($cleanIds === []) {
       return [];
     }
 
-    $missingIds = array_values(array_filter($topicIds, fn (int $id): bool => !isset($this->statistics[$id])));
+    $missingIds = array_values(array_filter($cleanIds, fn (int $id): bool => !isset($this->statistics[$id])));
     foreach ($missingIds as $topicId) {
       $this->statistics[$topicId] = [
         'count' => 0,
@@ -83,16 +89,20 @@ final class ForumPublicPostStatistics {
         ],
       );
 
-      foreach ($result as $row) {
-        $this->statistics[(int) $row->topic] = [
-          'count' => (int) $row->post_count,
-          'last_activity' => (int) $row->last_activity,
-          'last_post_id' => (int) $row->last_post_id,
-        ];
+      if ($result instanceof \Traversable) {
+        foreach ($result as $row) {
+          if (is_object($row) && isset($row->topic) && is_numeric($row->topic)) {
+            $this->statistics[(int) $row->topic] = [
+              'count' => isset($row->post_count) && is_numeric($row->post_count) ? (int) $row->post_count : 0,
+              'last_activity' => isset($row->last_activity) && is_numeric($row->last_activity) ? (int) $row->last_activity : 0,
+              'last_post_id' => isset($row->last_post_id) && is_numeric($row->last_post_id) ? (int) $row->last_post_id : 0,
+            ];
+          }
+        }
       }
     }
 
-    return array_intersect_key($this->statistics, array_fill_keys($topicIds, TRUE));
+    return array_intersect_key($this->statistics, array_fill_keys($cleanIds, TRUE));
   }
 
 }

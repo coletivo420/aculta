@@ -55,7 +55,11 @@ final class ForumGalleryUploadDialogForm extends FormBase {
   }
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
+   */
   public function buildForm(array $form, FormStateInterface $form_state, ?FilterFormatInterface $filter_format = NULL): array {
     $this->dialogBuilder->wrap($form, 'aculta-forum-gallery-dialog', 'forum', 'forum-gallery-dialog');
     $form['introduction'] = [
@@ -87,6 +91,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
         '#type' => 'item',
         '#plain_text' => $this->t('A política de upload atual não permite extensões de imagem para o Fórum.'),
       ];
+      /** @var array<string, mixed> $form */
       return $form;
     }
     $form['image_alts'] = [
@@ -102,14 +107,19 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       '#button_type' => 'primary',
       '#ajax' => ['callback' => '::ajaxSubmit'],
     ];
+    /** @var array<string, mixed> $form */
     return $form;
   }
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $fids = $this->selectedFids($form_state);
-    $title = trim((string) $form_state->getValue('title'));
+    $raw_title = $form_state->getValue('title');
+    $title = is_scalar($raw_title) ? trim((string) $raw_title) : '';
     if ($title === '' || mb_strlen($title) > 255) {
       $form_state->setErrorByName('title', $this->t('Informe um título de até 255 caracteres.'));
       return;
@@ -123,7 +133,9 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       $form_state->setErrorByName('images', $this->t('Uma das imagens enviadas não está disponível. Envie-a novamente.'));
       return;
     }
-    $alt_lines = preg_split('/\\R/u', trim((string) $form_state->getValue('image_alts'))) ?: [];
+    $raw_alts = $form_state->getValue('image_alts');
+    $alts_text = is_scalar($raw_alts) ? trim((string) $raw_alts) : '';
+    $alt_lines = preg_split('/\\R/u', $alts_text) ?: [];
     if (count($alt_lines) !== count($fids)
       || array_filter($alt_lines, static fn (string $alt): bool => trim($alt) === '' || mb_strlen(trim($alt)) > 512) !== []) {
       $form_state->setErrorByName('image_alts', $this->t('Informe uma descrição não vazia de até 512 caracteres para cada imagem, uma por linha e na mesma ordem.'));
@@ -131,7 +143,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
     }
     $form_state->setValue('title', $title);
     foreach ($files as $file) {
-      if (!$file instanceof FileInterface || !$this->uploadPolicy->isValidImage($file, 'forum') || !$this->studioPickOk($form_state, $file)) {
+      if (!$this->uploadPolicy->isValidImage($file, 'forum') || !$this->studioPickOk($form_state, $file)) {
         $form_state->setErrorByName('images', $this->t('Uma das imagens não atende às extensões ou ao tamanho permitidos.'));
         return;
       }
@@ -142,10 +154,31 @@ final class ForumGalleryUploadDialogForm extends FormBase {
    * Imagens escolhidas: uploads novos e envios recentes do Studio, sem repetição.
    *
    * @return int[]
+   *   Identificadores dos arquivos escolhidos, sem repetição.
    */
   private function selectedFids(FormStateInterface $form_state): array {
-    $uploaded = array_values(array_filter(array_map('intval', (array) $form_state->getValue('images'))));
-    $studio = array_values(array_filter(array_map('intval', array_keys(array_filter((array) $form_state->getValue('studio_images'))))));
+    $uploaded = [];
+    $raw_uploaded = $form_state->getValue('images');
+    if (is_array($raw_uploaded)) {
+      foreach ($raw_uploaded as $item) {
+        $val = filter_var($item, FILTER_VALIDATE_INT);
+        if ($val !== FALSE && $val > 0) {
+          $uploaded[] = (int) $val;
+        }
+      }
+    }
+    $studio = [];
+    $raw_studio = $form_state->getValue('studio_images');
+    if (is_array($raw_studio)) {
+      foreach ($raw_studio as $key => $item) {
+        if ($item) {
+          $val = filter_var($key, FILTER_VALIDATE_INT);
+          if ($val !== FALSE && $val > 0) {
+            $studio[] = (int) $val;
+          }
+        }
+      }
+    }
     return array_values(array_unique(array_merge($uploaded, $studio)));
   }
 
@@ -153,7 +186,18 @@ final class ForumGalleryUploadDialogForm extends FormBase {
    * Envio escolhido do Studio só vale para o próprio dono, ou para administrador.
    */
   private function studioPickOk(FormStateInterface $form_state, FileInterface $file): bool {
-    $studio = array_map('intval', array_keys(array_filter((array) $form_state->getValue('studio_images'))));
+    $studio = [];
+    $raw_studio = $form_state->getValue('studio_images');
+    if (is_array($raw_studio)) {
+      foreach ($raw_studio as $key => $item) {
+        if ($item) {
+          $val = filter_var($key, FILTER_VALIDATE_INT);
+          if ($val !== FALSE && $val > 0) {
+            $studio[] = (int) $val;
+          }
+        }
+      }
+    }
     if (!in_array((int) $file->id(), $studio, TRUE)) {
       return TRUE;
     }
@@ -161,11 +205,17 @@ final class ForumGalleryUploadDialogForm extends FormBase {
   }
 
   /**
-   * {@inheritdoc} */
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
   /**
-   * Creates private Media and a Gallery, then inserts its Entity Embed. */
+   * Creates private Media and a Gallery, then inserts its Entity Embed.
+   *
+   * @param array<string, mixed> $form
+   */
   public function ajaxSubmit(array &$form, FormStateInterface $form_state): AjaxResponse {
     $response = new AjaxResponse();
     if ($form_state->hasAnyErrors()) {
@@ -175,8 +225,11 @@ final class ForumGalleryUploadDialogForm extends FormBase {
 
     $fids = $this->selectedFids($form_state);
     $files = $this->entityTypeManager->getStorage('file')->loadMultiple($fids);
-    $alt_lines = preg_split('/\\R/u', trim((string) $form_state->getValue('image_alts'))) ?: [];
-    $title = trim((string) $form_state->getValue('title'));
+    $raw_alts = $form_state->getValue('image_alts');
+    $alts_text = is_scalar($raw_alts) ? trim((string) $raw_alts) : '';
+    $alt_lines = preg_split('/\\R/u', $alts_text) ?: [];
+    $raw_title = $form_state->getValue('title');
+    $title = is_scalar($raw_title) ? trim((string) $raw_title) : '';
     if ($fids === [] || count($files) !== count($fids)) {
       $form_state->setErrorByName('images', $this->t('Uma das imagens enviadas não está mais disponível. Envie-a novamente.'));
       $response->addCommand(new HtmlCommand('#aculta-forum-gallery-dialog', $form));
@@ -194,7 +247,7 @@ final class ForumGalleryUploadDialogForm extends FormBase {
       return $response;
     }
     foreach ($files as $file) {
-      if (!$file instanceof FileInterface || !$this->uploadPolicy->isValidImage($file, 'forum') || !$this->studioPickOk($form_state, $file)) {
+      if (!$this->uploadPolicy->isValidImage($file, 'forum') || !$this->studioPickOk($form_state, $file)) {
         $form_state->setErrorByName('images', $this->t('Uma das imagens não atende às extensões ou ao tamanho permitidos.'));
         $response->addCommand(new HtmlCommand('#aculta-forum-gallery-dialog', $form));
         return $response;
@@ -203,6 +256,9 @@ final class ForumGalleryUploadDialogForm extends FormBase {
     $media_ids = [];
     foreach ($fids as $position => $fid) {
       $file = $files[$fid] ?? NULL;
+      if (!$file instanceof FileInterface) {
+        continue;
+      }
       $media = $this->entityTypeManager->getStorage('media')->create([
         'bundle' => ForumAttachmentPublication::BUNDLE,
         'name' => $file->getFilename(),
@@ -214,9 +270,6 @@ final class ForumGalleryUploadDialogForm extends FormBase {
           'alt' => trim($alt_lines[$position]),
         ],
       ]);
-      if (!$media instanceof MediaInterface) {
-        throw new \UnexpectedValueException('The Forum attachment Media bundle could not be created.');
-      }
       $media->save();
       $media_ids[] = ['target_id' => $media->id()];
       if ($file->isTemporary()) {

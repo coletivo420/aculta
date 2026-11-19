@@ -40,7 +40,7 @@ esta página não replica listas de versões ou de módulos habilitados.
 - Core e contrib continuam donos das capacidades que já fornecem; o Portal integra
   sem criar armazenamento paralelo.
 - Antes de adicionar dependência ou código custom, consulte os documentos de
-  domínio acima e as normas de [Drupal 11+](../portal/DRUPAL-11-STANDARDS.md).
+  domínio acima e as normas de [Drupal 11+](../portal/DRUPAL-12-STANDARDS.md).
 - Mudanças de módulo que afetem a apresentação também atualizam o
   [mapa módulo–tema](../portal/MAPA-MODULO-TEMA.md) e seguem a
   [fronteira Portal–tema](../portal/FRONTEIRA-MODULO-TEMA.md).

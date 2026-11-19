@@ -34,7 +34,7 @@ function aculta_commerce_melhorenvio_update_8001(): string {
     }
   }
   if ($changed > 0) {
-    $config->set('keys', $keys)->save(TRUE);
+    $config->set('keys', $keys)->save();
   }
   return sprintf('Normalized %d Melhor Envio OAuth Key ID reference(s).', $changed);
 }

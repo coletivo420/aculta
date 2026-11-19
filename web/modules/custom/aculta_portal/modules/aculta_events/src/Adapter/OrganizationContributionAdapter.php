@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_events\Adapter;
 
-use Drupal\aculta_contributions\Contract\ContributionAdapterInterface;
-use Drupal\aculta_contributions\Entity\Contribution;
+use Drupal\aculta_cgu\Contract\ContributionAdapterInterface;
+use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_events\Access\EventPermissionPolicy;
 use Drupal\aculta_events\Entity\EventOrganization;
 use Drupal\aculta_events\Event\OrganizationContributionOutcomeRecordedEvent;
 use Drupal\aculta_events\Slug\EventSlugGenerator;
 use Drupal\aculta_events\Service\OrganizationContributionEventQueue;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Database\Connection;
@@ -33,7 +33,7 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
 
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
-    private readonly ?DomainPurposeManager $domainPurposes,
+    private readonly ?DomainSiteManager $siteManagers,
     private readonly EventPermissionPolicy $permissionPolicy,
     private readonly LockBackendInterface $lock,
     private readonly Connection $database,
@@ -87,7 +87,7 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
   public function submitAccess(AccountInterface $account, string $intent, ?EntityInterface $target): bool {
     return $account->isAuthenticated()
       && (int) $account->id() > 0
-      && $this->domainPurposes?->getCurrentPurpose() === 'eventos'
+      && $this->siteManagers?->getCurrentSiteKey()?->value === 'eventos'
       && $this->permissionPolicy->canCreateEvent($account)
       && (($intent === 'organization_update' && $this->eligibleTarget($target))
         || ($intent === 'organization_create' && $target === NULL));
@@ -98,7 +98,7 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
    */
   public function reviewAccess(AccountInterface $reviewer, string $intent, ?EntityInterface $target): bool {
     return in_array($intent, ['organization_update', 'organization_create'], TRUE)
-      && $this->domainPurposes?->getCurrentPurpose() === 'main'
+      && $this->siteManagers?->getCurrentSiteKey()?->value === 'main'
       && $reviewer->hasPermission('administer aculta events');
   }
 
@@ -128,6 +128,12 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
 
   /**
    * Normalizes only the explicitly allowlisted public profile fields.
+   *
+   * @param array<array-key, mixed> $payload
+   *   Proposed profile field values.
+   *
+   * @return array<string, mixed>
+   *   Validated, normalized profile field values.
    */
   public function validatePayload(string $intent, array $payload, ?EntityInterface $target = NULL): array {
     $validTarget = $intent === 'organization_create'
@@ -224,6 +230,11 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
 
   /**
    * Applies a decision with access to the persisted proposal author.
+   *
+   * @param array<string, mixed> $selectedPayload
+   *   Reviewer-selected profile fields.
+   * @param array<string, mixed> $decisionData
+   *   Adapter-specific decision data.
    */
   public function applyContribution(Contribution $proposal, string $intent, ?EntityInterface $target, string $expectedVersion, array $selectedPayload, AccountInterface $reviewer, array $decisionData = []): EntityInterface {
     if ($intent === 'organization_create') {
@@ -265,12 +276,12 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
     $transaction = NULL;
     try {
       $transaction = $this->database->startTransaction();
-      $this->database->select('aculta_event_organization', 'organization')
+      $select = $this->database->select('aculta_event_organization', 'organization');
+      $select
         ->fields('organization', ['id'])
         ->condition('id', $organizationId)
-        ->forUpdate()
-        ->execute()
-        ->fetchField();
+        ->forUpdate();
+      $select->execute()?->fetchField();
       $fresh = $this->entityTypeManager->getStorage('aculta_event_organization')->loadUnchanged($organizationId);
       if (!$fresh instanceof EventOrganization || !$fresh->isUnclaimed()
         || !hash_equals($expectedVersion, $this->currentVersion($intent, $fresh))) {
@@ -315,7 +326,8 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
       throw new ConflictHttpException('A proposta de criação da organização não está válida.');
     }
     $normalized = $this->validatePayload('organization_create', $selectedPayload);
-    if (empty($normalized['title'])) {
+    $title = $normalized['title'] ?? NULL;
+    if (!is_string($title) || $title === '') {
       throw new UnprocessableEntityHttpException('Selecione o nome da organização para aplicar a criação.');
     }
     $lockName = 'aculta_events.organization.create';
@@ -327,20 +339,21 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
       $transaction = $this->database->startTransaction();
       $duplicates = $this->entityTypeManager->getStorage('aculta_event_organization')->getQuery()
         ->accessCheck(FALSE)
-        ->condition('title', $normalized['title'])
+        ->condition('title', $title)
         ->range(0, 1)
         ->execute();
       if ($duplicates !== []) {
         throw new ConflictHttpException('Já existe uma organização com este nome; revise o cadastro existente antes de aplicar.');
       }
-      $slug = $this->uniqueOrganizationSlug($normalized['title']);
-      $values = $normalized + [
-        'body' => '',
-        'imagem' => '',
-        'links' => '',
-        'localidade' => '',
-        'uf' => '',
-        'ocultar_localidade' => FALSE,
+      $slug = $this->uniqueOrganizationSlug($title);
+      $values = [
+        'title' => $title,
+        'body' => $this->normalizedString($normalized, 'body'),
+        'imagem' => $this->normalizedString($normalized, 'imagem'),
+        'links' => $this->normalizedString($normalized, 'links'),
+        'localidade' => $this->normalizedString($normalized, 'localidade'),
+        'uf' => $this->normalizedString($normalized, 'uf'),
+        'ocultar_localidade' => $this->normalizedBoolean($normalized, 'ocultar_localidade'),
       ];
       $organization = $this->entityTypeManager->getStorage('aculta_event_organization')->create([
         'title' => $values['title'],
@@ -393,6 +406,34 @@ final class OrganizationContributionAdapter implements ContributionAdapterInterf
       $candidate = $base . '-' . $suffix++;
     }
     return $candidate;
+  }
+
+  /**
+   * Reads a validated string field, preserving the optional-field default.
+   *
+   * @param array<string, mixed> $payload
+   *   Normalized payload returned by validatePayload().
+   */
+  private function normalizedString(array $payload, string $field): string {
+    $value = $payload[$field] ?? '';
+    if (!is_string($value)) {
+      throw new \LogicException('Validated organization payload contains a non-string field.');
+    }
+    return $value;
+  }
+
+  /**
+   * Reads the normalized privacy flag, preserving its default when omitted.
+   *
+   * @param array<string, mixed> $payload
+   *   Normalized payload returned by validatePayload().
+   */
+  private function normalizedBoolean(array $payload, string $field): bool {
+    $value = $payload[$field] ?? FALSE;
+    if (!is_bool($value)) {
+      throw new \LogicException('Validated organization payload contains an invalid privacy flag.');
+    }
+    return $value;
   }
 
   /**

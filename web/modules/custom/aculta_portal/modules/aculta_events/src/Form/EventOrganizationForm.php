@@ -7,10 +7,11 @@ namespace Drupal\aculta_events\Form;
 use Drupal\aculta_events\Slug\EventSlugGenerator;
 use Drupal\aculta_events\Organization\OrganizationSuggestionService;
 use Drupal\aculta_events\Adapter\OrganizationContributionAdapter;
-use Drupal\aculta_contributions\Service\ContributionLifecycle;
+use Drupal\aculta_cgu\Service\ContributionLifecycle;
 use Drupal\aculta_user\Organization\OrganizationMembershipManager;
 use Drupal\aculta_user\Organization\OwnershipClaimService;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -56,8 +57,8 @@ final class EventOrganizationForm extends ContentEntityForm {
     if ($container->has('aculta_events.organization_suggestion')) {
       $instance->suggestionService = $container->get('aculta_events.organization_suggestion');
     }
-    if ($container->has('aculta_contributions.lifecycle')) {
-      $instance->contributions = $container->get('aculta_contributions.lifecycle');
+    if ($container->has('aculta_cgu.contribution_lifecycle')) {
+      $instance->contributions = $container->get('aculta_cgu.contribution_lifecycle');
     }
     if ($container->has('aculta_events.organization_contribution_adapter')) {
       $instance->organizationAdapter = $container->get('aculta_events.organization_contribution_adapter');
@@ -154,9 +155,9 @@ final class EventOrganizationForm extends ContentEntityForm {
       $isAdmin = $this->currentUser()->hasPermission('administer aculta events');
       if ($entity->isUnclaimed() && !$isAdmin) {
         $form['unclaimed_notice'] = [
-          '#type' => 'container',
-          '#attributes' => ['data-portal-ui' => 'notice-warning'],
-          '#markup' => $this->t('<strong>Organização sem titular:</strong> suas alterações serão enviadas como sugestão e só aparecerão no perfil público após aprovação administrativa.'),
+          '#component' => 'aculta420_v2:status-messages',
+          '#props' => ['type' => 'warning'],
+          '#slots' => ['content' => ['#markup' => $this->t('<strong>Organização sem titular:</strong> suas alterações serão enviadas como sugestão e só aparecerão no perfil público após aprovação administrativa.')]],
           '#weight' => -15,
         ];
         if (isset($form['actions']['submit'])) {
@@ -195,8 +196,8 @@ final class EventOrganizationForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state): void {
-    parent::validateForm($form, $form_state);
+  public function validateForm(array &$form, FormStateInterface $form_state): ContentEntityInterface {
+    $entity = parent::validateForm($form, $form_state);
 
     if ($this->entity->isNew()) {
       $choice = (string) $form_state->getValue('is_claimed_choice', 'unclaimed');
@@ -220,6 +221,7 @@ final class EventOrganizationForm extends ContentEntityForm {
         $form_state->setErrorByName('contribution_rationale', (string) $this->t('Informe por que esta organização deve ser cadastrada.'));
       }
     }
+    return $entity;
   }
 
   /**
@@ -309,7 +311,7 @@ final class EventOrganizationForm extends ContentEntityForm {
 
     if ($isNew) {
       $choice = (string) $form_state->getValue('is_claimed_choice', 'unclaimed');
-      if ($choice === 'claimed' && $isAdmin) {
+      if ($choice === 'claimed') {
         $entity->set('reivindicada', TRUE);
         $entity->set('reivindicacao_status', 'confirmada');
         $entity->set('titular', $currentUid);

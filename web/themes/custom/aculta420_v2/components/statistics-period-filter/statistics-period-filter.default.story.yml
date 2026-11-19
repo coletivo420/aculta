@@ -1,0 +1,16 @@
+name: Filtro de período
+props:
+  action: /painel-administrativo/aculta/estatisticas/area/forum
+  label: Período
+  options:
+    - value: '7'
+      label: Últimos 7 dias
+    - value: '14'
+      label: Últimos 14 dias
+    - value: '30'
+      label: Últimos 30 dias
+  selected: '14'
+  submit_label: Aplicar
+  hidden:
+    - name: metrica
+      value: forum.topics.created

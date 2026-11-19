@@ -2,7 +2,7 @@ name: ACULTA Eventos OpenStreetMap
 type: module
 description: 'Conecta o ACULTA ao OpenStreetMap por OAuth2 com credenciais segregadas por ambiente.'
 package: 'ACULTA Portal'
-core_version_requirement: ^11.3
+core_version_requirement: ^11 || ^12
 version: '0.1.0-dev.2'
 dependencies:
   - aculta_portal:aculta_portal

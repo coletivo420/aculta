@@ -1,0 +1,8 @@
+name: Publicado
+description: Comentário publicado, com ações de moderação.
+props:
+  author_name: Participante
+  state_label: Publicado
+  created_label: 12/11/2026
+  reactions_total: 3
+  reply_count: 1

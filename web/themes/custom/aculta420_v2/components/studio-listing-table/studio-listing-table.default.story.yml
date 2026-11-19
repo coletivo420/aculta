@@ -1,0 +1,7 @@
+name: Tabela de listagem do Studio
+description: Tabela de conteúdos com rolagem horizontal acessível.
+component: aculta420_v2:studio-listing-table
+slots:
+  content:
+    type: inline_template
+    template: '<div class="studio__listing-wrap"><table class="studio__listing"><thead><tr><th scope="col">Título</th><th scope="col">Estado</th></tr></thead><tbody><tr><td>Conteúdo de exemplo</td><td>Publicado</td></tr></tbody></table></div>'

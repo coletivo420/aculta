@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_messenger\Controller;
 
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -21,22 +22,33 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 final class NativePrivateMessageController extends ControllerBase {
 
   public function __construct(
-    #[Autowire(service: 'aculta_portal.domain_purpose')]
-    private readonly DomainPurposeManager $domainPurposeManager,
+    #[Autowire(service: 'aculta_portal.domain_site')]
+    private readonly DomainSiteManager $siteManager,
   ) {}
 
+  /**
+   * Cria a instância do controlador com o serviço de propósito de domínio.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   Container de serviços.
+   *
+   * @return static
+   *   Instância do controlador.
+   */
   public static function create(ContainerInterface $container): static {
-    return new static($container->get('aculta_portal.domain_purpose'));
+    return new static($container->get('aculta_portal.domain_site'));
   }
 
-  /** The inbox page is gone: redirect to the account home (purpose account). */
+  /**
+   * The inbox page is gone: redirect to the account home (purpose account). */
   public function redirectToAccount(): Response {
     // The account home is the root of the account purpose (as the account shell links it), not /minha-conta.
-    $target = $this->domainPurposeManager->pathUrl('account', '/');
+    $target = $this->siteManager->pathUrl(SiteKey::Account, '/');
     return new TrustedRedirectResponse($target?->setAbsolute()->toString() ?? '/', 302);
   }
 
-  /** Native conversation pages are not served; the drawer is the only conversation view. */
+  /**
+   * Native conversation pages are not served; the drawer is the only conversation view. */
   public function gone(): never {
     throw new NotFoundHttpException();
   }

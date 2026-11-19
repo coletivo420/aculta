@@ -11,20 +11,23 @@ interface AvisoDigestProviderInterface {
 
   /**
    * Returns user IDs with pending digest entries.
+   *
+   * @return array<mixed>
+   *   IDs dos destinatários pendentes.
    */
   public function pendingRecipientIds(): array;
 
   /**
    * Returns summary rows for one recipient, revalidating current access.
    *
-   * Each row includes a representative provider-owned `delivery_id`; grouped
+   * Valid rows include a representative provider-owned `delivery_id`; grouped
    * rows may include the exact `delivery_ids` to acknowledge safely. A row
    * without a valid identity is never included in an email. If other valid
-   * rows are delivered, the malformed row is left pending because it cannot
-   * be acknowledged by ID. When no valid row can be included, the shared
-   * digest may invoke recipient-level discard to prevent an endless retry.
+   * rows are delivered, the malformed row remains pending because it cannot
+   * be acknowledged by ID. When no valid row can be included, the consumer
+   * may discard the recipient's pending digest to prevent endless retries.
    *
-   * @return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}>
+   * @return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id?: int, delivery_ids?: list<int>}>
    *   Digest rows with their provider-owned delivery IDs.
    */
   public function digestRowsFor(int $uid): array;

@@ -11,7 +11,7 @@
 
 ## Tamanho e formato
 
-- Importação de 1.388.509 CEPs em 872 arquivos, com cerca de 92 MB no disco do Runtime de teste.
+- Importação de 1.388.509 CEPs em 872 arquivos, com cerca de 92 MB no disco do Runtime de desenvolvimento.
 - Formato de cada linha, separado por TAB: `cep`, `logradouro`, `bairro`, `cidade`, `UF`, `código IBGE`, ordenado por CEP.
 - Verificado contra a ViaCEP em quatro CEPs (São Paulo, Rio de Janeiro, Brasília): logradouro, bairro, cidade e UF iguais.
 

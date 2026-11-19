@@ -36,6 +36,22 @@ cart-status:
     - core/drupal
     - core/once
 
+# Apresentação do widget de desafio de terceiros (Turnstile), dono: aculta_portal.
+captcha-presentation:
+  css:
+    theme:
+      css/captcha-presentation.css: {}
+
+shop-presentation:
+  css:
+    theme:
+      css/shop-presentation.css: {}
+
+checkout-presentation:
+  css:
+    theme:
+      css/checkout-presentation.css: {}
+
 # Padrão de integrações externas: abre a autorização ou o pagamento num popup; o retorno é PopupReturnPage.
 integration-popup:
   js:

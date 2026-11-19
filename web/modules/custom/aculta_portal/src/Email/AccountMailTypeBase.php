@@ -26,9 +26,18 @@ abstract class AccountMailTypeBase implements MailTypeInterface {
     return [
       'name' => ['label' => (string) $this->translation->translate('Nome de exibição'), 'sample' => 'Pessoa Exemplo'],
       'username' => ['label' => (string) $this->translation->translate('Nome de usuário'), 'sample' => 'pessoa'],
-      'site' => ['label' => (string) $this->translation->translate('Nome do site'), 'sample' => 'Associação Cultural Antiproibicionista'],
-      'login_url' => ['label' => (string) $this->translation->translate('Endereço de entrada'), 'sample' => 'https://example.invalid/user'],
-      'one_time_url' => ['label' => (string) $this->translation->translate('Link de uso único (segredo)'), 'sample' => 'https://example.invalid/user/reset/exemplo'],
+      'site' => [
+        'label' => (string) $this->translation->translate('Nome do site'),
+        'sample' => 'Associação Cultural Antiproibicionista',
+      ],
+      'login_url' => [
+        'label' => (string) $this->translation->translate('Endereço de entrada'),
+        'sample' => 'https://example.invalid/user',
+      ],
+      'one_time_url' => [
+        'label' => (string) $this->translation->translate('Link de uso único (segredo)'),
+        'sample' => 'https://example.invalid/user/reset/exemplo',
+      ],
     ];
   }
 

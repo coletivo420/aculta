@@ -88,7 +88,8 @@ class RecurrenceRuleParserTest extends UnitTestCase {
    * O teto de 366 é a constante usada no expansor (M3).
    */
   public function testTetoDeOcorrencias(): void {
-    $this->assertSame(366, RecurrenceRuleParser::MAX_OCCURRENCES);
+    $teto = (new \ReflectionClassConstant(RecurrenceRuleParser::class, 'MAX_OCCURRENCES'))->getValue();
+    $this->assertSame(366, $teto);
   }
 
 }

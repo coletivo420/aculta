@@ -16,11 +16,20 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 final class NativePrivateMessagePagesSubscriber implements EventSubscriberInterface {
 
+  /**
+   * {@inheritdoc}
+   */
   public static function getSubscribedEvents(): array {
     // After the Portal's domain and account routing (-2049/-2050), so the purpose set there is kept.
     return [RoutingEvents::ALTER => ['onAlterRoutes', -2060]];
   }
 
+  /**
+   * Redireciona a caixa de entrada e remove a página nativa de conversa.
+   *
+   * @param \Drupal\Core\Routing\RouteBuildEvent $event
+   *   Evento de construção de rotas.
+   */
   public function onAlterRoutes(RouteBuildEvent $event): void {
     $collection = $event->getRouteCollection();
     $inbox = $collection->get('private_message.private_message_page');

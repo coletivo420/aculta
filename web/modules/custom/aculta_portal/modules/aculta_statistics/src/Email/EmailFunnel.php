@@ -50,7 +50,8 @@ final class EmailFunnel {
    * Conta as linhas do dia por métrica e dimensão.
    *
    * Dimensões: `queued` por tipo; `accepted`, `delivered` e `bounced` por transporte;
-   * `failed` por transporte e código; `status` por transporte e estado atual. Somando uma das partes, obtém-se o total por estado ou por transporte.
+   * `failed` por transporte e código; `status` por transporte e estado atual.
+   * Somando uma das partes, obtém-se o total por estado ou por transporte.
    *
    * @param iterable<array{type: string, status: string, transport: string, error_code: string, accepted: bool}> $rows
    *   Uma linha por envio, com `accepted` verdadeiro quando o campo `sent` foi preenchido.

@@ -17,12 +17,25 @@ use Drupal\Core\Session\AccountInterface;
  */
 final class DonationRefundAccess {
 
-  /** Tipo do item de pedido de doação. */
+  /**
+   * Tipo do item de pedido de doação. */
   public const TIPO_ITEM_DOACAO = 'donation';
 
-  /** Operação do Commerce que estorna um pagamento. */
+  /**
+   * Operação do Commerce que estorna um pagamento. */
   public const OPERACAO_ESTORNO = 'refund-payment';
 
+  /**
+   * Bloqueia o estorno quando o pedido tem item de doação.
+   *
+   * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
+   *   Correspondência da rota acessada.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   Conta que solicita o acesso.
+   *
+   * @return \Drupal\Core\Access\AccessResult
+   *   Resultado do acesso à operação.
+   */
   public function access(RouteMatchInterface $route_match, AccountInterface $account): AccessResult {
     if ($route_match->getParameter('operation') !== self::OPERACAO_ESTORNO) {
       return AccessResult::allowed();
@@ -36,7 +49,8 @@ final class DonationRefundAccess {
       : AccessResult::allowed()->addCacheableDependency($pedido);
   }
 
-  /** Indica se o pedido tem ao menos um item de doação. */
+  /**
+   * Indica se o pedido tem ao menos um item de doação. */
   public static function pedidoTemDoacao(OrderInterface $pedido): bool {
     foreach ($pedido->getItems() as $item) {
       if ($item->bundle() === self::TIPO_ITEM_DOACAO) {

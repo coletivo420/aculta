@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
+use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
@@ -32,7 +33,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   admin_permission: 'administer aculta avisos',
   internal: TRUE,
 )]
-final class Aviso extends ContentEntityBase {
+final class Aviso extends ContentEntityBase implements EntityChangedInterface {
 
   use EntityChangedTrait;
 

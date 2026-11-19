@@ -10,9 +10,10 @@ use Drupal\views\ViewExecutableFactory;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
- * Galeria do produto da loja: prepara a view VVJS (galeria_produto) com as mídias do produto.
+ * Prepara a View UI Patterns galeria_produto com as mídias do produto.
  *
- * O Portal entrega ao tema uma renderização pronta em aculta_product_gallery; o tema só imprime.
+ * O Portal entrega ao tema uma renderização pronta em
+ * aculta_product_gallery; o tema só imprime.
  */
 final class ProductGalleryHooks {
 
@@ -26,6 +27,12 @@ final class ProductGalleryHooks {
     private readonly ViewExecutableFactory $viewExecutableFactory,
   ) {}
 
+  /**
+   * Prepara a galeria do produto com as mídias do campo field_galeria.
+   *
+   * @param array $variables
+   *   Variáveis de preprocess do produto, alteradas no lugar.
+   */
   #[Hook('preprocess_commerce_product')]
   public function preprocessCommerceProduct(array &$variables): void {
     $product = $variables['elements']['#commerce_product'] ?? NULL;

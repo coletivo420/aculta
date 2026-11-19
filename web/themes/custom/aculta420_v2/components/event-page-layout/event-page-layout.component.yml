@@ -1,0 +1,29 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Layout da página de evento
+description: Regiões semânticas para detalhe público de evento, em ordem mobile-first.
+status: experimental
+group: Layouts
+props:
+  type: object
+  additionalProperties: false
+  properties: {}
+slots:
+  title:
+    title: Título
+    description: Título da página do evento, quando o consumidor controla o H1.
+  highlight:
+    title: Destaque
+    description: Mídia ou destaque editorial principal.
+  essentials:
+    title: Informações essenciais
+    description: Tipo, datas e link do evento.
+  content:
+    title: Conteúdo
+    description: Descrição e informações de acesso do evento.
+  sidebar:
+    title: Complementos
+    description: Organização e informações relacionadas.
+assets:
+  css:
+    component:
+      event-page-layout.css: {}

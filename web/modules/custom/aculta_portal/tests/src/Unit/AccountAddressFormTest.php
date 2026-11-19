@@ -73,7 +73,19 @@ final class AccountAddressFormTest extends UnitTestCase {
     $this->assertContains([StreetNumberField::class, 'processStreetNumber'], $element['#process']);
     $this->assertContains([AccountAddressForm::class, 'validateAddressElement'], $element['#element_validate']);
     $this->assertContains(AccountAddressForm::LIBRARY, $element['#attached']['library']);
+    $this->assertContains('aculta420_v2/address-fields', $element['#attached']['library']);
     $this->assertSame(['BR'], $element['#available_countries']);
+  }
+
+  /**
+   * External address adapters without number/S/N do not attach its theme CSS.
+   */
+  public function testExternalAddressAdapterDoesNotAttachNumberStyles(): void {
+    $element = ['#type' => 'address', '#default_value' => []];
+
+    $this->assertTrue(AccountAddressForm::apply($element, '', FALSE, FALSE));
+
+    $this->assertNotContains('aculta420_v2/address-fields', $element['#attached']['library']);
   }
 
   /**

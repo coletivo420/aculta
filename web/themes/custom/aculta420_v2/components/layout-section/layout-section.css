@@ -1,0 +1,30 @@
+.layout-section {
+  display: grid;
+  gap: var(--spacing-lg);
+  min-inline-size: 0;
+}
+
+.layout-section .aculta-section-title { margin-block: 1rem .5rem; font-family: var(--font-family-heading); font-size: 1.25rem; }
+
+.layout-section--raised {
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-control-card);
+  background-color: var(--color-surface-raised);
+}
+
+/* Opt-in for structural sections in UI Patterns Layouts / Layout Builder. */
+.layout-section--green-soft {
+  padding: var(--spacing-lg);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-surface-green-border);
+  border-radius: var(--radius-control-card);
+  background-color: var(--color-surface-green-soft);
+}
+
+.layout-section__header,
+.layout-section__content {
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.layout-section .aculta-lms-discussion-list { margin-block: 0; }

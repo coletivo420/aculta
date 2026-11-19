@@ -1,0 +1,97 @@
+{
+  "purpose": "UI Patterns Views style migration for the public Revista news block",
+  "date": "2026-11-11",
+  "environment": "development Runtime",
+  "route": "/noticias",
+  "owner": "aculta_magazine / Views aculta_news:block_1",
+  "before_runtime_snapshot": {
+    "sha256_json": "291eb04a25c7dcbd54290fe9b7b55cf287db55129715b8269e00391665fc03d6",
+    "sha256_reimport_yaml": "880352875d80634973ad34923f7c7ade94eb83ecf80bafcc24b9fdb0588f3e14",
+    "source": "Runtime config export captured before the targeted import"
+  },
+  "after_runtime_snapshot_sha256_json": "2d5d01b8b851df019c43d7e7b43eb15d2a43e71de250760894c30976a230fac6",
+  "configuration_change": {
+    "only_config_imported": "views.view.aculta_news",
+    "style_before": "default",
+    "style_after": "ui_patterns",
+    "component": "aculta420_v2:revista-listing",
+    "slot_source": "view_rows",
+    "row_plugin_preserved": "entity:node, view_mode teaser",
+    "legacy_css_class_removed": "aculta-editorial-list"
+  },
+  "functional_parity": {
+    "http_status_before_after": [
+      200,
+      200
+    ],
+    "result_count_before_after": [
+      4,
+      4
+    ],
+    "node_ids_before_after": [
+      599,
+      600,
+      601,
+      602
+    ],
+    "anonymous_access": "allowed by native access content permission",
+    "filters_sorts_pager_row_query_relationships": "unchanged",
+    "cache_type": "tag",
+    "cache_contexts": [
+      "languages:language_interface",
+      "user.node_grants:view",
+      "user.permissions"
+    ],
+    "cache_hit_variation": "DEFERRED: response is no-cache/private and X-Drupal-Dynamic-Cache is UNCACHEABLE; two repeated anonymous requests were both X-Drupal-Cache MISS",
+    "repeated_anonymous_requests": {
+      "http_status": [
+        200,
+        200
+      ],
+      "x_drupal_cache": [
+        "MISS",
+        "MISS"
+      ],
+      "stable_result_node_ids": [
+        599,
+        600,
+        601,
+        602
+      ],
+      "html_diff": "per-request View DOM ID and CSP nonce only"
+    }
+  },
+  "browser": {
+    "method": "Visible Firefox ESR via WebDriver BiDi",
+    "viewports_css_px": [
+      320,
+      390,
+      768,
+      1024,
+      1440
+    ],
+    "modes": [
+      "light",
+      "dark"
+    ],
+    "result": "10/10 PASS before and 10/10 PASS after",
+    "assertions": [
+      "four native teaser nodes remain present",
+      "one visible H1 and one main landmark",
+      "keyboard focus is visible inside the View block",
+      "no horizontal overflow",
+      "contrast ratio remains at least 7.16:1",
+      "responsive columns are 1 below 600px, 2 below 992px and 3 from 992px",
+      "first card spans all columns at 1024px and 1440px"
+    ],
+    "before_capture_directory": "before/",
+    "after_capture_directory": "after/"
+  },
+  "deferred": [
+    "cache-hit variation is unavailable while the page remains uncacheable",
+    "real browser zoom 200%",
+    "human visual review"
+  ],
+  "rollback": "Restore the pre-change views.view.aculta_news configuration from its recorded snapshot or the parent commit, then import only that YAML and rebuild caches.",
+  "tested_commit": "e69380f39c15176ca2e399cf95551badb1e59759"
+}

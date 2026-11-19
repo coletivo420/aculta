@@ -1,0 +1,15 @@
+parameters:
+    level: {level}
+    reportUnmatchedIgnoredErrors: {unmatched}
+    paths:
+        - web/modules/custom
+        - web/themes/custom
+        - scripts
+    excludePaths:
+        - vendor/
+        - web/core/
+        - web/libraries/
+        - web/modules/custom/aculta_forum
+
+includes:
+    - phpstan-baseline.neon

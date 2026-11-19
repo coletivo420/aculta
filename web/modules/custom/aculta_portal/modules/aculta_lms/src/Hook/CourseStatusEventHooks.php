@@ -45,6 +45,17 @@ final class CourseStatusEventHooks {
     $this->publisher->publish($entity);
   }
 
+  /**
+   * Retorna o valor de um campo da entidade de progresso.
+   *
+   * @param \Drupal\aculta_lms\Entity\ProgressEntity $progress
+   *   Entidade de progresso.
+   * @param string $field
+   *   Nome do campo.
+   *
+   * @return mixed
+   *   Valor do campo, ou NULL quando ausente.
+   */
   private static function fieldValue(ProgressEntity $progress, string $field): mixed {
     $values = $progress->get($field)->getValue();
     return $values[0]['value'] ?? NULL;

@@ -1,0 +1,42 @@
+.aculta-map-container {
+  display: grid;
+  gap: var(--spacing-sm, .75rem);
+  inline-size: 100%;
+}
+
+.aculta-map {
+  block-size: 18rem;
+  min-block-size: 16rem;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-highlight);
+}
+
+@media (min-width: 48rem) {
+  .aculta-map {
+    block-size: 24rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .aculta-map {
+    block-size: 30rem;
+  }
+}
+
+.aculta-map__aviso {
+  margin-block: .5rem;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm, .875rem);
+}
+
+.aculta-map__aviso a {
+  text-decoration: underline;
+  color: var(--color-brand-primary);
+  text-underline-offset: .15em;
+}
+
+.aculta-map__fallback-list {
+  margin-block-start: var(--spacing-sm, .75rem);
+}

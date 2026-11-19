@@ -21,6 +21,10 @@ final class AuthorCardThemeHooks {
   /**
    * Declares the shared author card template variables.
    */
+  /**
+   * @return array<array-key, mixed>
+   *   Dados retornados.
+   */
   #[Hook('theme')]
   public function theme(): array {
     return [
@@ -35,9 +39,12 @@ final class AuthorCardThemeHooks {
           'member_since' => NULL,
           'bio' => NULL,
           'social_links' => [],
+          'reactions_received' => 0,
+          'reactions_given' => 0,
           'designation' => NULL,
           'actions' => [],
           'source_label' => NULL,
+          'component' => NULL,
         ],
         'template' => 'aculta-user-author-card',
         'path' => $this->moduleList->getPath('aculta_user') . '/templates',

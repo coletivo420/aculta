@@ -1,0 +1,20 @@
+.document-download {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  color: var(--color-text-muted);
+}
+
+.document-download__link,
+.document-download__format,
+.document-download__size {
+  display: grid;
+  gap: .5rem;
+  color: var(--color-text-muted);
+}
+
+.document-download__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}

@@ -196,7 +196,7 @@ pendentes.
 
 - **Todo `/painel-administrativo/` responde somente no MAIN** — inclusive Eventos, Datas, Locais e a integração OpenStreetMap. Em subdomínios, essas rotas retornam **404** (nunca 302), o toolbar do Navigation não é renderizado e nenhuma ação editorial é exposta.
 - O purpose `eventos` serve as páginas públicas (catálogo, Evento, calendário, `.ics`, embed) e a superfície autenticada de organizadores ACULTA Studio Culturas em `/culturas`. Esta área é separada do painel administrativo e só executa escrita nas rotas canônicas de `aculta_events`, com validação de acesso no servidor.
-- O bloco somente leitura `aculta_events_upcoming` ("Próximos eventos") está na sidebar do MAIN, visível apenas no purpose `main`, e não oferece ações editoriais.
+- O bloco somente leitura `aculta_events_upcoming` ("Próximos eventos") está na sidebar da landing (`<front>`) do purpose `main`; não aparece em outras páginas desse domínio e não oferece ações editoriais.
 - Salvar/editar/remover/reordenar Data atualiza a lista do Evento por AJAX, sem perder os campos não salvos. A ordem usa `field_peso`.
 - Nenhuma entidade, catálogo ou armazenamento é duplicado por domínio; a origem continua sendo `aculta_events`.
 

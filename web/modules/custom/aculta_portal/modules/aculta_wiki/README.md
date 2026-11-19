@@ -69,12 +69,17 @@ homologação dos grants ativos no Runtime.
   antigas não eram armazenadas pelo modelo anterior. A migração aborta em
   colisões ou revisões traduzidas, em vez de copiar parcialmente esse histórico.
 
-- Adapter `wiki` registrado em `aculta_contributions`: valida purpose, conta,
+- Adapter `wiki` registrado em `aculta_cgu`: valida purpose, conta,
   alvo, campos e escolhas de lista, delegando a aplicação seletiva ao serviço
-  editorial existente. Unit focal: 3 testes/5 assertions; Kernel focal:
-  1/223. A capacidade dual-store foi implementada no código; a migração dos dados
+  editorial existente. A unificação de propostas e contribuições agora reside no
+  módulo transversal `aculta_cgu` (`Drupal\aculta_cgu\Adapter\WikiContributionAdapter`).
+  A capacidade dual-store foi implementada no código; a migração dos dados
   legados no Runtime não foi executada. O update 10003 e seus checkpoints
   continuam necessários antes de declarar a migração concluída.
+
+- Discussões contextuais integradas via `aculta_forum`:
+  O `aculta_forum` registra e provê o contexto de discussão para verbetes da Wiki (`WikiDiscussionContextProvider`),
+  associando discussões contextuais aos verbetes sem acoplamento reverso ou módulo intermediário.
 
 - Contrato Wiki→Messenger v1 documentado em
   [`docs/MESSENGER-EVENT-CONTRACT.md`](docs/MESSENGER-EVENT-CONTRACT.md): dois
@@ -102,7 +107,7 @@ homologação dos grants ativos no Runtime.
   `node.label`. A busca ganhou formulário próprio e prévia independentes do
   tema; componentes neutros têm fallback semântico e o ACULTA420 mantém um único
   `h1` nas páginas contextuais. Runtime: Index ativado, geração validada e
-  auditada; Olivero e ACULTA420 homologados em oito larguras; modo escuro
+  auditada; ACULTA420 homologados em oito larguras; modo escuro
   confirmado. Suítes próprias: Unit 84/455 e Kernel 31/1.692. Pendências:
   leitor de tela/WCAG completa, zoom real, divergência RBAC das permissões de
   proposta no Runtime e exportação da configuração do Index. Ver `CHANGELOG.md`.
@@ -411,7 +416,7 @@ homologação dos grants ativos no Runtime.
   de viewport no campo/submit da busca, em Firefox ESR. O CSS agregado atual do
   Runtime de teste falha no submit (x=336 a 320 px; x=1282 a 1280 px); a folha
   candidata carregada por GET no browser passa 22/22. O agregado não foi
-  atualizado; Olivero e WCAG integral continuam pendentes.
+  atualizado; WCAG integral continua pendente.
 
 - `0.1.0-dev.70`: edição própria WE SATIVA agora preserva conflitos. O Form API
   carrega a revisão-base, valida antes do submit e revalida com lock transacional
@@ -435,8 +440,7 @@ homologação dos grants ativos no Runtime.
 - `0.1.0-dev.67`: Firefox ESR/X11 visualizou home, listagem e busca em 1280,
   390 e 320 px; 46/46 verificações passaram com o CSS atual da Wiki carregado
   por GET no browser. Identificado e corrigido overflow do submit em
-  `aculta420` 0.6.1-dev.5. O agregado Runtime não foi reconstruído; Olivero e
-  WCAG 2.2 AA completos pendentes.
+  `aculta420` 0.6.1-dev.5. O agregado Runtime não foi reconstruído; WCAG 2.2 AA completa pendente.
 
 - `0.1.0-dev.66`: Kernel cobre nota acima de 5.000 caracteres, decisão de
   proposta retirada, revisão-base obsoleta e aplicação editorial aprovada via

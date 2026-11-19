@@ -11,3 +11,30 @@ aculta_user.admin_subtab_participacao:
   base_route: aculta_portal.admin
   parent_id: aculta_user.admin_tab_pessoas
   weight: 0
+
+aculta_user.admin_subtab_coautorias:
+  title: 'Coautorias'
+  route_name: aculta_user.coauthors.overview
+  base_route: aculta_portal.admin
+  parent_id: aculta_user.admin_tab_pessoas
+  weight: 3
+
+aculta_user.admin_subtab_coautorias_auditoria:
+  title: 'Auditoria de coautorias'
+  route_name: aculta_user.coauthors.audit
+  base_route: aculta_portal.admin
+  parent_id: aculta_user.admin_tab_pessoas
+  weight: 4
+
+aculta_user.config_tab_coautoria:
+  title: 'Coautoria'
+  route_name: aculta_user.coauthors.settings
+  base_route: user.admin_index
+  weight: 15
+
+aculta_user.config_subtab_coautoria_config:
+  title: 'Configuração'
+  route_name: aculta_user.coauthors.settings
+  parent_id: aculta_user.config_tab_coautoria
+  base_route: user.admin_index
+  weight: 0

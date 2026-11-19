@@ -83,6 +83,8 @@ final readonly class ContentIndexProjection {
       throw new \InvalidArgumentException('Content Index owner UID must fit an unsigned 32-bit user ID.');
     }
     foreach ($relations as $relation) {
+      // Runtime guard: providers and tests can pass untyped arrays.
+      // @phpstan-ignore instanceof.alwaysTrue
       if (!$relation instanceof ContentIndexRelation) {
         throw new \InvalidArgumentException('Content Index projections accept only ContentIndexRelation values.');
       }

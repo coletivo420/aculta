@@ -69,7 +69,7 @@
 | OC-C, P1 | OC315-05, 06, 07 | User, Studio, UGC, Mailer | vínculos aprovados, ownership não transferido automaticamente, fila única, cache A/B |
 | OC-D, P2 | OC315-08, 09, 10, 12, 15 | Magazine, Image, Document Viewer, tema | origem/legalidade dos dados, autorização das marcas, cards/Views validados |
 | OC-E, P2 | OC315-11, 13 | Maps, Portal | comparação prévia com implementação existente; evitar duplicidade |
-| OC-F, encerramento | todas | Donos + Ops | documentação e provenance reconciliadas, Unit/Kernel/Functional, Firefox ESR visível e Olivero onde aplicável |
+| OC-F, encerramento | todas | Donos + Ops | documentação e provenance reconciliadas, Unit/Kernel/Functional, Firefox ESR visível onde aplicável |
 
 **Ordem condicionada:** estas ondas são backlog aprovado, **não** autorização para contornar as fases/gates vigentes de cada módulo, nem para realizar `drush cr`, `config:import`, `updatedb`, deploy ou escrita de OpenStreetMap. Atualização de dependências exige aprovação e README no mesmo commit. O uso de Facets/Office Hours é **candidato**, não dependência aprovada automaticamente.
 

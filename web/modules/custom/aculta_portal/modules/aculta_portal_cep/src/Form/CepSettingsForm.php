@@ -22,7 +22,7 @@ final class CepSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typed_config,
-    private readonly CepSources $sources,
+    protected readonly CepSources $sources,
   ) {
     parent::__construct($config_factory, $typed_config);
   }
@@ -47,6 +47,8 @@ final class CepSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<int, string>
    */
   protected function getEditableConfigNames(): array {
     return [CepSources::SETTINGS];
@@ -54,10 +56,16 @@ final class CepSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array<mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $config = $this->config(CepSources::SETTINGS);
-    $stored = $config->get('sources') ?? CepSources::DEFAULTS['sources'];
+    $rawSources = $config->get('sources');
+    $stored = is_array($rawSources) ? $rawSources : CepSources::DEFAULTS['sources'];
 
     $form['intro'] = [
       '#type' => 'item',
@@ -69,20 +77,28 @@ final class CepSettingsForm extends ConfigFormBase {
     foreach (array_keys(CepSources::LABELS) as $id) {
       $options[$id] = $this->sources->label($id);
     }
+    $rawDefault = $config->get('default_source');
     $form['default_source'] = [
       '#type' => 'select',
       '#title' => $this->t('Banco de dados padrão'),
       '#description' => $this->t('Primeira fonte consultada. Precisa estar ativa.'),
       '#options' => $options,
-      '#default_value' => $config->get('default_source') ?? CepSources::DEFAULTS['default_source'],
+      '#default_value' => is_string($rawDefault) && $rawDefault !== '' ? $rawDefault : CepSources::DEFAULTS['default_source'],
     ];
 
     // Keep disabled sources in their saved order in the table.
     $ids = array_keys(CepSources::LABELS);
-    usort($ids, static fn (string $a, string $b): int => ((int) ($stored[$a]['weight'] ?? 0)) <=> ((int) ($stored[$b]['weight'] ?? 0)));
+    usort($ids, static function (string $a, string $b) use ($stored): int {
+      $storedA = is_array($stored[$a] ?? NULL) ? $stored[$a] : [];
+      $storedB = is_array($stored[$b] ?? NULL) ? $stored[$b] : [];
+      $weightA = isset($storedA['weight']) && is_numeric($storedA['weight']) ? (int) $storedA['weight'] : 0;
+      $weightB = isset($storedB['weight']) && is_numeric($storedB['weight']) ? (int) $storedB['weight'] : 0;
+      return $weightA <=> $weightB;
+    });
 
     $rows = [];
     foreach ($ids as $position => $id) {
+      $storedId = is_array($stored[$id] ?? NULL) ? $stored[$id] : [];
       $rows[$id] = [
         '#attributes' => ['class' => ['draggable']],
         '#weight' => $position,
@@ -91,7 +107,7 @@ final class CepSettingsForm extends ConfigFormBase {
           '#type' => 'checkbox',
           '#title' => $this->t('Ativa'),
           '#title_display' => 'invisible',
-          '#default_value' => (bool) ($stored[$id]['enabled'] ?? FALSE),
+          '#default_value' => !empty($storedId['enabled']),
         ],
         'weight' => [
           '#type' => 'weight',
@@ -112,11 +128,18 @@ final class CepSettingsForm extends ConfigFormBase {
       '#attributes' => ['data-portal-ui' => 'cep-sources'],
     ] + $rows;
 
+    $form['#attached'] = is_array($form['#attached'] ?? NULL) ? $form['#attached'] : [];
+    $form['#attached']['library'] = is_array($form['#attached']['library'] ?? NULL) ? $form['#attached']['library'] : [];
+    $form['#attached']['library'][] = 'aculta_portal_cep/cep-settings';
+
     return parent::buildForm($form, $form_state);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     parent::validateForm($form, $form_state);
@@ -130,7 +153,8 @@ final class CepSettingsForm extends ConfigFormBase {
       $form_state->setErrorByName('sources', $this->t('Mantenha pelo menos uma fonte ativa.'));
       return;
     }
-    $default = (string) $form_state->getValue('default_source');
+    $rawDefault = $form_state->getValue('default_source');
+    $default = is_scalar($rawDefault) ? (string) $rawDefault : '';
     if (!in_array($default, $enabled, TRUE)) {
       $form_state->setErrorByName('default_source', $this->t('O banco de dados padrão precisa estar ativo.'));
     }
@@ -138,17 +162,24 @@ final class CepSettingsForm extends ConfigFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $sources = [];
     foreach (array_keys(CepSources::LABELS) as $id) {
+      $rawWeight = $form_state->getValue(['sources', $id, 'weight']);
+      $weight = is_numeric($rawWeight) ? (int) $rawWeight : 0;
       $sources[$id] = [
         'enabled' => (bool) $form_state->getValue(['sources', $id, 'enabled']),
-        'weight' => (int) $form_state->getValue(['sources', $id, 'weight']),
+        'weight' => $weight,
       ];
     }
+    $rawDefault = $form_state->getValue('default_source');
+    $default = is_scalar($rawDefault) ? (string) $rawDefault : '';
     $this->config(CepSources::SETTINGS)
-      ->set('default_source', (string) $form_state->getValue('default_source'))
+      ->set('default_source', $default)
       ->set('sources', $sources)
       ->save();
     parent::submitForm($form, $form_state);

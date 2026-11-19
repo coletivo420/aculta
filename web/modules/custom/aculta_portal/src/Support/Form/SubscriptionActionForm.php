@@ -9,7 +9,9 @@ use Drupal\aculta_portal\Exception\PaymentOperationException;
 use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
+use Drupal\commerce_payment\Entity\PaymentGatewayInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,12 +27,12 @@ final class SubscriptionActionForm extends ConfirmFormBase {
 
   /**
    * Ação validada no buildForm (pausar, reativar ou cancelar). */
-  private string $acaoAtual = '';
+  protected string $acaoAtual = '';
 
   public function __construct(
-    private readonly ?SubscriptionOperationsInterface $operacoesAssinatura,
-    private readonly EntityTypeManagerInterface $entidades,
-    private readonly AccountInterface $usuario,
+    protected readonly ?SubscriptionOperationsInterface $operacoesAssinatura,
+    protected readonly EntityTypeManagerInterface $entidades,
+    protected readonly AccountInterface $usuario,
   ) {}
 
   /**
@@ -56,26 +58,26 @@ final class SubscriptionActionForm extends ConfirmFormBase {
   /**
    * Performs the get question operation.
    */
-  public function getQuestion(): string {
+  public function getQuestion(): TranslatableMarkup {
     return match ($this->acaoAtual) {
-      'pausar' => (string) $this->t('Pausar a doação mensal?'),
-      'reativar' => (string) $this->t('Reativar a doação mensal?'),
-      default => (string) $this->t('Cancelar a doação mensal?'),
+      'pausar' => $this->t('Pausar a doação mensal?'),
+      'reativar' => $this->t('Reativar a doação mensal?'),
+      default => $this->t('Cancelar a doação mensal?'),
     };
   }
 
   /**
    * Performs the get description operation.
    */
-  public function getDescription(): string {
-    return (string) $this->t('Doações já feitas não são estornadas. Você pode reativar uma assinatura pausada enquanto ela existir.');
+  public function getDescription(): TranslatableMarkup {
+    return $this->t('Doações já feitas não são estornadas. Você pode reativar uma assinatura pausada enquanto ela existir.');
   }
 
   /**
    * Performs the get confirm text operation.
    */
-  public function getConfirmText(): string {
-    return (string) match ($this->acaoAtual) {
+  public function getConfirmText(): TranslatableMarkup {
+    return match ($this->acaoAtual) {
       'pausar' => $this->t('Pausar'),
       'reativar' => $this->t('Reativar'),
       default => $this->t('Cancelar assinatura'),
@@ -92,6 +94,13 @@ final class SubscriptionActionForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * @param \Drupal\commerce_order\Entity\OrderInterface|null $commerce_order
+   * @param string $acao
+   *
+   * @return array<string, mixed>
+   *
    * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
    *   Pedido de outra conta, ou ação não permitida para o status atual.
    */
@@ -105,23 +114,32 @@ final class SubscriptionActionForm extends ConfirmFormBase {
     $this->acaoAtual = $acao;
     $form_state->set('pedido_id', (int) $commerce_order->id());
     $form_state->set('acao', $acao);
-    return parent::buildForm($form, $form_state);
+    /** @var array<string, mixed> $builtForm */
+    $builtForm = parent::buildForm($form, $form_state);
+    return $builtForm;
   }
 
   /**
    * Performs the submit form operation.
+   *
+   * @param array<string, mixed> $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
-    $pedido = $this->entidades->getStorage('commerce_order')->load((int) $form_state->get('pedido_id'));
+    $rawId = $form_state->get('pedido_id');
+    $pedidoId = is_numeric($rawId) ? (int) $rawId : 0;
+    $rawAcao = $form_state->get('acao');
+    $acaoStr = is_string($rawAcao) ? $rawAcao : '';
+    $pedido = $this->entidades->getStorage('commerce_order')->load($pedidoId);
     $gateway = $this->operacoesAssinatura === NULL
       ? NULL
       : $this->entidades->getStorage('commerce_payment_gateway')->load('mercado_pago');
-    if (!$pedido instanceof OrderInterface || $gateway === NULL) {
+    if (!$pedido instanceof OrderInterface || !$gateway instanceof PaymentGatewayInterface) {
       $this->messenger()->addError($this->t('Não foi possível atualizar a assinatura. Tente novamente em instantes.'));
     }
     else {
       try {
-        $this->operacoesAssinatura?->change($gateway, $pedido, (string) $form_state->get('acao'));
+        $this->operacoesAssinatura->change($gateway, $pedido, $acaoStr);
         $this->messenger()->addStatus($this->t('A assinatura foi atualizada.'));
       }
       catch (PaymentOperationException | \InvalidArgumentException) {

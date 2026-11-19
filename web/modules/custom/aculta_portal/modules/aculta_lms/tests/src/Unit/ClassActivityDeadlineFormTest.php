@@ -4,11 +4,14 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta_lms\Form\ClassActivityDeadlineForm;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
@@ -24,14 +27,29 @@ use PHPUnit\Framework\Attributes\Group;
 final class ClassActivityDeadlineFormTest extends UnitTestCase {
 
   /**
+   * Provides the stateless services the form uses through Drupal.
+   */
+  protected function setUp(): void {
+    parent::setUp();
+    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container->set('string_translation', $this->getStringTranslationStub());
+    $generator = $this->createMock(UrlGeneratorInterface::class);
+    $generator->method('generateFromRoute')->willReturn('/gerado');
+    $container->set('url_generator', $generator);
+    \Drupal::setContainer($container);
+  }
+
+  /**
    * The form interprets the entered deadline in the educator's account zone.
    */
   public function testDateInputUsesEducatorTimezone(): void {
     $form = $this->createForm('America/Sao_Paulo');
-    $build = $form->buildForm([], $this->createMock(\Drupal\Core\Form\FormStateInterface::class));
+    $build = $form->buildForm([], $this->createMock(FormStateInterface::class));
 
-    self::assertSame('America/Sao_Paulo', $build['due_at']['#date_timezone']);
-    self::assertStringContainsString('America/Sao_Paulo', (string) $build['intro']['#description']);
+    self::assertIsArray($build['due_at'] ?? NULL);
+    self::assertSame('America/Sao_Paulo', $build['due_at']['#date_timezone'] ?? NULL);
+    self::assertIsArray($build['intro'] ?? NULL);
+    self::assertStringContainsString('America/Sao_Paulo', $this->renderedText($build['intro']['#description'] ?? NULL));
   }
 
   /**
@@ -39,10 +57,26 @@ final class ClassActivityDeadlineFormTest extends UnitTestCase {
    */
   public function testDateInputFallsBackToUtc(): void {
     $form = $this->createForm(NULL);
-    $build = $form->buildForm([], $this->createMock(\Drupal\Core\Form\FormStateInterface::class));
+    $build = $form->buildForm([], $this->createMock(FormStateInterface::class));
 
-    self::assertSame('UTC', $build['due_at']['#date_timezone']);
-    self::assertStringContainsString('UTC', (string) $build['intro']['#description']);
+    self::assertIsArray($build['due_at'] ?? NULL);
+    self::assertSame('UTC', $build['due_at']['#date_timezone'] ?? NULL);
+    self::assertIsArray($build['intro'] ?? NULL);
+    self::assertStringContainsString('UTC', $this->renderedText($build['intro']['#description'] ?? NULL));
+  }
+
+  /**
+   * Reads a description value returned by Form API.
+   */
+  private function renderedText(mixed $description): string {
+    if (is_string($description)) {
+      return $description;
+    }
+    self::assertInstanceOf(TranslatableMarkup::class, $description);
+    $arguments = $description->getArguments();
+    $timezone = $arguments['@timezone'] ?? NULL;
+    self::assertIsString($timezone);
+    return str_replace('@timezone', $timezone, $description->getUntranslatedString());
   }
 
   /**

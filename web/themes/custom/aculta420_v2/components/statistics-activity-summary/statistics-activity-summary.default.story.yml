@@ -1,0 +1,11 @@
+name: Resumo de atividade
+props:
+  title: Resumo de atividade
+  note: 'Fonte: ACULTA Statistics.'
+  rows:
+    - label: Tópicos criados
+      value: '128'
+      description: Eventos do período, somáveis.
+    - label: Respostas criadas
+      value: '542'
+      description: Comments e ForumPosts publicados.

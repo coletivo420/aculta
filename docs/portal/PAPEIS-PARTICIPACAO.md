@@ -1,7 +1,7 @@
 # Papéis e hierarquia
 
 As permissões e hooks listados abaixo descrevem o sistema ACULTA Forum atual e
-as integrações ativas. O Drupal Forum contrib foi removido do Runtime de teste
+as integrações ativas. O Drupal Forum contrib foi removido do Runtime de desenvolvimento
 e do Composer em dev.50. As regras de participação são aplicadas ao
 provider/contexto correspondente e revalidadas pela Access API; matrícula não
 se converte em papel global nem se protege conteúdo somente ocultando links.
@@ -42,7 +42,7 @@ Um usuário pode ter mais de um papel. `estudante` é concedido na matrícula me
 ## 3. Papel `administrator`
 
 - Concedido somente pelo administrador.
-- Tem bypass administrativo geral, exceto os guards explícitos do acervo Growroom histórico, que também vedam operações de conteúdo para administrador. O Runtime de teste está sem dados do Forum contrib após F-D33/dev.50; a estrutura de autoria histórica fica preparada para futura restauração controlada.
+- Tem bypass administrativo geral, exceto os guards explícitos do acervo Growroom histórico, que também vedam operações de conteúdo para administrador. O Runtime de desenvolvimento está sem dados do Forum contrib após F-D33/dev.50; a estrutura de autoria histórica fica preparada para futura restauração controlada.
 - É o único que atribui papéis administrativos, edita contas e confirma e-mail manualmente. Essas ações não ficam com
   nenhum outro papel.
 
@@ -64,10 +64,10 @@ de moderação). O nível de associado não dá nenhuma outra função além do 
 |---|---|---|
 | Ler tópicos públicos | Anônimo | Aplicado |
 | Seguir e salvar tópico | `authenticated` | Aplicado |
-| Criar tópico e editar/excluir o próprio | `email_confirmed` | Config Sync aplicado; rota e formulário Core autorizados no Runtime de teste. Formulário não submetido; edição/exclusão persistidas não homologadas |
+| Criar tópico e editar/excluir o próprio | `email_confirmed` | Config Sync aplicado; rota e formulário Core autorizados no Runtime de desenvolvimento. Formulário não submetido; edição/exclusão persistidas não homologadas |
 | Comentar e denunciar | `email_confirmed` | Conforme as permissões e políticas de comentário/moderação documentadas abaixo; fluxo de envio permanece em homologação |
 | Ver contêiner ou tópico de nível "e-mail confirmado" | `email_confirmed` (ou `content_editor` com `email_confirmed`) | Aplicado |
-| Ver contêiner ou tópico de nível "estudante" | `estudante` (ou `content_editor` com `email_confirmed`) | Aplicado; testes unitários e smoke no Runtime de testes OK |
+| Ver contêiner ou tópico de nível "estudante" | `estudante` (ou `content_editor` com `email_confirmed`) | Aplicado; testes unitários e smoke no Runtime de desenvolvimentos OK |
 | Ver contêiner ou tópico de nível "associado" | `associado` (ou `content_editor` com `email_confirmed`) | Aplicado: realm pelo papel `associado`; o marcador de conta segue como fallback |
 | Denunciar e ver a fila de denúncias | `content_editor` com `email_confirmed` | Aplicado |
 | Ocultar, despublicar ou excluir tópico e comentário (exceto histórico) | `content_editor` com `email_confirmed` | Aplicado |
@@ -80,7 +80,7 @@ com essa confirmação; não conceder `edit any`/`delete any` diretamente ao pap
 As regras configuráveis de participação continuam aplicadas pelo access check
 de criação. Administrador mantém o bypass nativo do Drupal.
 
-No Runtime de teste, a role ativa foi preservada e recebeu somente a dependência
+No Runtime de desenvolvimento, a role ativa foi preservada e recebeu somente a dependência
 do bundle novo e essas três permissões próprias. A conta `teste.comum` (uid 5)
 teve a rota autorizada e o formulário renderizado em memória. Não houve envio,
 Node ou Comment persistido; edição e exclusão de tópico salvo permanecem sem
@@ -109,7 +109,7 @@ homologação funcional.
   ACULTA; conteúdos Growroom importados com autoria histórica ficam isentos da
   moderação inicial e fora da fila de denúncias.
   O Comment compartilhado está instalado em `article` e
-  `blog` no Runtime de teste; formulário foi renderizado em memória para a
+  `blog` no Runtime de desenvolvimento; formulário foi renderizado em memória para a
   conta de teste, mas HTTP/envio de comentário segue sem homologação.
 
 ## 6. Política histórica de fóruns restritos — decisão substituída
@@ -136,7 +136,7 @@ Não envia nenhum e-mail. Cada confirmação é registrada no log do canal `acul
 Autores legados **não são usuários do Drupal**. Não têm conta, login, perfil nem aparecem na lista de usuários do
 administrador. A autoria fica na entidade própria `aculta_legado_autor`, acessível só pela permissão
 **administer aculta legado**. Tópicos e comentários históricos têm uid 0 e apontam para a autoria pelo campo
-`field_autor_legado`. O responsável determinou F-D33 e o Runtime de teste não contém mais Nodes `forum`, Comments `comment_forum`, termos `forums` nem referências editoriais antigas. A extensão contrib ainda fornece estruturas vazias até o uninstall seguro. Nenhum conteúdo legado será importado para o novo fórum; autores históricos continuam distintos de contas Drupal e não são convertidos em usuários ativos.
+`field_autor_legado`. O responsável determinou F-D33 e o Runtime de desenvolvimento não contém mais Nodes `forum`, Comments `comment_forum`, termos `forums` nem referências editoriais antigas. A extensão contrib ainda fornece estruturas vazias até o uninstall seguro. Nenhum conteúdo legado será importado para o novo fórum; autores históricos continuam distintos de contas Drupal e não são convertidos em usuários ativos.
 
 ## 9. Mudanças em relação à versão anterior e pendências
 
@@ -152,7 +152,7 @@ Pendências:
 
 1. ~~Forma de concessão do `estudante`~~: decidido em 2026-10-17 — automática ao se inscrever em qualquer curso (`EnrollmentRoleHooks`).
 2. ~~Forma de concessão do `associado`~~: decidido em 2026-10-17 — atribuído manualmente pelo administrador.
-3. ~~Permissão de visibilidade do nível `estudante`~~: criada e aplicada no Runtime de testes (realm `aculta_estudante`).
+3. ~~Permissão de visibilidade do nível `estudante`~~: criada e aplicada no Runtime de desenvolvimentos (realm `aculta_estudante`).
 4. ~~Migração do marcador de associado para papel~~: papel `associado` criado (`config/sync/user.role.associado.yml`) e concedendo o realm de associados. O Runtime não tinha marcas (`aculta_associado` vazia), então não há contas a migrar. O marcador segue como fallback até decisão de remoção.
 5. ~~Permissões de Wiki do `content_editor`~~: a configuração atual já concede revisão e moderação da Wiki (transições de `wiki_editorial`); nada a alterar.
 6. ~~Se `estudante` e `associado` exigem `email_confirmed`~~: matrícula não exige confirmação, decisão F7. Como `estudante` recebe permissões de fórum e a cadeia inclui `email_confirmed`, a herança condicional consulta `EmailConfirmationPolicy`; matrícula não marca nem herda confirmação de e-mail.

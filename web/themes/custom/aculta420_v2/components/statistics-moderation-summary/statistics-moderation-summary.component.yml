@@ -1,0 +1,42 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Moderação
+description: Resumo analítico em lista de definição, sem dados pessoais.
+status: experimental
+group: Estatísticas
+assets:
+  css: {}
+props:
+  type: object
+  additionalProperties: false
+  required: [title, rows]
+  properties:
+    title:
+      title: Título do resumo de moderação
+      type: string
+      minLength: 1
+      description: Cabeçalho do resumo, renderizado antes das linhas de moderação.
+    note:
+      title: Observação do resumo
+      type: string
+      default: ''
+      description: Observação opcional apresentada após as linhas, sem expor pessoas denunciantes ou alvos.
+    rows:
+      title: Linhas de moderação
+      type: array
+      description: Indicadores agregados de moderação apresentados como lista de definição.
+      items:
+        type: object
+        additionalProperties: false
+        description: Uma linha agregada de moderação.
+        required: [label, value]
+        properties:
+          label:
+            type: string
+            description: Nome do indicador de moderação apresentado como termo da definição.
+          value:
+            type: string
+            description: Valor textual agregado do indicador.
+          description:
+            type: string
+            default: ''
+            description: Contexto opcional apresentado junto ao valor agregado.

@@ -7,8 +7,9 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\aculta_user\ParticipationRules;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\SynchronizableInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -30,6 +31,9 @@ final class ForumPublicationTimeHooks {
    */
   #[Hook('entity_presave')]
   public function entityPresave(EntityInterface $entity): void {
+    if (!$entity instanceof ContentEntityInterface) {
+      return;
+    }
     if ($entity instanceof CommentInterface
       && $entity->bundle() === 'aculta_discussion_post'
       && $entity->getFieldName() === 'field_aculta_discussion') {
@@ -38,10 +42,10 @@ final class ForumPublicationTimeHooks {
     }
 
     if ($entity->getEntityTypeId() === 'aculta_forum_post') {
-      $is_syncing = $entity instanceof SynchronizableInterface && $entity->isSyncing();
+      $is_syncing = $entity->isSyncing();
       if (!$is_syncing && $entity->isNew() && $entity instanceof EntityOwnerInterface && $entity->hasField('moderation_state')) {
         $owner = $entity->getOwner();
-        $entity->set('moderation_state', $owner !== NULL && $this->participationRules->requiresFirstDiscussionModeration($owner)
+        $entity->set('moderation_state', $this->participationRules->requiresFirstDiscussionModeration($owner)
           ? 'review'
           : 'published');
       }
@@ -54,8 +58,9 @@ final class ForumPublicationTimeHooks {
   /**
    * Sets the marker once, when the entity first becomes publicly published.
    */
-  private function setOnFirstPublication(EntityInterface $entity, string $fieldName): void {
-    if (!$entity->isPublished() || !$entity->hasField($fieldName) || !$entity->get($fieldName)->isEmpty()) {
+  private function setOnFirstPublication(ContentEntityInterface $entity, string $fieldName): void {
+    if (!$entity instanceof EntityPublishedInterface || !$entity->isPublished()
+      || !$entity->hasField($fieldName) || !$entity->get($fieldName)->isEmpty()) {
       return;
     }
 

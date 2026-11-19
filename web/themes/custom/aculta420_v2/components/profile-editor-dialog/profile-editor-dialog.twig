@@ -1,0 +1,31 @@
+{#
+/**
+ * @file
+ * Editor de perfil em estilo de popup: mesmo padrão visual dos diálogos do tema
+ * (faixas tricolores, cabeçalho com título e fechar, corpo com as seções do perfil).
+ */
+#}
+<section{{ attributes.addClass('profile-editor-dialog') }} aria-labelledby="profile-editor-dialog-title">
+  <div class="profile-editor-dialog__surface">
+    <header class="profile-editor-dialog__header">
+      {% if show_accent_stripes|default(true) %}
+        <div class="profile-editor-dialog__stripes" aria-hidden="true">
+          <span class="profile-editor-dialog__stripe profile-editor-dialog__stripe--green"></span>
+          <span class="profile-editor-dialog__stripe profile-editor-dialog__stripe--yellow"></span>
+          <span class="profile-editor-dialog__stripe profile-editor-dialog__stripe--red"></span>
+        </div>
+      {% endif %}
+      <div class="profile-editor-dialog__titles">
+        <h2 class="profile-editor-dialog__title" id="profile-editor-dialog-title">{{ title|default('Editar perfil') }}</h2>
+        {% if subtitle %}<p class="profile-editor-dialog__subtitle">{{ subtitle }}</p>{% endif %}
+      </div>
+    </header>
+
+    <div class="profile-editor-dialog__body">
+      {% if intro %}<div class="profile-editor-dialog__intro">{{ intro }}</div>{% endif %}
+      {% if identity %}<div class="profile-editor-dialog__section">{{ identity }}</div>{% endif %}
+      {% if bio %}<div class="profile-editor-dialog__section">{{ bio }}</div>{% endif %}
+      {% if social_links %}<div class="profile-editor-dialog__section">{{ social_links }}</div>{% endif %}
+    </div>
+  </div>
+</section>

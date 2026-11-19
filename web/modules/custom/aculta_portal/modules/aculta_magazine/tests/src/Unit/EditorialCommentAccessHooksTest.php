@@ -57,6 +57,11 @@ final class EditorialCommentAccessHooksTest extends UnitTestCase {
 
   /**
    * Builds the access hook with a single publication-context provider.
+   *
+   * @param list<string> $roles
+   *   Roles allowed by the capability setting.
+   * @param bool $nativeModerationAllowed
+   *   Whether native Comment permission allows moderation.
    */
   private function hook(array $roles, bool $nativeModerationAllowed = TRUE): EditorialCommentAccessHooks {
     $config = $this->createMock(ImmutableConfig::class);
@@ -111,6 +116,11 @@ final class EditorialCommentAccessHooksTest extends UnitTestCase {
 
   /**
    * Creates an account with configured roles and Comment permissions.
+   *
+   * @param list<string> $roles
+   *   Account roles.
+   * @param bool $administerComments
+   *   Whether the account has native Comment moderation permission.
    */
   private function account(array $roles, bool $administerComments): AccountInterface {
     $account = $this->createMock(AccountInterface::class);

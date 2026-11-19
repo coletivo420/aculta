@@ -10,11 +10,13 @@ dependencies:
     - field.field.group.lms_course.field_h5p_activities
     - field.field.group.lms_course.field_lms_galleries
     - field.field.group.lms_course.field_lms_readings
+    - field.field.group.lms_course.field_lms_videos
     - group.type.lms_course
     - image.style.thumbnail
   module:
     - image
-    - aculta_lms_resources
+    - aculta_lms
+    - media
     - path
     - text
 id: group.lms_course.default
@@ -68,6 +70,16 @@ content:
   field_lms_readings:
     type: entity_reference_autocomplete
     weight: 6
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  field_lms_videos:
+    type: entity_reference_autocomplete
+    weight: 8
     region: content
     settings:
       match_operator: CONTAINS

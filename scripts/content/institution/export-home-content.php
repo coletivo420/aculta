@@ -1,10 +1,12 @@
 <?php
 
 /**
+ * @file
  * Exports the home content declared by the institution pages (DT-T10).
  *
  * Read-only: writes home-content.json next to this script. Run from web/:
- *   php ../vendor/drush/drush/drush.php php:script export-home-content --script-path=../scripts/content/institution
+ *   php ../vendor/drush/drush/drush.php php:script export-home-content
+ *     --script-path=../scripts/content/institution.
  */
 
 use Drupal\block_content\Entity\BlockContent;
@@ -30,7 +32,10 @@ usort($data['block_content'], static fn(array $a, array $b): int => strcmp($a['u
 // The front page hero (node 1, alias /inicio).
 $hero = Node::load(1);
 if ($hero) {
-  $link = static fn($field): ?array => $hero->get($field)->isEmpty() ? NULL : ['uri' => $hero->get($field)->uri, 'title' => $hero->get($field)->title];
+  $link = static fn($field): ?array => $hero->get($field)->isEmpty() ? NULL : [
+    'uri' => $hero->get($field)->uri,
+    'title' => $hero->get($field)->title,
+  ];
   $data['node'][] = [
     'uuid' => $hero->uuid(),
     'bundle' => 'page',

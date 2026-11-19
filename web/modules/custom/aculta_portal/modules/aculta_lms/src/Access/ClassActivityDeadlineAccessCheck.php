@@ -58,8 +58,6 @@ final class ClassActivityDeadlineAccessCheck {
   }
 
   /**
-   * Finds the parent course relationship for a class. */
-  /**
    * Checks access to the published course that owns a class.
    *
    * Keep Drupal LMS course semantics inside this adapter. Consumers receive
@@ -76,11 +74,19 @@ final class ClassActivityDeadlineAccessCheck {
     }
 
     $course = $this->courseForClass($class);
-    if (!$course instanceof GroupInterface || !$course->isPublished()) {
+    if (!$course instanceof GroupInterface) {
       return AccessResult::forbidden()
         ->cachePerUser()
         ->addCacheContexts(['user.permissions', 'user.group_permissions'])
         ->addCacheableDependency($class)
+        ->addCacheTags($cacheTags);
+    }
+    if (!$course->isPublished()) {
+      return AccessResult::forbidden()
+        ->cachePerUser()
+        ->addCacheContexts(['user.permissions', 'user.group_permissions'])
+        ->addCacheableDependency($class)
+        ->addCacheableDependency($course)
         ->addCacheTags($cacheTags);
     }
 
@@ -95,6 +101,9 @@ final class ClassActivityDeadlineAccessCheck {
       ->addCacheableDependency($course);
   }
 
+  /**
+   * Finds the parent course relationship for a class.
+   */
   public function courseForClass(GroupInterface $class): ?GroupInterface {
     if ($class->bundle() !== 'lms_class') {
       return NULL;

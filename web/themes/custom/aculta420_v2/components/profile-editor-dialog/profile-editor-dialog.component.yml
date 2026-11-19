@@ -1,0 +1,37 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: "Editor de perfil (diálogo)"
+description: "Editor do perfil privado do Studio em estilo de popup: cabeçalho com faixas tricolores, título, subtítulo e corpo com identidade, biografia e redes."
+status: stable
+group: Conta
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    title:
+      type: string
+      title: Título do diálogo
+      default: "Editar perfil"
+      description: Texto do cabeçalho e nome acessível referenciado por aria-labelledby.
+    subtitle:
+      type: [string, 'null']
+      title: Subtítulo
+      default: "Atualize como seu perfil aparece na ACULTA."
+      description: Orientação opcional apresentada abaixo do título do diálogo.
+    show_accent_stripes:
+      type: boolean
+      title: Mostrar faixas tricolores
+      default: true
+      description: Quando true, exibe faixas decorativas tricolores no cabeçalho; elas são ocultadas de tecnologia assistiva.
+slots:
+  intro:
+    title: Introdução
+    description: Orientação preparada pelo Studio.
+  identity:
+    title: Identidade
+    description: Identidade, avatar e ações preparadas pelos módulos proprietários.
+  bio:
+    title: Biografia
+    description: Biografia autorizada preparada pelo módulo proprietário.
+  social_links:
+    title: Redes sociais
+    description: Redes autorizadas preparadas pelo módulo proprietário.

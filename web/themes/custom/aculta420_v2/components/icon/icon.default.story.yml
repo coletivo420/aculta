@@ -1,0 +1,6 @@
+name: Ícone Phosphor duotone
+description: SVG Phosphor carregado do acervo de ícones do tema pelo componente.
+props:
+  name: list-checks
+  variant: duotone
+  size: xl

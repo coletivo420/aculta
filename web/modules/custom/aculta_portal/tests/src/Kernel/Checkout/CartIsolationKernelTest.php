@@ -23,7 +23,7 @@ final class CartIsolationKernelTest extends OrderKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['commerce_cart', 'commerce_checkout'];
+  protected static $modules = ['commerce_cart', 'commerce_checkout', 'text', 'text_with_summary'];
 
   /**
    * Conta do comprador.

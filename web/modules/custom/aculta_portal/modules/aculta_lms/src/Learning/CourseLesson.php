@@ -12,6 +12,8 @@ namespace Drupal\aculta_lms\Learning;
 final class CourseLesson {
 
   /**
+   * Constrói a aula com seus identificadores e dados de exibição.
+   *
    * @param int $id
    *   Identificador da aula na fonte atual.
    * @param int $courseId

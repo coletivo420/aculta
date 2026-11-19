@@ -6,3 +6,8 @@ ckeditor5.create:
     - core/drupal.ajax
     - core/drupal.dialog.ajax
     - entity_embed/entity_embed
+
+embed-dialog:
+  css:
+    theme:
+      css/embed-dialog.css: {}

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Kernel;
 
+use Drupal\aculta_lms\Hook\CourseClassRelationHooks;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\group\Entity\Group;
@@ -32,9 +33,12 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
    */
   protected static $modules = [
     'key',
-    'system', 'domain', 'user', 'file', 'image', 'media', 'entity_usage', 'aculta_image', 'aculta_file_uploader',
+    'system', 'domain', 'user', 'file', 'image', 'media', 'node', 'comment', 'gnode', 'entity_usage', 'aculta_image', 'aculta_file_uploader',
+    'media_gallery', 'media_library', 'photoswipe',
     'field', 'filter', 'flexible_permissions', 'group', 'views', 'options',
-    'text', 'lms', 'lms_classes', 'aculta_lms',
+    'text',
+    'editor',
+    'ckeditor5',
   ];
 
   /**
@@ -50,7 +54,11 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $this->installConfig(['group', 'lms', 'lms_classes', 'aculta_lms']);
+    $this->prepareAcultaLmsGroupTypes(deferTypesToModuleInstall: TRUE);
+    $this->installEntitySchema('node');
+    $this->prepareAcultaLmsPartialConfigDependencies();
+    $this->container->get('module_installer')->install(['aculta_lms'], FALSE);
+    $this->prepareAcultaLmsClassRelationship();
     $this->installEntitySchema('user');
     $this->installSchema('user', ['users_data']);
     $this->installSchema('file', ['file_usage']);
@@ -85,7 +93,9 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
    * The stable class relationship ID resolves to the ACULTA implementation.
    */
   public function testClassRelationshipUsesAcultaPlugin(): void {
-    $permissions = $this->container->get('user.permissions')->getPermissions();
+    // This Kernel installs aculta_lms after container compilation, so assert
+    // the hook provider directly; production discovers it during compilation.
+    $permissions = (new CourseClassRelationHooks())->permissions();
     self::assertArrayHasKey('administer lms', $permissions);
 
     $manager = $this->container->get('group_relation_type.manager');
@@ -172,12 +182,34 @@ final class ClassRosterVisibilityTest extends KernelTestBase {
     self::assertSame((string) $viewer->id(), (string) $viewerMembership->getEntity()->id());
     self::assertTrue($viewerMembership->getEntity()->isActive());
     $visible = $manager->build($course, $viewer);
-    self::assertCount(1, $visible['classes'], 'A student sees only classes where they are enrolled.');
-    self::assertSame('Turma A', $visible['classes'][0]['title']['#value']);
-    $items = $visible['classes'][0]['members']['#items'];
-    self::assertSame('aculta_user_author_card', $items[0]['#theme']);
-    self::assertSame('profile_compact', $items[0]['#variant']);
-    self::assertSame('sm', $items[0]['#size']);
+    $slots = $visible['#slots'] ?? NULL;
+    self::assertIsArray($slots);
+    $classLists = $slots['content'] ?? NULL;
+    self::assertIsArray($classLists);
+    $classListValues = [];
+    foreach ($classLists as $classList) {
+      self::assertIsArray($classList);
+      $classListValues[] = $classList;
+    }
+    self::assertCount(1, $classListValues, 'A student sees only classes where they are enrolled.');
+    $classList = $classListValues[0];
+    $title = $classList['title'] ?? NULL;
+    self::assertIsArray($title);
+    self::assertSame('Turma A', $title['#value'] ?? NULL);
+    $members = $classList['members'] ?? NULL;
+    self::assertIsArray($members);
+    $rosterItems = $members['#items'] ?? NULL;
+    self::assertIsArray($rosterItems);
+    $items = [];
+    foreach ($rosterItems as $item) {
+      self::assertIsArray($item);
+      $items[] = $item;
+    }
+    $firstItem = $items[0] ?? NULL;
+    self::assertIsArray($firstItem);
+    self::assertSame('aculta_user_author_card', $firstItem['#theme'] ?? NULL);
+    self::assertSame('profile_compact', $firstItem['#variant'] ?? NULL);
+    self::assertSame('sm', $firstItem['#size'] ?? NULL);
     $names = array_map(static fn (array $item): string => (string) $item['#display_name'], $items);
     self::assertEqualsCanonicalizing(['peer', 'viewer'], $names);
     self::assertNotContains('blocked', $names);

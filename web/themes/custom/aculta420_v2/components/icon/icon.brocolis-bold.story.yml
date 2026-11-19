@@ -1,0 +1,6 @@
+name: ACULTA Brócolis - Bold
+description: Desenho original ACULTA Brócolis na variante bold.
+props:
+  name: aculta-brocolis
+  variant: bold
+  size: xl

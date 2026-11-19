@@ -1,0 +1,34 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Badge
+variants:
+  primary:
+    title: Principal
+  highlight:
+    title: Destaque
+  neutral:
+    title: Neutro
+status: stable
+description: Etiqueta compacta para categoria ou estado.
+group: Elementos básicos
+props:
+  type: object
+  additionalProperties: false
+  required: [label]
+  properties:
+    label:
+      title: Texto do selo
+      description: Texto visível que identifica a categoria ou o estado.
+      type: string
+      minLength: 1
+    variant:
+      type: string
+      title: Variante visual
+      description: Estilo do selo entre as opções primary, highlight e neutral.
+      enum: [primary, highlight, neutral]
+      default: neutral
+    icon_name:
+      type: [string, 'null']
+      title: Ícone Phosphor opcional
+      description: Nome opcional de um ícone do pack Phosphor, exibido antes do texto.
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+      default: null

@@ -19,6 +19,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 #[Group('aculta_messenger')]
 final class SettingsTabsHooksTest extends UnitTestCase {
 
+  /**
+   * Container anterior restaurado após cada teste.
+   *
+   * @var \Symfony\Component\DependencyInjection\ContainerInterface|null
+   */
   private ?ContainerInterface $previousContainer = NULL;
 
   /**

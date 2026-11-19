@@ -1,0 +1,19 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Botão Continuar com Google
+status: stable
+description: "Botão de entrada com a conta Google, no padrão de marca: fundo branco, borda cinza, logo colorido e o texto Continuar com Google."
+group: Botões
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    label:
+      type: string
+      title: Texto do botão
+      description: Rótulo visível do controle de entrada.
+      default: Continuar com Google
+    url:
+      type: [string, 'null']
+      title: Endereço de início do login com Google (sem endereço, vira botão)
+      description: Quando informado, renderiza um link para o endereço; sem URL, renderiza um botão tipo button para o consumidor conectar a ação.
+      default: null

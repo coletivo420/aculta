@@ -98,9 +98,6 @@ final class ForumGalleryPublication {
         break;
       }
       foreach ($comment_storage->loadMultiple($comment_ids) as $comment) {
-        if (!$comment instanceof CommentInterface) {
-          continue;
-        }
         foreach ($this->attachmentPublication->galleryUuids($comment) as $uuid) {
           $gallery = $this->loadForumGallery($uuid);
           if ($gallery instanceof MediaGalleryInterface) {
@@ -153,12 +150,23 @@ final class ForumGalleryPublication {
   public function syncGalleryEntity(MediaGalleryInterface $gallery): void {
     $original = $gallery->getOriginal();
     if ($original instanceof MediaGalleryInterface && $this->isForumGallery($original)) {
-      $current_media_ids = array_map('strval', array_column($gallery->get('images')->getValue(), 'target_id'));
-      foreach ($original->get('images')->referencedEntities() as $media) {
-        if ($media instanceof MediaInterface
-          && $media->bundle() === ForumAttachmentPublication::BUNDLE
-          && !in_array((string) $media->id(), $current_media_ids, TRUE)) {
-          $this->attachmentPublication->syncMediaEntity($media, (int) $gallery->id());
+      $raw_images = $gallery->get('images')->getValue();
+      $current_media_ids = [];
+      if (is_array($raw_images)) {
+        foreach ($raw_images as $item) {
+          if (is_array($item) && isset($item['target_id']) && is_scalar($item['target_id'])) {
+            $current_media_ids[] = (string) $item['target_id'];
+          }
+        }
+      }
+      $referenced = $original->get('images')->referencedEntities();
+      if (is_array($referenced)) {
+        foreach ($referenced as $media) {
+          if ($media instanceof MediaInterface
+            && $media->bundle() === ForumAttachmentPublication::BUNDLE
+            && !in_array((string) $media->id(), $current_media_ids, TRUE)) {
+            $this->attachmentPublication->syncMediaEntity($media, (int) $gallery->id());
+          }
         }
       }
     }
@@ -171,9 +179,12 @@ final class ForumGalleryPublication {
     if (!$this->isForumGallery($gallery)) {
       return;
     }
-    foreach ($gallery->get('images')->referencedEntities() as $media) {
-      if ($media instanceof MediaInterface && $media->bundle() === ForumAttachmentPublication::BUNDLE) {
-        $this->attachmentPublication->syncMediaEntity($media);
+    $referenced = $gallery->get('images')->referencedEntities();
+    if (is_array($referenced)) {
+      foreach ($referenced as $media) {
+        if ($media instanceof MediaInterface && $media->bundle() === ForumAttachmentPublication::BUNDLE) {
+          $this->attachmentPublication->syncMediaEntity($media);
+        }
       }
     }
   }
@@ -196,7 +207,8 @@ final class ForumGalleryPublication {
         continue;
       }
       // Recheck publication and comments immediately before deleting.
-      if ($gallery->isPublished() || $this->hasContentReference($gallery)) {
+      if ($gallery->isEnabled()
+        || $this->hasContentReference($gallery)) {
         continue;
       }
       $gallery->delete();
@@ -232,37 +244,40 @@ final class ForumGalleryPublication {
       $comments[$current_comment->id()] = $current_comment;
     }
     foreach ($comments as $comment) {
-      if ($comment instanceof CommentInterface
-        && in_array($gallery->uuid(), $this->attachmentPublication->galleryUuids($comment), TRUE)
+      if (in_array($gallery->uuid(), $this->attachmentPublication->galleryUuids($comment), TRUE)
         && $this->attachmentPublication->isPublicForumComment($comment, $current_topic, check_access: FALSE)) {
         $is_public = TRUE;
         break;
       }
     }
-    $posts = $this->attachmentPublication->currentPostsReferencingGallery($gallery->uuid());
+    $galleryUuid = (string) $gallery->uuid();
+    $posts = $this->attachmentPublication->currentPostsReferencingGallery($galleryUuid);
     if ($excluded_post_id !== NULL) {
       unset($posts[$excluded_post_id]);
     }
     if ($current_post instanceof ForumPost) {
       unset($posts[$current_post->id()]);
-      if (in_array($gallery->uuid(), $this->attachmentPublication->postGalleryUuids($current_post), TRUE)) {
+      if (in_array($galleryUuid, $this->attachmentPublication->postGalleryUuids($current_post), TRUE)) {
         $posts[$current_post->id()] = $current_post;
       }
     }
     foreach ($posts as $post) {
-      if ($post instanceof ForumPost && $this->attachmentPublication->isPublicPost($post, $current_topic, check_access: FALSE)) {
+      if ($this->attachmentPublication->isPublicPost($post, $current_topic, check_access: FALSE)) {
         $is_public = TRUE;
         break;
       }
     }
 
-    if ($gallery->isPublished() !== $is_public) {
-      $is_public ? $gallery->setPublished() : $gallery->setUnpublished();
+    if ($gallery->isEnabled() !== $is_public) {
+      $gallery->setStatus($is_public);
       $gallery->save();
     }
-    foreach ($gallery->get('images')->referencedEntities() as $media) {
-      if ($media instanceof MediaInterface && $media->bundle() === ForumAttachmentPublication::BUNDLE) {
-        $this->attachmentPublication->syncMediaEntity($media);
+    $galleryImages = $gallery->get('images')->referencedEntities();
+    if (is_array($galleryImages)) {
+      foreach ($galleryImages as $media) {
+        if ($media instanceof MediaInterface && $media->bundle() === ForumAttachmentPublication::BUNDLE) {
+          $this->attachmentPublication->syncMediaEntity($media);
+        }
       }
     }
   }
@@ -275,23 +290,28 @@ final class ForumGalleryPublication {
   }
 
   /**
-   * Checks for any current comment reference, including drafts and pending posts. */
+   * Checks for any current comment reference, including drafts and pending posts.
+   *
+   * @phpstan-impure
+   *   The query results can change between the initial check and the final
+   *   deletion recheck, so repeated calls must not be treated as identical.
+   */
   private function hasContentReference(MediaGalleryInterface $gallery): bool {
+    $galleryUuid = (string) $gallery->uuid();
     $comment_ids = $this->entityTypeManager->getStorage('comment')->getQuery()
       ->accessCheck(FALSE)
       ->condition('comment_type', 'aculta_discussion_post')
       ->condition('entity_type', 'node')
       ->condition('field_name', 'field_aculta_discussion')
-      ->condition('comment_body.value', '%' . $gallery->uuid() . '%', 'LIKE')
+      ->condition('comment_body.value', '%' . $galleryUuid . '%', 'LIKE')
       ->execute();
     foreach ($this->entityTypeManager->getStorage('comment')->loadMultiple($comment_ids) as $comment) {
-      if ($comment instanceof CommentInterface
-        && $this->isForumComment($comment)
-        && in_array($gallery->uuid(), $this->attachmentPublication->galleryUuids($comment), TRUE)) {
+      if ($this->isForumComment($comment)
+        && in_array($galleryUuid, $this->attachmentPublication->galleryUuids($comment), TRUE)) {
         return TRUE;
       }
     }
-    return $this->attachmentPublication->hasPostGalleryReference($gallery->uuid());
+    return $this->attachmentPublication->hasPostGalleryReference($galleryUuid);
   }
 
   /**

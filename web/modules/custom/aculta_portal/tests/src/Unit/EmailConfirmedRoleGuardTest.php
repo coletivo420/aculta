@@ -17,6 +17,9 @@ class EmailConfirmedRoleGuardTest extends UnitTestCase {
 
   /**
    * Conta com os papéis informados.
+   *
+   * @param array<mixed> $roles
+   *   Dados de entrada (roles).
    */
   private function account(array $roles): UserInterface {
     $account = $this->createMock(UserInterface::class);
@@ -28,7 +31,10 @@ class EmailConfirmedRoleGuardTest extends UnitTestCase {
    * Remoção do papel é detectada.
    */
   public function testRemocaoEDetectada(): void {
-    $this->assertTrue(EmailConfirmedRoleGuard::isRemoval($this->account(['authenticated']), $this->account(['authenticated', 'email_confirmed'])));
+    $this->assertTrue(EmailConfirmedRoleGuard::isRemoval($this->account(['authenticated']), $this->account([
+      'authenticated',
+      'email_confirmed',
+    ])));
   }
 
   /**

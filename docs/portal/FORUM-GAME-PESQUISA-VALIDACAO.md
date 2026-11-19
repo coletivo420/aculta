@@ -19,7 +19,7 @@ implementação; não descrevem funcionalidades aplicadas nesta entrega.
 
 | Verificação estática | Resultado |
 | --- | --- |
-| `php scripts/validate-aculta-portal-drupal11.php` | PASS — 772 verificações |
+| `php scripts/validate-aculta-portal-drupal12.php` | PASS — 772 verificações |
 | `php scripts/validate-module-theme-boundary.php` | PASS — 1034 verificações; nenhuma classe de design no módulo |
 | `php scripts/validate-environment-addresses.php` | PASS — 1721 arquivos |
 | `git diff --check` | PASS |

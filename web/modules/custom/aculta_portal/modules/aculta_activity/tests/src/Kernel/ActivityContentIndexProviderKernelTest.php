@@ -8,8 +8,10 @@ use Drupal\aculta_index\Queue\ContentIndexWorkManager;
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
 use Drupal\aculta_activity\Form\ActivityFormCallbacks;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
-use Drupal\aculta_portal\Domain\DomainPurposeManager;
+use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\aculta_portal\Profile\PerfilDoPapel;
+use Drupal\domain\DomainInterface;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\domain\Entity\Domain;
 use Drupal\field\Entity\FieldConfig;
@@ -72,7 +74,6 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     'key',
     'language',
     'link',
-    'lms',
     'login_emailusername',
     'media',
     'media_duplicates',
@@ -106,13 +107,13 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     'vvjs',
     'aculta_image',
     'aculta_mail_confirmer',
-    'aculta_mail_confirmer_user',
     'aculta_mailer',
     'aculta_portal',
     'aculta_portal_cep',
     'aculta_user',
     'aculta_index',
     'aculta_activity',
+    'aculta_file_uploader',
   ];
 
   /**
@@ -188,7 +189,9 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     }
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     $negotiator->getActiveDomain();
-    $negotiator->setActiveDomain(Domain::load('cursos_aculta_org'));
+    $domain = Domain::load('cursos_aculta_org');
+    self::assertInstanceOf(DomainInterface::class, $domain);
+    $negotiator->getContext()->setDomain($domain);
   }
 
   /**
@@ -198,7 +201,7 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     $registry = $this->container->get('aculta_index.provider_registry');
     self::assertTrue($registry->has('activity'));
     $provider = $registry->get('activity');
-    self::assertInstanceOf(ContentIndexProviderInterface::class, $provider);
+    self::assertInstanceOf(ContentIndexAccessContextProviderInterface::class, $provider);
 
     $node = Node::create([
       'type' => 'activity',
@@ -211,7 +214,8 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     $node->save();
     $work = $this->container->get('aculta_index.work_manager')
       ->getStatus('activity', 'node', (string) $node->id(), 'en');
-    self::assertSame('project', $work['operation']);
+    self::assertIsArray($work);
+    self::assertSame('project', $work['operation'] ?? NULL);
 
     $projection = $provider->project($node);
     self::assertNotNull($projection);
@@ -224,7 +228,7 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     self::assertSame('editorial_image', $projection->relations[0]->type);
     self::assertSame('media', $projection->relations[0]->targetEntityTypeId);
     self::assertSame('501', $projection->relations[0]->targetEntityId);
-    self::assertSame('main', $provider->getAccessPurpose($node));
+    self::assertSame('main', $provider->getAccessSiteKey($node));
   }
 
   /**
@@ -260,13 +264,15 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
 
     $activity->delete();
     $this->processActivityWork();
-    self::assertSame(0, (int) $this->container->get('database')->select('aculta_index_entry', 'entry')
+    $count = $this->container->get('database')->select('aculta_index_entry', 'entry')
       ->condition('generation_id', $generationId)
       ->condition('provider_id', 'activity')
       ->condition('entity_id', (string) $activity->id())
       ->countQuery()
       ->execute()
-      ->fetchField());
+      ?->fetchField();
+    $countInt = is_numeric($count) ? (int) $count : 0;
+    self::assertSame(0, $countInt);
   }
 
   /**
@@ -296,24 +302,26 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     ];
     $negotiator = $this->container->get(DomainNegotiatorInterface::class);
     self::assertTrue($this->container->get('module_handler')->moduleExists('aculta_portal'));
-    self::assertInstanceOf(DomainPurposeManager::class, $this->container->get('aculta_portal.domain_purpose'));
     $filter = $this->container->get('aculta_index.access_filter');
-    self::assertInstanceOf(ContentIndexAccessFilter::class, $filter);
-
     $allowed = $filter->filter($candidate, $reader);
     self::assertCount(1, $allowed->entities, 'Published Activity remains visible under its owner purpose.');
-    self::assertSame('cursos_aculta_org', $negotiator->getActiveDomain()?->id());
-    self::assertSame('courses', $this->container->get('aculta_portal.domain_purpose')->getCurrentPurpose());
+    $activeDomain = $negotiator->getActiveDomain();
+    self::assertSame('cursos_aculta_org', $activeDomain instanceof DomainInterface ? $activeDomain->id() : NULL);
+    self::assertSame('courses', $this->container->get('aculta_portal.domain_site')->getCurrentSiteKey()?->value);
 
     $activity->setUnpublished()->save();
     self::assertCount(0, $filter->filter($candidate, $reader)->entities, 'The current unpublished state is revalidated.');
-    self::assertSame('cursos_aculta_org', $negotiator->getActiveDomain()?->id());
+    $activeDomain = $negotiator->getActiveDomain();
+    self::assertSame('cursos_aculta_org', $activeDomain instanceof DomainInterface ? $activeDomain->id() : NULL);
 
-    Domain::load('aculta_org')->delete();
+    $acultaOrg = Domain::load('aculta_org');
+    self::assertInstanceOf(DomainInterface::class, $acultaOrg);
+    $acultaOrg->delete();
     self::assertCount(0, $filter->filter($candidate, $reader)->entities, 'A missing canonical purpose denies exposure.');
+    $activeDomain = $negotiator->getActiveDomain();
     self::assertSame(
       'cursos_aculta_org',
-      $negotiator->getActiveDomain()?->id(),
+      $activeDomain instanceof DomainInterface ? $activeDomain->id() : NULL,
       'The active purpose remains unchanged when the canonical Domain is missing.',
     );
   }
@@ -327,6 +335,7 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     $formObject->setEntity($node);
     $formState = new FormState();
     $formState->setFormObject($formObject);
+    /** @var array<string, array<string, mixed>> $form */
     $form = [
       'title' => [],
       'body' => [],
@@ -341,13 +350,16 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     $arguments = [&$form, $formState, 'node_activity_form'];
     $this->container->get('module_handler')->invoke('aculta_activity', 'form_node_form_alter', $arguments);
 
-    self::assertSame('editorial_content', $form['title']['#group']);
-    self::assertSame('editorial_image', $form['field_media_image']['#group']);
-    self::assertSame('editorial_relations', $form['field_related_activity']['#group']);
-    self::assertSame('editorial_seo', $form['field_meta_tags']['#group']);
-    self::assertSame('Conta responsável pelo cadastro', (string) $form['author']['#title']);
-    self::assertSame(['aculta_activity.form_callbacks:validateActivity'], $form['#validate']);
-    self::assertInstanceOf(ActivityFormCallbacks::class, $this->container->get('aculta_activity.form_callbacks'));
+    self::assertSame('editorial_content', $form['title']['#group'] ?? NULL);
+    self::assertSame('editorial_image', $form['field_media_image']['#group'] ?? NULL);
+    self::assertSame('editorial_relations', $form['field_related_activity']['#group'] ?? NULL);
+    self::assertSame('editorial_seo', $form['field_meta_tags']['#group'] ?? NULL);
+    $authorTitle = $form['author']['#title'] ?? NULL;
+    self::assertInstanceOf(\Stringable::class, $authorTitle);
+    self::assertSame('Conta responsável pelo cadastro', (string) $authorTitle);
+    $expectedValidate = ['aculta_activity.form_callbacks:validateActivity'];
+    $actualValidate = (array) ($form['#validate'] ?? []);
+    self::assertEquals($expectedValidate, $actualValidate);
   }
 
   /**
@@ -399,6 +411,7 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
       'field_modality' => 'online',
       'field_online_url' => ['uri' => 'https://example.invalid/atividade'],
     ]);
+    /** @var array<string, string> $tags */
     $tags = [
       'schema_article_image' => '[node:image]',
       'schema_event_image' => '[node:image]',
@@ -411,10 +424,12 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
     self::assertArrayNotHasKey('schema_article_image', $tags);
     self::assertArrayNotHasKey('schema_event_image', $tags);
     self::assertArrayNotHasKey('schema_web_page_image', $tags);
+    self::assertArrayHasKey('schema_event_location', $tags);
+    $locationTag = $tags['schema_event_location'];
     self::assertSame([
       '@type' => 'VirtualLocation',
       'url' => 'https://example.invalid/atividade',
-    ], SchemaMetatagManager::unserialize($tags['schema_event_location']));
+    ], SchemaMetatagManager::unserialize($locationTag));
 
     $tags['schema_event_location'] = 'editorial override';
     $this->container->get('module_handler')->invoke('aculta_activity', 'metatags_alter', $arguments);
@@ -431,11 +446,11 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
       ->condition('provider_id', 'activity')
       ->condition('status', 'queued')
       ->execute()
-      ->fetchCol();
+      ?->fetchCol() ?? [];
     $worker = $this->container->get('plugin.manager.queue_worker')
       ->createInstance(ContentIndexWorkManager::QUEUE_ID);
     foreach ($ids as $id) {
-      $worker->processItem(['work_id' => (int) $id]);
+      $worker->processItem(['work_id' => is_numeric($id) ? (int) $id : 0]);
     }
   }
 
@@ -443,13 +458,14 @@ final class ActivityContentIndexProviderKernelTest extends KernelTestBase {
    * Returns the label of one Activity entry in a generation.
    */
   private function entryLabel(string $generationId, string $entityId): string {
-    return (string) $this->container->get('database')->select('aculta_index_entry', 'entry')
+    $field = $this->container->get('database')->select('aculta_index_entry', 'entry')
       ->fields('entry', ['label'])
       ->condition('generation_id', $generationId)
       ->condition('provider_id', 'activity')
       ->condition('entity_id', $entityId)
       ->execute()
-      ->fetchField();
+      ?->fetchField();
+    return is_scalar($field) ? (string) $field : '';
   }
 
 }

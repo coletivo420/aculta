@@ -8,7 +8,7 @@ dependencies:
     - user.role.lms_teacher
   module:
     - aculta_document_viewer
-    - aculta_forum_lms
+    - aculta_lms
 id: lms_course-teacher
 label: Educador
 weight: 10
@@ -24,6 +24,7 @@ permissions:
   - 'delete own lms_classes relationship'
   - 'create aculta_document_viewer:course_document entity'
   - 'create aculta_document_viewer:course_document relationship'
+  - 'update own aculta_document_viewer:course_document entity'
   - 'edit group'
   - 'grade students'
   - 'revert group revisions'
@@ -42,4 +43,3 @@ permissions:
   - 'view group_membership relationship'
   - 'view latest group version'
   - 'view own unpublished group'
-

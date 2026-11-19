@@ -1,0 +1,12 @@
+name: Layout em pilha
+description: Conteúdo principal em uma coluna.
+component: aculta420_v2:layout-page
+props:
+  variant: stack
+slots:
+  title:
+    type: inline_template
+    template: '<h1>Minha página</h1>'
+  content:
+    type: inline_template
+    template: '<p>Conteúdo principal em uma coluna.</p>'

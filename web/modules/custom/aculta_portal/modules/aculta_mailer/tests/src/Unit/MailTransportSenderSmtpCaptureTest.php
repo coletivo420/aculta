@@ -72,10 +72,12 @@ final class MailTransportSenderSmtpCaptureTest extends UnitTestCase {
       $result = $sender->send($transport, $email);
 
       self::assertTrue($result['sent'], $result['message']);
-      self::assertSame(NULL, $result['error_class']);
+      self::assertNull($result['error_class']);
       fclose($pipes[1]);
       fclose($pipes[2]);
-      self::assertSame(0, proc_close($process));
+      $exitCode = proc_close($process);
+      $process = NULL;
+      self::assertSame(0, $exitCode);
       $transcript = (string) file_get_contents($capture);
       self::assertStringContainsString('MAIL FROM:<retorno@example.invalid>', $transcript);
       self::assertStringContainsString('RCPT TO:<destino@example.invalid>', $transcript);

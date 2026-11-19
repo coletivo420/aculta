@@ -1,0 +1,6 @@
+name: Perigo
+description: Ação destrutiva, como excluir.
+props:
+  text: Excluir evento
+  url: /
+  variant: danger

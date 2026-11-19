@@ -1,0 +1,29 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Drupal\aculta_messenger\Ajax;
+
+use Drupal\Core\Ajax\CommandInterface;
+
+/**
+ * Ajax command to insert a thread into the private message page.
+ */
+class PrivateMessageInsertThreadCommand implements CommandInterface {
+
+  public function __construct(protected readonly string $threadHtml) {}
+
+  /**
+   * {@inheritdoc}
+   *
+   * @return array<string, mixed>
+   *   A lista com os valores resultantes.
+   */
+  public function render(): array {
+    return [
+      'command' => 'privateMessageInsertThread',
+      'thread' => $this->threadHtml,
+    ];
+  }
+
+}

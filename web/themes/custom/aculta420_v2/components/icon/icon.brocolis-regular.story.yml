@@ -1,0 +1,6 @@
+name: ACULTA Brócolis - Regular
+description: Desenho original ACULTA Brócolis na variante regular.
+props:
+  name: aculta-brocolis
+  variant: regular
+  size: xl

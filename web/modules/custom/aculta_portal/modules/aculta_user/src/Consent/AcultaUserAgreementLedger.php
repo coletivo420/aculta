@@ -36,7 +36,11 @@ final class AcultaUserAgreementLedger {
     private readonly EventDispatcherInterface $dispatcher,
   ) {}
 
-  /** Records a new event; document metadata must identify the accepted text. */
+  /**
+   * Records a new event; document metadata must identify the accepted text.
+   *
+   * @phpstan-param array<int|string, mixed> $documents
+   */
   public function recordAcultaUserAgreement(int $uid, string $agreementType, string $action, array $documents = [], bool $legacy = FALSE, ?int $created = NULL): int {
     if ($uid < 1 || !in_array($action, ['accepted', 'revoked'], TRUE)) {
       throw new \InvalidArgumentException('A valid account and consent action are required.');
@@ -44,15 +48,17 @@ final class AcultaUserAgreementLedger {
     if ($agreementType !== self::AGREEMENT_TYPE) {
       throw new \InvalidArgumentException('Apenas o aceite único (aculta_user_agreement_terms) pode ser gravado.');
     }
-    if (!$legacy && $action === 'accepted' && $agreementType === 'aculta_user_agreement_terms' && $documents === []) {
+    if (!$legacy && $action === 'accepted' && $documents === []) {
       $documents = $this->currentTermsEvidence();
     }
     $request = $this->requestStack->getCurrentRequest();
-    $previous = $this->database->select('aculta_user_agreement', 'c')
+    $previousStatement = $this->database->select('aculta_user_agreement', 'c')
       ->fields('c', ['record_hash'])
       ->condition('uid', $uid)
       ->orderBy('id', 'DESC')
-      ->range(0, 1)->execute()->fetchField() ?: '';
+      ->range(0, 1)->execute();
+    $lastHash = $previousStatement?->fetchField();
+    $previous = is_string($lastHash) ? $lastHash : '';
     $values = [
       'uid' => $uid,
       'aculta_user_agreement_type' => $agreementType,
@@ -74,7 +80,11 @@ final class AcultaUserAgreementLedger {
     return $id;
   }
 
-  /** Captures stable revision references and content hashes for the current legal documents. */
+  /**
+   * Captures stable revision references and content hashes for the current legal documents.
+   *
+   * @phpstan-return array<int, array<string, string>>
+   */
   private function currentTermsEvidence(): array {
     $evidence = [];
     foreach (['/sobre/termos-de-uso', '/sobre/politica-de-privacidade'] as $alias) {
@@ -88,7 +98,7 @@ final class AcultaUserAgreementLedger {
         $evidence[] = ['alias' => $alias, 'status' => 'document_unresolved'];
         continue;
       }
-      $body = (string) $node->get('body')->value;
+      $body = $this->textValue($node->get('body')->value);
       $evidence[] = [
         'alias' => $alias,
         'uuid' => (string) $node->uuid(),
@@ -102,43 +112,69 @@ final class AcultaUserAgreementLedger {
     return $evidence;
   }
 
-  /** Returns whether the latest event for an agreement is an acceptance. */
+  /**
+   * Returns whether the latest event for an agreement is an acceptance.
+   */
   public function hasAcceptedAcultaUserAgreement(int $uid, string $agreementType): bool {
     if ($agreementType !== self::AGREEMENT_TYPE) {
       return FALSE;
     }
-    $action = $this->database->select('aculta_user_agreement', 'c')
+    $statement = $this->database->select('aculta_user_agreement', 'c')
       ->fields('c', ['action'])->condition('uid', $uid)->condition('aculta_user_agreement_type', $agreementType)
-      ->orderBy('id', 'DESC')->range(0, 1)->execute()->fetchField();
-    return $action === 'accepted';
+      ->orderBy('id', 'DESC')->range(0, 1)->execute();
+    return $statement?->fetchField() === 'accepted';
   }
 
-  /** Verifies the per-account chain and HMACs, returning FALSE on any alteration. */
+  /**
+   * Verifies the per-account chain and HMACs, returning FALSE on any alteration.
+   */
   public function verify(int $uid): bool {
+    $statement = $this->database->select('aculta_user_agreement', 'c')->fields('c')->condition('uid', $uid)->orderBy('id')->execute();
+    if ($statement === NULL) {
+      // Sem resultado não há cadeia verificável: tratado como alteração.
+      return FALSE;
+    }
     $previous = '';
-    foreach ($this->database->select('aculta_user_agreement', 'c')->fields('c')->condition('uid', $uid)->orderBy('id')->execute() as $row) {
-      $actual = (string) $row->record_hash;
+    foreach ($statement as $row) {
+      if (!$row instanceof \stdClass) {
+        return FALSE;
+      }
+      $actual = $this->textValue($row->record_hash);
       $record = [
-        'uid' => (int) $row->uid,
-        'aculta_user_agreement_type' => (string) $row->aculta_user_agreement_type,
-        'action' => (string) $row->action,
-        'created' => (int) $row->created,
-        'ip_address' => $row->ip_address === NULL ? NULL : (string) $row->ip_address,
-        'user_agent' => $row->user_agent === NULL ? NULL : (string) $row->user_agent,
-        'documents' => (string) $row->documents,
-        'legacy' => (int) $row->legacy,
-        'previous_hash' => (string) $row->previous_hash,
+        'uid' => $this->intValue($row->uid),
+        'aculta_user_agreement_type' => $this->textValue($row->aculta_user_agreement_type),
+        'action' => $this->textValue($row->action),
+        'created' => $this->intValue($row->created),
+        'ip_address' => $row->ip_address === NULL ? NULL : $this->textValue($row->ip_address),
+        'user_agent' => $row->user_agent === NULL ? NULL : $this->textValue($row->user_agent),
+        'documents' => $this->textValue($row->documents),
+        'legacy' => $this->intValue($row->legacy),
+        'previous_hash' => $this->textValue($row->previous_hash),
       ];
-      if (!hash_equals($previous, (string) $record['previous_hash'])) {
+      if (!hash_equals($previous, $record['previous_hash'])) {
         return FALSE;
       }
       $expected = hash_hmac('sha256', json_encode($record, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR), $this->privateKey->get());
-      if (!hash_equals((string) $actual, $expected)) {
+      if (!hash_equals($actual, $expected)) {
         return FALSE;
       }
-      $previous = (string) $actual;
+      $previous = $actual;
     }
     return TRUE;
+  }
+
+  /**
+   * Texto de uma coluna da linha; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
+  }
+
+  /**
+   * Inteiro de uma coluna da linha; zero quando o valor não é numérico.
+   */
+  private function intValue(mixed $value): int {
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

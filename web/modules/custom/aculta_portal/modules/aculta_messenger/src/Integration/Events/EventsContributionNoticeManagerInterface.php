@@ -21,7 +21,11 @@ interface EventsContributionNoticeManagerInterface extends PaginatedPersonalNoti
   public function record(MessengerNoticeEvent $event): ?MessageInterface;
 
   /**
-   * Resolves a currently authorized notice into safe presentation data. */
+   * Resolves a currently authorized notice into safe presentation data.
+   *
+   * @return array<mixed>
+   *   Avisos resolvidos.
+   */
   public function resolve(MessageInterface $message, AccountInterface $account): ?array;
 
   /**

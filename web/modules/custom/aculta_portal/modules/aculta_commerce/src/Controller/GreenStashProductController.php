@@ -26,6 +26,15 @@ final class GreenStashProductController {
     private readonly EntityTypeManagerInterface $entities,
   ) {}
 
+  /**
+   * Exibe o detalhe de um produto do Green Stash.
+   *
+   * @param string $produto
+   *   Identificador do produto solicitado.
+   *
+   * @return array
+   *   Estrutura renderizável da página do produto.
+   */
   public function detail(string $produto): array {
     if (!$this->experiences->access('green_stash', 'shop', $this->account)->isAllowed()) {
       throw new AccessDeniedHttpException();
@@ -45,9 +54,12 @@ final class GreenStashProductController {
     $build['heading']['#value'] = $entity->label();
     $build['notice']['#value'] = 'Detalhes do produto. A edição dentro do Green Stash será disponibilizada na próxima fase.';
     $build['back'] = [
-      '#type' => 'link',
-      '#title' => 'Voltar aos produtos',
-      '#url' => Url::fromRoute('aculta_commerce.green_stash_area', ['secao' => 'produtos']),
+      '#type' => 'aculta_portal_button',
+      '#props' => [
+        'text' => 'Voltar aos produtos',
+        'url' => Url::fromRoute('aculta_commerce.green_stash_area', ['secao' => 'produtos'])->toString(),
+        'variant' => 'secondary',
+      ],
     ];
     $build['detail'] = [
       '#type' => 'container',

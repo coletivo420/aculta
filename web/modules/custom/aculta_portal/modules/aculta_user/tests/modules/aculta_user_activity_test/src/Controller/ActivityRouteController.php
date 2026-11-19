@@ -12,6 +12,9 @@ final class ActivityRouteController {
   /**
    * Returns an empty response; this route is used only to generate test URLs.
    */
+  /**
+   * @return array<array-key, mixed>
+   */
   public function placeholder(): array {
     return ['#markup' => ''];
   }

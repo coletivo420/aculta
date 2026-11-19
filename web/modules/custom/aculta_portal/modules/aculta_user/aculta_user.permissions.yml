@@ -27,7 +27,26 @@ administer aculta legado:
   title: 'Administrar autorias históricas do Fórum'
   restrict access: true
 
-
 administer aculta claims:
   title: 'Administrar e moderar reivindicações de posse e organizações'
+  restrict access: true
+
+administer aculta coauthors:
+  title: 'Administrar coautoria de conteúdos'
+  description: 'Permite gerenciar coautores em qualquer conteúdo e alterar configurações de coautoria.'
+  restrict access: true
+
+view aculta coauthor audit:
+  title: 'Consultar auditoria de coautoria'
+  description: 'Acessa o histórico de adições e remoções de coautores em conteúdos.'
+  restrict access: true
+
+edit aculta coauthors of own content:
+  title: 'Editar coautores do próprio conteúdo'
+
+edit aculta coauthors of coauthored content:
+  title: 'Editar coautores de conteúdo onde já é coautor'
+
+edit aculta coauthors of all content:
+  title: 'Editar coautores de qualquer conteúdo'
   restrict access: true

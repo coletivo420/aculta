@@ -20,14 +20,10 @@ final class ContentIndexOwnerResolver {
       return NULL;
     }
     $ownerId = $entity->getOwnerId();
-    if (is_string($ownerId) && preg_match('/^(0|[1-9][0-9]{0,9})$/', $ownerId) !== 1) {
-      return NULL;
-    }
-    if (!is_int($ownerId) && !is_string($ownerId)) {
-      return NULL;
-    }
-    $uid = (int) $ownerId;
-    return $uid >= 0 && $uid <= 4_294_967_295 ? $uid : NULL;
+    $uid = filter_var($ownerId, FILTER_VALIDATE_INT, [
+      'options' => ['min_range' => 0, 'max_range' => 4_294_967_295],
+    ]);
+    return $uid === FALSE ? NULL : $uid;
   }
 
 }

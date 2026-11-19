@@ -28,9 +28,15 @@ final class OrganizationContributionEventQueueTest extends UnitTestCase {
       return array_keys($values);
     });
     $store->method('getMultiple')->willReturnCallback(static function (array $keys) use (&$values): array {
-      return array_intersect_key($values, array_flip($keys));
+      return array_intersect_key($values, array_flip(array_map(static fn(mixed $k): string => is_scalar($k) ? (string) $k : '', $keys)));
     });
-    $store->method('delete')->willReturnCallback(static function (string $key) use (&$values): void {
+    $store->expects(self::once())->method('delete')->with(hash('sha256', implode(':', [
+      'events_location',
+      'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+      '42',
+      '9',
+      'accepted',
+    ])))->willReturnCallback(static function (string $key) use (&$values): void {
       unset($values[$key]);
     });
     $keyValueFactory = $this->createMock(KeyValueFactoryInterface::class);
@@ -61,7 +67,6 @@ final class OrganizationContributionEventQueueTest extends UnitTestCase {
     }
 
     self::assertSame(1, $service->recoverUndelivered());
-    self::assertSame([], $values);
   }
 
 }

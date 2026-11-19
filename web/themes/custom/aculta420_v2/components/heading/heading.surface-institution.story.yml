@@ -1,0 +1,7 @@
+name: Título sobre superfície institucional
+description: Título com fundo institucional; a cor do texto e o fundo trocam sozinhos no modo escuro.
+component: aculta420_v2:heading
+props:
+  text: Eventos em Goiás
+  level: 2
+  surface: institution

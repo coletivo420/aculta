@@ -1,0 +1,26 @@
+.lms-course-materials {
+  display: grid;
+  gap: var(--spacing-base);
+  min-inline-size: 0;
+}
+
+.lms-course-materials > ul {
+  display: grid;
+  gap: var(--spacing-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lms-course-materials > ul > li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  min-inline-size: 0;
+  padding: var(--spacing-base);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  background: var(--color-surface-raised);
+}

@@ -1,0 +1,11 @@
+{
+  "front": "revista-editorial",
+  "purpose": "magazine",
+  "origin_env": "REVISTA_HOST",
+  "source": "tests/browser/magazine/revista-editorial/README.md",
+  "public_routes": [
+    { "path": "/" }
+  ],
+  "auth": { "account": "teste_comum" },
+  "notes": "Sem rota pública declarada. O fluxo usa UIDs de editor e leitor de teste (REVISTA_EDITOR_UID, REVISTA_READER_UID) e sessão logada. Cobertura fica no script da frente."
+}

@@ -1,0 +1,6 @@
+name: Mapa em página
+description: Mapa interativo produzido pelo renderer do módulo e envolvido pela casca SDC.
+component: aculta420_v2:map-canvas
+slots:
+  content:
+    '#markup': <div class="aculta-map" role="region" aria-label="Mapa demonstrativo"><p>Mapa interativo</p></div>

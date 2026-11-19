@@ -1,0 +1,25 @@
+entity.aculta_patch.enable_form:
+  path: '/painel-administrativo/configuracoes/desenvolvimento/patches-aculta/{aculta_patch}/habilitar'
+  defaults:
+    _form: '\Drupal\aculta_patcher\Form\AcultaPatchStatusForm'
+    _title: 'Habilitar patch'
+    patch_operation: 'enable'
+  requirements:
+    _permission: 'administer aculta patches'
+  options:
+    parameters:
+      aculta_patch:
+        type: entity:aculta_patch
+
+entity.aculta_patch.disable_form:
+  path: '/painel-administrativo/configuracoes/desenvolvimento/patches-aculta/{aculta_patch}/desabilitar'
+  defaults:
+    _form: '\Drupal\aculta_patcher\Form\AcultaPatchStatusForm'
+    _title: 'Desabilitar patch'
+    patch_operation: 'disable'
+  requirements:
+    _permission: 'administer aculta patches'
+  options:
+    parameters:
+      aculta_patch:
+        type: entity:aculta_patch

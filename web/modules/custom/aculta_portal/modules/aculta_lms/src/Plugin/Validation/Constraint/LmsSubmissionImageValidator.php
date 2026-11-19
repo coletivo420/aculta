@@ -26,7 +26,8 @@ final class LmsSubmissionImageValidator extends ConstraintValidator {
     private readonly ConsumerUploadPolicy $uploadPolicy,
   ) {}
 
-  /** {@inheritdoc} */
+  /**
+   * {@inheritdoc} */
   public function validate(mixed $value, Constraint $constraint): void {
     if (!$constraint instanceof LmsSubmissionImage) {
       throw new UnexpectedTypeException($constraint, LmsSubmissionImage::class);
@@ -35,7 +36,7 @@ final class LmsSubmissionImageValidator extends ConstraintValidator {
       throw new UnexpectedTypeException($value, FileInterface::class);
     }
 
-    $extension = strtolower(pathinfo($value->getFilename(), PATHINFO_EXTENSION));
+    $extension = strtolower(pathinfo($value->getFilename() ?? '', PATHINFO_EXTENSION));
     if (!in_array($extension, explode(' ', UploadPolicy::EXTENSIONS), TRUE)) {
       return;
     }

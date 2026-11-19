@@ -21,8 +21,8 @@ final class MailAlertSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typedConfigManager,
-    private readonly MailMonitor $monitor,
-    private readonly MailSuppression $suppression,
+    protected readonly MailMonitor $monitor,
+    protected readonly MailSuppression $suppression,
   ) {
     parent::__construct($config_factory, $typedConfigManager);
   }

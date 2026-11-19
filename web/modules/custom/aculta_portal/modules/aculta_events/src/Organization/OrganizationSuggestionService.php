@@ -48,7 +48,7 @@ final class OrganizationSuggestionService {
    *   Organization being edited.
    * @param \Drupal\Core\Session\AccountInterface $author
    *   Account proposing the changes.
-   * @param array<string, scalar|null> $changes
+   * @param array<string, mixed> $changes
    *   Allowlisted field values from the edit form.
    */
   public function submit(EventOrganization $organization, AccountInterface $author, array $changes): EventOrganizationSuggestion {
@@ -137,12 +137,12 @@ final class OrganizationSuggestionService {
       $organizationId = (int) $current->get('field_organization')->target_id;
       if ($decision === 'approved') {
         // Serialize approval against other writes to the organization's row.
-        $this->database->select('aculta_event_organization', 'organization')
+        $select = $this->database->select('aculta_event_organization', 'organization');
+        $select
           ->fields('organization', ['id'])
           ->condition('id', $organizationId)
-          ->forUpdate()
-          ->execute()
-          ->fetchField();
+          ->forUpdate();
+        $select->execute()->fetchField();
       }
 
       /** @var \Drupal\aculta_events\Entity\EventOrganization|null $organization */

@@ -7,8 +7,8 @@ aculta_user.perfil_publico:
     _access: 'TRUE'
     apelido: '[a-z0-9][a-z0-9-]{2,39}'
   options:
-    # Perfil público existe só no purpose MAIN; em outro host responde 404 (DomainPurposeRequestSubscriber).
-    _aculta_domain_purpose: 'main'
+    # Perfil público existe só no purpose MAIN; em outro host responde 404 (DomainSiteRequestSubscriber).
+    _aculta_site_key: 'main'
 
 aculta_user.configuracoes_privacidade:
   path: '/configuracoes/privacidade'
@@ -35,6 +35,50 @@ aculta_user.people:
     _title: 'Pessoas'
   requirements:
     _permission: 'administer users'
+  options:
+    _admin_route: true
+
+aculta_user.coauthors.overview:
+  path: '/painel-administrativo/pessoas/coautorias'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\CoAuthorAdminController::overview'
+    _title: 'Coautorias'
+  requirements:
+    _permission: 'administer aculta coauthors'
+  options:
+    _admin_route: true
+
+aculta_user.coauthors.manage:
+  path: '/painel-administrativo/pessoas/coautorias/{node}/gerenciar'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\CoAuthorManageForm'
+    _title: 'Gerenciar coautores'
+  requirements:
+    _permission: 'administer aculta coauthors'
+    node: '\d+'
+  options:
+    _admin_route: true
+    parameters:
+      node:
+        type: entity:node
+
+aculta_user.coauthors.audit:
+  path: '/painel-administrativo/pessoas/coautorias/auditoria'
+  defaults:
+    _controller: '\Drupal\aculta_user\Controller\CoAuthorAuditController::listing'
+    _title: 'Auditoria de coautorias'
+  requirements:
+    _permission: 'view aculta coauthor audit'
+  options:
+    _admin_route: true
+
+aculta_user.coauthors.settings:
+  path: '/painel-administrativo/configuracoes/pessoas/coautoria'
+  defaults:
+    _form: '\Drupal\aculta_user\Form\CoAuthorSettingsForm'
+    _title: 'Coautoria'
+  requirements:
+    _permission: 'administer aculta coauthors'
   options:
     _admin_route: true
 
@@ -130,7 +174,7 @@ aculta_user.bio_form:
   requirements:
     _custom_access: 'aculta_user.account_modal_access:access'
   options:
-    _aculta_domain_purpose: 'account'
+    _aculta_site_key: 'account'
 
 aculta_user.bio_save:
   path: '/bio/salvar'
@@ -141,7 +185,7 @@ aculta_user.bio_save:
     _permission: 'access aculta portal'
     _csrf_token: 'TRUE'
   options:
-    _aculta_domain_purpose: 'account'
+    _aculta_site_key: 'account'
 
 aculta_user.redes_form:
   path: '/redes/editar/{rede}'
@@ -152,7 +196,7 @@ aculta_user.redes_form:
     _custom_access: 'aculta_user.account_modal_access:access'
     rede: 'instagram|facebook|reddit'
   options:
-    _aculta_domain_purpose: 'account'
+    _aculta_site_key: 'account'
 
 aculta_user.redes_save:
   path: '/redes/salvar'
@@ -163,7 +207,7 @@ aculta_user.redes_save:
     _permission: 'access aculta portal'
     _csrf_token: 'TRUE'
   options:
-    _aculta_domain_purpose: 'account'
+    _aculta_site_key: 'account'
 
 # Memorial coletivo do Fórum (ACULTA Fórum, F2). Apelido reservado em AccountNames::RESERVED.
 # Conteúdo pendente: lista de autores e texto aprovado; ver CHANGELOG do aculta_forum.
@@ -175,7 +219,7 @@ aculta_user.memorial_legados:
   requirements:
     _access: 'TRUE'
   options:
-    _aculta_domain_purpose: 'main'
+    _aculta_site_key: 'main'
 
 aculta_user.denuncias_forum:
   path: '/painel-administrativo/forum/denuncias'
@@ -210,6 +254,6 @@ aculta_user.associado_pedido:
   requirements:
     _permission: 'access aculta portal'
   options:
-    _aculta_domain_purpose: 'account'
+    _aculta_site_key: 'account'
 
 # Caminhos legados da troca de e-mail (antes do contrib change_mail_page): levam à aba E-mail da Segurança.

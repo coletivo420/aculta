@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_mailer\Unit;
 
-use Drupal\aculta_file_uploader\IngestionLimits;
 use Drupal\aculta_mailer\Monitor\BounceParser;
 use Drupal\aculta_mailer\Monitor\DmarcReportParser;
 use Drupal\aculta_mailer\Monitor\MimeMessage;
@@ -101,7 +100,7 @@ final class MonitorParsersTest extends UnitTestCase {
       '',
     ]);
 
-    $summary = (new DmarcReportParser(IngestionLimits::defaults()))->parse($raw);
+    $summary = (new DmarcReportParser())->parse($raw);
 
     $this->assertNotNull($summary);
     $this->assertSame('google.com', $summary['org']);
@@ -130,24 +129,9 @@ final class MonitorParsersTest extends UnitTestCase {
   public function testFeedbackWithoutMetadataIsIgnored(): void {
     $raw = $this->attachment('application/gzip', 'vazio.xml.gz', base64_encode(gzencode('<?xml version="1.0"?><feedback><!--x--></feedback>')));
 
-    $this->assertNull((new DmarcReportParser(IngestionLimits::defaults()))->parse($raw));
+    $this->assertNull((new DmarcReportParser())->parse($raw));
   }
 
-  /**
-   * O teto configurado no painel é o que vale: um XML de 2 MiB passa com o padrão e é recusado com 1 MB.
-   */
-  public function testConfiguredDmarcLimitIsEnforced(): void {
-    $xml = '<?xml version="1.0"?><feedback>'
-      . '<report_metadata><org_name>google.com</org_name><report_id>1</report_id>'
-      . '<date_range><begin>1700000000</begin><end>1700086400</end></date_range></report_metadata>'
-      . '<policy_published><domain>example.invalid</domain></policy_published>'
-      . '<!--' . str_repeat('x', 2 * 1024 * 1024) . '--></feedback>';
-    $raw = $this->attachment('application/gzip', 'relatorio.xml.gz', base64_encode(gzencode($xml)));
-
-    $this->assertNotNull((new DmarcReportParser(IngestionLimits::defaults()))->parse($raw));
-    $limited = IngestionLimits::fromArray(['dmarc_max_report_mb' => 1]);
-    $this->assertNull((new DmarcReportParser($limited))->parse($raw));
-  }
 
   /**
    * Gzip que descompacta além do teto é recusado, mesmo com XML válido.
@@ -155,7 +139,7 @@ final class MonitorParsersTest extends UnitTestCase {
   public function testRejectsGzipBombAboveReportLimit(): void {
     $gz = base64_encode(gzencode($this->oversizedReport()));
 
-    $this->assertNull((new DmarcReportParser(IngestionLimits::defaults()))->parse($this->attachment('application/gzip', 'bomba.xml.gz', $gz)));
+    $this->assertNull((new DmarcReportParser())->parse($this->attachment('application/gzip', 'bomba.xml.gz', $gz)));
   }
 
   /**
@@ -169,7 +153,7 @@ final class MonitorParsersTest extends UnitTestCase {
     $zip->close();
     try {
       $zipBody = base64_encode((string) file_get_contents($path));
-      $this->assertNull((new DmarcReportParser(IngestionLimits::defaults()))->parse($this->attachment('application/zip', 'bomba.zip', $zipBody)));
+      $this->assertNull((new DmarcReportParser())->parse($this->attachment('application/zip', 'bomba.zip', $zipBody)));
     }
     finally {
       @unlink($path);

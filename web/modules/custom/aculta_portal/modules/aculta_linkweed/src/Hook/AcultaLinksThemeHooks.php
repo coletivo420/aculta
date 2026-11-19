@@ -11,7 +11,11 @@ use Drupal\Core\Hook\Attribute\Hook;
 final class AcultaLinksThemeHooks {
 
   /**
- * Declares the template used by public micropages. */
+   * Declares the template used by public micropages.
+   *
+   * @return array<mixed>
+   *   Declaração de temas.
+   */
   #[Hook('theme')]
   public function theme(): array {
     return [
@@ -23,8 +27,9 @@ final class AcultaLinksThemeHooks {
           'theme_preset' => 'classic',
           'links' => [],
           'has_links' => FALSE,
+          'component' => NULL,
         ],
-        'template' => 'aculta-linkweed-page',
+        'template' => 'aculta-links-page',
       ],
       'aculta_linkweed_landing' => [
         'variables' => [
@@ -33,8 +38,9 @@ final class AcultaLinksThemeHooks {
           'links' => [],
           'has_links' => FALSE,
           'theme_preset' => 'classic',
+          'component' => NULL,
         ],
-        'template' => 'aculta-linkweed-landing',
+        'template' => 'aculta-links-landing',
       ],
     ];
   }

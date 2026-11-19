@@ -17,6 +17,9 @@ class MultistepWithDonation extends CheckoutFlowWithPanesBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, array<string, mixed>>
+   *   Etapas do fluxo, por identificador.
    */
   public function getSteps() {
     // Note that previous_label and next_label are not the labels

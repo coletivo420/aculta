@@ -17,7 +17,7 @@ services:
 
   Drupal\aculta_magazine\Hook\MagazineNoticeEventPublisher:
     class: Drupal\aculta_magazine\Hook\MagazineNoticeEventPublisher
-    arguments: ['@flag', '@aculta_portal.domain_purpose', '@entity_type.manager', '@aculta_messenger.notice_event_publisher', '@config.factory', '@datetime.time']
+    arguments: ['@flag', '@aculta_portal.domain_site', '@entity_type.manager', '@aculta_messenger.notice_event_publisher', '@config.factory', '@datetime.time']
 
   aculta_magazine.content_index_provider:
     class: Drupal\aculta_magazine\ContentIndex\MagazineContentIndexProvider
@@ -31,8 +31,12 @@ services:
 
   aculta_magazine.post_presentation:
     class: Drupal\aculta_magazine\Presentation\PostPresentation
-    arguments: ['@date.formatter', '@entity_type.manager', '@aculta_portal.domain_purpose']
+    arguments: ['@date.formatter', '@aculta_user.author_identity_resolver']
 
   Drupal\aculta_magazine\Hook\RevistaCoverStudioHooks:
     class: Drupal\aculta_magazine\Hook\RevistaCoverStudioHooks
     arguments: ['@entity_type.manager', '@current_user', '@aculta_file_uploader.recent_uploads', '@aculta_file_uploader.consumer_policy']
+
+  Drupal\aculta_magazine\Hook\StudioCreatePopupFormHooks:
+    class: Drupal\aculta_magazine\Hook\StudioCreatePopupFormHooks
+    arguments: ['@current_route_match', '@request_stack']

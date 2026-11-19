@@ -1,0 +1,24 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Audio player
+status: stable
+description: Player leve com controles nativos de áudio acessíveis.
+group: Elementos básicos
+props:
+  type: object
+  additionalProperties: false
+  required: [src, title]
+  properties:
+    src:
+      title: Endereço do arquivo de áudio
+      description: Caminho ou URL do arquivo carregado pelo elemento de áudio nativo.
+      type: string
+      format: uri-reference
+    title:
+      title: Título do áudio
+      description: Texto visível na legenda do player e usado para identificar a gravação.
+      type: string
+      minLength: 1
+    artist:
+      title: Artista ou autoria
+      description: Texto opcional exibido junto ao título para identificar quem criou ou interpreta o áudio.
+      type: [string, 'null']

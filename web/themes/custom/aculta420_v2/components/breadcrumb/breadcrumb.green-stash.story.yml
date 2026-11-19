@@ -1,0 +1,9 @@
+name: Green Stash
+props:
+  label: Navegação estrutural
+  sessao: green_stash
+  variant: padrao
+  trail:
+    - label: Green Stash
+      url: /loja
+  current: Produtos e publicações

@@ -1,0 +1,16 @@
+name: Catálogo de cursos públicos
+description: Apresentação de formação com View Drupal nativa.
+component: aculta420_v2:courses-catalog
+slots:
+  intro:
+    type: inline_template
+    template: '<p>Formação para ampliar conhecimento, fortalecer direitos e construir caminhos.</p>'
+  catalog_title:
+    type: inline_template
+    template: '<h2>Cursos disponíveis</h2>'
+  catalog:
+    type: inline_template
+    template: '<ul><li><a href="/ganjalab/curso">Curso de demonstração</a></li></ul>'
+  collaboration:
+    type: inline_template
+    template: '<p>Acesse sua conta para participar dos cursos.</p>'

@@ -1,0 +1,7 @@
+name: Valores rápidos
+description: Opções com valores diferentes e a rota de valor aberto.
+component: aculta420_v2:donation-quick
+slots:
+  items:
+    type: inline_template
+    template: '<li>{{ include("aculta420_v2:button", { text: "R$ 25", url: "#sample-25", variant: "secondary" }, with_context = false) }}</li><li>{{ include("aculta420_v2:button", { text: "R$ 50", url: "#sample-50", variant: "secondary" }, with_context = false) }}</li><li>{{ include("aculta420_v2:button", { text: "Outro", url: "#sample-other", variant: "secondary" }, with_context = false) }}</li>'

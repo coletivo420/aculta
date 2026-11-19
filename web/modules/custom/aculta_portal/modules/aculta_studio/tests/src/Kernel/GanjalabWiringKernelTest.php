@@ -12,6 +12,7 @@ use PHPUnit\Framework\Attributes\Group;
  * Confirma a ligação do controller do Ganjalab no container com o stack do portal.
  */
 #[Group('aculta_studio')]
+#[\PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses]
 final class GanjalabWiringKernelTest extends KernelTestBase {
 
   /**
@@ -50,12 +51,11 @@ final class GanjalabWiringKernelTest extends KernelTestBase {
     'flag',
     'aculta_file_uploader',
     'aculta_image',
-    'aculta_learning_contracts',
     'aculta_mail_confirmer',
-    'aculta_mail_confirmer_user',
     'aculta_mailer',
     'aculta_portal',
     'aculta_portal_cep',
+    'aculta_calendar',
     'aculta_studio',
     'aculta_user',
     'commerce',
@@ -65,11 +65,6 @@ final class GanjalabWiringKernelTest extends KernelTestBase {
     'commerce_payment',
     'commerce_product',
     'commerce_store',
-    'lms',
-    'lms_classes',
-    'lms_answer_plugins',
-    'lms_answer_comments',
-    'lms_file_upload',
     'webform_score',
     'entity_print',
     'physical',

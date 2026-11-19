@@ -1,0 +1,21 @@
+name: Shell da Conta
+props:
+  title: Minha conta
+  section_title: Meu perfil
+  menu_items:
+    - label: Perfil
+      href: '/conta'
+      active: true
+    - label: Segurança
+      href: '/conta/seguranca'
+      active: false
+  accordion_items:
+    - label: Pedidos
+      href: '/conta/pedidos'
+      open: false
+  logout:
+    label: Sair
+    href: '/user/logout'
+slots:
+  content:
+    '#markup': '<p>Conteúdo da seção.</p>'

@@ -16,6 +16,9 @@ final class ForumPostEntityTestHooks {
 
   /**
    * Declares the fixed ForumPost bundle.
+   *
+   * @return array<mixed>
+   *   Dados retornados.
    */
   #[Hook('entity_bundle_info')]
   public function entityBundleInfo(): array {
@@ -31,6 +34,9 @@ final class ForumPostEntityTestHooks {
 
   /**
    * Adds the real ForumPost entity definition without enabling Forum.
+   *
+   * @param array<mixed> $entity_types
+   *   Dados de entrada (entity_types).
    */
   #[Hook('entity_type_alter')]
   public function entityTypeAlter(array &$entity_types): void {

@@ -21,7 +21,7 @@ final class CalendarImportProcessor {
    *
    * @param \Drupal\aculta_calendar\Entity\CalendarImportSource $source
    *   Configured source whose existing items are reconciled.
-   * @param \Drupal\aculta_calendar\Import\NormalizedCalendarEvent[] $events
+   * @param array<mixed> $events
    *   Events parsed and sanitized from a local iCalendar file.
    *
    * @return array{created: int, updated: int, unchanged: int, absent: int}
@@ -75,7 +75,8 @@ final class CalendarImportProcessor {
 
     // Mark removed UIDs as absent without deleting or unpublishing their items.
     foreach ($this->repository->itemsForSource($source) as $current) {
-      $uid = (string) $current->get('external_uid')->value;
+      $uidValue = $current->get('external_uid')->value;
+      $uid = is_string($uidValue) || is_int($uidValue) ? (string) $uidValue : '';
       if (!isset($incoming['event:' . $uid]) && $current->get('source_presence')->value !== 'ausente') {
         $current->set('source_presence', 'ausente')->save();
         $result['absent']++;
@@ -96,13 +97,22 @@ final class CalendarImportProcessor {
       ? $item->get('import_state')->value === 'cancelado'
       : $item->get('import_state')->value !== 'cancelado';
 
+    $descValue = $item->get('description')->value;
+    $descStr = is_string($descValue) ? $descValue : '';
+    $locValue = $item->get('location')->value;
+    $locStr = is_string($locValue) ? $locValue : '';
+    $startVal = $item->get('start')->value;
+    $startInt = is_numeric($startVal) ? (int) $startVal : 0;
+    $endVal = $item->get('end')->value;
+    $endInt = is_numeric($endVal) ? (int) $endVal : 0;
+
     return $stateCompatible
       && $item->get('external_uid')->value === $event->uid
       && $item->get('title')->value === ($event->title !== '' ? $event->title : $event->uid)
-      && (string) ($item->get('description')->value ?? '') === $event->description
-      && (string) ($item->get('location')->value ?? '') === $event->location
-      && (int) $item->get('start')->value === $event->start->getTimestamp()
-      && (int) $item->get('end')->value === $event->end->getTimestamp()
+      && $descStr === $event->description
+      && $locStr === $event->location
+      && $startInt === $event->start->getTimestamp()
+      && $endInt === $event->end->getTimestamp()
       && (bool) $item->get('all_day')->value === $event->allDay
       && $item->get('timezone')->value === $event->timezone
       && (bool) $item->get('timezone_assumed')->value === $event->timezoneAssumed;

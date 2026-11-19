@@ -1,0 +1,12 @@
+name: Citação compacta
+description: Citação com espaçamento compacto para composições estreitas.
+props:
+  density: compact
+  author_name: PiradoPirata
+  timestamp: 07/11/2026 14:36
+slots:
+  avatar_media:
+    type: inline_template
+    template: '{{ render_var(aculta_avatar_sample("PiradoPirata")) }}'
+  content:
+    '#markup': '<p>Para solos orgânicos vivos, recomendo também monitorar a umidade com tensiômetro nas primeiras semanas.</p>'

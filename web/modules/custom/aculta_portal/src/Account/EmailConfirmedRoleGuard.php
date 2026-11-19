@@ -11,13 +11,15 @@ use Drupal\user\UserInterface;
  *
  * A confirmação de e-mail é uma etapa para proteger o site contra bots e contas falsas. Ela não é uma permissão
  * editorial. O papel pula o CAPTCHA (a configuração do CAPTCHA é global; a dispensa é por papel), e a Wiki
- * usa a mesma marca (o antigo Colaborador da Wiki foi mesclado em E-mail confirmado). Remover o papel reabriria a proteção, por isso:
+ * usa a mesma marca (o antigo Colaborador da Wiki foi mesclado em E-mail confirmado). Remover o papel reabriria a
+ * proteção, por isso:
  * - o formulário de administração trava o checkbox do papel;
  * - o presave restaura o papel se ele sair por qualquer outro caminho (API, script, importação).
  */
 final class EmailConfirmedRoleGuard {
 
-  /** Papel de e-mail confirmado. */
+  /**
+   * Papel de e-mail confirmado. */
   public const ROLE = EmailConfirmationPolicy::ROLE;
 
   /**

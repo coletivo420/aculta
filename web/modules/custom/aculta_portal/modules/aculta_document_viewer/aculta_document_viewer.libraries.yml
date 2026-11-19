@@ -1,4 +1,7 @@
 aculta_document_viewer_pdf:
+  css:
+    component:
+      css/pdf-viewer.css: {}
   js:
     js/pdf-viewer.mjs:
       attributes:

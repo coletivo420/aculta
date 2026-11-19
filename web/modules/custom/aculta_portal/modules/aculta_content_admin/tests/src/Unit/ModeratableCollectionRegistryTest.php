@@ -12,12 +12,14 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\views\ViewsData;
 use Drupal\Tests\UnitTestCase;
+use PHPUnit\Framework\Attributes\Group;
 
 /**
  * Verifies the Events contribution queue is filtered by native route access.
  *
- * @group aculta_content_admin
+
  */
+#[Group('aculta_content_admin')]
 final class ModeratableCollectionRegistryTest extends UnitTestCase {
 
   /**

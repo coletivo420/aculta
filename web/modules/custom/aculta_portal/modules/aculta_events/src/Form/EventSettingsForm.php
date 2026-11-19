@@ -19,7 +19,7 @@ final class EventSettingsForm extends ConfigFormBase {
   public function __construct(
     ConfigFactoryInterface $config_factory,
     TypedConfigManagerInterface $typedConfigManager,
-    private readonly EventPermissionPolicy $permissionPolicy,
+    protected readonly EventPermissionPolicy $permissionPolicy,
   ) {
     parent::__construct($config_factory, $typedConfigManager);
   }

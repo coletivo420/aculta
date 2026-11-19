@@ -42,32 +42,34 @@ final class MessengerSettingsFormTest extends UnitTestCase {
     $form = new MessengerSettingsForm($configFactory, $this->createMock(TypedConfigManagerInterface::class));
     $form->setStringTranslation($this->getStringTranslationStub());
 
-    $build = $form->buildForm([], new FormState());
+    $build = self::assertArray($form->buildForm([], new FormState()));
+    $emailModes = self::arrayAt($build, 'email_modes');
+    $magazineEvents = self::arrayAt($build, 'magazine_events');
 
     self::assertSame(
       [AvisoPreferencias::EMAIL_IMMEDIATE],
-      $build['email_modes']['forum_resposta']['#default_value'],
+      self::valueAt(self::arrayAt($emailModes, 'forum_resposta'), '#default_value'),
     );
     self::assertSame(
       [AvisoPreferencias::EMAIL_DIGEST],
-      $build['email_modes']['wiki']['#default_value'],
+      self::valueAt(self::arrayAt($emailModes, 'wiki'), '#default_value'),
     );
-    self::assertArrayHasKey('doacao', $build['email_modes']);
-    self::assertTrue($build['magazine_events']['published']['#default_value']);
-    self::assertTrue($build['magazine_events']['updated']['#default_value']);
-    self::assertTrue($build['magazine_events']['review_submitted']['#default_value']);
-    self::assertTrue($build['magazine_events']['review_returned']['#default_value']);
+    self::assertArrayHasKey('doacao', $emailModes);
+    self::assertTrue(self::arrayAt($magazineEvents, 'published')['#default_value']);
+    self::assertTrue(self::arrayAt($magazineEvents, 'updated')['#default_value']);
+    self::assertTrue(self::arrayAt($magazineEvents, 'review_submitted')['#default_value']);
+    self::assertTrue(self::arrayAt($magazineEvents, 'review_returned')['#default_value']);
     foreach ([AvisoPreferencias::EMAIL_PRIVATE_MESSAGES, AvisoPreferencias::EMAIL_FRIENDSHIP] as $category) {
       $expectedOptions = $category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES
         ? [AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE]
         : [AvisoPreferencias::EMAIL_IMMEDIATE];
       self::assertSame($category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES
         ? [AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE]
-        : [AvisoPreferencias::EMAIL_IMMEDIATE], $build['email_modes'][$category]['#default_value']);
-      self::assertSame($expectedOptions, array_keys($build['email_modes'][$category]['#options']));
+        : [AvisoPreferencias::EMAIL_IMMEDIATE], self::arrayAt($emailModes, $category)['#default_value']);
+      self::assertSame($expectedOptions, array_keys(self::arrayAt(self::arrayAt($emailModes, $category), '#options')));
     }
     foreach (AvisoPreferencias::EMAIL_CATEGORIES as $category) {
-      $defaultMode = $build['email_modes'][$category . '_default_mode'];
+      $defaultMode = self::arrayAt($emailModes, $category . '_default_mode');
       self::assertSame('select', $defaultMode['#type']);
       self::assertSame(
         $category === AvisoPreferencias::EMAIL_PRIVATE_MESSAGES || $category === AvisoPreferencias::EMAIL_FRIENDSHIP
@@ -77,18 +79,18 @@ final class MessengerSettingsFormTest extends UnitTestCase {
         $category,
       );
       if ($category === AvisoPreferencias::EMAIL_FRIENDSHIP) {
-        self::assertArrayNotHasKey(AvisoPreferencias::EMAIL_DIGEST, $defaultMode['#options']);
+        self::assertArrayNotHasKey(AvisoPreferencias::EMAIL_DIGEST, self::arrayAt($defaultMode, '#options'));
       }
     }
     self::assertSame(
       AvisoPreferencias::EMAIL_IMMEDIATE,
-      $build['email_modes'][AvisoPreferencias::EMAIL_PRIVATE_MESSAGES . '_default_mode']['#default_value'],
+      self::valueAt(self::arrayAt($emailModes, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES . '_default_mode'), '#default_value'),
     );
     self::assertSame(
       [AvisoPreferencias::EMAIL_OFF, AvisoPreferencias::EMAIL_DIGEST, AvisoPreferencias::EMAIL_IMMEDIATE],
-      array_keys($build['email_modes'][AvisoPreferencias::EMAIL_PRIVATE_MESSAGES . '_default_mode']['#options']),
+      array_keys(self::arrayAt(self::arrayAt($emailModes, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES . '_default_mode'), '#options')),
     );
-    self::assertTrue($build['email_modes']['private_message_digest_anchor']['#required']);
+    self::assertTrue(self::valueAt(self::arrayAt($emailModes, 'private_message_digest_anchor'), '#required'));
   }
 
   /**
@@ -112,12 +114,13 @@ final class MessengerSettingsFormTest extends UnitTestCase {
     $form = new MessengerSettingsForm($configFactory, $this->createMock(TypedConfigManagerInterface::class));
     $form->setStringTranslation($this->getStringTranslationStub());
 
-    $build = $form->buildForm([], new FormState());
+    $build = self::assertArray($form->buildForm([], new FormState()));
+    $emailModes = self::arrayAt($build, 'email_modes');
 
-    self::assertSame([], $build['email_modes']['wiki']['#default_value']);
-    self::assertSame([], $build['email_modes']['loja']['#default_value']);
-    self::assertSame([], $build['email_modes']['doacao']['#default_value']);
-    self::assertSame([AvisoPreferencias::EMAIL_OFF], array_keys($build['email_modes']['doacao_default_mode']['#options']));
+    self::assertSame([], self::valueAt(self::arrayAt($emailModes, 'wiki'), '#default_value'));
+    self::assertSame([], self::valueAt(self::arrayAt($emailModes, 'loja'), '#default_value'));
+    self::assertSame([], self::valueAt(self::arrayAt($emailModes, 'doacao'), '#default_value'));
+    self::assertSame([AvisoPreferencias::EMAIL_OFF], array_keys(self::arrayAt(self::arrayAt($emailModes, 'doacao_default_mode'), '#options')));
   }
 
   /**
@@ -175,6 +178,7 @@ final class MessengerSettingsFormTest extends UnitTestCase {
     $form->submitForm($formArray, $state);
 
     self::assertSame('2026-11-02', $saved['private_message_digest_anchor']);
+    $savedEmailModes = self::arrayAt($saved, 'email_modes');
     self::assertSame([
       'published' => TRUE,
       'updated' => FALSE,
@@ -185,17 +189,54 @@ final class MessengerSettingsFormTest extends UnitTestCase {
       'digest' => FALSE,
       'immediate' => TRUE,
       'default_mode' => AvisoPreferencias::EMAIL_IMMEDIATE,
-    ], $saved['email_modes']['forum_resposta']);
+    ], self::arrayAt($savedEmailModes, 'forum_resposta'));
     self::assertSame([
       'digest' => TRUE,
       'immediate' => FALSE,
       'default_mode' => AvisoPreferencias::EMAIL_OFF,
-    ], $saved['email_modes'][AvisoPreferencias::EMAIL_PRIVATE_MESSAGES]);
+    ], self::arrayAt($savedEmailModes, AvisoPreferencias::EMAIL_PRIVATE_MESSAGES));
     self::assertSame([
       'digest' => TRUE,
       'immediate' => FALSE,
       'default_mode' => AvisoPreferencias::EMAIL_DIGEST,
-    ], $saved['email_modes']['wiki']);
+    ], self::arrayAt($savedEmailModes, 'wiki'));
+  }
+
+  /**
+   * Validates an untyped Form API result before its fields are inspected.
+   *
+   * @return array<mixed>
+   *   The form render array.
+   */
+  private static function assertArray(mixed $value): array {
+    self::assertIsArray($value);
+    return $value;
+  }
+
+  /**
+   * Returns a nested form array after validating its runtime type.
+   *
+   * @param array<mixed> $parent
+   *   The form or render element containing the requested child.
+   *
+   * @return array<mixed>
+   *   The requested form or render element.
+   */
+  private static function arrayAt(array $parent, string $key): array {
+    self::assertArrayHasKey($key, $parent);
+    self::assertIsArray($parent[$key]);
+    return $parent[$key];
+  }
+
+  /**
+   * Returns a present value from a validated form array.
+   *
+   * @param array<mixed> $parent
+   *   The render element containing the value.
+   */
+  private static function valueAt(array $parent, string $key): mixed {
+    self::assertArrayHasKey($key, $parent);
+    return $parent[$key];
   }
 
 }

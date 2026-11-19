@@ -13,7 +13,7 @@ Data: 2026-10-14. Gate: `php scripts/validate-portal-popup-rule.php`.
 ## Por que
 
 - O modal do Drupal já vem com foco preso, fechamento por Esc controlado, sobreposição e bloqueio de rolagem da página. Cada popup nativo reimplementado precisava desses cuidados à mão (o popup de aceite tinha JavaScript próprio para isso).
-- Tamanho e posição no módulo misturavam apresentação com comportamento. Quando o tema muda, o popup precisa continuar funcionando sem o ACULTA420 (testado com o Olivero).
+- Tamanho e posição no módulo misturavam apresentação com comportamento. Quando o tema muda, o popup precisa continuar funcionando sem o ACULTA420.
 
 ## Como criar um popup
 

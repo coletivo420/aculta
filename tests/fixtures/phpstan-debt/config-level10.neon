@@ -1,0 +1,14 @@
+parameters:
+    level: 10
+    reportUnmatchedIgnoredErrors: true
+    paths:
+        - web/modules/custom
+        - web/themes/custom
+        - scripts
+    excludePaths:
+        - vendor/
+        - web/core/
+        - web/libraries/
+
+includes:
+    - phpstan-baseline.neon

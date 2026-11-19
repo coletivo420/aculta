@@ -10,6 +10,7 @@ use Drupal\aculta_mailer\Message\MailStatus;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\aculta_mailer\Entity\MailLog;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -72,6 +73,9 @@ final class MailLogListController extends ControllerBase {
 
     $rows = [];
     foreach ($storage->loadMultiple($ids) as $log) {
+      if (!$log instanceof MailLog) {
+        throw new \UnexpectedValueException('O armazenamento de logs retornou uma entidade inesperada.');
+      }
       $rows[] = [
         date('Y-m-d H:i', (int) $log->get('created')->value),
         (string) $log->get('type')->value,
@@ -113,7 +117,8 @@ final class MailLogListController extends ControllerBase {
         ],
         '#rows' => $rows,
         '#empty' => $this->t('Nenhum envio com estes filtros.'),
-        // A rolagem vai no contêiner: overflow-x não rola em <table>; sem isso a página inteira rolava em tela estreita.
+        // A rolagem vai no contêiner: overflow-x não rola em <table>; sem isso a página inteira
+        // rolava em tela estreita.
         '#prefix' => '<div data-aculta-mailer-table="rolagem">',
         '#suffix' => '</div>',
         '#attached' => ['library' => ['aculta_mailer/admin']],
@@ -129,7 +134,7 @@ final class MailLogListController extends ControllerBase {
   private function pager(int $total, int $page, string $type, string $status, string $transport, int $days): array {
     $query = array_filter(
       ['type' => $type, 'status' => $status, 'transport' => $transport, 'days' => $days],
-      static fn($v) => $v !== '' && $v !== NULL,
+      static fn($v) => $v !== '',
     );
     $links = [];
     if ($page > 0) {

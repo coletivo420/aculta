@@ -18,7 +18,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\State\StateInterface;
-use Drupal\private_message\Entity\PrivateMessageThreadInterface;
+use Drupal\aculta_messenger\Entity\PrivateMessageThreadInterface;
 use Psr\Log\NullLogger;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -48,10 +48,10 @@ final class PrivateMessageRetentionHooksTest extends UnitTestCase {
 
     $hook->expireDormantThreads();
 
-    self::assertTrue($state->thread_deleted);
-    self::assertTrue($state->notices_deleted);
-    self::assertTrue($state->committed);
-    self::assertFalse($state->rolled_back);
+    self::assertEquals(TRUE, $state->thread_deleted);
+    self::assertEquals(TRUE, $state->notices_deleted);
+    self::assertEquals(TRUE, $state->committed);
+    self::assertEquals(FALSE, $state->rolled_back);
   }
 
   /**

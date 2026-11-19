@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Plugin\views\field;
 use Drupal\aculta_forum\Service\ForumPublicPostStatistics;
 use Drupal\views\Attribute\ViewsField;
 use Drupal\views\Plugin\views\field\NumericField;
+use Drupal\views\Plugin\views\query\Sql;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 
@@ -16,17 +17,28 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 #[ViewsField('aculta_forum_reply_count')]
 final class PublicForumReplyCount extends NumericField implements ContainerFactoryPluginInterface {
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
+   */
   public function __construct(
     array $configuration,
     $plugin_id,
     $plugin_definition,
-    private readonly ForumPublicPostStatistics $postStatistics,
+    protected readonly ForumPublicPostStatistics $postStatistics,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $configuration
+   * @param string $plugin_id
+   * @param mixed $plugin_definition
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     return new static(
@@ -41,6 +53,9 @@ final class PublicForumReplyCount extends NumericField implements ContainerFacto
    * {@inheritdoc}
    */
   public function query(): void {
+    if (!$this->query instanceof Sql) {
+      throw new \LogicException('Public Forum reply count field requires a SQL Views query.');
+    }
     $this->ensureMyTable();
     $this->field_alias = $this->query->addField($this->tableAlias, 'comment_count');
     $this->aliases['comment_count'] = $this->field_alias;
@@ -57,12 +72,15 @@ final class PublicForumReplyCount extends NumericField implements ContainerFacto
   public function preRender(&$values): void {
     $topicIds = [];
     foreach ($values as $row) {
-      $topicIds[] = (int) $this->getValue($row, 'nid');
+      $val = $this->getValue($row, 'nid');
+      $topicIds[] = is_numeric($val) ? (int) $val : 0;
     }
     $statistics = $this->postStatistics->getByTopics($topicIds);
     foreach ($values as $row) {
-      $topicId = (int) $this->getValue($row, 'nid');
-      $commentCount = (int) ($this->getValue($row, 'comment_count') ?? 0);
+      $val = $this->getValue($row, 'nid');
+      $topicId = is_numeric($val) ? (int) $val : 0;
+      $commentVal = $this->getValue($row, 'comment_count');
+      $commentCount = is_numeric($commentVal) ? (int) $commentVal : 0;
       $postCount = $statistics[$topicId]['count'] ?? 0;
       $row->{$this->field_alias} = $commentCount + $postCount;
     }

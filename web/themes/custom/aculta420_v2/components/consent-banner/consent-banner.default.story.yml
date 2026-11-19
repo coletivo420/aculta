@@ -1,0 +1,5 @@
+name: Consentimento de métricas padrão
+description: Aviso acessível com link para privacidade e escolhas explícitas.
+component: aculta420_v2:consent-banner
+props:
+  privacy_url: /sobre/politica-de-privacidade

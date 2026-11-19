@@ -1,0 +1,6 @@
+name: Secundário
+description: Ação de apoio, como Cancelar e Voltar.
+props:
+  text: Cancelar
+  url: /
+  variant: secondary

@@ -51,16 +51,14 @@ o painel de turma do LMS), com as mesmas permissões.
 
 ## Fórum (`aculta_forum`)
 
-- **Fonte:** contagem de comentários do Core (`comment_count`), tópicos
-  publicados (`aculta_forum_topic` filtrado pelo domínio `forum`) e categorias.
-- **Métricas:** `forum.topics.published`, `forum.comments.created`,
-  `forum.posts.created`,
-  `forum.participants.active`.
-- **Provedor:** `ForumProvider` consulta contagens; não lê autoria privada.
-- **Regras:** o Fórum não cria builders de perfil; participantes são contados,
-  não listados. Comentários de verbete ficam associados à origem.
-- **Produtor (aculta_forum 0.1.0-dev.127 e dev.159):** `ForumActivityEvent` para tópico, Comment legado e post revisionável criados. O
-  agregado diário é gravado a partir dele sem autoria/conteúdo; posts sincronizados/importados não geram evento. Pendente: trocar a leitura do painel do Fórum para o agregado.
+**Estado verificado estaticamente em 2026-11-10 (branch `dev`): integração básica implementada, homologação transversal pendente.** Plano e evidências detalhadas: [FST-00 a FST-11](FORUM-ANALYTICS-PLANO-FST-00-11.md).
+
+- **Eventos reais:** `ForumActivityEventHooks` emite `aculta_forum.topic_created`, `aculta_forum.comment_created` e `aculta_forum.post_created`. `ForumActivitySubscriber` assina e grava `forum.topics.created`, `forum.comments.created` e `forum.posts.created` (catálogo atual, sem dimensão por categoria/escopo).
+- **Consumidores reais:** o painel do Statistics possui área `forum`; `ForumAdminOverviewController` lê série histórica dos últimos sete dias de `aculta_statistics.storage`, mas ainda consulta os totais atuais de tópicos/categorias por Entity Query. Não confundir contador de eventos com inventário publicado atual.
+- **Métricas `forum.topics.published` e `forum.participants.active` e classe `ForumProvider`:** mencionadas historicamente, **não implementadas** no catálogo/serviços examinados; integrar apenas após definição semântica e testes.
+- **Risco P0 a testar/corrigir:** reações e contagem pública por autor não aplicam comprovadamente o isolamento real do Group herdado de categoria e contexto; `getVisibilityPolicy() === 'group_members_only'` é insuficiente como classificador. Não presumir ocorrência em Runtime.
+- **Risco P1:** republicação e replay podem duplicar eventos; falta round-trip Kernel com os dois módulos. Migração de Comments para ForumPosts e importações sincronizadas não devem produzir atividade nova.
+- **Futuro:** `ForumAnalyticsScopeResolver`, contrato opcional de `ForumProvider`, snapshots, autores distintos, resposta, reações, moderação e relatórios, sob gates FST. O owner de dados permanece `aculta_forum`/Core e as permissões do contexto permanecem inalteradas.
 
 ## Wiki (conteúdo `wiki420`)
 
@@ -192,3 +190,14 @@ o painel de turma do LMS), com as mesmas permissões.
   (contrib), por não ter recorte por domínio e registrar IP no access log se ligado.
   Como o dado é agregado e sem identificação, a base legal fica a confirmar com o
   responsável no inventário.
+
+## Fórum -> Statistics (FST-00 a FST-11)
+
+- Produtor: `aculta_forum` emite `aculta_forum.topic_created`, `.comment_created`, `.post_created`, `.reaction_added` e `.search_executed`. O evento carrega IDs e contagem, sem autoria, termo ou texto.
+- Idempotência: `aculta_forum_analytics_ledger` reivindica a primeira emissão por entidade e evento; replay, concorrência e republicação não duplicam.
+- Escopo: `ForumAnalyticsScopeResolver` decide `public_forum`, `restricted_forum`, `publication`, `wiki`, `lms` ou `unknown` pelo conteúdo e Group, nunca pela conta. `unknown` e falha fecham a inclusão pública.
+- Consumo: `ForumActivitySubscriber`, `ForumReactionSubscriber` e `ForumSearchSubscriber` gravam apenas no catálogo central. `ForumMetricsProvider` é opcional por tag `aculta_statistics.metric_provider`.
+- Retratos: `MetricProviderCollector` substitui o dia; `SnapshotReconciliation` compara e corrige com dry-run. `aculta-forum:reconcile-reactions` reclassifica reações antigas.
+- Detalhamento: `forum.replies.created` usa o ID do tópico como dimensão; `AuthorizedEntityMetricAggregator` aceita somente `node:aculta_forum_topic` e exige `view content-level statistics`. O Index revalida acesso antes de enviar candidatos.
+- Moderação: owner é `aculta_cgu` (`aculta_cgu_report`), com status, `created` e `decided_at`; `ForumModerationMetricsProvider` expõe abertas, resolvidas e mediana sem denunciante, alvo nominal ou parecer. Nenhum ledger paralelo foi criado.
+- Privacidade: sem UID, IP, e-mail, termo de busca ou texto em dimensões. Coleta de busca desligada por padrão; habilitada apenas no desenvolvimento por decisão de 2026-11-10, com finalidade no inventário LGPD.

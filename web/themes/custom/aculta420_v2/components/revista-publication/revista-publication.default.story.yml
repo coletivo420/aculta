@@ -1,0 +1,33 @@
+name: Publicação completa
+description: Capa 4:3, chamada, resumo, corpo de leitura, metadados e autoria.
+component: aculta420_v2:revista-publication
+props:
+  has_meta: true
+  has_subtitle: true
+  has_summary: true
+  has_cover: true
+  has_footer: true
+  has_authors: true
+  has_discussion: false
+slots:
+  meta:
+    type: inline_template
+    template: '<div>Autoria · 4 de novembro de 2026</div>'
+  cover:
+    type: inline_template
+    template: '<img src="/themes/custom/aculta420_v2/assets/logos/wiki420-globe-512.png" alt="Capa editorial de exemplo" width="800" height="600">'
+  subtitle:
+    type: inline_template
+    template: '<p>Chamada editorial de exemplo.</p>'
+  summary:
+    type: inline_template
+    template: '<p>Resumo breve da publicação.</p>'
+  body:
+    type: inline_template
+    template: '<p>Corpo de texto para demonstrar a coluna de leitura.</p>'
+  footer:
+    type: inline_template
+    template: '<p>Categoria editorial</p>'
+  authors:
+    type: inline_template
+    template: '<p>Autoria pública preparada pelo Portal.</p>'

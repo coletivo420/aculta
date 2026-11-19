@@ -1,0 +1,12 @@
+name: Duas colunas
+description: Conteúdo principal com coluna complementar, proporção equilibrada.
+component: aculta420_v2:layout-two-columns
+props:
+  ratio: equal
+slots:
+  primary:
+    type: inline_template
+    template: '<h2>Conteúdo</h2><p>Texto principal da seção.</p>'
+  secondary:
+    type: inline_template
+    template: '<h2>Apoio</h2><p>Informação complementar.</p>'

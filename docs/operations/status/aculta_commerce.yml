@@ -2,7 +2,12 @@
 version: 0.1.0-dev.16
 state: Dev
 progress_note: >-
-  Firefox ESR comprovou sem CAPTCHA o produto, carrinho, identificação por e-mail,
+  Segurança estática: zero chamadas globais \\Drupal:: em classes/traits após
+  migração de Shipment para resolução pura de pacotes e hook OOP injetado; 6
+  testes focais / 18 assertions, PHPStan, PHPCS e gate Drupal 12 PASS. Semgrep
+  revalidado: 40 achados restantes, todos já triados como falsos positivos ou
+  aceitos; nenhum uso estático real pendente. Firefox ESR comprovou sem CAPTCHA
+  o produto, carrinho, identificação por e-mail,
   cadastro AJAX de visitante e o formulário de endereço/frete. Google fica antes
   do e-mail; conta existente mostra senha e e-mail novo mostra cadastro sem senha.
   Não foi enviado endereço, calculada cotação, enviado pedido nem comprovada a conta.
@@ -25,4 +30,4 @@ progress_note: >-
   `aculta_simpletest` em 2026-10-31: 80 testes / 591 assertions PASS, 7 skipped,
   222 depreciações upstream. Nenhum pedido, cotação ou pagamento real foi
   criado. Ingressos não estão implementados; ver ADR-036 e decisão do item.
-next_phase: 'Homologar checkout e seleção de frete em Firefox ESR no servidor de testes, validar cotação sandbox sem contratar envio e planejar cutover autorizado preservando pedidos LMS/Doações ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/ROADMAP.md))'
+next_phase: 'Homologar checkout e seleção de frete em Firefox ESR no servidor de desenvolvimento, validar cotação sandbox sem contratar envio e planejar cutover autorizado preservando pedidos LMS/Doações ([roadmap](web/modules/custom/aculta_portal/modules/aculta_commerce/docs/ROADMAP.md))'

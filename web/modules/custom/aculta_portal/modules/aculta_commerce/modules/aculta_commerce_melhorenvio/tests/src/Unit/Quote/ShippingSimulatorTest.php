@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_commerce_melhorenvio\Unit\Quote;
 
+use Drupal\commerce_product\Entity\ProductVariationInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioClientInterface;
 use Drupal\aculta_commerce_melhorenvio\Http\MelhorEnvioException;
 use Drupal\aculta_commerce_melhorenvio\Quote\MelhorEnvioQuoter;
@@ -39,6 +41,10 @@ final class ShippingSimulatorTest extends UnitTestCase {
    *   Origem da configuração.
    * @param bool $credentials
    *   Se o cliente tem as chaves do ambiente.
+   * @param \Drupal\aculta_commerce_melhorenvio\Quote\MelhorEnvioQuoter $quoter
+   *   Cotador usado pelo simulador.
+   * @param array<string, mixed>|null $package
+   *   Pacote padrão da configuração.
    */
   private function simulator(?array $origin, bool $credentials, MelhorEnvioQuoter $quoter, ?array $package = NULL): ShippingSimulator {
     $config = $this->createMock(ImmutableConfig::class);
@@ -65,10 +71,22 @@ final class ShippingSimulatorTest extends UnitTestCase {
     return new ShippingSimulator($client, $quoter, $configs, $cep, new MemoryBackend($time), $time, $loggers);
   }
 
+  /**
+   * Cria o pacote padrão usado nos testes.
+   *
+   * @return \Drupal\aculta_commerce_melhorenvio\Quote\QuotePackage
+   *   Pacote de exemplo.
+   */
   private function package(): QuotePackage {
     return new QuotePackage(widthCm: 11.0, heightCm: 2.0, lengthCm: 16.0, weightKg: 0.3, insuranceValue: 0.0);
   }
 
+  /**
+   * Cria um cotador simulado.
+   *
+   * @return \Drupal\aculta_commerce_melhorenvio\Quote\MelhorEnvioQuoter
+   *   Cotador de teste.
+   */
   private function quoter(): MelhorEnvioQuoter {
     return $this->createMock(MelhorEnvioQuoter::class);
   }
@@ -242,17 +260,23 @@ final class ShippingSimulatorTest extends UnitTestCase {
   }
 
   /**
-   * Variação sem medidas usa o pacote padrão da configuração. Sem padrão configurado, a variação sem medidas não tem
-   * pacote e fica indisponível (nenhuma medida é presumida).
+   * Variação sem medidas usa o pacote padrão da configuração.
+   *
+   * Sem padrão configurado, a variação sem medidas não tem pacote e fica indisponível (nenhuma medida é presumida).
    */
   public function testVariationWithoutMeasuresUsesDefaultOrIsUnavailable(): void {
-    $empty = $this->createMock(\Drupal\Core\Field\FieldItemListInterface::class);
+    $empty = $this->createMock(FieldItemListInterface::class);
     $empty->method('isEmpty')->willReturn(TRUE);
-    $variation = $this->createMock(\Drupal\commerce_product\Entity\ProductVariationInterface::class);
+    $variation = $this->createMock(ProductVariationInterface::class);
     $variation->method('hasField')->willReturn(TRUE);
     $variation->method('get')->willReturn($empty);
 
-    $com_padrao = $this->simulator(self::ORIGIN, TRUE, $this->quoter(), ['width' => 16, 'height' => 2, 'length' => 11, 'weight' => 0.3]);
+    $com_padrao = $this->simulator(self::ORIGIN, TRUE, $this->quoter(), [
+      'width' => 16,
+      'height' => 2,
+      'length' => 11,
+      'weight' => 0.3,
+    ]);
     $pacote = $com_padrao->packageForVariation($variation);
     $this->assertNotNull($pacote);
     $this->assertSame(16.0, $pacote->widthCm);

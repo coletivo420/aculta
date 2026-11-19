@@ -1,0 +1,24 @@
+--- a/src/Entity/ProfileType.php
++++ b/src/Entity/ProfileType.php
+@@ -218,7 +218,8 @@
+     // Rebuild the user page tab.
+     \Drupal::service('router.builder')->setRebuildNeeded();
+     // Update the "register" form display, if needed.
+-    $original_registration = isset($this->original) ? $this->original->getRegistration() : FALSE;
++    $original = method_exists($this, 'getOriginal') ? $this->getOriginal() : $this->original;
++    $original_registration = $original instanceof ProfileTypeInterface ? $original->getRegistration() : FALSE;
+     $registration = $this->getRegistration();
+     if ($original_registration != $registration) {
+       $register_display = EntityFormDisplay::load('user.user.register');
+--- a/src/Entity/Profile.php
++++ b/src/Entity/Profile.php
+@@ -286,7 +286,8 @@
+ 
+     if ($this->getOwnerId()) {
+       $default = $this->isDefault();
+-      $original_default = $this->original ? $this->original->isDefault() : FALSE;
++      $original = method_exists($this, 'getOriginal') ? $this->getOriginal() : $this->original;
++      $original_default = $original instanceof ProfileInterface ? $original->isDefault() : FALSE;
+       if ($default && !$original_default && $this->getOwner()) {
+         // The profile was set as default, remove the flag from other profiles.
+         $profiles = $storage->loadMultipleByUser($this->getOwner(), $this->bundle());

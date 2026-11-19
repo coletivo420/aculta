@@ -103,6 +103,9 @@ final class StateMelhorEnvioTokenStore implements MelhorEnvioTokenStoreInterface
 
   /**
    * Decodes and validates an encrypted JSON token payload.
+   *
+   * @return array{access_token: string, refresh_token: string, expires_at: int}
+   *   Tokens validados.
    */
   private function decode(string $json): array {
     try {
@@ -116,17 +119,24 @@ final class StateMelhorEnvioTokenStore implements MelhorEnvioTokenStoreInterface
 
   /**
    * Validates token payload fields without exposing their values.
+   *
+   * @param array<mixed> $tokens
+   *   Payload decodificado.
+   *
+   * @return array{access_token: string, refresh_token: string, expires_at: int}
+   *   Tokens validados.
    */
   private function normalize(array $tokens): array {
-    if (!is_string($tokens['access_token'] ?? NULL) || $tokens['access_token'] === ''
-      || !is_string($tokens['refresh_token'] ?? NULL) || $tokens['refresh_token'] === ''
-      || !is_int($tokens['expires_at'] ?? NULL) || $tokens['expires_at'] < 1) {
+    $accessToken = $tokens['access_token'] ?? NULL;
+    $refreshToken = $tokens['refresh_token'] ?? NULL;
+    $expiresAt = $tokens['expires_at'] ?? NULL;
+    if (!is_string($accessToken) || $accessToken === '' || !is_string($refreshToken) || $refreshToken === '' || !is_int($expiresAt) || $expiresAt < 1) {
       throw new \RuntimeException('Malformed Melhor Envio token payload.');
     }
     return [
-      'access_token' => $tokens['access_token'],
-      'refresh_token' => $tokens['refresh_token'],
-      'expires_at' => $tokens['expires_at'],
+      'access_token' => $accessToken,
+      'refresh_token' => $refreshToken,
+      'expires_at' => $expiresAt,
     ];
   }
 

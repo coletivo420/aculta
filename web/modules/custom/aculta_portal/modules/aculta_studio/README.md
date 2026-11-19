@@ -10,11 +10,12 @@
 | Ganjalab Estudante | `courses` | `/ganjalab` |
 | Ganjalab Educador | `courses` | `/ganjalab/educador` |
 | Criação de curso | `courses` | `/ganjalab/educador/cursos/novo` |
+| Estrutura de curso | `courses` | `/ganjalab/educador/cursos/{course}/estrutura` |
 | ACULTA STUDIO WE SATIVA | `wiki` | `/we-sativa` |
 | ACULTA STUDIO GREEN STASH | `shop` | `/green-stash` |
 | Culturas | `eventos` | `/culturas` |
 
-A raiz de `account` apresenta a entrada da Conta; Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados.
+A decisão vigente da ADR-048 (2026-11-05) coloca o dashboard do Studio em `/` do purpose `account`, Minha Conta em `/conta` e Meu Perfil privado em `/meu-perfil`; a rota pública do perfil permanece independente e aguarda decisão. A raiz usa um path interno bloqueado em acesso direto, e `/studio*` continua 404.
 
 **Responsabilidades atuais:** Marley reúne somente Revista, moderação do Fórum e Galerias; a aba de Fórum exige `moderar denuncias do forum` e oferece a rota de denúncias do owner, sem menu de discussões ou criação de tópicos. Ganjalab Educador e Ganjalab Estudante são experiências distintas no mesmo purpose `courses`; Course Builder/Form API fica com o Educador e dashboard/jornada com o Estudante. Group/LMS continuam owners de entidades, permissões, matrículas, progresso e notas. Os dashboards mostram links entre Educador/Estudante somente quando a rota destino autoriza a conta. Salvos usam `/salvos`, Mercado Pago usa `/conta/mercado-pago/planos` e `/conta-legada` permanece. URLs absolutas são resolvidas pelo `DomainPurposeManager`; o Domain Wiki canônico é `wiki420`, sem migração de host planejada.
 
@@ -59,7 +60,7 @@ Minha Conta Studio inclui agora as páginas privadas `/studio/conta/pedidos`, `/
 
 O Studio somente envolve os render arrays e aplica navegação contextual; não duplica entity, workflow, form, tabela ou shell, nem altera o Perfil público. As rotas originais `/meu-apoio` e `/configuracoes` e o legado permanente `/conta-legada` continuam disponíveis; o hub ACCOUNT fica em `/` (`/studio` técnico bloqueado diretamente).
 
-**Unit novos escritos mas não executados**; PHPUnit/Kernel/Functional, PHP lint, PHPCS, gates, Domain, cache, HTTP autenticado/anônimo, checkout, duas contas, Firefox ESR/X11, 320 px, Olivero e no-JS permanecem pendentes. Sem RC, merge ou deploy.
+**Unit novos escritos mas não executados**; PHPUnit/Kernel/Functional, PHP lint, PHPCS, gates, Domain, cache, HTTP autenticado/anônimo, checkout, duas contas, Firefox ESR/X11, 320 px e no-JS permanecem pendentes. Sem RC, merge ou deploy.
 
 ## Histórico — auditoria S-R3-B1, Studio dev.19
 
@@ -255,7 +256,7 @@ Atributos `data-portal-ui` e `data-aculta-studio` são contratos de comportament
 
 Documentos e changelogs anteriores podem usar os nomes antigos para registrar decisões passadas. Eles não definem a identidade vigente; consulte o contrato acima. Runtime e navegador não foram alterados por esta implementação local.
 
-Gates do escopo: PHP lint, PHPCS disponível, Unit/Kernel/Functional aplicáveis, `php scripts/validate-module-theme-boundary.php`, `php scripts/validate-aculta-portal-drupal11.php`, `php scripts/validate-project-status-index.php` e `git diff --check`. Testes visuais seguem `tests/browser/aculta-studio/visual.mjs` com Firefox ESR/X11 autorizado.
+Gates do escopo: PHP lint, PHPCS disponível, Unit/Kernel/Functional aplicáveis, `php scripts/validate-module-theme-boundary.php`, `php scripts/validate-aculta-portal-drupal12.php`, `php scripts/validate-project-status-index.php` e `git diff --check`. Testes visuais seguem `tests/browser/aculta-studio/visual.mjs` com Firefox ESR/X11 autorizado.
 
 ## Eventos e Locais - integração e ACULTA Studio Culturas (2026-10-30)
 
@@ -292,11 +293,12 @@ sem alias ou redirect.
 | ACULTA STUDIO GREEN STASH | `shop` | `/green-stash` |
 | Culturas | `eventos` | `/culturas` |
 
-Conta (`/conta/*`) e Perfil (`/perfil/*`) permanecem separados; salvos usam
+Conta (`/conta/*`) e Meu Perfil privado (`/meu-perfil/*`) permanecem separados; salvos usam
 `/salvos`, Mercado Pago `/conta/mercado-pago/planos` e o legado
 `/conta-legada` permanece. URLs entre purposes são produzidas pelo
-`DomainPurposeManager`. A raiz `account` apresenta a entrada da Conta sem
-rewrite para `/studio`.
+`DomainPurposeManager`. A raiz `account` apresenta o dashboard do Studio por
+reescrita interna para a rota de dashboard; `/conta` apresenta Dados cadastrais
+privados. O path interno não é público, e `/studio*` continua 404.
 
 O Domain Wiki canônico é `wiki420`. O responsável corrigiu a referência a
 `wiki.aculta.*` no pedido inicial; não há mudança de host planejada. HTTPS e
@@ -323,3 +325,10 @@ A composição da jornada e da sala de aprendizagem pertence ao Studio. CourseJo
 O LMS não deve importar classes do Studio nem registrar seus composers. CourseRoomBuilder permanece no aculta_lms somente para elementos próprios de matrícula e roster. A composição do dashboard pessoal ainda é um ponto transitório: LearnerDashboardComposer permanece implementado no LMS e será separado quando houver um contrato de dados de resumo do estudante; não duplicar dados nem mover autorização para a interface.
 
 A rota de atividade lms.group.answer_form continua como integração temporária com o Drupal LMS contrib. A extração não removeu essa rota nem alterou submissões. A validação Runtime está sendo conduzida em frente separada e não é declarada concluída aqui.
+
+## Ganjalab Educador — entrada da estrutura do curso (2026-11-03)
+
+O Dashboard Educador oferece “Editar estrutura” quando o acesso à rota do LMS
+autoriza o curso. A página, os formulários e a validação de curso/aula/atividade
+pertencem ao `aculta_lms`; Studio só compõe o link no workspace. Matrículas,
+respostas, gabaritos e dados pedagógicos não são armazenados pelo Studio.

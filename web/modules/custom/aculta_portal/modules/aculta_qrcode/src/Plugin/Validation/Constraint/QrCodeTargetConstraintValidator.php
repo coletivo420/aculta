@@ -25,7 +25,7 @@ final class QrCodeTargetConstraintValidator extends ConstraintValidator {
       return;
     }
     try {
-      (new QrCodePayloadValidator())->validateUrl((string) $value);
+      (new QrCodePayloadValidator())->validateUrl((is_scalar($value) ? (string) $value : ''));
     }
     catch (InvalidQrCodeException) {
       $this->context->addViolation($constraint->message);

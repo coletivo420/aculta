@@ -77,7 +77,7 @@ final class NoticeOriginGrouper {
     usort($origins, static function (string $a, string $b) use ($groups, $stableOrder): int {
       $aCreated = self::latestTimestamp($groups[$a]);
       $bCreated = self::latestTimestamp($groups[$b]);
-      return ($bCreated <=> $aCreated) ?: (($stableOrder[$a] ?? PHP_INT_MAX) <=> ($stableOrder[$b] ?? PHP_INT_MAX));
+      return ($bCreated <=> $aCreated) ?: (($stableOrder[$a]) <=> ($stableOrder[$b]));
     });
 
     $result = [];

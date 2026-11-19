@@ -7,6 +7,7 @@ namespace Drupal\aculta_user\Avatar;
 use Drupal\aculta_file_uploader\Cleanup\FileCleanupStatus;
 use Drupal\aculta_file_uploader\Cleanup\UnusedFileCleaner;
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
@@ -18,7 +19,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
  *
  * Toda remoção passa pela verificação global de referências do Portal.
  */
-final class AvatarAssetCleanup {
+class AvatarAssetCleanup {
 
   /**
    * Idade mínima de um upload temporário para ser apagado (segundos).
@@ -39,6 +40,9 @@ final class AvatarAssetCleanup {
   /**
    * Executa a limpeza e retorna exclusões confirmadas por tipo.
    */
+  /**
+   * @return array<array-key, mixed>
+   */
   public function run(): array {
     $fileStorage = $this->entityTypeManager->getStorage('file');
     $now = (int) $this->time->getRequestTime();
@@ -49,7 +53,7 @@ final class AvatarAssetCleanup {
       ->condition('created', $now - self::TEMP_MAX_AGE, '<')
       ->execute();
     foreach ($fileStorage->loadMultiple($temp) as $file) {
-      if ($this->isPictureUri($file->getFileUri())) {
+      if (is_string($fileUri = $file->getFileUri()) && $this->isPictureUri($fileUri)) {
         if ($this->unusedFileCleaner->removeIfUnused($file, TRUE) === FileCleanupStatus::Deleted) {
           $removed['temporarios']++;
         }
@@ -84,7 +88,10 @@ final class AvatarAssetCleanup {
     // Recortes de arquivos que já não existem mais.
     $cropStorage = $this->entityTypeManager->getStorage('crop');
     foreach ($cropStorage->loadMultiple() as $crop) {
-      $uri = $crop->hasField('uri') ? (string) $crop->get('uri')->value : '';
+      if (!$crop instanceof ContentEntityInterface) {
+        continue;
+      }
+      $uri = $crop->hasField('uri') ? $this->textValue($crop->get('uri')->value) : '';
       if ($uri !== '' && str_starts_with($uri, 'public://pictures/')
         && !$this->entityTypeManager->getStorage('file')->loadByProperties(['uri' => $uri])) {
         $crop->delete();
@@ -110,6 +117,13 @@ final class AvatarAssetCleanup {
       ->range(0, 1)
       ->count()
       ->execute() > 0;
+  }
+
+  /**
+   * Texto de um valor; vazio quando o valor não é escalar.
+   */
+  private function textValue(mixed $value): string {
+    return is_scalar($value) || $value instanceof \Stringable ? (string) $value : '';
   }
 
 }

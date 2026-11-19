@@ -1,0 +1,16 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Formulário editorial do Studio
+description: Apresenta o formulário de edição de revista dentro do Studio.
+status: stable
+group: Studio
+props:
+  type: object
+  additionalProperties: false
+slots:
+  content:
+    title: Formulário editorial
+    description: Form API responsável pela edição de conteúdo editorial.
+assets:
+  css:
+    component:
+      studio-revista-form.css: {}

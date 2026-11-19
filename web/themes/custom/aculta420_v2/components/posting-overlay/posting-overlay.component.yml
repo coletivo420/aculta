@@ -1,0 +1,19 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Aviso de postagem
+status: stable
+description: Sobreposição "Aguarde" exibida dentro do popup enquanto o comentário é enviado. Começa oculta; o JS a mostra durante o envio.
+group: Elementos básicos
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    title:
+      type: string
+      title: Título
+      description: Título do aviso.
+      default: Aguarde
+    text:
+      type: string
+      title: Texto
+      description: Mensagem exibida abaixo do título.
+      default: Postando seu comentário…
