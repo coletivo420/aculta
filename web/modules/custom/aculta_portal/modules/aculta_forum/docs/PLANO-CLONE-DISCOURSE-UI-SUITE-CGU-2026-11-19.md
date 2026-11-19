@@ -158,6 +158,21 @@ Statistics, User, Messenger, Game, Index, CGU e no próprio Fórum são integra�
 com o host atual e devem ser avaliadas por contrato/origem; não devem ser
 movidas automaticamente para o addon apenas por conter “forum” no nome.
 
+O censo documental fora dos módulos encontrou regras históricas que precisam
+de fonte normativa única na extração: `docs/portal/PAPEIS-PARTICIPACAO.md`
+repete `field_autor_legado` e diz que conteúdo legado não será importado,
+trecho superado por F-D43; `ACULTA-USER-PLAN.md`, `SOURCE-OF-TRUTH.md`,
+`docs/architecture/aculta_forum.md` e `docs/architecture/avatar.md` ainda
+descrevem autoria, campos e ownership em User/Forum; `ROUTES-SITEMAP.md` e
+`FRIENDLY-PORTUGUESE-SLUGS.md` registram a rota e reserva do memorial; e
+`FORUM-GAME-PESQUISA-VALIDACAO.md` resume regras de integração. No FDC-11.2,
+mover a política detalhada para os documentos do addon e deixar nesses
+documentos transversais apenas contratos atuais e links para o dono normativo.
+Preservar rota e reserva por provider genérico. `RUNTIME-WINDOW-PLAN-2026-11-12.md`
+é evidência operacional datada: não executá-lo como autorização atual nem
+apagar seu histórico; se a migração de ownership tornar seus passos obsoletos,
+marcá-los como supersedidos por este plano.
+
 O censo de interface/configuração também separou infraestrutura corrente de
 semântica de arquivo: o domínio e alias do Fórum, a página inicial de
 categorias, Views/Search API e o cabeçalho visual do Growroom continuam com o
