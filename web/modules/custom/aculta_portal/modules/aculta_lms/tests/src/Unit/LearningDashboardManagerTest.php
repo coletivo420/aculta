@@ -11,8 +11,8 @@ use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_lms\LearningDashboardManager;
-use Drupal\aculta_lms\Learning\AccountCourseSummary;
-use Drupal\aculta_lms\Learning\AccountCoursesReaderInterface;
+use Drupal\aculta_portal\Learning\AccountCourseSummary;
+use Drupal\aculta_portal\Learning\AccountCoursesReaderInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -21,7 +21,6 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpKernel\Exception\ServiceUnavailableHttpException;
 
 /**
@@ -46,7 +45,7 @@ final class LearningDashboardManagerTest extends UnitTestCase {
   }
 
   /**
-   * Confirma que o painel usa as aulas publicadas do próprio aluno e o progresso do curso.
+   * Confirma o uso das aulas publicadas e do progresso do próprio aluno.
    */
   public function testStudentDashboardUsesOwnPublishedLessonsAndCourseLevelProgress(): void {
     $account = new UserSession(['uid' => 42]);
@@ -140,7 +139,7 @@ final class LearningDashboardManagerTest extends UnitTestCase {
   /**
    * Monta o gerenciador do painel com leitores simulados.
    *
-   * @param \Drupal\aculta_lms\Learning\AccountCoursesReaderInterface|null $coursesReader
+   * @param \Drupal\aculta_portal\Learning\AccountCoursesReaderInterface|null $coursesReader
    *   Leitor de cursos da conta.
    * @param \Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface $certificates
    *   Gerenciador de certificados.

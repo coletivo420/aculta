@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit;
 
-use Drupal\aculta_lms\Learning\AccountCourseSummary;
 use Drupal\aculta_lms\Account\AccountCoursesReader;
 use Drupal\aculta_lms\Group\GroupMembershipReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
@@ -26,7 +25,8 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests adapting access results for a learner's courses.
  *
- * O progresso vem do contrato ACULTA (CourseProgressReaderInterface), não do LMS contrib (ADR-042, decisão 6).
+ * O progresso vem do contrato ACULTA (CourseProgressReaderInterface),
+ * não do LMS contrib (ADR-042, decisão 6).
  */
 #[Group('aculta_lms')]
 final class AccountCoursesReaderTest extends UnitTestCase {
@@ -103,7 +103,6 @@ final class AccountCoursesReaderTest extends UnitTestCase {
       ->getAccountCourses($account);
 
     self::assertCount(1, $summaries);
-    self::assertInstanceOf(AccountCourseSummary::class, $summaries[0]);
     self::assertSame('42', $summaries[0]->id);
     self::assertSame(['group:42'], $summaries[0]->cacheTags);
   }

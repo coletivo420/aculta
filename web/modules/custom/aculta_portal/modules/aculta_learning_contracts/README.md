@@ -1,24 +1,12 @@
-# ACULTA Learning Contracts
+# ACULTA Learning Contracts - módulo em desativação
 
-Contratos neutros de aprendizagem consumidos pelo Portal. O módulo não conhece
-Group, LMS, matrícula ou progresso: apenas define a interface e o DTO que os
-provedores implementam.
+As classes de leitura de cursos da Conta foram incorporadas a
+`aculta_portal/src/Learning`. O `aculta_lms` implementa diretamente esse
+contrato, sem herança de módulo intermediário.
 
-## Contrato
+Este diretório permanece provisoriamente no repositório apenas porque o módulo
+ainda consta instalado em `config/sync/core.extension.yml`. O manifesto
+`.info.yml` precisa permanecer disponível para desinstalação segura no Runtime.
+Não adicionar serviços, classes nem consumidores a este módulo.
 
-- `Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface`
-  expõe `getAccountCourses(AccountInterface): array`.
-- `Drupal\aculta_learning_contracts\Learning\AccountCourseSummary` é o DTO
-  autorizado com status normalizado, descrição e URL.
-
-## Provedor atual
-
-O `aculta_lms` registra o alias
-`Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface`
-para `aculta_lms.account_courses_reader`. O Portal consome apenas o contrato e
-continua funcional quando nenhum provedor está instalado.
-
-## Limites
-
-- Não lê Group, matrícula ou progresso.
-- Não renderiza nem define acesso; o provedor entrega somente cursos autorizados.
+Procedimento final: `docs/operations/LEARNING-CONTRACTS-RETIRADA.md`.

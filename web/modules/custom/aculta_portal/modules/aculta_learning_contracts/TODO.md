@@ -1,12 +1,8 @@
-# TODO — aculta_learning_contracts
+# Retirada operacional pendente
 
-Estado: Dev · versão 0.1.0-dev.1 (`aculta_learning_contracts.info.yml`).
-
-## Próximo passo
-
-- Adicionar testes Unit do contrato e um teste Kernel que confirme o alias do provedor LMS.
-- Avaliar a migração do DTO de progresso para o mesmo módulo, mantendo o LMS como implementação.
-
-## Ao concluir uma fase
-
-Atualize este TODO e `docs/operations/status/aculta_learning_contracts.yml` no mesmo commit.
+- [ ] Conferir estado ativo do módulo e dependências no Runtime.
+- [ ] Obter autorização operacional para `pm:uninstall`, conforme `AGENTS.md`.
+- [ ] Desinstalar com o manifesto do módulo disponível.
+- [ ] Atualizar `core.extension` somente após desinstalação real.
+- [ ] Excluir este diretório inteiro e `docs/operations/status/aculta_learning_contracts.yml`.
+- [ ] Revisar gate PHPStan nível 10, PHPUnit, PHPCS, Config Sync e smoke HTTP.

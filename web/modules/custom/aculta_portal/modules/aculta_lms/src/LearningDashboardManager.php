@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_lms;
 
 use Drupal\aculta_lms\Certificate\CourseCertificateManagerInterface;
-use Drupal\aculta_lms\Entity\CourseCertificate;
-use Drupal\aculta_lms\Learning\AccountCourseSummary;
-use Drupal\aculta_lms\Learning\AccountCoursesReaderInterface;
+use Drupal\aculta_portal\Learning\AccountCourseSummary;
+use Drupal\aculta_portal\Learning\AccountCoursesReaderInterface;
 use Drupal\aculta_lms\Learning\CourseJourney;
 use Drupal\aculta_lms\Learning\CourseJourneyLesson;
 use Drupal\aculta_lms\Learning\CourseJourneyReaderInterface;
@@ -18,7 +17,6 @@ use Drupal\aculta_lms\Learning\StudentLearningSummaryReaderInterface;
 use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
-use Drupal\aculta_lms\Learning\CourseLesson;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -90,9 +88,6 @@ final class LearningDashboardManager implements CourseJourneyReaderInterface, St
     // The provider is optional in isolated LMS Kernel tests. In the full site,
     // it supplies authorized course summaries and canonical purpose-aware URLs.
     foreach ($this->accountCourses?->getAccountCourses($account) ?? [] as $course_data) {
-      if (!$course_data instanceof AccountCourseSummary) {
-        continue;
-      }
       $course = $this->entityTypeManager->getStorage('group')->load($course_data->id);
       if (!$course instanceof GroupInterface || $course->bundle() !== 'lms_course') {
         continue;

@@ -2374,20 +2374,8 @@ parameters:
 			path: scripts/validate-aculta-portal-drupal12.php
 
 		-
-			rawMessage: Binary operation "." between non-falsy-string and mixed results in an error.
-			identifier: binaryOp.invalid
-			count: 1
-			path: scripts/validate-aculta-portal-drupal12.php
-
-		-
 			rawMessage: 'Call to function in_array() with arguments non-falsy-string, array{} and true will always evaluate to false.'
 			identifier: function.impossibleType
-			count: 1
-			path: scripts/validate-aculta-portal-drupal12.php
-
-		-
-			rawMessage: Cannot access offset 'docs' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: scripts/validate-aculta-portal-drupal12.php
 
@@ -25435,12 +25423,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Access/CourseAuthoringAccessCheck.php
 
 		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/src/Account/AccountCoursesReader.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_lms\Account\AccountCoursesReader::viewAccess() never returns bool so it can be removed from the return type.'
 			identifier: return.unusedType
 			count: 1
@@ -28424,12 +28406,6 @@ parameters:
 
 		-
 			rawMessage: Cannot access offset '#empty' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
-
-		-
-			rawMessage: Cannot access offset '#rows' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/LearningDashboardKernelTest.php
@@ -54422,12 +54398,6 @@ parameters:
 		-
 			rawMessage: 'Method Drupal\aculta_portal\Presentation\AccountCoursePresenter::present() should return array{items: array<int, array{id: string, title: string, description: array, status: array{code: string, label: string, tone: string}, score_label: string|null, action: array{label: string, url: Drupal\Core\Url, kind: string}|null, cache_tags: array<string>}>, empty: array{message: string, action: array{label: string, url: Drupal\Core\Url, kind: string}|null}} but returns array{items: list<array{id: string, title: string, description: mixed, status: array{code: string, label: string, tone: string}, score_label: string|null, action: array{label: string, url: mixed, kind: ''primary''}|null, cache_tags: mixed}>, empty: array{message: string, action: array{label: string, url: Drupal\Core\Url, kind: ''primary''}|null}}.'
 			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/src/Presentation/AccountCoursePresenter.php
-
-		-
-			rawMessage: 'Parameter #2 $args of method Drupal\Core\StringTranslation\TranslationInterface::translate() expects array<string, bool|float|int|string|Stringable>, array<string, mixed> given.'
-			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/src/Presentation/AccountCoursePresenter.php
 

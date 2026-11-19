@@ -241,7 +241,7 @@ services:
   aculta_portal.account_courses:
     class: Drupal\aculta_portal\AccountCoursesManager
     arguments:
-      - '@?Drupal\aculta_learning_contracts\Learning\AccountCoursesReaderInterface'
+      - '@?Drupal\aculta_portal\Learning\AccountCoursesReaderInterface'
       - '@aculta_portal.domain_site'
     tags:
       - { name: aculta_portal.helper }

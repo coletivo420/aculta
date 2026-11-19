@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_lms\Account;
 
-use Drupal\aculta_lms\Learning\AccountCourseSummary;
-use Drupal\aculta_lms\Learning\AccountCoursesReaderInterface;
+use Drupal\aculta_portal\Learning\AccountCourseSummary;
+use Drupal\aculta_portal\Learning\AccountCoursesReaderInterface;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Access\AccessResultInterface;
@@ -61,8 +61,10 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
       $description = '';
       $descriptionFormat = '';
       if ($course->hasField('field_description') && !$course->get('field_description')->isEmpty()) {
-        $description = (string) $course->get('field_description')->value;
-        $descriptionFormat = (string) $course->get('field_description')->format;
+        $rawDescription = $course->get('field_description')->value;
+        $rawFormat = $course->get('field_description')->format;
+        $description = is_string($rawDescription) ? $rawDescription : '';
+        $descriptionFormat = is_string($rawFormat) ? $rawFormat : '';
       }
 
       $statusCode = $progress === NULL ? '' : $progress->status;
