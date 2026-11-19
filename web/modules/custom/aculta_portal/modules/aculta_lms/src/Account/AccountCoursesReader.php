@@ -61,8 +61,10 @@ final class AccountCoursesReader implements AccountCoursesReaderInterface {
       $description = '';
       $descriptionFormat = '';
       if ($course->hasField('field_description') && !$course->get('field_description')->isEmpty()) {
-        $description = (string) $course->get('field_description')->value;
-        $descriptionFormat = (string) $course->get('field_description')->format;
+        $rawDescription = $course->get('field_description')->value;
+        $rawFormat = $course->get('field_description')->format;
+        $description = is_string($rawDescription) ? $rawDescription : '';
+        $descriptionFormat = is_string($rawFormat) ? $rawFormat : '';
       }
 
       $statusCode = $progress === NULL ? '' : $progress->status;
