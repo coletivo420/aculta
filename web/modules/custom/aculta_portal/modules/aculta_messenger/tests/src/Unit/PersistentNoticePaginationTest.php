@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\GeneratedUrl;
 use Drupal\Core\StringTranslation\TranslationInterface;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -87,9 +88,10 @@ final class PersistentNoticePaginationTest extends UnitTestCase {
 
     $urlGenerator = $this->createMock(UrlGeneratorInterface::class);
     $urlGenerator->method('generateFromRoute')->willReturnCallback(static function (string $name, array $parameters = [], array $options = [], bool $collectMetadata = FALSE): string|GeneratedUrl {
+      $path = self::noticePath($parameters);
       return $collectMetadata
-        ? (new GeneratedUrl())->setGeneratedUrl('/comunicado/' . (int) ($parameters['node'] ?? 0))
-        : '/comunicado/' . (int) ($parameters['node'] ?? 0);
+        ? (new GeneratedUrl())->setGeneratedUrl($path)
+        : $path;
     });
     $originalContainer = $this->currentDrupalContainer();
     $container = new ContainerBuilder();
@@ -114,11 +116,18 @@ final class PersistentNoticePaginationTest extends UnitTestCase {
         $pageState,
       );
 
+      self::assertIsArray($items);
       self::assertCount(2, $items);
-      self::assertSame('Não lido', $items[0]['link']['#value']['state']['#value']);
-      self::assertSame('Não lido', $items[1]['link']['#value']['state']['#value']);
-      self::assertSame('/comunicado/8', (string) $items[0]['link']['#element_attributes']->offsetGet('href'));
-      self::assertSame('/comunicado/9', (string) $items[1]['link']['#element_attributes']->offsetGet('href'));
+      $firstItem = self::arrayAt($items, 0);
+      $secondItem = self::arrayAt($items, 1);
+      foreach ([[$firstItem, '/comunicado/8'], [$secondItem, '/comunicado/9']] as [$item, $expectedPath]) {
+        $link = self::arrayAt($item, 'link');
+        $value = self::arrayAt($link, '#value');
+        $state = self::arrayAt($value, 'state');
+        self::assertSame('Não lido', $state['#value']);
+        self::assertInstanceOf(Attribute::class, $link['#element_attributes']);
+        self::assertSame($expectedPath, (string) $link['#element_attributes']->offsetGet('href'));
+      }
       self::assertTrue($pageState->hasNext());
     }
     finally {
@@ -175,6 +184,33 @@ final class PersistentNoticePaginationTest extends UnitTestCase {
     catch (\Throwable) {
       return NULL;
     }
+  }
+
+  /**
+   * Builds the expected URL for an entity ID supplied to the URL generator.
+   *
+   * @param array<mixed> $parameters
+   *   URL parameters from the controller.
+   */
+  private static function noticePath(array $parameters): string {
+    $nodeId = $parameters['node'] ?? NULL;
+    self::assertIsNumeric($nodeId);
+    return '/comunicado/' . (int) $nodeId;
+  }
+
+  /**
+   * Validates and returns one item from the generated render array.
+   *
+   * @param array<mixed> $items
+   *   Render items produced by the controller.
+   *
+   * @return array<mixed>
+   *   One notice render array.
+   */
+  private static function arrayAt(array $items, int|string $key): array {
+    self::assertArrayHasKey($key, $items);
+    self::assertIsArray($items[$key]);
+    return $items[$key];
   }
 
 }

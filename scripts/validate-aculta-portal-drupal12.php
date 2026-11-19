@@ -160,8 +160,9 @@ if (class_exists(Yaml::class)) {
     sort($documented);
     $check($tagged === $documented, sprintf('%s tags and Status registry metadata must match exactly.', $tagName));
     foreach ($definitions as $serviceId => $metadata) {
+      $docs = is_array($metadata) && is_string($metadata['docs'] ?? NULL) ? $metadata['docs'] : '';
       $check(
-        is_file($root . '/' . $metadata['docs']),
+        $docs !== '' && is_file($root . '/' . $docs),
         sprintf('%s (%s) must reference existing documentation.', $tagName, $serviceId),
       );
     }
@@ -819,10 +820,14 @@ $check(
 // the Portal only adapts that contract, and the dependency stays optional.
 $coursesManagerSource = $read($srcRoot . '/AccountCoursesManager.php');
 $servicesSource = $read(dirname($srcRoot) . '/aculta_portal.services.yml');
+$coursePresenterSource = $read($srcRoot . '/Presentation/AccountCoursePresenter.php');
 $check(
   !str_contains($coursesManagerSource, 'GroupMembership')
+    && !str_contains($coursesManagerSource, 'aculta_learning_contracts')
+    && !str_contains($coursePresenterSource, 'Drupal\\aculta_lms\\Learning\\AccountCourseSummary')
+    && str_contains($coursePresenterSource, 'Drupal\\aculta_portal\\Learning\\AccountCourseSummary')
     && str_contains($coursesManagerSource, 'AccountCoursesReaderInterface $reader')
-    && str_contains($servicesSource, "'@?Drupal\\aculta_learning_contracts\\Learning\\AccountCoursesReaderInterface'"),
+    && str_contains($servicesSource, "'@?Drupal\\aculta_portal\\Learning\\AccountCoursesReaderInterface'"),
   'P5.5 AccountCoursesManager must consume the AccountCoursesReader contract instead of reading Group memberships.',
 );
 $storageStaticPattern = '/\\\\Drupal::(?:entityTypeManager|entityQuery)\(\)|\\\\Drupal::service\(\'entity_type\.manager\'\)/';

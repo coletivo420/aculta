@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Kernel;
 
 use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeEventProducer;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeManager;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeQueue;
@@ -12,6 +13,7 @@ use Drupal\aculta_messenger\Friendship\FriendshipNoticeQueueInterface;
 use Drupal\aculta_messenger\Friendship\FriendshipNoticeSubscriber;
 use Drupal\aculta_messenger\Service\MessengerNoticePublisher;
 use Drupal\aculta_user\Social\FriendshipManager;
+use Drupal\aculta_user\Entity\AcultaFriendshipInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\field\Entity\FieldConfig;
@@ -119,39 +121,51 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
     $manager->request($recipient);
     self::assertSame('pending', $friendship->getStatus());
     self::assertCount(1, $queue->messageIds, 'Replaying a pending request does not produce another notice.');
-    $requestNotice = $this->loadNotice((int) $recipient->id(), 'requested');
+    $requestNotice = $this->loadNotice($this->entityId($recipient), 'requested');
     self::assertNotNull($requestNotice);
-    self::assertTrue((bool) $requestNotice->get('field_aculta_mailer_managed')->value);
+    $requestManaged = $this->fieldValue($requestNotice, 'field_aculta_mailer_managed');
+    self::assertIsNumeric($requestManaged);
+    self::assertSame(1, (int) $requestManaged);
 
     // Changed timestamps use second precision. With the same timestamp, a
     // withdrawn and re-sent request is a new transition and must not collide
     // with the first persistent notice.
-    $firstChanged = (int) $friendship->get('changed')->value;
+    $firstChangedValue = $friendship->get('changed')->value;
+    self::assertIsNumeric($firstChangedValue);
+    $firstChanged = (int) $firstChangedValue;
     $manager->cancel($friendship);
     $friendship = $manager->request($recipient);
-    self::assertSame($firstChanged, (int) $friendship->get('changed')->value);
+    $changedValue = $friendship->get('changed')->value;
+    self::assertIsNumeric($changedValue);
+    self::assertSame($firstChanged, (int) $changedValue);
     $requestNotices = $entityTypeManager->getStorage('message')->getQuery()->accessCheck(FALSE)
       ->condition('template', FriendshipNoticeSubscriber::TEMPLATE)
-      ->condition('uid', (int) $recipient->id())
+      ->condition('uid', $this->entityId($recipient))
       ->condition(FriendshipNoticeSubscriber::EVENT_FIELD, 'requested')
       ->execute();
     self::assertCount(2, $requestNotices);
     $requestRecords = $entityTypeManager->getStorage('message')->loadMultiple($requestNotices);
     $requestSources = array_map(
-      static fn(MessageInterface $notice): string => (string) $notice->get(FriendshipNoticeSubscriber::SOURCE_FIELD)->value,
-      $requestRecords,
+      fn(MessageInterface $notice): string => $this->fieldString($notice, FriendshipNoticeSubscriber::SOURCE_FIELD),
+      $this->messages($requestRecords),
     );
     self::assertCount(2, array_unique($requestSources));
     self::assertCount(2, $queue->messageIds);
 
     $currentUser->setAccount($recipient);
     $manager->accept($friendship);
-    $friendship = $entityTypeManager->getStorage('aculta_friendship')->load($friendship->id());
+    $friendshipId = $friendship->id();
+    self::assertNotNull($friendshipId);
+    $reloadedFriendship = $entityTypeManager->getStorage('aculta_friendship')->load($friendshipId);
+    self::assertInstanceOf(AcultaFriendshipInterface::class, $reloadedFriendship);
+    $friendship = $reloadedFriendship;
     self::assertSame('accepted', $friendship->getStatus());
     self::assertCount(3, $queue->messageIds);
-    $acceptanceNotice = $this->loadNotice((int) $requester->id(), 'accepted');
+    $acceptanceNotice = $this->loadNotice($this->entityId($requester), 'accepted');
     self::assertNotNull($acceptanceNotice);
-    self::assertTrue((bool) $acceptanceNotice->get('field_aculta_mailer_managed')->value);
+    $acceptanceManaged = $this->fieldValue($acceptanceNotice, 'field_aculta_mailer_managed');
+    self::assertIsNumeric($acceptanceManaged);
+    self::assertSame(1, (int) $acceptanceManaged);
 
     self::assertSame(
       3,
@@ -162,20 +176,20 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
     );
     self::assertSame(
       [
-        (int) $requestNotice->id(),
+        $this->entityId($requestNotice),
         (int) array_values(array_diff(
-          array_map(static fn(MessageInterface $notice): int => (int) $notice->id(), $requestRecords),
-          [(int) $requestNotice->id()],
+          array_map(fn(MessageInterface $notice): int => $this->entityId($notice), $this->messages($requestRecords)),
+          [$this->entityId($requestNotice)],
         ))[0],
-        (int) $acceptanceNotice->id(),
+        $this->entityId($acceptanceNotice),
       ],
       $queue->messageIds,
     );
 
     $noticeManager = new FriendshipNoticeManager($entityTypeManager);
-    self::assertSame(1, $noticeManager->unreadCount((int) $requester->id()));
+    self::assertSame(1, $noticeManager->unreadCount($this->entityId($requester)));
     self::assertTrue($noticeManager->setRead($acceptanceNotice, $requester, TRUE));
-    self::assertSame(0, $noticeManager->unreadCount((int) $requester->id()));
+    self::assertSame(0, $noticeManager->unreadCount($this->entityId($requester)));
   }
 
   /**
@@ -192,7 +206,7 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
       'field_aculta_friendship_read' => FALSE,
     ]);
     $message->save();
-    $messageId = (int) $message->id();
+    $messageId = $this->entityId($message);
 
     $queueFactory = $this->createMock(QueueFactory::class);
     $queueFactory->expects(self::never())->method('get');
@@ -221,12 +235,19 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
     $queue->requeuePending();
 
     $reloaded = $storage->loadUnchanged($messageId);
-    self::assertSame('failed_permanent', $reloaded->get('field_aculta_msg_delivery')->value);
-    self::assertSame(5, (int) $reloaded->get('field_aculta_enqueue_attempts')->value);
+    self::assertInstanceOf(MessageInterface::class, $reloaded);
+    self::assertSame('failed_permanent', $this->fieldValue($reloaded, 'field_aculta_msg_delivery'));
+    $attempts = $this->fieldValue($reloaded, 'field_aculta_enqueue_attempts');
+    self::assertIsNumeric($attempts);
+    self::assertSame(5, (int) $attempts);
   }
 
   /**
-   * Creates a native Message field for the focused Kernel fixture. */
+   * Creates a native Message field for the focused Kernel fixture.
+   *
+   * @param array<string, mixed> $settings
+   *   Field storage settings.
+   */
   private function installMessageField(string $name, string $type, array $settings): void {
     FieldStorageConfig::create([
       'entity_type' => 'message',
@@ -253,7 +274,57 @@ final class FriendshipNoticePipelineKernelTest extends KernelTestBase {
       ->condition('uid', $uid)
       ->condition(FriendshipNoticeSubscriber::EVENT_FIELD, $transition)
       ->execute();
-    return $ids === [] ? NULL : $storage->load(reset($ids));
+    if ($ids === []) {
+      return NULL;
+    }
+    $id = reset($ids);
+    $notice = $storage->load($id);
+    self::assertInstanceOf(MessageInterface::class, $notice);
+    return $notice;
+  }
+
+  /**
+   * Converts a persisted entity ID to the integer contract used by these tests.
+   */
+  private function entityId(EntityInterface $entity): int {
+    $id = $entity->id();
+    self::assertNotNull($id);
+    self::assertIsNumeric($id);
+    return (int) $id;
+  }
+
+  /**
+   * Returns the scalar field value for an assertion without unchecked casts.
+   */
+  private function fieldValue(MessageInterface $message, string $field): mixed {
+    return $message->get($field)->value;
+  }
+
+  /**
+   * Returns a validated string field value from a persisted notice.
+   */
+  private function fieldString(MessageInterface $message, string $field): string {
+    $value = $this->fieldValue($message, $field);
+    self::assertIsString($value);
+    return $value;
+  }
+
+  /**
+   * Narrows loaded entity storage results to Message entities.
+   *
+   * @param array<int|string, EntityInterface> $entities
+   *   Entities returned from the message storage.
+   *
+   * @return list<MessageInterface>
+   *   Loaded messages.
+   */
+  private function messages(array $entities): array {
+    $messages = [];
+    foreach ($entities as $entity) {
+      self::assertInstanceOf(MessageInterface::class, $entity);
+      $messages[] = $entity;
+    }
+    return $messages;
   }
 
 }

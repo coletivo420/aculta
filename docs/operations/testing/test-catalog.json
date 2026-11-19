@@ -5767,7 +5767,7 @@
             "test_methods": 3,
             "assertions": 10,
             "assertions_per_test": 3.33,
-            "first_import": "Drupal\\aculta_lms\\Learning\\AccountCourseSummary",
+            "first_import": "Drupal\\aculta_portal\\Learning\\AccountCourseSummary",
             "fixture": false,
             "flags": [
                 "mock_isolated"

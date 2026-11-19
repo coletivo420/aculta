@@ -78,7 +78,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $mailer = $this->createMock(AcultaMailerInterface::class);
     $mailer->expects($this->once())
       ->method('deliver')
-      ->with($this->callback(static fn (MailMessage $message): bool => substr_count($message->context['resumo'], 'Atividade no curso') === 1))
+      ->with($this->callback(static fn (MailMessage $message): bool => is_string($message->context['resumo'] ?? NULL) && substr_count($message->context['resumo'], 'Atividade no curso') === 1))
       ->willReturn(SendResult::sent());
     $summary = $this->createSummary($provider, $mailer, TRUE);
 
@@ -161,6 +161,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     }
 
     $this->assertSame($deliveries[0], $deliveries[1], 'A service discovery reorder must preserve both digest body and idempotency correlation.');
+    self::assertIsString($deliveries[0][1]);
     $this->assertSame(
       ['Atividade disponível', 'wiki em "Revisão publicada": 1'],
       array_map('trim', explode("\n", $deliveries[0][1])),
@@ -258,6 +259,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $this->assertSame([], $lmsProvider->marked);
     $this->assertSame([], $wikiProvider->marked);
     $this->assertSame(1, $summary->enviarResumos());
+    self::assertIsString($capturedRows[1] ?? NULL);
     $rows = array_map('trim', explode("\n", $capturedRows[1]));
     $this->assertSame(['Atividade disponível', 'wiki em "Revisão publicada": 1'], $rows);
     $this->assertSame([], $lmsProvider->discarded);
@@ -310,14 +312,15 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
    */
   public function testAcceptedDigestRecoveryAfterAcceptanceMarkerWriteFailure(): void {
     $provider = new TestLearningDigestProvider([27]);
-    $snapshot = NULL;
+    $snapshot = new DigestSnapshotState();
     $failAcceptedMarker = TRUE;
     $userData = $this->createMock(UserDataInterface::class);
-    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use (&$snapshot): mixed {
+    $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($snapshot): mixed {
       if ($key === 'avisos_resumo_em_andamento') {
-        return $uid === NULL
-          ? ($snapshot === NULL ? [] : [27 => $snapshot])
-          : $snapshot;
+        if ($uid === NULL) {
+          return $snapshot->value === NULL ? [] : [27 => $snapshot->value];
+        }
+        return $snapshot->value;
       }
       return match ($key) {
         'avisos_email_mode_aprendizagem' => AvisoPreferencias::EMAIL_DIGEST,
@@ -327,18 +330,18 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
         default => NULL,
       };
     });
-    $userData->method('set')->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use (&$snapshot, &$failAcceptedMarker): void {
+    $userData->method('set')->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use ($snapshot, &$failAcceptedMarker): void {
       if ($key === 'avisos_resumo_em_andamento') {
-        if (isset($value['accepted_at']) && $failAcceptedMarker) {
+        if (is_array($value) && isset($value['accepted_at']) && $failAcceptedMarker) {
           $failAcceptedMarker = FALSE;
           throw new \RuntimeException('Simulated persistence interruption after transport acceptance.');
         }
-        $snapshot = $value;
+        $snapshot->value = $value;
       }
     });
-    $userData->method('delete')->willReturnCallback(static function (string $module, int $uid, string $key) use (&$snapshot): void {
+    $userData->method('delete')->willReturnCallback(static function (string $module, int $uid, string $key) use ($snapshot): void {
       if ($key === 'avisos_resumo_em_andamento') {
-        $snapshot = NULL;
+        $snapshot->value = NULL;
       }
     });
 
@@ -364,15 +367,18 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $summary = $this->createSummary($provider, $mailer, TRUE, NULL, $database, $userData);
 
     self::assertSame(0, $summary->enviarResumos(), 'A crash-equivalent marker failure does not count a completed digest run.');
-    self::assertNotNull($snapshot, 'The pre-transport manifest remains available for recovery.');
-    self::assertArrayNotHasKey('accepted_at', $snapshot, 'The simulated failure occurs before acceptance evidence is written.');
-    self::assertSame('lms', $snapshot['providers'][0]['provider_id'] ?? NULL);
-    self::assertSame([501], $snapshot['providers'][0]['delivery_ids'] ?? NULL);
+    $savedSnapshot = $snapshot->value;
+    self::assertIsArray($savedSnapshot, 'The pre-transport manifest remains available for recovery.');
+    self::assertArrayNotHasKey('accepted_at', $savedSnapshot, 'The simulated failure occurs before acceptance evidence is written.');
+    self::assertIsArray($savedSnapshot['providers'] ?? NULL);
+    self::assertIsArray($savedSnapshot['providers'][0] ?? NULL);
+    self::assertSame('lms', $savedSnapshot['providers'][0]['provider_id'] ?? NULL);
+    self::assertSame([501], $savedSnapshot['providers'][0]['delivery_ids'] ?? NULL);
     self::assertSame(0, $summary->enviarResumos(), 'Retry consults Mailer acceptance and reconciles without sending again.');
     self::assertNotEmpty($correlationId);
     self::assertSame($correlationId, $recoveredCorrelationId);
     self::assertSame([[501]], $provider->markedDeliveryIds);
-    self::assertNull($snapshot, 'Successful recovery removes the exact in-progress snapshot.');
+    self::assertNull($snapshot->value, 'Successful recovery removes the exact in-progress snapshot.');
     self::assertTrue($transaction->committed);
     self::assertFalse($transaction->rolledBack);
   }
@@ -685,6 +691,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
           1 => TRUE,
           2 => FALSE,
           3 => TRUE,
+          default => FALSE,
         };
       });
     $lock->expects($this->once())
@@ -746,7 +753,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
-   * A provider row without a stable delivery ID is not sent repeatedly.
+   * A provider row without a valid delivery ID is not sent repeatedly.
    */
   public function testRowsWithoutDeliveryIdsAreNotSent(): void {
     $provider = new TestLearningDigestProvider([27], FALSE);
@@ -760,7 +767,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
   }
 
   /**
-   * A row without its required category cannot bypass email preferences.
+   * A row with an empty category cannot bypass email preferences.
    */
   public function testRowsWithoutCategoryAreNotSent(): void {
     $provider = new MalformedTestLearningDigestProvider([27]);
@@ -803,6 +810,9 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
 
   /**
    * Builds the real Messenger digest service with an LMS provider.
+   *
+   * @param AvisoDigestProviderInterface|list<AvisoDigestProviderInterface> $provider
+   *   One or more digest providers.
    */
   private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL, ?Connection $database = NULL, ?UserDataInterface $userDataOverride = NULL, ?TimeInterface $time = NULL, ?string $categoryMode = NULL): AvisosResumo {
     $query = $this->createMock(QueryInterface::class);
@@ -824,15 +834,15 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->willReturnCallback(static fn (string $type): EntityStorageInterface => $type === 'user' ? $userStorage : $noticeStorage);
 
-    $data = [];
-    $userData = $userDataOverride ?? $this->createMock(UserDataInterface::class);
     if ($userDataOverride === NULL) {
+      $userData = $this->createMock(UserDataInterface::class);
+      $data = new DigestUserDataValues();
       $userData->method('get')->willReturnCallback(static function (string $module, ?int $uid, ?string $key) use ($optIn, $categoryMode, &$data): mixed {
         if ($uid === NULL) {
           return [];
         }
-        if (array_key_exists($key, $data[$module][$uid] ?? [])) {
-          return $data[$module][$uid][$key];
+        if ($key !== NULL && isset($data->values[$module][$uid]) && array_key_exists($key, $data->values[$module][$uid])) {
+          return $data->values[$module][$uid][$key];
         }
         return match ($key) {
           'avisos_email_mode_aprendizagem' => $categoryMode ?? ($optIn ? AvisoPreferencias::EMAIL_DIGEST : AvisoPreferencias::EMAIL_OFF),
@@ -843,11 +853,14 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
         };
       });
       $userData->method('set')->willReturnCallback(static function (string $module, int $uid, string $key, mixed $value) use (&$data): void {
-        $data[$module][$uid][$key] = $value;
+        $data->values[$module][$uid][$key] = $value;
       });
       $userData->method('delete')->willReturnCallback(static function (string $module, int $uid, string $key) use (&$data): void {
-        unset($data[$module][$uid][$key]);
+        unset($data->values[$module][$uid][$key]);
       });
+    }
+    else {
+      $userData = $userDataOverride;
     }
     $emailPolicy = new EmailConfirmationPolicy(
       $userData,
@@ -902,6 +915,29 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
     $database->method('startTransaction')->willReturn(new TestLearningDigestTransaction());
     return $database;
   }
+
+}
+
+/**
+ * Typed storage for the default UserData mock in digest integration tests.
+ */
+final class DigestUserDataValues {
+
+  /**
+   * Stored module, account, and key values.
+   *
+   * @var array<string, array<int, array<string, mixed>>>
+   */
+  public array $values = [];
+
+}
+
+/**
+ * Mutable snapshot shared with the simulated UserData callbacks.
+ */
+final class DigestSnapshotState {
+
+  public mixed $value = NULL;
 
 }
 
@@ -984,13 +1020,24 @@ class TestLearningDigestProvider implements AvisoDigestProviderIdentityInterface
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id?: int, delivery_ids?: list<int>}>
+   *   Contract-shaped digest rows.
    */
   public function digestRowsFor(int $uid): array {
-    $row = ['tipo' => $this->type, 'titulo' => $this->title, 'quantidade' => 1];
+    $row = [
+      'tipo' => $this->type,
+      'titulo' => $this->title,
+      'quantidade' => 1,
+    ];
     if ($this->includeDeliveryId) {
       $row['delivery_id'] = $this->deliveryId;
     }
-    return [$row, ...$this->additionalRows];
+    $rows = [$row];
+    foreach ($this->additionalRows as $additionalRow) {
+      $rows[] = $additionalRow;
+    }
+    return $rows;
   }
 
   /**
@@ -1043,6 +1090,7 @@ final class MalformedTestLearningDigestProvider extends TestLearningDigestProvid
    */
   public function digestRowsFor(int $uid): array {
     return [[
+      'tipo' => '',
       'titulo' => 'Aviso sem categoria',
       'quantidade' => 1,
       'delivery_id' => 901,
@@ -1062,6 +1110,10 @@ final class LegacyTestLearningDigestProvider implements AvisoDigestProviderInter
    */
   private readonly TestLearningDigestProvider $provider;
 
+  /**
+   * @param int[] $recipients
+   *   Accounts with pending digest rows.
+   */
   public function __construct(array $recipients) {
     $this->provider = new TestLearningDigestProvider($recipients);
   }

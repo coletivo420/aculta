@@ -1,5 +1,12 @@
 ## Não versionado — restringir destino do aviso Mercado Pago
 
+## 2026-11-18 - Contratos de cursos da Conta no Portal
+
+- A Conta passa a consumir `Learning\AccountCoursesReaderInterface` e `Learning\AccountCourseSummary` próprios do Portal, sem dependência PHP do módulo `aculta_learning_contracts`.
+- Preservados `aculta_portal.account_courses`, a apresentação e o provider educacional opcional.
+- Desinstalação do módulo legado no Runtime e retirada de seu manifesto/configuração ainda pendentes.
+
+
 - A configuração do link agora só é exibida para HTTPS nos hosts oficiais
   `mercadopago.com.br`; Twig renderiza com a função Drupal `link()`.
 

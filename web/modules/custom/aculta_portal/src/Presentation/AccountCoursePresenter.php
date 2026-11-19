@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Presentation;
 
-use Drupal\aculta_lms\Learning\AccountCourseSummary;
+use Drupal\aculta_portal\Learning\AccountCourseSummary;
 use Drupal\aculta_portal\AccountCoursesManager;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -46,7 +46,8 @@ final class AccountCoursePresenter {
 
     foreach ($this->courses->getCourses($account) as $course) {
       $statusCode = (string) ($course['status'] ?? AccountCourseSummary::STATUS_NOT_STARTED);
-      $score = $course['score'];
+      $rawScore = $course['score'];
+      $score = is_int($rawScore) || is_float($rawScore) ? $rawScore : NULL;
       $url = $course['url'];
 
       $items[] = [

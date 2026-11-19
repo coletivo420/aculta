@@ -394,7 +394,8 @@ final class LmsClassEducatorPermissionKernelTest extends KernelTestBase {
     $groups = $this->arrayOffset($firstContext, 'groups');
     self::assertNotEmpty($this->arrayOffset($groups, '#items'));
     $pendingQueue = $moderationController->comments($class, $course, 'pending');
-    $viewBuild = $this->arrayOffset($pendingQueue, 'view');
+    $pendingSlots = $this->arrayOffset($pendingQueue, '#slots');
+    $viewBuild = $this->arrayOffset($pendingSlots, 'content');
     self::assertSame('view', $viewBuild['#type'] ?? NULL);
     self::assertSame('aculta_forum_lms_admin_comments', $viewBuild['#name'] ?? NULL);
     self::assertSame('lms_pending', $viewBuild['#display_id'] ?? NULL);

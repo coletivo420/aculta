@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_learning_contracts\Learning;
+namespace Drupal\aculta_portal\Learning;
 
 use Drupal\Core\Session\AccountInterface;
 
@@ -17,7 +17,7 @@ interface AccountCoursesReaderInterface {
   /**
    * Returns account-visible course summaries.
    *
-   * @return list<\Drupal\aculta_learning_contracts\Learning\AccountCourseSummary>
+   * @return list<\Drupal\aculta_portal\Learning\AccountCourseSummary>
    *   The account's authorized courses.
    */
   public function getAccountCourses(AccountInterface $account): array;

@@ -13,3 +13,4 @@ next_phase: 'Continuar a refatoração das chamadas estáticas restantes em clas
 # 2026-10-24: regra transversal de desenvolvimento: aliases temporários removidos.
 # Rotas canônicas apenas; código alterado, homologação Runtime ainda pendente.
 # Gate: scripts/validate-no-temporary-route-aliases.php.
+# 2026-11-18: AccountCoursesReader implementa contrato do Portal; wrappers duplicados do LMS removidos, smoke/Kernel pendentes.

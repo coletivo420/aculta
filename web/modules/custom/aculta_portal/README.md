@@ -238,7 +238,7 @@ cursos pagos não alteram essa regra.
 
 O módulo base `aculta_portal` não declara mais dependência de `lms:lms` nem
 injeta `lms.training_manager`. A seção Cursos da Conta lê o contrato neutro
-`AccountCoursesReaderInterface`; sem provider educacional, a Conta mostra o
+`Drupal\aculta_portal\Learning\AccountCoursesReaderInterface`; sem provider educacional, a Conta mostra o
 estado vazio. A leitura Group/LMS, os slugs amigáveis de curso/aula/atividade e
 a alteração da rota nativa foram movidos para o adaptador `aculta_lms`.
 IDs históricos de serviço e parâmetros de rota foram preservados para reduzir

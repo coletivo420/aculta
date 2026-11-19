@@ -13,7 +13,7 @@ use Drupal\aculta_lms\Learning\CourseLessonReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgressReaderInterface;
 use Drupal\aculta_lms\Learning\CourseProgress;
 use Drupal\aculta_lms\Notice\LearningEligibilityInterface;
-use Drupal\aculta_lms\Learning\AccountCourseSummary;
+use Drupal\aculta_portal\Learning\AccountCourseSummary;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupRelationshipType;
@@ -249,6 +249,7 @@ final class LearningDashboardKernelTest extends KernelTestBase {
 
     $updated_lesson_page = $this->container->get('aculta_lms.course_lesson_controller')
       ->view($course, $journey->lessons[0]->delta);
+    self::assertIsArray($updated_lesson_page['activities']);
     self::assertCount(1, $updated_lesson_page['activities']['#rows']);
 
     $current_user = $this->createMock(AccountProxyInterface::class);

@@ -315,9 +315,13 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
         }
         continue;
       }
+      $summary = $notice['email_summary'] ?? NULL;
+      if (!is_string($summary)) {
+        continue;
+      }
       $rows[] = [
         'tipo' => 'loja',
-        'titulo' => $notice['email_summary'],
+        'titulo' => $summary,
         'quantidade' => 1,
         'delivery_id' => (int) $message->id(),
       ];
@@ -467,7 +471,7 @@ final class CommerceOrderNoticeManager implements CommerceOrderNoticeManagerInte
     return [
       'title' => $this->t('Pedido recebido'),
       'summary' => $this->t('Seu pedido foi recebido pela Loja ACULTA.'),
-      'email_summary' => $this->t('Seu pedido foi recebido pela Loja ACULTA.'),
+      'email_summary' => (string) $this->t('Seu pedido foi recebido pela Loja ACULTA.'),
       'url' => $url,
     ];
   }
