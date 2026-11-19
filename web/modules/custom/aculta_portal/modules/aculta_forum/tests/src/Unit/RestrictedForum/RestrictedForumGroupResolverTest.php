@@ -10,6 +10,7 @@ use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\node\NodeInterface;
@@ -214,4 +215,72 @@ final class RestrictedForumGroupResolverTest extends TestCase {
     return $topic;
   }
 
+
+  /**
+   * Node IDs and term IDs with the same number do not cross-match.
+   */
+  public function testGroupIdsAreResolvedPerContentPlugin(): void {
+    $topic = $this->createMock(NodeInterface::class);
+    $topic->method('bundle')->willReturn('aculta_forum_topic');
+    $topic->method('id')->willReturn(123);
+    $topic->method('hasField')->with('field_aculta_categories')->willReturn(TRUE);
+    $categories = $this->createMock(FieldItemListInterface::class);
+    $categories->method('getValue')->willReturn([['target_id' => '456']]);
+    $topic->method('get')->with('field_aculta_categories')->willReturn($categories);
+
+    $topicConditions = [];
+    $categoryConditions = [];
+    $topicQuery = $this->queryWithConditionTracking($topicConditions);
+    $categoryQuery = $this->queryWithConditionTracking($categoryConditions);
+
+    $relationshipStorage = $this->createMock(EntityStorageInterface::class);
+    $relationshipStorage->method('getQuery')
+      ->willReturnOnConsecutiveCalls($topicQuery, $categoryQuery);
+    $relationshipStorage->method('loadMultiple')->willReturn([]);
+
+    $groupTypeStorage = $this->createMock(EntityStorageInterface::class);
+    $groupTypeStorage->method('load')->with('forum_associados')
+      ->willReturn($this->createMock(GroupTypeInterface::class));
+
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $entityTypeManager->method('getStorage')->willReturnMap([
+      ['group_type', $groupTypeStorage],
+      ['group_relationship', $relationshipStorage],
+    ]);
+
+    $resolver = new RestrictedForumGroupResolver(
+      $this->config('forum_associados'),
+      $entityTypeManager,
+      $this->createMock(LoggerInterface::class),
+    );
+
+    self::assertSame([], $resolver->groupIdsForTopic($topic));
+    self::assertSame([
+      ['plugin_id', RestrictedForumGroupResolver::TOPIC_PLUGIN, '='],
+      ['entity_id', [123], 'IN'],
+    ], $topicConditions);
+    self::assertSame([
+      ['plugin_id', RestrictedForumGroupResolver::CATEGORY_PLUGIN, '='],
+      ['entity_id', [456], 'IN'],
+    ], $categoryConditions);
+  }
+
+  /**
+   * Creates a query double that records the conditions it receives.
+   *
+   * @param array<int, array{0: string, 1: mixed, 2: string}> $conditions
+   *   Captured conditions, by reference.
+   */
+  private function queryWithConditionTracking(array &$conditions): QueryInterface {
+    $query = $this->createMock(QueryInterface::class);
+    $query->method('accessCheck')->willReturnSelf();
+    $query->method('condition')->willReturnCallback(
+      static function (string $field, mixed $value, ?string $operator = NULL) use (&$conditions, $query): QueryInterface {
+        $conditions[] = [$field, $value, $operator ?? '='];
+        return $query;
+      },
+    );
+    $query->method('execute')->willReturn([]);
+    return $query;
+  }
 }
