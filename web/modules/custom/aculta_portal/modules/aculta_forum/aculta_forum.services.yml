@@ -78,9 +78,6 @@ services:
   Drupal\aculta_forum\Hook\ForumDiscussionWriteHooks:
     class: Drupal\aculta_forum\Hook\ForumDiscussionWriteHooks
     arguments: ['@aculta_forum.discussion_write_guard']
-  Drupal\aculta_forum\Hook\ForumHistoricModerationQueueHooks:
-    class: Drupal\aculta_forum\Hook\ForumHistoricModerationQueueHooks
-    arguments: ['@database']
   Drupal\aculta_forum\Hook\ForumPublicationTimeHooks:
     class: Drupal\aculta_forum\Hook\ForumPublicationTimeHooks
     arguments: ['@datetime.time', '@aculta_user.participation_rules']
@@ -119,9 +116,9 @@ services:
   Drupal\aculta_forum\Hook\ForumTopicMoveHooks:
     class: Drupal\aculta_forum\Hook\ForumTopicMoveHooks
     arguments: ['@aculta_forum.topic_mover', '@current_user']
-  Drupal\aculta_forum\Hook\HistoricForumFlagAccessHooks:
-    class: Drupal\aculta_forum\Hook\HistoricForumFlagAccessHooks
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_portal.domain_site', '@aculta_forum.flagging_migration_context']
+  Drupal\aculta_forum\Hook\ForumFlagAccessHooks:
+    class: Drupal\aculta_forum\Hook\ForumFlagAccessHooks
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_forum.discussion_origin_resolver', '@aculta_portal.domain_site', '@aculta_forum.flagging_migration_context']
   Drupal\aculta_forum\Hook\PublicForumExposedFormHooks:
     class: Drupal\aculta_forum\Hook\PublicForumExposedFormHooks
     arguments: ['@entity_type.manager', '@current_user', '@entity.repository', '@string_translation']

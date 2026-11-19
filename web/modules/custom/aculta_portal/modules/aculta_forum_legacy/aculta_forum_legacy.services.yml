@@ -1,4 +1,8 @@
 services:
+  Drupal\aculta_forum_legacy\Hook\ForumHistoricModerationQueueHooks:
+    class: Drupal\aculta_forum_legacy\Hook\ForumHistoricModerationQueueHooks
+    arguments: ['@database']
+
   aculta_forum_legacy.discussion_origin_classifier:
     class: Drupal\aculta_forum_legacy\Origin\LegacyDiscussionOriginClassifier
     tags:

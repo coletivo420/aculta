@@ -112,14 +112,26 @@ confirmá-lo no censo; não presumir que exista arquivo histórico no banco.
 
 `aculta_forum_legacy` será um submódulo custom opcional do projeto, sem dependência reversa do core. Ele centralizará **absolutamente toda a semântica específica do fórum legado**. Com o addon ausente, o motor oferece discussões atuais e Comments contextuais sem carregar rotas, entidades, campos, consultas, eventos ou decisões do arquivo. Com o addon presente, providers/adapters registrados pelo próprio addon acrescentam leitura histórica, mantendo a política de imutabilidade e isolamento.
 
-### Evidência da implementação local — 2026-11-19 (census estático, não homologado)
+### Baseline anterior à implementação Dev.2 — 2026-11-19 (census estático, não homologado)
 
-- **O addon ainda não está implementado nesta branch.** Não há diretório/módulo `aculta_forum_legacy` no código custom, nem manifesto Drupal, serviços, schema, configuração de instalação ou implementação de uninstall validator. As menções ao addon nos documentos descrevem a arquitetura-alvo, não código instalado.
-- **Ainda não há classificador central de origem histórica.** A busca não encontrou implementações PHP de `ForumDiscussionOriginPolicy` ou `CurrentDiscussionOriginClassifier`, nem provider do addon. `DiscussionContextResolver` resolve host/provider de discussão e `ForumAnalyticsScopeResolver` resolve escopo analítico; nenhum deles prova classificação de origem `ARCHIVE`. O código corrente identifica histórico diretamente por campos/classes em vários serviços.
+Os bullets e a tabela abaixo registram a fotografia inicial anterior à criação
+do addon. Eles não descrevem o HEAD atual; o delta implementado aparece após
+esse baseline. A importação histórica continua não executada.
+
+- **Na baseline anterior a Dev.2, o addon ainda não estava implementado.** Na árvore atual há módulo/manifesto, serviços e provider de origem. Autoria, fields, memorial, apresentação e integrações seguem parcialmente acoplados a `aculta_user`/`aculta_forum`.
+- **Na baseline anterior a Dev.2, não havia classificador central de origem.** A implementação atual inclui contratos neutros no motor e provider opcional que reconhece `ARCHIVE`; a cobertura não removeu todos os acoplamentos listados no census.
 - **O ownership atual continua em `aculta_user` e `aculta_forum`.** `aculta_user` contém `Entity\LegacyAuthor`, a tabela/type `aculta_legado_autor`, manager, handler de acesso, memorial, apresentação e hooks de autoria/moderação. `aculta_forum` contém os fields, verificações de marcador, migrações e ferramentas relacionadas, inclusive as referências listadas no census abaixo. Não tratar a fronteira pretendida como já extraída.
 - `config/sync` contém storage/instâncias de `field_autor_legado` e displays de ForumPost que mencionam `legacy_author`; não existe configuração de addon no sync encontrada nesta branch. Esses arquivos/configurações são candidatos distintos de dados persistidos e exigem comparação por UUID/ID e dependências em clone.
 - As três migrations Comment→ForumPost estão registradas e executáveis pelo sistema Migrate, mas o responsável confirma que a importação histórica não foi executada no Runtime alvo. Portanto, ForumPosts/Flaggings históricos importados não são baseline existente nem devem ser presumidos. O censo somente leitura confirmará status/mapas vazios ou ausência de execução e distinguirá essa configuração/código de quaisquer resíduos de teste/refatoração. Não tocar no corpus fonte.
 - Esta revisão foi somente leitura da árvore Git: não consultou o banco Runtime e não executou Drush, import, update, migration, uninstall, rebuild ou limpeza.
+
+### Delta implementado em Dev.2–Dev.3 — 2026-11-19 (código local; sem Runtime)
+
+- `aculta_forum_legacy` existe como addon opcional e declara dependência somente de `aculta_forum`; os demais módulos não dependem dele.
+- O motor fornece API central de classificação; o addon registra provider `ARCHIVE`. ForumPosts correntes, Comments contextuais e origem desconhecida têm regras próprias e testes focalizados.
+- Respostas a tópicos correntes usam o formulário revisionável `ForumPostSubmissionForm`. Game e Messenger consultam o resolver central.
+- A exclusão do arquivo Growroom das filas ordinárias de moderação foi movida para o addon. A política genérica de denúncias permaneceu no Fórum, mas agora usa o resolver central e falha fechada para origem diferente de `CURRENT`.
+- Autoria/fields, memorial coletivo, apresentação histórica, ferramentas Migrate/auditoria e demais acoplamentos continuam pendentes de extração. Nenhuma importação, migração, configuração ou operação de dados foi executada no Runtime.
 
 ### Auditoria estática preliminar dos acoplamentos — 2026-11-19
 

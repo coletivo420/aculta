@@ -7,11 +7,12 @@ namespace Drupal\aculta_forum\Hook;
 use Drupal\comment\CommentInterface;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Migration\ForumFlaggingMigrationContext;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountInterface;
@@ -28,7 +29,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  * OR. The role therefore does not receive broad flag/unflag permissions;
  * this hook grants the action only for current ACULTA discussion content.
  */
-final class HistoricForumFlagAccessHooks {
+final class ForumFlagAccessHooks {
 
   private const FLAGS = ['sinalizar_topico', 'sinalizar_comentario'];
 
@@ -37,6 +38,7 @@ final class HistoricForumFlagAccessHooks {
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly AccountProxyInterface $currentUser,
+    private readonly DiscussionOriginResolverInterface $originResolver,
     private readonly ?DomainSiteManager $siteManager = NULL,
     private readonly ?ForumFlaggingMigrationContext $flaggingMigrationContext = NULL,
   ) {}
@@ -79,8 +81,9 @@ final class HistoricForumFlagAccessHooks {
     if (!$public) {
       $result = AccessResult::forbidden('Denúncia disponível somente para publicação pública deste Fórum.');
     }
-    elseif ($this->isHistoricalTarget($flaggable, $flag->id())) {
-      $result = AccessResult::forbidden('Conteúdo histórico do Growroom não entra no fluxo de denúncias.');
+    elseif (($origin = $this->originResolver->classify($flaggable))->origin !== DiscussionOrigin::CURRENT) {
+      $result = AccessResult::forbidden('A origem deste conteúdo não permite denúncia pela fila do Fórum.');
+      $result->addCacheableDependency($origin);
     }
     else {
       // The permission alone must not expose unpublished or out-of-purpose
@@ -147,40 +150,9 @@ final class HistoricForumFlagAccessHooks {
       $validTarget = $this->forumPostAccess($entity, $this->currentUser)->isAllowed();
     }
     if ($entity === NULL || !$validTarget
-      || $this->isHistoricalTarget($entity, $flagging->getFlagId())) {
+      || $this->originResolver->classify($entity)->origin !== DiscussionOrigin::CURRENT) {
       throw new AccessDeniedHttpException('Este conteúdo não aceita denúncia pela fila do Fórum público.');
     }
-  }
-
-  /**
-   * Checks archive status and the entity type expected by the flag.
-   */
-  private function isHistoricalTarget(EntityInterface $entity, string $flagId): bool {
-    if ($flagId === 'sinalizar_topico') {
-      return $entity instanceof NodeInterface
-        && $entity->bundle() === 'aculta_forum_topic'
-        && $this->hasHistoricAuthor($entity);
-    }
-    if ($flagId === self::POST_FLAG) {
-      if (!$this->isPublicForumPost($entity)) {
-        return FALSE;
-      }
-      if ($this->hasHistoricAuthor($entity)) {
-        return TRUE;
-      }
-      $topic = $entity instanceof ForumPost ? $entity->get('topic')->entity : NULL;
-      return $topic instanceof NodeInterface && $this->hasHistoricAuthor($topic);
-    }
-    if (!$this->isPublicForumComment($entity)) {
-      return FALSE;
-    }
-    if ($this->hasHistoricAuthor($entity)) {
-      return TRUE;
-    }
-    $host = $entity instanceof CommentInterface ? $entity->getCommentedEntity() : NULL;
-    return $host instanceof NodeInterface
-      && $host->bundle() === 'aculta_forum_topic'
-      && $this->hasHistoricAuthor($host);
   }
 
   /**
@@ -259,18 +231,6 @@ final class HistoricForumFlagAccessHooks {
     return $entity->access('view', $account, TRUE)
       ->andIf($topic->access('view', $account, TRUE))
       ->andIf($dependency);
-  }
-
-  /**
-   * Checks whether an entity carries the immutable historical author marker.
-   */
-  private function hasHistoricAuthor(EntityInterface $entity): bool {
-    if ($entity instanceof ForumPost && $entity->hasField('legacy_author')) {
-      return !$entity->get('legacy_author')->isEmpty();
-    }
-    return $entity instanceof FieldableEntityInterface
-      && $entity->hasField('field_autor_legado')
-      && !$entity->get('field_autor_legado')->isEmpty();
   }
 
 }

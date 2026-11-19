@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_forum\Hook;
+namespace Drupal\aculta_forum_legacy\Hook;
 
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Hook\Attribute\Hook;

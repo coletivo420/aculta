@@ -4,7 +4,7 @@ Addon opcional do `aculta_forum` para a integração do arquivo histórico
 Growroom. Projetos que não adotam esse arquivo não precisam instalar este
 módulo; o Fórum principal não depende dele.
 
-## Fase atual — Dev.2
+## Fase atual — Dev.3
 
 O addon fornece o provider tagged que reconhece `ARCHIVE` em tópico Growroom,
 Comment ligado a esse tópico ou ForumPost originado nele quando a referência
@@ -13,9 +13,14 @@ e os consumidores de escrita, citação, reação, participação e avisos perte
 aos módulos principais. Posts correntes exigem autoria Drupal positiva; origem
 ausente ou conflitante falha fechada.
 
+O addon também passou a registrar a exclusão do arquivo Growroom das filas
+ordinárias de moderação. A política genérica de denúncias do Fórum permanece no
+motor e usa o resolver de origem; o motor não lê campos ou entidades de autoria
+legada diretamente.
+
 A extração de autoria e campos, memorial coletivo, apresentação histórica,
-ferramentas de importação/auditoria, moderação e integrações ainda não foi
-concluída. O código principal ainda contém acoplamentos a remover em etapas.
+ferramentas de importação/auditoria e integrações ainda não foi concluída. O
+código principal ainda contém acoplamentos a remover em etapas.
 A importação Growroom não foi executada no Runtime alvo. O pipeline futuro deve
 importar o corpus aprovado sem converter Comments históricos para ForumPosts.
 

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_forum\Unit;
+namespace Drupal\Tests\aculta_forum_legacy\Unit;
 
-use Drupal\aculta_forum\Hook\ForumHistoricModerationQueueHooks;
+use Drupal\aculta_forum_legacy\Hook\ForumHistoricModerationQueueHooks;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Schema;
 use Drupal\Tests\UnitTestCase;
@@ -16,7 +16,7 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Tests archive exclusion from Forum moderation Views.
  */
-#[Group('aculta_forum')]
+#[Group('aculta_forum_legacy')]
 final class ForumHistoricModerationQueueHooksTest extends UnitTestCase {
 
   /**

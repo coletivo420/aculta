@@ -6,14 +6,17 @@ namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Session\AccountInterface;
-use Drupal\aculta_forum\Hook\HistoricForumFlagAccessHooks;
+use Drupal\aculta_forum\Hook\ForumFlagAccessHooks;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\flag\FlagInterface;
 use Drupal\flag\FlaggingInterface;
 use Drupal\node\NodeInterface;
@@ -26,7 +29,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
  * Tests that Growroom archive content stays out of the report flow.
  */
 #[Group('aculta_forum')]
-final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
+final class ForumFlagAccessHooksTest extends UnitTestCase {
 
   /**
    * A historical topic cannot be reported through either topic flag action.
@@ -62,6 +65,26 @@ final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
     self::assertTrue($this->hook()
       ->flagActionAccess('flag', $this->flag('sinalizar_topico'), $account, $this->node('aculta_forum_topic', FALSE))
       ->isNeutral());
+  }
+
+  /**
+   * Unclassified Forum content fails closed even with report permission.
+   */
+  public function testUnknownOriginCannotBeReported(): void {
+    $topic = $this->node('aculta_forum_topic', FALSE);
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->with($topic)->willReturn(
+      DiscussionOriginClassification::from(DiscussionOrigin::UNKNOWN, $topic),
+    );
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('hasPermission')->with('report aculta forum content')->willReturn(TRUE);
+    $hook = new ForumFlagAccessHooks(
+      $this->createMock(EntityTypeManagerInterface::class),
+      $this->createMock(AccountProxyInterface::class),
+      $resolver,
+    );
+
+    self::assertTrue($hook->flagActionAccess('flag', $this->flag('sinalizar_topico'), $account, $topic)->isForbidden());
   }
 
   /**
@@ -141,7 +164,7 @@ final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
     $currentUser->method('hasPermission')->with('report aculta forum content')->willReturn(TRUE);
 
     $this->expectException(AccessDeniedHttpException::class);
-    (new HistoricForumFlagAccessHooks($manager, $currentUser))->preventHistoricalFlagging($flagging);
+    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventHistoricalFlagging($flagging);
   }
 
   /**
@@ -164,7 +187,7 @@ final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
     $currentUser->method('hasPermission')->with('report aculta forum content')->willReturn(TRUE);
 
     $this->expectException(AccessDeniedHttpException::class);
-    (new HistoricForumFlagAccessHooks($manager, $currentUser))->preventHistoricalFlagging($flagging);
+    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventHistoricalFlagging($flagging);
   }
 
   /**
@@ -178,7 +201,7 @@ final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
     $flagging->method('getFlagId')->willReturn('sinalizar_topico');
 
     $this->expectException(AccessDeniedHttpException::class);
-    (new HistoricForumFlagAccessHooks($manager, $currentUser))->preventHistoricalFlagging($flagging);
+    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventHistoricalFlagging($flagging);
   }
 
   /**
@@ -197,7 +220,7 @@ final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
     $flagging->method('getFlaggableId')->willReturn('404');
 
     $this->expectException(AccessDeniedHttpException::class);
-    (new HistoricForumFlagAccessHooks($manager, $currentUser))->preventHistoricalFlagging($flagging);
+    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventHistoricalFlagging($flagging);
   }
 
   /**
@@ -213,17 +236,43 @@ final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
     $flagging->method('getFlaggableType')->willReturn('arbitrary_entity');
 
     $this->expectException(AccessDeniedHttpException::class);
-    (new HistoricForumFlagAccessHooks($manager, $currentUser))->preventHistoricalFlagging($flagging);
+    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventHistoricalFlagging($flagging);
   }
 
   /**
    * Creates the hook with mocked Runtime dependencies.
    */
-  private function hook(): HistoricForumFlagAccessHooks {
-    return new HistoricForumFlagAccessHooks(
+  private function hook(): ForumFlagAccessHooks {
+    return new ForumFlagAccessHooks(
       $this->createMock(EntityTypeManagerInterface::class),
       $this->createMock(AccountProxyInterface::class),
+      $this->originResolver(),
     );
+  }
+
+  /**
+   * Creates the provider double used to test the generic origin contract.
+   */
+  private function originResolver(): DiscussionOriginResolverInterface {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturnCallback(function (EntityInterface $entity): DiscussionOriginClassification {
+      $archive = $this->hasHistoricAuthor($entity);
+      if ($entity instanceof CommentInterface) {
+        $host = $entity->getCommentedEntity();
+        $archive = $archive || ($host instanceof NodeInterface && $this->hasHistoricAuthor($host));
+      }
+      return DiscussionOriginClassification::from($archive ? DiscussionOrigin::ARCHIVE : DiscussionOrigin::CURRENT, $entity);
+    });
+    return $resolver;
+  }
+
+  /**
+   * Checks the fixture marker used by the fake origin provider.
+   */
+  private function hasHistoricAuthor(EntityInterface $entity): bool {
+    return $entity instanceof FieldableEntityInterface
+      && $entity->hasField('field_autor_legado')
+      && !$entity->get('field_autor_legado')->isEmpty();
   }
 
   /**
@@ -266,10 +315,11 @@ final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
   /**
    * Creates a field item list reporting the requested emptiness state.
    *
-   * @return FieldItemListInterface<FieldItemInterface>&MockObject
+   * @return FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>&MockObject
+   *   The mocked marker field list.
    */
   private function marker(bool $populated): FieldItemListInterface&MockObject {
-    /** @var FieldItemListInterface<FieldItemInterface>&MockObject $marker */
+    /** @var FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface>&MockObject $marker */
     $marker = $this->createMock(FieldItemListInterface::class);
     $marker->method('isEmpty')->willReturn(!$populated);
     return $marker;
@@ -278,7 +328,8 @@ final class HistoricForumFlagAccessHooksTest extends UnitTestCase {
   /**
    * Gives a mocked entity cacheability metadata.
    *
-   * @param (CacheableDependencyInterface&MockObject)|(object&MockObject) $entity
+   * @param object&MockObject $entity
+   *   The mocked entity.
    */
   private function cacheable(object $entity): void {
     $entity->method('getCacheTags')->willReturn([]);
