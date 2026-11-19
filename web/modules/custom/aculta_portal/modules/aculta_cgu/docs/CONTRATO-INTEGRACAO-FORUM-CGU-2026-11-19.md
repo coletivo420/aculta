@@ -40,7 +40,7 @@ não executa backfill, rollback, migração nem exclusão.
 
 ### Modelo proposto: denúncia != caso != ação
 
-1. `CguReport`: entrada individual sigilosa por usuário/alvo/motivo, preserva tombstone, link com flagging migrado e timestamp.
+1. `CguReport`: entrada individual sigilosa por usuário/alvo/motivo, preserva tombstone e timestamp; quando necessário, usa referência genérica de origem/idempotência. Não incorpora vínculo específico ao Flagging histórico do Fórum.
 2. `ModerationCase` (entidade revisionável do CGU ou modelagem equivalente): agrega denúncias por alvo + contexto + janela sem expor identidades, registra escalonamento, owner, atribuição, notas privadas e timeline imutável.
 3. `ModerationDecision`: procedente/improcedente/em análise com justificativa; pode concluir caso sem mudar conteúdo.
 4. `ModerationAction`: comando tipado explícito, autorizado novamente no submit, aplicado pelo owner do alvo (ForumPost workflow, Comment status, Node topic, LMS/Educador, Revista/Editor, Wiki/Editor) e registrado com resultado, erro/retry, compensação e auditoria.
