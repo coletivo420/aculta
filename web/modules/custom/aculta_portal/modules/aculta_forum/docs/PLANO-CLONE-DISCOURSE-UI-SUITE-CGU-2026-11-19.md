@@ -38,16 +38,22 @@ não apenas para Index e Statistics. A ausência do addon deixa o motor corrente
 funcional; origens sem provider autorizado falham fechadas. O addon opcional
 não é requisito do `aculta_forum` nem do `aculta_portal`.
 
-### Integrações negativas: sem capacidades correntes
+### Fronteiras dos módulos e decisões ainda pendentes
 
-O addon não consome APIs de CGU, Game, Messenger ou `aculta_user`. Sua única
-contribuição transversal é publicar a origem `ARCHIVE` pelo contrato genérico
-de classificação, além dos providers de arquivo que possui. Os módulos
-principais consultam esse contrato e excluem o arquivo: CGU não oferece
-denúncia, caso ou moderação; Messenger não envia aviso, assinatura ou
-mensagem; Game não atribui participação, atividade, XP ou conquista; `aculta_user`
-não trata autores do arquivo como usuários. Não criar adapters do addon que
-acionem ou consumam essas capacidades.
+O addon não pode criar dependência reversa de CGU, Game, Messenger ou
+`aculta_user`. Ele publica a origem `ARCHIVE` por contrato genérico e mantém
+seus providers próprios; cada módulo principal decide como tratar essa origem
+dentro de suas responsabilidades, sem conhecer entidades, campos ou rotas do
+addon. O plano ainda precisa especificar, à luz da política do acervo, se e
+como registros históricos podem aparecer em denúncia/revisão do CGU, e quais
+eventos de Messenger/Game devem ser suprimidos em importações ou reconstruções.
+Importar ou reconstruir o acervo não pode, por si só, gerar participação,
+avisos, XP ou conquistas. Esses critérios devem ser validados antes de virar
+contrato de produto ou regra de exclusão nos consumidores.
+
+`aculta_user` continua responsável por usuários atuais. Autores históricos
+seguem a entidade e a apresentação definidas em F-D44, sem converter autoria
+histórica em conta ou perfil individual.
 
 “Autor legado” significa exclusivamente a entidade de conteúdo existente
 `aculta_legado_autor`, implementada pela classe PHP
@@ -149,8 +155,8 @@ FDC-11.0 deve registrar essa distinção sem exportar dados pessoais.
 
 - **Dados e autoria:** entidade existente `aculta_legado_autor`, manager/upsert por ID de origem, `field_autor_legado` e referências legadas, configuração de storage/form/display e a propriedade desses contratos. Autores continuam sem conta User/login; `uid=0` e as chaves, IDs, referências e relações existentes devem ser preservados conforme plano aprovado. Os arquivos de autoria são inventariados e preservados, sem mudar seu armazenamento nesta fase. A localização atual em `aculta_user` não torna `aculta_user` dono futuro do legado.
 - **Identidade pública histórica:** memorial coletivo único `/u/lendashistoricas`, reserva do slug, cartões e nomes históricos. Todos esses elementos e suas configurações são fornecidos por `aculta_forum_legacy`. Nos tópicos e comentários do fórum legado, a exibição individual deve respeitar o perfil legado definido em F-D44. Não criar página, rota ou listagem individual pública, nem link para perfil/conta User. Manter a convenção `-gr` apenas onde já decidida para cartões do fórum, sem alterar nomes canônicos do memorial.
-- **Classificação e integridade:** classificador central por origem/host; guardas read-only; exclusão dos fluxos de denúncia/moderação; regras de mover/citar/responder; prevenção de reações e eventos de participação. O addon fornece classificação `ARCHIVE` pelo contrato genérico; não implementa nem consome CGU, Messenger, Game ou `aculta_user`. Esses módulos principais apenas excluem a origem histórica de seus fluxos correntes usando contratos genéricos. O core não conhece nomes de campo nem IDs de entidade legados. Origem não reconhecida ou ausência do provider exigido falha fechada.
-- **Integrações de leitura:** `aculta_forum_legacy` é dono das projeções, catálogo e pesquisa próprios do arquivo, além do provider da série de métricas históricas. `aculta_index` e `aculta_statistics` permanecem genéricos: oferecem contratos de extensão e infraestrutura de consulta/agregação, sem lógica, configuração ou nomenclatura Growroom embutida. O addon não consome esses módulos nem os serviços correntes de CGU, Messenger, Game ou User; registra providers genéricos para o arquivo e mantém exclusões de capacidades correntes.
+- **Classificação e integridade:** classificador central por origem/host; guardas read-only; regras de mover/citar/responder; prevenção de reações e eventos colaterais de importação/reconstrução. O plano deve especificar separadamente a política de denúncias/moderação e os eventos correntes permitidos. O addon fornece classificação `ARCHIVE` pelo contrato genérico; o core não conhece nomes de campo nem IDs de entidade legados. Origem não reconhecida ou ausência do provider exigido falha fechada.
+- **Integrações de leitura:** `aculta_forum_legacy` é dono das projeções, catálogo e pesquisa próprios do arquivo, além do provider da série de métricas históricas. `aculta_index` e `aculta_statistics` permanecem genéricos: oferecem contratos de extensão e infraestrutura de consulta/agregação, sem lógica, configuração ou nomenclatura Growroom embutida. O addon publica seus providers por contratos genéricos; os módulos principais mantêm suas responsabilidades e não dependem do addon.
 - **Ferramentas e apresentação:** Views/rotas do memorial coletivo, cartões de autoria e renderização read-only, cache tags/contexts e invalidação, além dos hooks de autoria/atividade que hoje carregam marcador histórico.
 - **Migração e auditoria:** todo código de census/auditoria do acervo pode residir no addon como ferramenta read-only. O conversor Comment→ForumPost não é parte do alvo executável: a política vigente proíbe essa conversão. Qualquer utilitário futuro deve ser explicitamente não destrutivo, dry-run/read-only por padrão e não importar dados por efeito colateral.
 
