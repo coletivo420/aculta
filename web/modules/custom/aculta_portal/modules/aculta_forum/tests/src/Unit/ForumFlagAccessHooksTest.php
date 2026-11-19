@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
@@ -85,6 +86,28 @@ final class ForumFlagAccessHooksTest extends UnitTestCase {
     );
 
     self::assertTrue($hook->flagActionAccess('flag', $this->flag('sinalizar_topico'), $account, $topic)->isForbidden());
+  }
+
+  /**
+   * Current Comment access inherits tags from the Comment and topic host.
+   */
+  public function testCurrentCommentAccessIncludesHostCacheability(): void {
+    $host = $this->node('aculta_forum_topic', FALSE, TRUE, ['node:forum-topic']);
+    $comment = $this->comment($host, FALSE, ['comment:forum-reply']);
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('hasPermission')->with('report aculta forum content')->willReturn(TRUE);
+
+    $result = $this->hook()->flagActionAccess(
+      'flag',
+      $this->flag('sinalizar_comentario'),
+      $account,
+      $comment,
+    );
+
+    self::assertTrue($result->isAllowed());
+    $cacheTags = CacheableMetadata::createFromObject($result)->getCacheTags();
+    self::assertContains('comment:forum-reply', $cacheTags);
+    self::assertContains('node:forum-topic', $cacheTags);
   }
 
   /**
@@ -286,29 +309,45 @@ final class ForumFlagAccessHooksTest extends UnitTestCase {
 
   /**
    * Creates a Node mock with the requested historical marker state.
+   *
+   * @param string $bundle
+   *   The Node bundle.
+   * @param bool $historical
+   *   Whether the marker field is populated.
+   * @param bool $published
+   *   Whether the Node is published.
+   * @param list<string> $cacheTags
+   *   Cache tags to expose from the Node.
    */
-  private function node(string $bundle, bool $historical, bool $published = TRUE): NodeInterface {
+  private function node(string $bundle, bool $historical, bool $published = TRUE, array $cacheTags = []): NodeInterface {
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn($bundle);
     $node->method('isPublished')->willReturn($published);
     $node->method('access')->willReturn(AccessResult::allowed());
     $node->method('hasField')->with('field_autor_legado')->willReturn(TRUE);
     $node->method('get')->with('field_autor_legado')->willReturn($this->marker($historical));
-    $this->cacheable($node);
+    $this->cacheable($node, $cacheTags);
     return $node;
   }
 
   /**
    * Creates a Comment mock with a configurable host and cacheability.
+   *
+   * @param \Drupal\node\NodeInterface $host
+   *   The Comment host.
+   * @param bool $historical
+   *   Whether the marker field is populated.
+   * @param list<string> $cacheTags
+   *   Cache tags to expose from the Comment.
    */
-  private function comment(NodeInterface $host, bool $historical = FALSE): CommentInterface {
+  private function comment(NodeInterface $host, bool $historical = FALSE, array $cacheTags = []): CommentInterface {
     $comment = $this->createMock(CommentInterface::class);
     $comment->method('bundle')->willReturn('aculta_discussion_post');
     $comment->method('access')->willReturn(AccessResult::allowed());
     $comment->method('hasField')->with('field_autor_legado')->willReturn(TRUE);
     $comment->method('get')->with('field_autor_legado')->willReturn($this->marker($historical));
     $comment->method('getCommentedEntity')->willReturn($host);
-    $this->cacheable($comment);
+    $this->cacheable($comment, $cacheTags);
     return $comment;
   }
 
@@ -330,9 +369,11 @@ final class ForumFlagAccessHooksTest extends UnitTestCase {
    *
    * @param object&MockObject $entity
    *   The mocked entity.
+   * @param list<string> $cacheTags
+   *   The entity's cache tags.
    */
-  private function cacheable(object $entity): void {
-    $entity->method('getCacheTags')->willReturn([]);
+  private function cacheable(object $entity, array $cacheTags = []): void {
+    $entity->method('getCacheTags')->willReturn($cacheTags);
     $entity->method('getCacheContexts')->willReturn([]);
     $entity->method('getCacheMaxAge')->willReturn(-1);
   }

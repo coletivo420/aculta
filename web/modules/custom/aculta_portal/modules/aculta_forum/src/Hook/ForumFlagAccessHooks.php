@@ -77,13 +77,13 @@ final class ForumFlagAccessHooks {
       'sinalizar_comentario' => $this->isPublicForumComment($flaggable),
       default => ($postAccess = $this->forumPostAccess($flaggable, $account))->isAllowed(),
     };
+    $origin = $this->originResolver->classify($flaggable);
 
     if (!$public) {
       $result = AccessResult::forbidden('Denúncia disponível somente para publicação pública deste Fórum.');
     }
-    elseif (($origin = $this->originResolver->classify($flaggable))->origin !== DiscussionOrigin::CURRENT) {
+    elseif ($origin->origin !== DiscussionOrigin::CURRENT) {
       $result = AccessResult::forbidden('A origem deste conteúdo não permite denúncia pela fila do Fórum.');
-      $result->addCacheableDependency($origin);
     }
     else {
       // The permission alone must not expose unpublished or out-of-purpose
@@ -95,7 +95,14 @@ final class ForumFlagAccessHooks {
     }
 
     $result->addCacheableDependency($flaggable)
+      ->addCacheableDependency($origin)
       ->addCacheContexts(['user.permissions']);
+    if ($flaggable instanceof CommentInterface) {
+      $host = $flaggable->getCommentedEntity();
+      if ($host instanceof EntityInterface) {
+        $result->addCacheableDependency($host);
+      }
+    }
     if ($flaggable instanceof ForumPost) {
       $topic = $flaggable->get('topic')->entity;
       if ($topic instanceof NodeInterface) {
