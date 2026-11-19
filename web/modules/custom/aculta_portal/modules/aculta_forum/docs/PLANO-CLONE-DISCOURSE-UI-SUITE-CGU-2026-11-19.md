@@ -155,11 +155,16 @@ armazenar regras, campos, nomes de rota ou decisões específicas do acervo.
 ### Contrato mínimo do classificador de origem
 
 O resolver genérico deve aceitar entidade e contexto/host e devolver origem
-estável com metadados de cacheabilidade. Providers registrados por contrato
-podem reconhecer origens; somente o addon conhece fields, classes, rotas e
-proveniência exclusivos do acervo. O Fórum mantém os providers correntes e
-contextuais necessários para continuar funcionando sem o addon. Conflitos
-entre providers ou resultado sem prova suficiente viram `UNKNOWN`.
+estável com metadados de cacheabilidade. Esse é um contrato novo, separado de
+`DiscussionContextResolver`: o serviço atual apenas escolhe o provider do host
+por `supports()`/`getContext()`, retorna `NULL` quando nenhum serve e lança erro
+se mais de um provider de host casar. Ele não classifica proveniência. Não
+sobrecarregar `DiscussionContextProviderInterface` nem seu tag para guardar
+regras do acervo. Definir uma interface/tag própria de origem; somente o addon
+conhece fields, classes, rotas e proveniência exclusivos do acervo. O Fórum
+mantém os providers correntes e contextuais necessários para continuar
+funcionando sem o addon. Evidência conflitante ou insuficiente vira `UNKNOWN`;
+um provider corrente não pode inferir `CURRENT` apenas da ausência de marker.
 
 | Caso de entrada | Classificação exigida |
 | --- | --- |
