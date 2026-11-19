@@ -19,11 +19,23 @@ final class PublicForumViewsDataHooks {
    * virtual sort field so the public Forum View can use its safe equivalent
    * without replacing Core's handler for unrelated Views.
    *
-   * @param array<string, mixed> $data
+   * @param array<string, array<string, mixed>> $data
    *   Views data definitions.
    */
   #[Hook('views_data_alter')]
   public function viewsDataAlter(array &$data): void {
+    if (!isset($data['comment_entity_statistics'])) {
+      $data['comment_entity_statistics'] = [];
+    }
+    if (!isset($data['history'])) {
+      $data['history'] = [];
+    }
+    if (!isset($data['node'])) {
+      $data['node'] = [];
+    }
+    if (!isset($data['taxonomy_term_field_data'])) {
+      $data['taxonomy_term_field_data'] = [];
+    }
     $data['comment_entity_statistics']['aculta_forum_last_activity'] = [
       'title' => 'ACULTA Forum: última atividade',
       'help' => 'Ordena por atividade mais recente entre a atualização do tópico e sua última resposta publicada.',

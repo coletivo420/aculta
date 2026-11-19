@@ -33,6 +33,8 @@ final class DiscussionProgressHooks {
    *
    * O formulário do core é um #lazy_builder, reconstruído na renderização; por isso a
    * remoção é feita no template (variável comment_form), na última etapa do pré-processamento.
+   *
+   * @param array<string, mixed> $variables
    */
   #[Hook('preprocess_field', order: Order::Last)]
   public function preprocessDiscussionField(array &$variables): void {
@@ -43,6 +45,8 @@ final class DiscussionProgressHooks {
 
   /**
    * Marks the shared discussion field for its client-side reading controls.
+   *
+   * @param array<string, mixed> $build
    */
   #[Hook('entity_view_alter')]
   public function entityViewAlter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
@@ -50,11 +54,22 @@ final class DiscussionProgressHooks {
       || ($build['#view_mode'] ?? NULL) !== 'full'
       || !$entity->hasField('field_aculta_discussion')
       || !isset($build['field_aculta_discussion'])
+      || !is_array($build['field_aculta_discussion'])
       || (isset($build['field_aculta_discussion']['#access']) && $build['field_aculta_discussion']['#access'] === FALSE)) {
       return;
     }
 
+    if (!isset($build['field_aculta_discussion']['#attributes']) || !is_array($build['field_aculta_discussion']['#attributes'])) {
+      $build['field_aculta_discussion']['#attributes'] = [];
+    }
     $build['field_aculta_discussion']['#attributes']['data-aculta-discussion-thread'] = '';
+
+    if (!isset($build['field_aculta_discussion']['#attached']) || !is_array($build['field_aculta_discussion']['#attached'])) {
+      $build['field_aculta_discussion']['#attached'] = [];
+    }
+    if (!isset($build['field_aculta_discussion']['#attached']['library']) || !is_array($build['field_aculta_discussion']['#attached']['library'])) {
+      $build['field_aculta_discussion']['#attached']['library'] = [];
+    }
     // Comportamento do popup de Responder/Citar e do botão Comentar (código no módulo; visual no tema).
     $build['field_aculta_discussion']['#attached']['library'][] = 'aculta_forum/discussion-reply-popup';
     // Alternância normal/espelhado pela ordem exibida das respostas.
@@ -93,9 +108,11 @@ final class DiscussionProgressHooks {
     if ($comment->access('create')) {
       $form = $this->formBuilder->getForm($comment);
       $this->renderer->renderInIsolation($form);
+      $attached = $build['field_aculta_discussion']['#attached'];
+      $form_attached = is_array($form['#attached'] ?? NULL) ? $form['#attached'] : [];
       $build['field_aculta_discussion']['#attached'] = \Drupal\Component\Utility\NestedArray::mergeDeep(
-        $build['field_aculta_discussion']['#attached'] ?? [],
-        $form['#attached'] ?? [],
+        $attached,
+        $form_attached,
       );
     }
   }

@@ -50,6 +50,8 @@ final class DiscussionReplyFormHooks {
 
   /**
    * Alters comment forms for discussion reply handling.
+   *
+   * @param array<mixed> $form
    */
   #[Hook('form_comment_form_alter', order: Order::Last)]
   public function commentFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
@@ -73,7 +75,8 @@ final class DiscussionReplyFormHooks {
     }
 
     // COM-05: Ensure action points to host page with Portuguese parameters instead of comment.reply.
-    $parentId = $comment->hasParentComment() ? (int) $comment->getParentComment()->id() : NULL;
+    $parentComment = $comment->hasParentComment() ? $comment->getParentComment() : NULL;
+    $parentId = $parentComment instanceof CommentInterface ? (int) $parentComment->id() : NULL;
     if ($parentId === NULL && $comment->isNew()) {
       $request = $this->requestStack->getCurrentRequest();
       $requestedPid = $request ? ($request->query->get('resposta') ?? $request->request->get('pid') ?? $request->query->get('pid')) : NULL;
@@ -97,6 +100,9 @@ final class DiscussionReplyFormHooks {
         '#type' => 'hidden',
         '#default_value' => $parentId !== NULL ? (string) $parentId : '',
       ];
+      if (!isset($form['#entity_builders']) || !is_array($form['#entity_builders'])) {
+        $form['#entity_builders'] = [];
+      }
       $form['#entity_builders'][] = self::class . ':buildCommentEntityWithPid';
     }
 
@@ -112,6 +118,9 @@ final class DiscussionReplyFormHooks {
 
     // Attach native HTMX support to form.
     $composerId = 'discussion-composer-' . $host->getEntityTypeId() . '-' . $host->id() . ($parentId ? '-' . $parentId : '');
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
     $form['#attributes']['id'] = $composerId . '-form';
 
     // Prevent destination manipulation.
@@ -127,12 +136,27 @@ final class DiscussionReplyFormHooks {
       ->applyTo($form);
 
     // Add validation and submission handlers for idempotency and safe redirection.
+    if (!isset($form['#validate']) || !is_array($form['#validate'])) {
+      $form['#validate'] = [];
+    }
     array_unshift($form['#validate'], self::class . ':validateIdempotency');
+
+    if (!isset($form['actions']) || !is_array($form['actions'])) {
+      $form['actions'] = [];
+    }
+    if (!isset($form['actions']['submit']) || !is_array($form['actions']['submit'])) {
+      $form['actions']['submit'] = [];
+    }
+    if (!isset($form['actions']['submit']['#submit']) || !is_array($form['actions']['submit']['#submit'])) {
+      $form['actions']['submit']['#submit'] = [];
+    }
     $form['actions']['submit']['#submit'][] = self::class . ':postSubmitRedirect';
   }
 
   /**
    * Entity builder that assigns normalized parent ID to new comment entities.
+   *
+   * @param array<string, mixed> $form
    */
   public function buildCommentEntityWithPid(string $entityType, EntityInterface $entity, array &$form, FormStateInterface $formState): void {
     if (!$entity instanceof CommentInterface || !$entity->isNew()) {
@@ -154,6 +178,8 @@ final class DiscussionReplyFormHooks {
 
   /**
    * Validates duplicate submission within idempotency window.
+   *
+   * @param array<string, mixed> $form
    */
   public function validateIdempotency(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();
@@ -165,12 +191,14 @@ final class DiscussionReplyFormHooks {
       return;
     }
 
-    $body = (string) $formState->getValue(['comment_body', 0, 'value'], '');
+    $raw_body = $formState->getValue(['comment_body', 0, 'value'], '');
+    $body = is_scalar($raw_body) ? (string) $raw_body : '';
     if (trim($body) === '') {
       return;
     }
 
-    $parentId = $comment->hasParentComment() ? (int) $comment->getParentComment()->id() : NULL;
+    $parentComment = $comment->hasParentComment() ? $comment->getParentComment() : NULL;
+    $parentId = $parentComment instanceof CommentInterface ? (int) $parentComment->id() : NULL;
 
     $duplicateCid = $this->idempotencyManager->findRecentDuplicate(
       $this->currentUser,
@@ -188,6 +216,8 @@ final class DiscussionReplyFormHooks {
 
   /**
    * Ensures submission redirects back to host on non-HTMX requests and avoids standalone comment URLs.
+   *
+   * @param array<string, mixed> $form
    */
   public function postSubmitRedirect(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();

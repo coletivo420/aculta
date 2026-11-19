@@ -21,6 +21,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Contextual submission form for public Forum posts.
+ *
+ * @property \Drupal\aculta_forum\Entity\ForumPost $entity
  */
 final class ForumPostSubmissionForm extends ContentEntityForm {
 
@@ -49,6 +51,9 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
@@ -73,12 +78,13 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
       return $form;
     }
 
+    $parent_label = (string) $parent->label();
     $form['reply_context'] = [
       '#type' => 'container',
       '#weight' => -100,
       'description' => [
         '#plain_text' => $this->t('Você está respondendo à publicação: @subject', [
-          '@subject' => $parent->label(),
+          '@subject' => $parent_label,
         ]),
       ],
     ];
@@ -87,6 +93,8 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function buildEntity(array $form, FormStateInterface $form_state) {
     $entity = parent::buildEntity($form, $form_state);
@@ -101,17 +109,24 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<mixed>
    */
   protected function actions(array $form, FormStateInterface $form_state): array {
     $actions = parent::actions($form, $form_state);
-    $actions['submit']['#value'] = $this->entity->isNew()
-      ? $this->t('Enviar publicação')
-      : $this->t('Salvar alterações');
+    if (isset($actions['submit']) && is_array($actions['submit'])) {
+      $actions['submit']['#value'] = $this->entity->isNew()
+        ? $this->t('Enviar publicação')
+        : $this->t('Salvar alterações');
+    }
     return $actions;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function save(array $form, FormStateInterface $form_state): int {
     $wasNew = $this->entity->isNew();
@@ -122,13 +137,13 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
     }
 
     $message = $wasNew
-      ? ($this->entity instanceof EntityPublishedInterface && $this->entity->isPublished()
+      ? ($this->entity->isPublished()
         ? $this->t('Sua publicação foi adicionada à discussão.')
         : $this->t('Sua publicação foi enviada para moderação e aparecerá na discussão depois da aprovação.'))
       : $this->t('Sua publicação foi atualizada.');
     $this->submissionMessenger->addStatus($message);
     $url = $topic->toUrl('canonical');
-    if ($this->entity instanceof ForumPost && $this->entity->isPublished()) {
+    if ($this->entity->isPublished()) {
       $page = $this->threadBuilder->getPageForPost($topic, $this->entity);
       if ($page !== NULL) {
         $url->setOption('query', $this->threadBuilder->getTopicPagerQuery($page));

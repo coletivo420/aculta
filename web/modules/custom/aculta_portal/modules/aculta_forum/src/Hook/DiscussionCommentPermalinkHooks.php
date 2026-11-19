@@ -34,10 +34,13 @@ final class DiscussionCommentPermalinkHooks {
 
   /**
    * Overrides comment permalink with canonical host link and anchor, and sets depth.
+   *
+   * @param array<string, mixed> $variables
    */
   #[Hook('preprocess_comment')]
   public function preprocessComment(array &$variables): void {
-    $comment = $variables['elements']['#comment'] ?? NULL;
+    $elements = isset($variables['elements']) && is_array($variables['elements']) ? $variables['elements'] : [];
+    $comment = $elements['#comment'] ?? NULL;
     if (!$comment instanceof CommentInterface
       || !in_array($comment->getFieldName(), ['field_aculta_discussion', 'comments'], TRUE)) {
       return;
@@ -52,11 +55,14 @@ final class DiscussionCommentPermalinkHooks {
       $variables['attributes']->setAttribute('data-comment-depth', (string) $depth);
       $variables['attributes']->addClass('discussion-comment-depth-' . $depth);
     }
-    else {
+    elseif (is_array($variables['attributes'])) {
       $variables['attributes']['data-comment-depth'] = (string) $depth;
-      $variables['attributes']['class'][] = 'discussion-comment-depth-' . $depth;
+      $variables['attributes']['class'] = array_merge((array) ($variables['attributes']['class'] ?? []), ['discussion-comment-depth-' . $depth]);
     }
-    $variables['#cache']['tags'][] = 'config:aculta_forum.settings';
+    if (!isset($variables['#cache']) || !is_array($variables['#cache'])) {
+      $variables['#cache'] = [];
+    }
+    $variables['#cache']['tags'] = array_merge((array) ($variables['#cache']['tags'] ?? []), ['config:aculta_forum.settings']);
 
     if ($comment->bundle() !== 'aculta_discussion_post'
       || $comment->getFieldName() !== 'field_aculta_discussion') {
@@ -70,7 +76,8 @@ final class DiscussionCommentPermalinkHooks {
     if ($url !== NULL) {
       // Mesmo padrão das demais ações do comentário: ícone Phosphor e rótulo em aria-label/title.
       $label = (string) $this->t('Permalink');
-      $attributes = $url->getOption('attributes') ?: [];
+      $raw_attributes = $url->getOption('attributes');
+      $attributes = is_array($raw_attributes) ? $raw_attributes : [];
       $attributes += [
         'class' => ['permalink', 'aculta-resposta-acao', 'aculta-resposta-acao--link'],
         'rel' => 'bookmark',
@@ -101,10 +108,13 @@ final class DiscussionCommentPermalinkHooks {
    * Id do elemento do comentário: resposta-CID, igual à âncora do permalink.
    *
    * Roda depois do core, que define comment-CID no mesmo atributo.
+   *
+   * @param array<string, mixed> $variables
    */
   #[Hook('preprocess_comment', order: Order::Last)]
   public function preprocessCommentDomId(array &$variables): void {
-    $comment = $variables['elements']['#comment'] ?? NULL;
+    $elements = isset($variables['elements']) && is_array($variables['elements']) ? $variables['elements'] : [];
+    $comment = $elements['#comment'] ?? NULL;
     if (!$comment instanceof CommentInterface
       || $comment->bundle() !== 'aculta_discussion_post'
       || $comment->getFieldName() !== 'field_aculta_discussion') {
@@ -113,7 +123,7 @@ final class DiscussionCommentPermalinkHooks {
     if ($variables['attributes'] instanceof Attribute) {
       $variables['attributes']->setAttribute('id', 'resposta-' . $comment->id());
     }
-    else {
+    elseif (is_array($variables['attributes'])) {
       $variables['attributes']['id'] = 'resposta-' . $comment->id();
     }
   }

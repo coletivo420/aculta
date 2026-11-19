@@ -46,31 +46,37 @@ final class DiscussionCommentActionIconHooks {
 
   /**
    * Implements hook_comment_links_alter().
+   *
+   * @param array<string, mixed> $links
+   * @param array<string, mixed> $context
    */
   #[Hook('comment_links_alter', order: Order::Last)]
   public function commentLinksAlter(array &$links, CommentInterface $comment, array &$context): void {
-    if (isset($links['#links'])) {
+    if (isset($links['#links']) && is_array($links['#links'])) {
       $this->decorate($links['#links']);
     }
-    if (isset($links['comment']['#links'])) {
+    if (isset($links['comment']) && is_array($links['comment']) && isset($links['comment']['#links']) && is_array($links['comment']['#links'])) {
       $this->decorate($links['comment']['#links']);
     }
   }
 
   /**
    * Aplica o ícone em cada ação conhecida.
+   *
+   * @param array<mixed> $list
    */
   private function decorate(array &$list): void {
     foreach (self::ICONS as $key => $icon) {
-      if (!isset($list[$key])) {
+      if (!isset($list[$key]) || !is_array($list[$key])) {
         continue;
       }
-      $label = (string) ($list[$key]['title'] ?? '');
+      $raw_title = $list[$key]['title'] ?? '';
+      $label = is_scalar($raw_title) ? (string) $raw_title : '';
       $svg = $this->svg($icon);
       if ($svg === '') {
         continue;
       }
-      $attributes = $list[$key]['attributes'] ?? [];
+      $attributes = (isset($list[$key]['attributes']) && is_array($list[$key]['attributes'])) ? $list[$key]['attributes'] : [];
       $attributes['class'] = array_merge((array) ($attributes['class'] ?? []), [
         'aculta-resposta-acao',
         'aculta-resposta-acao--' . self::MODIFIERS[$key],

@@ -22,6 +22,12 @@ class TopicOpeningEditForm extends FormBase {
     return 'aculta_forum_topic_opening_edit_form';
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
+   */
   public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $node = NULL): array {
     $this->topic = $node;
     if (!$node instanceof NodeInterface || $node->bundle() !== 'aculta_forum_topic') {
@@ -46,6 +52,9 @@ class TopicOpeningEditForm extends FormBase {
     ]);
 
     $form['#action'] = $targetUrl->toString();
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
     $form['#attributes']['id'] = 'aculta-topic-edit-form-' . $node->id();
 
     $htmx = new Htmx();
@@ -54,6 +63,9 @@ class TopicOpeningEditForm extends FormBase {
       ->swap('innerHTML')
       ->onlyMainContent()
       ->applyTo($form);
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
     $form['#attributes']['data-hx-select'] = '[data-discussion-reply-composer]';
 
     $form['title'] = [
@@ -67,7 +79,10 @@ class TopicOpeningEditForm extends FormBase {
     $bodyValue = '';
     if ($node->hasField('body') && !$node->get('body')->isEmpty()) {
       $bodyItem = $node->get('body')->first();
-      $bodyValue = $bodyItem->get('value')->getValue() ?? '';
+      if ($bodyItem !== NULL) {
+        $rawBody = $bodyItem->get('value')->getValue();
+        $bodyValue = is_scalar($rawBody) ? (string) $rawBody : '';
+      }
     }
 
     $form['body'] = [
@@ -98,15 +113,22 @@ class TopicOpeningEditForm extends FormBase {
       ],
     ];
 
+    /** @var array<string, mixed> $form */
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     if (!$this->topic instanceof NodeInterface) {
       return;
     }
 
-    $title = (string) $form_state->getValue('title', '');
+    $title_val = $form_state->getValue('title', '');
+    $title = is_scalar($title_val) ? (string) $title_val : '';
     $bodyVal = $form_state->getValue('body');
 
     $this->topic->setTitle($title);

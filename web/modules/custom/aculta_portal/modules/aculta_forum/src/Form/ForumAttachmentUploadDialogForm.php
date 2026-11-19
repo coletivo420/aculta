@@ -60,6 +60,9 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?FilterFormatInterface $filter_format = NULL): array {
     $this->dialogBuilder->wrap($form, 'aculta-forum-attachment-dialog', 'forum', 'forum-attachment-dialog');
@@ -96,11 +99,14 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
       '#button_type' => 'primary',
       '#ajax' => ['callback' => '::ajaxSubmit'],
     ];
+    /** @var array<string, mixed> $form */
     return $form;
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $selection = $this->resolveSelection($form_state);
@@ -112,7 +118,8 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
       return;
     }
     if ($selection['is_image']) {
-      $image_alt = trim((string) $form_state->getValue('image_alt'));
+      $image_alt_val = $form_state->getValue('image_alt');
+      $image_alt = is_scalar($image_alt_val) ? trim((string) $image_alt_val) : '';
       if ($image_alt === '' || mb_strlen($image_alt) > 512) {
         $form_state->setErrorByName('image_alt', $this->t('Informe uma descrição não vazia de até 512 caracteres para a imagem.'));
         return;
@@ -133,9 +140,28 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
    *   Dados do arquivo resolvido e eventual mensagem de erro.
    */
   private function resolveSelection(FormStateInterface $form_state): array {
-    $image_fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('image_file'))));
-    $document_fids = array_values(array_filter(array_map('intval', (array) $form_state->getValue('document_file'))));
-    $studio_fid = (int) $form_state->getValue('studio_file');
+    $raw_image = $form_state->getValue('image_file');
+    $image_fids = [];
+    if (is_array($raw_image)) {
+      foreach ($raw_image as $item) {
+        $val = filter_var($item, FILTER_VALIDATE_INT);
+        if ($val !== FALSE && $val > 0) {
+          $image_fids[] = (int) $val;
+        }
+      }
+    }
+    $raw_doc = $form_state->getValue('document_file');
+    $document_fids = [];
+    if (is_array($raw_doc)) {
+      foreach ($raw_doc as $item) {
+        $val = filter_var($item, FILTER_VALIDATE_INT);
+        if ($val !== FALSE && $val > 0) {
+          $document_fids[] = (int) $val;
+        }
+      }
+    }
+    $studio_val = filter_var($form_state->getValue('studio_file'), FILTER_VALIDATE_INT);
+    $studio_fid = ($studio_val !== FALSE && $studio_val > 0) ? (int) $studio_val : 0;
     $uploaded = count($image_fids) + count($document_fids);
 
     if ($uploaded > 1 || ($uploaded === 1 && $studio_fid > 0)) {
@@ -159,7 +185,7 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
       $is_image = $image_fids !== [];
       $fid = $is_image ? reset($image_fids) : reset($document_fids);
       $field = $is_image ? 'image_file' : 'document_file';
-      $file = $this->entityTypeManager->getStorage('file')->load($fid);
+      $file = $fid > 0 ? $this->entityTypeManager->getStorage('file')->load($fid) : NULL;
       if (!$file instanceof FileInterface) {
         return [
           'file' => NULL,
@@ -173,7 +199,9 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
 
     // Envio recente do Studio: só do próprio usuário, ou de todos se administrador.
     $file = $this->entityTypeManager->getStorage('file')->load($studio_fid);
-    $is_image = $file instanceof FileInterface && in_array(strtolower(pathinfo($file->getFilename(), PATHINFO_EXTENSION)), $this->uploadPolicy->imageExtensions('forum'), TRUE);
+    $filename = $file instanceof FileInterface ? (string) $file->getFilename() : '';
+    $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    $is_image = $file instanceof FileInterface && in_array($ext, $this->uploadPolicy->imageExtensions('forum'), TRUE);
     if (!$file instanceof FileInterface || !$this->recentUploads->isOwnedBy($file, (int) $this->currentUser->id(), 'forum', $this->currentUser->hasPermission('administer site configuration'))) {
       return [
         'file' => NULL,
@@ -187,11 +215,15 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
   /**
    * Creates unpublished Media and inserts the Entity Embed in the editor.
+   *
+   * @param array<string, mixed> $form
    */
   public function ajaxSubmit(array &$form, FormStateInterface $form_state): AjaxResponse {
     $response = new AjaxResponse();
@@ -219,7 +251,8 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
       return $response;
     }
 
-    $image_alt = trim((string) $form_state->getValue('image_alt'));
+    $image_alt_val = $form_state->getValue('image_alt');
+    $image_alt = is_scalar($image_alt_val) ? trim((string) $image_alt_val) : '';
     if ($is_image_upload && ($image_alt === '' || mb_strlen($image_alt) > 512)) {
       $form_state->setErrorByName('image_alt', $this->t('Informe uma descrição não vazia de até 512 caracteres para a imagem.'));
       $response->addCommand(new HtmlCommand('#aculta-forum-attachment-dialog', $form));

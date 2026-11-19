@@ -1,10 +1,10 @@
 # Dívida PHPStan — ACULTA
 
-Gerado em 2026-11-19T01:40:20+00:00 por `scripts/phpstan-debt-report.php`.
+Gerado em 2026-11-19T02:04:07+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Item | Valor |
 | --- | --- |
-| Commit | `82cbd7efdb82e291c5c77047cb4886c8a694b0fd` |
+| Commit | `011fa2fbd145f6972bef45e400afd2720e116f27` |
 | PHP | 8.4.27 |
 | PHPStan | PHPStan - PHP Static Analysis Tool 2.3.5 |
 | Nível | 10 |
@@ -15,11 +15,11 @@ Gerado em 2026-11-19T01:40:20+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Medida | Ocorrências |
 | --- | ---: |
-| Total bruto no nível 10 | 17533 |
-| Dívida congelada no baseline | 17533 |
+| Total bruto no nível 10 | 17398 |
+| Dívida congelada no baseline | 17398 |
 | Erros não suprimidos | 0 |
-| Entradas no baseline | 10332 |
-| Produção | 10417 |
+| Entradas no baseline | 10221 |
+| Produção | 10282 |
 | Testes | 7116 |
 
 ## Criticidade funcional
@@ -27,8 +27,8 @@ Gerado em 2026-11-19T01:40:20+00:00 por `scripts/phpstan-debt-report.php`.
 | Criticidade | Ocorrências |
 | --- | ---: |
 | alta | 212 |
-| media | 15497 |
-| baixa | 1824 |
+| media | 15405 |
+| baixa | 1781 |
 
 ## Dívida por módulo (prioridade de redução)
 
@@ -41,8 +41,8 @@ Gerado em 2026-11-19T01:40:20+00:00 por `scripts/phpstan-debt-report.php`.
 | aculta_portal | 1152 |
 | aculta_lms | 1014 |
 | aculta_lms_h5p | 928 |
-| aculta_forum | 923 |
 | aculta_index | 915 |
+| aculta_forum | 788 |
 | aculta_commerce | 623 |
 | aculta_pagamentos_mercadopago | 594 |
 | aculta_studio | 592 |
@@ -69,13 +69,13 @@ Gerado em 2026-11-19T01:40:20+00:00 por `scripts/phpstan-debt-report.php`.
 
 | Identificador | Ocorrências |
 | --- | ---: |
-| `offsetAccess.nonOffsetAccessible` | 4590 |
-| `argument.type` | 3337 |
-| `method.nonObject` | 2059 |
-| `missingType.iterableValue` | 1708 |
-| `cast.string` | 1599 |
-| `cast.int` | 1017 |
-| `method.notFound` | 709 |
+| `offsetAccess.nonOffsetAccessible` | 4541 |
+| `argument.type` | 3327 |
+| `method.nonObject` | 2049 |
+| `missingType.iterableValue` | 1665 |
+| `cast.string` | 1586 |
+| `cast.int` | 1011 |
+| `method.notFound` | 706 |
 | `property.nonObject` | 474 |
 | `return.type` | 288 |
 | `foreach.nonIterable` | 274 |

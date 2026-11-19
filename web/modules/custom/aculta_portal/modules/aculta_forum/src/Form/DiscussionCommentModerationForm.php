@@ -49,6 +49,12 @@ final class DiscussionCommentModerationForm extends FormBase {
     return 'aculta_forum_comment_moderation_form';
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   * @return array<string, mixed>
+   */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $comment = $this->modRoute->getParameter('comment');
     if (!$comment instanceof CommentInterface) {
@@ -58,9 +64,11 @@ final class DiscussionCommentModerationForm extends FormBase {
 
     // Ação concluída: o modal só confirma e a página recarrega para mostrar o novo estado do comentário.
     if ($form_state->get('acao_feita')) {
-      $feitoCid = (int) $form_state->get('acao_cid');
-      $feitoAcao = (string) $form_state->get('acao');
-      $form['feito'] = ['#markup' => '<p class="comment-admin-controls__done" data-moderation-done data-cid="' . $feitoCid . '" data-acao="' . $feitoAcao . '">' . $this->t('Ação concluída.') . '</p>'];
+      $raw_cid = $form_state->get('acao_cid');
+      $feitoCid = is_numeric($raw_cid) ? (int) $raw_cid : 0;
+      $raw_acao = $form_state->get('acao');
+      $feitoAcao = is_scalar($raw_acao) ? (string) $raw_acao : '';
+      $form['feito'] = ['#markup' => '<p class="comment-admin-controls__done" data-moderation-done data-cid="' . $feitoCid . '" data-acao="' . htmlspecialchars($feitoAcao, ENT_QUOTES, 'UTF-8') . '">' . $this->t('Ação concluída.') . '</p>'];
       return $form;
     }
 
@@ -104,19 +112,32 @@ final class DiscussionCommentModerationForm extends FormBase {
     $form['acoes']['excluir'] = ['#type' => 'submit', '#value' => $this->t('Excluir de vez'), '#acao' => 'excluir'];
 
     // Envio por HTMX para o mesmo endereço: o corpo do popup é trocado pelo resultado.
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
     $form['#attributes']['data-hx-post'] = Url::fromRoute('aculta_forum.comment_moderation', ['comment' => $cid])->toString();
     $form['#attributes']['data-hx-target'] = '#aculta-admin-dialog-body';
     $form['#attributes']['data-hx-swap'] = 'innerHTML';
-    $form['#attributes']['class'][] = 'comment-admin-controls__form';
+    $form['#attributes']['class'] = array_merge((array) ($form['#attributes']['class'] ?? []), ['comment-admin-controls__form']);
     return $form;
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     if ($this->acaoDoBotao($form_state) === 'excluir' && !$form_state->getValue('confirmar_exclusao')) {
       $form_state->setErrorByName('confirmar_exclusao', $this->t('Confirme que a exclusão é definitiva.'));
     }
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * @param array<string, mixed> $form
+   */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $comment = $this->modRoute->getParameter('comment');
     if (!$comment instanceof CommentInterface) {
@@ -166,7 +187,8 @@ final class DiscussionCommentModerationForm extends FormBase {
    */
   private function acaoDoBotao(FormStateInterface $form_state): string {
     $trigger = $form_state->getTriggeringElement();
-    return (string) ($trigger['#acao'] ?? '');
+    $acao = is_array($trigger) ? ($trigger['#acao'] ?? '') : '';
+    return is_scalar($acao) ? (string) $acao : '';
   }
 
   /**
