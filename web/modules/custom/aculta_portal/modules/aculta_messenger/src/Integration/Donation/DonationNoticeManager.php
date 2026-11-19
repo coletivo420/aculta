@@ -307,7 +307,7 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
     return [
       'title' => $payment ? $this->t('Pagamento de doação aprovado') : $this->t('Pedido de doação criado'),
       'summary' => $summary,
-      'email_summary' => $summary,
+      'email_summary' => (string) $summary,
       'url' => $url,
     ];
   }
@@ -403,9 +403,13 @@ final class DonationNoticeManager implements DonationNoticeManagerInterface, Avi
         $message->set(self::DIGEST_FIELD, 1)->save();
         continue;
       }
+      $summary = $notice['email_summary'] ?? NULL;
+      if (!is_string($summary)) {
+        continue;
+      }
       $rows[] = [
         'tipo' => 'doacao',
-        'titulo' => $notice['email_summary'],
+        'titulo' => $summary,
         'quantidade' => 1,
         'delivery_id' => (int) $message->id(),
       ];

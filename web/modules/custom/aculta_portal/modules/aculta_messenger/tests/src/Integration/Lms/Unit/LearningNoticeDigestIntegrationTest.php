@@ -1005,7 +1005,7 @@ class TestLearningDigestProvider implements AvisoDigestProviderIdentityInterface
   /**
    * {@inheritdoc}
    *
-   * @return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}>
+   * @return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id?: int, delivery_ids?: list<int>}>
    *   Contract-shaped digest rows.
    */
   public function digestRowsFor(int $uid): array {
@@ -1013,8 +1013,10 @@ class TestLearningDigestProvider implements AvisoDigestProviderIdentityInterface
       'tipo' => $this->type,
       'titulo' => $this->title,
       'quantidade' => 1,
-      'delivery_id' => $this->includeDeliveryId ? $this->deliveryId : 0,
     ];
+    if ($this->includeDeliveryId) {
+      $row['delivery_id'] = $this->deliveryId;
+    }
     $rows = [$row];
     foreach ($this->additionalRows as $additionalRow) {
       $rows[] = $additionalRow;

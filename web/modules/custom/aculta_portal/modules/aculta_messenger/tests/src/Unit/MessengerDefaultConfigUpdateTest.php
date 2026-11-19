@@ -275,9 +275,13 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
       'submitted' => 'Enviar para revisão',
       'needs_changes' => 'Pedir ajustes',
     ];
+    $readback = new MessengerAllowedValuesReadback();
     $field = $this->createMock(FieldStorageConfigInterface::class);
     $field->expects(self::exactly(2))->method('getSetting')->with('allowed_values')
-      ->willReturnCallback(static fn(): array => $allowedValues);
+      ->willReturnCallback(static function () use ($allowedValues, $readback): array {
+        $readback->values = $allowedValues;
+        return $readback->values;
+      });
     $field->expects(self::never())->method('setSetting');
     $field->expects(self::never())->method('save');
     $storage = $this->createMock(EntityStorageInterface::class);
@@ -293,8 +297,10 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
     try {
       aculta_messenger_update_10016();
       aculta_messenger_update_10016();
-      self::assertSame('Enviar para revisão', $allowedValues['submitted']);
-      self::assertCount(2, $allowedValues);
+      $observedValues = $readback->values;
+      self::assertIsArray($observedValues);
+      self::assertSame('Enviar para revisão', $observedValues['submitted'] ?? NULL);
+      self::assertCount(2, $observedValues);
     }
     finally {
       \Drupal::unsetContainer();
@@ -415,6 +421,20 @@ final class MessengerDefaultConfigUpdateTest extends UnitTestCase {
     $resolver->method('getPath')->with('module', 'aculta_messenger')->willReturn($modulePath);
     return $resolver;
   }
+
+}
+
+/**
+ * Stores allowed values returned by the mocked field storage for assertions.
+ */
+final class MessengerAllowedValuesReadback {
+
+  /**
+   * Values observed during the update hook's storage reads.
+   *
+   * @var array<string, string>|null
+   */
+  public ?array $values = NULL;
 
 }
 

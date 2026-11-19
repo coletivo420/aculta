@@ -38662,12 +38662,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Commerce/CommerceOrderNoticeManager.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManager::digestRowsFor() should return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}> but returns list<array{tipo: ''loja'', titulo: mixed, quantidade: 1, delivery_id: int}>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Commerce/CommerceOrderNoticeManager.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_messenger\Integration\Commerce\CommerceOrderNoticeManager::loadOrdersForUuids() has parameter $uuids with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -38890,12 +38884,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Donation/DonationNoticeManager.php
 
 		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Donation\DonationNoticeManager::digestRowsFor() should return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}> but returns list<array{tipo: ''doacao'', titulo: mixed, quantidade: 1, delivery_id: int}>.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Donation/DonationNoticeManager.php
-
-		-
 			rawMessage: 'Method Drupal\aculta_messenger\Integration\Donation\DonationNoticeManager::pendingMessages() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
@@ -39042,12 +39030,6 @@ parameters:
 		-
 			rawMessage: 'Method Drupal\aculta_messenger\Integration\Events\EventsContributionNoticeManager::addPersonalNoticesPage() has parameter $items with no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_messenger\Integration\Events\EventsContributionNoticeManager::digestRowsFor() should return array<int, array{tipo: string, titulo: string, quantidade: int, delivery_id: int, delivery_ids?: list<int>}> but returns list<array{tipo: ''eventos…'', titulo: mixed, quantidade: 1, delivery_id: int}>.'
-			identifier: return.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_messenger/src/Integration/Events/EventsContributionNoticeManager.php
 

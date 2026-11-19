@@ -151,7 +151,9 @@ final class CommerceOrderNoticePersistenceKernelTest extends KernelTestBase {
 
     self::assertCount(2, $rows);
     self::assertSame('loja', $rows[0]['tipo']);
-    self::assertGreaterThan(0, $rows[0]['delivery_id']);
+    $deliveryId = $rows[0]['delivery_id'] ?? NULL;
+    self::assertIsInt($deliveryId);
+    self::assertGreaterThan(0, $deliveryId);
     self::assertCount(1, array_unique(array_column($rows, 'titulo')));
     self::assertSame(
       array_column($rows, 'delivery_id'),
