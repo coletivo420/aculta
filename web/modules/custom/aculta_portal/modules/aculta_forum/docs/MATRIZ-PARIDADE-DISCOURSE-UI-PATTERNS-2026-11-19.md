@@ -39,7 +39,7 @@ Paridade de fluxos, não pixel-perfect: lista, categoria, tópico, timeline, com
 2. SDC render não decide ACL nem faz EntityQuery; render arrays de serviços carregam `#cache` por contexto/usuário/Domain/Group e evitam vazamentos.
 3. Validar `ui_patterns_views` nos displays ativos e `ui_patterns_layouts`/Field Group na configuração efetiva, não apenas no `config/install`; não remover Twig adapter que preserve campos estruturais enquanto a substituição não estiver homologada.
 4. CSS pelos tokens `ui_skins` e `ui_styles`; evitar verde escuro em superfícies escuras sem contraste; modos claro/escuro com mesma geometria; responsividade 320/390/768/1024/1440.
-5. Tests: schema validation, render SDC, UI Patterns Library, claro/escuro, contraste WCAG 2.2 AA, zoom 200%/400%, teclado, leitor de tela, leitor de RSS e sem JS quando aplicável. 
+5. Tests: schema validation, render SDC, UI Patterns Library, claro/escuro, contraste WCAG 2.2 AA, zoom 200%/400%, teclado, leitor de tela, leitor de RSS e sem JS quando aplicável.
 6. Inspecionar versão instalada/corrigida do UI Patterns frente ao advisory https://www.drupal.org/sa-contrib-2026-075; não pressupor correção pelo nome da branch.
 7. Não instalar `UI Patterns CKEditor 5` nesta fase. `UI Patterns Field Group` prefere dev se tecnicamente compatível com APIs instaladas e decisão ADR-055.
 
