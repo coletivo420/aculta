@@ -17,6 +17,7 @@ use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -87,7 +88,7 @@ final class DiscussionReplyControllerQuoteTest extends UnitTestCase {
   /**
    * Creates a published shared Comment with a specified source host and ACL.
    */
-  private function sourceComment(int $hostId, bool $viewAllowed): CommentInterface {
+  private function sourceComment(int $hostId, bool $viewAllowed): CommentInterface&MockObject {
     $comment = $this->createMock(CommentInterface::class);
     $comment->method('bundle')->willReturn('aculta_discussion_post');
     $comment->method('getFieldName')->willReturn('field_aculta_discussion');

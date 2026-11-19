@@ -8,6 +8,7 @@ use Drupal\aculta_forum\Service\TopicDeletionModerationManager;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -51,19 +52,19 @@ final class TopicDeletionDecisionForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    */
-  public function getQuestion(): string {
+  public function getQuestion(): TranslatableMarkup {
     return $this->decision === 'approve'
-      ? (string) $this->t('Excluir definitivamente este tópico?')
-      : (string) $this->t('Rejeitar a exclusão e restaurar este tópico?');
+      ? $this->t('Excluir definitivamente este tópico?')
+      : $this->t('Rejeitar a exclusão e restaurar este tópico?');
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getConfirmText(): string {
+  public function getConfirmText(): TranslatableMarkup {
     return $this->decision === 'approve'
-      ? (string) $this->t('Aprovar e excluir')
-      : (string) $this->t('Rejeitar e restaurar');
+      ? $this->t('Aprovar e excluir')
+      : $this->t('Rejeitar e restaurar');
   }
 
   /**
