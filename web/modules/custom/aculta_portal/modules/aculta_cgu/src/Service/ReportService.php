@@ -7,6 +7,8 @@ namespace Drupal\aculta_cgu\Service;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\comment\CommentInterface;
+use Drupal\node\NodeInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_cgu\Entity\CguReport;
@@ -92,6 +94,14 @@ final class ReportService {
       return 'anonimo';
     }
     if ($entity instanceof CguReport || $entity->isNew()) {
+      return 'alvo_invalido';
+    }
+    // Unsupported discussion hosts must never be silently assigned to
+    // the public Forum moderation queue.
+    try {
+      $this->resolvePurpose($entity);
+    }
+    catch (ReportNotAllowedException) {
       return 'alvo_invalido';
     }
     // Só denuncia o que a própria conta pode ler.
@@ -228,30 +238,38 @@ final class ReportService {
   }
 
   /**
-   * Infere o purpose com base no tipo da entidade.
+   * Resolves the authoritative reporting scope from the actual host.
+   *
+   * A Comment bundle is shared by multiple purposes. LMS discussions require
+   * a dedicated Group-aware moderation adapter before CGU can accept reports;
+   * unsupported hosts fail closed rather than enter the public Forum queue.
    */
   public function resolvePurpose(EntityInterface $entity): string {
-    $type = $entity->getEntityTypeId();
-    if (str_contains($type, 'event')) {
-      return 'eventos';
+    if ($entity instanceof CommentInterface) {
+      $host = $entity->getCommentedEntity();
+      if (!$host instanceof EntityInterface || $host instanceof CommentInterface) {
+        throw new ReportNotAllowedException('Contexto do comentário não reconhecido.');
+      }
+      $purpose = $this->resolvePurpose($host);
+      if (!in_array($purpose, ['forum', 'revista', 'wiki'], TRUE)) {
+        throw new ReportNotAllowedException('Contexto de moderação do comentário ainda não habilitado.');
+      }
+      return $purpose;
     }
-    if (str_contains($type, 'forum') || str_contains($type, 'comment')) {
+    if ($entity->getEntityTypeId() === 'aculta_forum_post') {
       return 'forum';
     }
-    if ($type === 'node') {
-      /** @var \Drupal\node\NodeInterface $entity */
-      $bundle = $entity->bundle();
-      if ($bundle === 'revista') {
-        return 'revista';
-      }
-      if ($bundle === 'wiki_entry') {
-        return 'wiki';
-      }
-      if ($bundle === 'aculta_forum_topic') {
-        return 'forum';
-      }
+    if ($entity instanceof NodeInterface) {
+      return match ($entity->bundle()) {
+        'aculta_forum_topic' => 'forum',
+        'revista' => 'revista',
+        'wiki_entry' => 'wiki',
+        default => 'portal',
+      };
+    }
+    if (str_contains($entity->getEntityTypeId(), 'event')) {
+      return 'eventos';
     }
     return 'portal';
   }
-
 }

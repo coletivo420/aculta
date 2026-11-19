@@ -10,6 +10,7 @@ use Drupal\aculta_forum\Service\ForumQuoteBuilder;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
@@ -236,7 +237,19 @@ final class ForumQuoteHooks {
       || !$comment->isPublished()) {
       return FALSE;
     }
-    return $comment->getCommentedEntity() instanceof EntityInterface;
+    // Historical Growroom replies are immutable archive records, not normal
+    // discussion comments eligible for quote/reply actions.
+    if ($comment->hasField('field_autor_legado')
+      && !$comment->get('field_autor_legado')->isEmpty()) {
+      return FALSE;
+    }
+    $host = $comment->getCommentedEntity();
+    if ($host instanceof FieldableEntityInterface
+      && $host->hasField('field_autor_legado')
+      && !$host->get('field_autor_legado')->isEmpty()) {
+      return FALSE;
+    }
+    return $host instanceof EntityInterface;
   }
 
 }
