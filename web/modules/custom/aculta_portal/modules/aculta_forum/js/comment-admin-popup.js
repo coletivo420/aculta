@@ -11,7 +11,8 @@
 
   const dialogId = 'aculta-admin-dialog';
   const bodyId = 'aculta-admin-dialog-body';
-  const triggerSelector = '[data-action="comentario-controles"]';
+  // Gatilhos de comentário e de tópico (data-action="<tipo>-controles") abrem o mesmo popup.
+  const triggerSelector = '[data-action$="-controles"]';
   let lastTrigger = null;
 
   function getDialog() {

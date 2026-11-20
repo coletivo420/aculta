@@ -192,6 +192,18 @@ DEFERRED: prova visual e de ordem real nos consumidores e no Fórum.
 - Prova: Unit do Fórum 285 testes OK; PHPStan exit 0; guard PASS; PHPCS sem erros.
 - DEFERRED: prova visual de recuo e seta nas páginas reais, e Kernel de ordem com respostas aninhadas.
 
+## Ícone de administração generalizado (comentário e tópico) — 2026-11-20
+
+Decisão do responsável: usar o ícone de administração existente (`comment-admin-trigger`) também no tópico, generalizado, e todas as ações administrativas em popup seguindo o padrão dos SDCs.
+
+- `comment-admin-trigger`: novas props `kind` (`comentario`, padrão, ou `topico`) e `title` (opcional). O `data-action` vira `<kind>-controles`. Comentário mantém o comportamento atual.
+- `comment-admin-popup.js`: o seletor passa a `[data-action$="-controles"]`, então o mesmo popup atende comentário e tópico.
+- Validação: schema SDC PASS (151 componentes, 2895 verificações); `node --check` OK.
+
+Próximo passo: a rota que devolve o conteúdo do popup do tópico (ações de mover categoria) por HTMX, e ligar o trigger com `kind: topico` na página do tópico. DEFERRED até essa rota existir.
+
+Desfeito nesta rodada: o `forum-topic-admin-menu` criado antes, que não era necessário.
+
 ## Recontagem de consumo por código (somente twig, php e yml) — 2026-11-20
 
 Recontagem excluindo docs, CHANGELOG e Stories. Antes, `forum-topic-card` e `forum-reply-mirror` pareciam consumidos por causa de docs.
