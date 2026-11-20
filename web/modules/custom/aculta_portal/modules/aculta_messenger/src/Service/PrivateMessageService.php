@@ -355,7 +355,7 @@ class PrivateMessageService implements PrivateMessageServiceInterface {
           $members = [$user_entity, $author];
           $thread_id = $this->getThreadIdForMembers($members);
           if ($thread_id) {
-            $url = Url::fromRoute('entity.private_message_thread.canonical', ['private_message_thread' => $thread_id], ['attributes' => ['class' => ['private_message_link']]]);
+            $url = Url::fromRoute('entity.private_message_thread.canonical', ['private_message_thread' => $thread_id], []);
             $build['private_message_link'] = [
               '#type' => 'link',
               '#url' => $url,

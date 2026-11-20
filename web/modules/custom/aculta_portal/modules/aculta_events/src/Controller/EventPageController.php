@@ -434,7 +434,7 @@ final class EventPageController extends ControllerBase {
     return [
       '#type' => 'component',
       '#component' => 'aculta420_v2:event-page-layout',
-      '#attributes' => ['class' => ['aculta-event']],
+      '#attributes' => [],
       '#props' => [],
       '#slots' => $slots,
       '#prefix' => $prefix !== '' ? $prefix : NULL,
