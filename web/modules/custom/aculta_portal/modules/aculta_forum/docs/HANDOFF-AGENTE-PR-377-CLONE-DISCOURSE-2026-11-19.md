@@ -89,6 +89,15 @@ Plano ajustado:
 2. Impedir anexo nos consumidores pelo mesmo mecanismo de origem/contexto, com teste que prove a recusa. Pendente.
 3. A lacuna de anexos do acervo no índice (abaixo) fica restrita ao Fórum: anexo só é indexável por referência de tópico ou resposta `CURRENT` do próprio Fórum.
 
+## Verificação — reações compartilhadas no bundle `aculta_discussion_post` — 2026-11-20
+
+Decisão do responsável: o bundle de comentário compartilhado deve compartilhar reações entre os consumidores.
+
+- **Render:** `DiscussionReactionEntityViewHooks` monta a barra de reação para qualquer `aculta_discussion_post` em `field_aculta_discussion`, sem filtro por consumidor. Verificado por código.
+- **Permissão:** `DiscussionReactionAccess` resolve o host pelo `DiscussionContextResolver`. Estão registrados os contextos público do Fórum, Publicação (Revista), Wiki e LMS. Host sem contexto registrado é recusado. Verificado por código.
+- **Armazenamento:** tabela `aculta_discussion_reaction`, indexada por entidade e contexto público. Não separa por consumidor. Verificado por código.
+- **Prova:** Unit com mocks em `DiscussionReactionAccessTest`, `DiscussionReactionEntityViewHooksTest` e `DiscussionReactionManagerOriginTest`. **DEFERRED:** Kernel de reação real em comentário de Wiki, Revista e LMS. Não há prova automatizada de ponta a ponta.
+
 ## Achado aberto — anexos do acervo no índice público — 2026-11-20
 
 - **Lacuna:** `MediaContentIndexProvider::isIndexable` (provider de `forum_attachment`, registrado em `aculta_forum.attachment_content_index_provider`) aceita qualquer mídia do bundle. Anexos de tópicos do acervo entram no índice público pelo caminho de mídia, sem passar pelo filtro de origem aplicado a tópicos e comentários.
