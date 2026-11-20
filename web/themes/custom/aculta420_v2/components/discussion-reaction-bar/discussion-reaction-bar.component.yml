@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Barra de Reações
-description: Reações positivas e descurtida com emojis Fluent, botão Descurtir idêntico ao de reação rápida, mesmo clique alterna a seleção e saldo geral descontado; sem controle Undo.
+description: Brócolis como curtir padrão, mão parda em botão próprio de descurtir e popin de emojis positivos com ação Undo para remover qualquer reação ativa. Undo não é emoji nem voto persistente.
 status: stable
 group: Comunidade
 props:

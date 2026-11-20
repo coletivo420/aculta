@@ -145,3 +145,25 @@
   outline: 2px solid var(--color-focus, currentColor);
   outline-offset: 2px;
 }
+
+/* Undo removes the selected vote without adding a pseudo-reaction. */
+.discussion-reaction-bar__popover .discussion-reaction-bar__palette-btn--undo {
+  display: inline-flex;
+  align-items: center;
+  gap: .375rem;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+  background: var(--color-surface-raised, transparent);
+  min-block-size: 2.75rem;
+}
+
+.discussion-reaction-bar__popover .discussion-reaction-bar__palette-btn--undo:focus-visible {
+  outline: 2px solid var(--color-focus, currentColor);
+  outline-offset: 2px;
+}
+
+.discussion-reaction-bar__popover .discussion-reaction-bar__palette-btn--undo:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}

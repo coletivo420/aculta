@@ -59,6 +59,16 @@
               </form>
             {% endif %}
           {% endfor %}
+          {# Undo is an action, not a vote or another emoji. It removes
+             whatever reaction is active, and is disabled for non-voters. #}
+          <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__form discussion-reaction-bar__form--undo">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="reaction" value="undo">
+            <button type="submit" class="discussion-reaction-bar__palette-btn discussion-reaction-bar__palette-btn--undo" title="{{ 'Desfazer reação'|t }}" aria-label="{{ 'Desfazer reação'|t }}" {% if user_reaction is empty %}disabled{% endif %}>
+              {{ include('aculta420_v2:icon', { name: 'arrow-counter-clockwise', variant: 'regular', size: 'sm' }, with_context = false) }}
+              <span>{{ 'Desfazer'|t }}</span>
+            </button>
+          </form>
         </div>
       </div>
     </div>

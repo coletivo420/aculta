@@ -317,15 +317,19 @@ final class ForumSettingsForm extends ConfigFormBase {
       }
       $id = $reaction['id'] ?? NULL;
       $label = $reaction['label'] ?? NULL;
-      if (!is_string($id) || $id === '' || !is_string($label)) {
+      if (!is_string($id) || $id === '' || !is_string($label)
+        || in_array($id, ['dislike', 'undo', 'thumbs-down', 'thumbs-down-medium', 'thumbs_down', 'thumbs_down_medium'], TRUE)) {
         continue;
       }
 
       $icon = $reaction['icon'] ?? $id;
+      if (!is_string($icon) || in_array($icon, ['thumbs-down', 'thumbs-down-medium'], TRUE)) {
+        continue;
+      }
       $enabled = $this->booleanValue($reaction['enabled'] ?? TRUE) ?? TRUE;
       $reactions[] = [
         'id' => $id,
-        'icon' => is_string($icon) ? $icon : $id,
+        'icon' => $icon,
         'label' => $label,
         'enabled' => $enabled,
       ];

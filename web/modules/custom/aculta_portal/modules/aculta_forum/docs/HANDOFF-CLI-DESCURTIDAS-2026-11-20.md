@@ -35,3 +35,11 @@ EXECUTE SEQUENCIALMENTE, SEM PARAR NA PRIMEIRA FALHA:
 - O botão negativo usa **mão parda** Microsoft Fluent Emoji Medium `thumbs-down-medium` (👎🏽), não a versão Default. Usar `aculta420_v2:reaction-emoji`, existente no tema.
 - O popin contém **somente reações positivas**, nunca `dislike`, `thumbs-down` ou `thumbs-down-medium`, nem como ID nem como `icon` de configuração. O catálogo `aculta_editor` pode oferecer 👎🏽 em texto, mas isso **não é uma reação votável** na paleta do fórum.
 - Verificar proteção dupla `DiscussionReactionManager::getAllowedReactions()` + `discussion-reaction-bar.twig`; clicar na reação ativa remove o voto, sem botão de desfazer adicional. Preservar `allowed_reactions` no banco/config só com emojis positivos. Acrescentar Unit/Kernel simulando configuração adversarial e Browser mobile/desktop com o popin aberto.
+
+## Revisão normativa final: popin com Undo, sem descurtida
+
+O popin de seleção de reações contém **somente os emojis positivos e a ação "Desfazer" (Undo)**. O botão negativo com mão parda 👎🏽 continua fixo na barra, **fora do popin**. A curtida rápida é sempre o **brócolis 🥦**. Implementações anteriores diziam que não haveria Undo: esta decisão posterior corrige isso, mantendo o segundo clique como outra forma de remoção.
+
+O formulário Undo envia `reaction=undo` via POST/CSRF/HTMX (ou fallback), e o manager o interpreta como **comando de exclusão da reação atual**, sem persistir `undo`. Sem reação, o comando é no-op e a opção fica desabilitada. É permitido desfazer a curtida positiva e a descurtida. Não misturar Undo com `allowed_reactions` nem com `dislike`; um popin que contenha o emoji 👎🏽 como opção viola o contrato.
+
+Validar DV-16..DV-19 no guia IMPLEMENTACAO-DESCURTIDAS, além de DV-01..DV-15: sem duplo voto, acesso e origem, User Stats e Statistics/CGU/Game, comportamento em HTMX e sem JS, popin aberto com positivos + Undo, bloqueio correto da opção para não votantes. O CI e o Runtime não foram executados nesta rodada de edição remota; usar evidência real antes de declarar pronto.

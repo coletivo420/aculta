@@ -46,6 +46,7 @@ final class ForumReactionsConfigTest extends UnitTestCase {
     self::assertContains('pray', $reactionIds);
     // Dislike is a separate button and never an emoji palette entry.
     self::assertNotContains('dislike', $reactionIds);
+    self::assertNotContains('undo', $reactionIds);
     self::assertNotContains('thumbs-down', $reactionIds);
     self::assertNotContains('thumbs-down-medium', $reactionIds);
     self::assertNotContains('thumbs_down_medium', $reactionIds);
@@ -63,6 +64,10 @@ final class ForumReactionsConfigTest extends UnitTestCase {
     self::assertFileExists($theme . '/assets/icons/reacoes/thumbs-down-medium.svg');
     self::assertStringContainsString("key not in ['dislike', 'thumbs-down', 'thumbs-down-medium'", $bar);
     self::assertStringContainsString("reaction.icon not in ['thumbs-down', 'thumbs-down-medium']", $bar);
+    self::assertStringContainsString('name="reaction" value="undo"', $bar);
+    self::assertStringContainsString("name: 'arrow-counter-clockwise'", $bar);
+    self::assertStringContainsString("{{ 'Desfazer'|t }}", $bar);
+    self::assertStringContainsString('user_reaction is empty', $bar);
   }
 
   /**

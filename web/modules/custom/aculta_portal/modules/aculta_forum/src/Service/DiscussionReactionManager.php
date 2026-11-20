@@ -36,6 +36,14 @@ class DiscussionReactionManager {
    */
   public const DISLIKE_REACTION = ReactionScore::DISLIKE;
 
+  /**
+   * An explicit action to remove the current vote from the positive popover.
+   *
+   * This is NOT a reaction type and must never be stored in the reaction table
+   * or shown among the positive emoji options.
+   */
+  public const UNDO_ACTION = 'undo';
+
   public function __construct(
     protected readonly Connection $database,
     protected readonly ConfigFactoryInterface $configFactory,
@@ -59,7 +67,7 @@ class DiscussionReactionManager {
     $allowed = [];
     if (is_iterable($raw)) {
       foreach ($raw as $item) {
-        if (is_array($item) && !empty($item['enabled']) && isset($item['id'], $item['icon'], $item['label']) && is_string($item['id']) && is_string($item['icon']) && is_string($item['label']) && !in_array($item['id'], [self::DISLIKE_REACTION, 'thumbs-down', 'thumbs-down-medium', 'thumbs_down', 'thumbs_down_medium'], TRUE) && !in_array($item['icon'], ['thumbs-down', 'thumbs-down-medium'], TRUE)) {
+        if (is_array($item) && !empty($item['enabled']) && isset($item['id'], $item['icon'], $item['label']) && is_string($item['id']) && is_string($item['icon']) && is_string($item['label']) && !in_array($item['id'], [self::DISLIKE_REACTION, self::UNDO_ACTION, 'thumbs-down', 'thumbs-down-medium', 'thumbs_down', 'thumbs_down_medium'], TRUE) && !in_array($item['icon'], ['thumbs-down', 'thumbs-down-medium'], TRUE)) {
           $allowed[$item['id']] = [
             'id' => $item['id'],
             'icon' => $item['icon'],
@@ -211,7 +219,7 @@ class DiscussionReactionManager {
    *   }
    */
   public function toggleReaction(EntityInterface $entity, int $uid, string $reactionId): array {
-    if (!$this->isAllowedReaction($reactionId)) {
+    if ($reactionId !== self::UNDO_ACTION && !$this->isAllowedReaction($reactionId)) {
       throw new \InvalidArgumentException(sprintf('Reaction "%s" is not allowed.', $reactionId));
     }
 
@@ -262,8 +270,8 @@ class DiscussionReactionManager {
         $wasPositive = $wasPublic && $prevReaction !== self::DISLIKE_REACTION;
         $isPositive = $isPublic && $reactionId !== self::DISLIKE_REACTION;
 
-        if ($prevReaction === $reactionId) {
-          // Same emoji: remove reaction.
+        if ($prevReaction === $reactionId || $reactionId === self::UNDO_ACTION) {
+          // Same selected emoji or explicit Undo: remove the current vote.
           $this->database->delete(self::TABLE_REACTIONS)
             ->condition('id', $existingId)
             ->execute();
@@ -311,6 +319,15 @@ class DiscussionReactionManager {
           'action' => 'updated',
           'previous_reaction' => $prevReaction,
           'current_reaction' => $reactionId,
+        ];
+      }
+
+      // Undo on a fresh/unvoted item is a no-op. Never persist "undo".
+      if ($reactionId === self::UNDO_ACTION) {
+        return [
+          'action' => 'unchanged',
+          'previous_reaction' => NULL,
+          'current_reaction' => NULL,
         ];
       }
 

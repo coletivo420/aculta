@@ -100,3 +100,17 @@ Foi substituído o ícone Phosphor negativo pelo SVG original Microsoft Fluent E
 O ícone do botão negativo é `thumbs-down-medium.svg`, **Microsoft Fluent Emoji Medium** 👎🏽, registrado nos packs existentes do tema (`aculta_reacoes` e `aculta_fluent_emoji`) e no catálogo `aculta_editor`. O ID persistido continua `dislike`. O botão negativo permanece **fora da paleta de emojis positivos**, e `DiscussionReactionManager::getAllowedReactions()` exclui `dislike`, `thumbs-down`, `thumbs-down-medium` e aliases, inclusive por ícone. O template da paleta também aplica guarda defensiva. Clicar novamente em qualquer reação ativa a remove, inclusive descurtir, sem ação Undo adicional. Este requisito prevalece sobre os anteriores que mencionavam mão genérica.
 
 Validar com teste de configuração deliberadamente malformada incluindo IDs/ícones negativos na paleta e com navegador/HTMX. Até então, apenas código publicado; aceite Runtime DEFERRED.
+
+### Regra final do popin - positiva + Undo (2026-11-20)
+
+**Decisão mais recente e prevalecente:** o popin mostra os emojis positivos configurados e **uma opção Desfazer/Undo**, não mostra a descurtida nem o emoji de mão parda. A mão parda 👎🏽 aparece **exclusivamente no botão próprio** ao lado da curtida rápida por brócolis 🥦. O popin possui o formulário POST `reaction=undo`: remove a reação ativa, seja positiva ou negativa, sem converter Undo em um voto, emoji, trigger de Game ou métrica. Sem reação ativa, o controle fica desabilitado e um POST manual de Undo não grava linha. Continuam válidos o segundo clique no botão de brócolis/descurtida/emoji ativo e a troca entre emojis positivos; um único voto por UID/alvo.
+
+**Segurança:** `DiscussionReactionManager::UNDO_ACTION` é comando transitório validado pelo controller e pelo próprio manager, separado de `isAllowedReaction()`; `getAllowedReactions()` e o Form admin rejeitam ID `undo` e IDs/ícones negativos, inclusive se Config Sync estiver incorreto. `undo` nunca integra `allowed_reactions`, o banco de votos nem o popin de emojis. Backend administrativo apenas para `administrator`.
+
+**Novos testes de aceite DV-16..19 (PLANNED, código inicial escrito):**
+- DV-16 - usuário com `broccoli` selecionado: popin mostra positivos + Undo, **não** mostra descurtida; Undo remove 1 voto e decrementa contador recebido.
+- DV-17 - usuário com `dislike` selecionado: popin mostra Undo, mas **não** oferece opção de descurtir; Undo remove o negativo e aumenta saldo do alvo em 1 até o clamp.
+- DV-18 - usuário sem reação: Undo desabilitado; POST `reaction=undo` autenticado é no-op sem inserção na tabela.
+- DV-19 - configuração adulterada com `undo`, `dislike` ou `thumbs-down-medium` no catálogo positivo não cria opção positiva; remapeamento/dados legados mantêm brócolis default e emoji pardo no botão exclusivo.
+
+As fases de Theme/Browser, Kernel/concorrência e CI devem ser verificadas no Homelab antes de promover os cenários a PASS.
