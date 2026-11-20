@@ -46,7 +46,8 @@ final class ForumMarleyTopicActions {
     if (!$targetAccess instanceof AccessResultInterface) {
       return AccessResult::forbidden()->cachePerUser()->cachePerPermissions()->addCacheableDependency($node);
     }
-    return $permission->andIf($targetAccess)->addCacheableDependency($node);
+    return $permission->andIf($targetAccess)
+      ->addCacheableDependency($node)->addCacheContexts(['domain', 'user.permissions']);
   }
 
   /**

@@ -37,8 +37,8 @@ final class ForumTab extends MarleyTabBase {
    * {@inheritdoc}
    */
   public function access(AccountInterface $account): AccessResultInterface {
-    return AccessResult::allowedIf(ModerationScope::allows($account, 'forum'))
-      ->cachePerPermissions();
+    return AccessResult::allowedIf($account->isAuthenticated() && ModerationScope::allows($account, 'forum'))
+      ->cachePerPermissions()->cachePerUser();
   }
 
   /**

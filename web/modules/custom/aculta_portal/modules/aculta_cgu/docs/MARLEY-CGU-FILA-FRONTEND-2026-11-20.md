@@ -1,3 +1,5 @@
+> **SEGUNDA ETAPA DA INTEGRAÇÃO (2026-11-20):** `aculta_forum.marley_topic_actions` conecta o inspetor frontend do Marley a três comandos **reais do Fórum**, reutilizando Form API e owner services: fixar/desafixar, fechar/reabrir e arquivar/desarquivar. As rotas `/marley/forum/topico/{node}/{fixar|fechar|arquivar}` exigem `moderate aculta forum topics`, verificam o nó atual do Forum e acessibilidade no domínio de origem por `DomainSiteManager::runInSite('forum')`. O CGU mantém denúncia/decisão separada da mutação do conteúdo. A fila também verifica topic/target no domínio Fórum e resolve links canônicos para esse host. Nada altera backend/admin, não implementa ações destrutivas, split/merge ou popin HTMX nesta etapa. Testes de contrato publicados; Runtime e Browser ainda DEFERRED.
+
 # Entrega técnica - fila e decisão CGU reais no frontend Marley
 
 **Data:** 2026-11-20. **Branch:** feat/forum-paridade-discourse / PR #394.
