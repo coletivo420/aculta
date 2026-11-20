@@ -6,6 +6,7 @@ namespace Drupal\aculta_forum\Form;
 
 use Drupal\aculta_forum\Service\ForumCommentMover;
 use Drupal\aculta_forum\Service\TopicAuthorDeletion;
+use Drupal\aculta_forum\Service\TopicModerationAudit;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -30,6 +31,7 @@ final class TopicMergeForm extends FormBase {
     protected readonly ForumCommentMover $mover,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     protected readonly TopicAuthorDeletion $state,
+    protected readonly TopicModerationAudit $audit,
     protected readonly RouteMatchInterface $topicRoute,
     protected readonly AccountInterface $account,
   ) {}
@@ -42,6 +44,7 @@ final class TopicMergeForm extends FormBase {
       $container->get('aculta_forum.comment_mover'),
       $container->get('entity_type.manager'),
       $container->get('aculta_forum.topic_author_deletion'),
+      $container->get('aculta_forum.topic_moderation_audit'),
       $container->get('current_route_match'),
       $container->get('current_user'),
     );
@@ -153,9 +156,11 @@ final class TopicMergeForm extends FormBase {
     }
     $raw = $form_state->getValue('destination');
     $destination = is_numeric($raw) ? (int) $raw : 0;
-    foreach ($this->rootCommentIds($topic) as $commentId) {
+    $roots = $this->rootCommentIds($topic);
+    foreach ($roots as $commentId) {
       $this->mover->move($commentId, $destination, $this->account);
     }
+    $this->audit->record((int) $topic->id(), 'merge', $destination, (int) $this->account->id(), time(), count($roots));
     $this->state->setClosed($topic, TRUE);
     $this->messenger()->addStatus($this->t('Tópicos juntados. O tópico de origem foi fechado.'));
     $form_state->setRedirect('entity.node.canonical', ['node' => $destination]);

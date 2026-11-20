@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Controller;
 
 use Drupal\aculta_cgu\Entity\CguReport;
+use Drupal\aculta_forum\Service\TopicModerationAudit;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatterInterface;
@@ -26,6 +27,7 @@ final class TopicAdminPopupController extends ControllerBase {
   public static function create(ContainerInterface $container): static {
     $instance = parent::create($container);
     $instance->database = $container->get('database');
+    $instance->audit = $container->get('aculta_forum.topic_moderation_audit');
     $instance->dateFormatter = $container->get('date.formatter');
     return $instance;
   }
@@ -34,6 +36,11 @@ final class TopicAdminPopupController extends ControllerBase {
    * The database connection used for reaction counts.
    */
   private Connection $database;
+
+  /**
+   * Administrative audit of split and merge actions.
+   */
+  private TopicModerationAudit $audit;
 
   /**
    * The date formatter used for the publication date.
@@ -92,6 +99,19 @@ final class TopicAdminPopupController extends ControllerBase {
       $notesField = $report->get('decision_notes');
       $notes = is_string($notesField->value ?? NULL) ? $notesField->value : '';
       $items[] = $status . ($notes !== '' ? ': ' . $notes : '');
+    }
+    // Auditoria administrativa de dividir e juntar (sem exibição pública).
+    $labels = ['split' => (string) $this->t('Dividiu'), 'merge' => (string) $this->t('Juntou')];
+    foreach ($this->audit->entries((int) $node->id()) as $entry) {
+      $user = $this->entityTypeManager()->getStorage('user')->load($entry['uid']);
+      $name = $user !== NULL ? (string) $user->getDisplayName() : (string) $this->t('Usuário removido');
+      $items[] = (string) $this->t('@action @count comentário(s) para o tópico @dest por @name em @date', [
+        '@action' => $labels[$entry['action']] ?? $entry['action'],
+        '@count' => (string) $entry['count'],
+        '@dest' => (string) $entry['destination'],
+        '@name' => $name,
+        '@date' => $this->dateFormatter->format($entry['time'], 'short'),
+      ]);
     }
     $log = $items === [] ? NULL : [
       '#theme' => 'item_list',

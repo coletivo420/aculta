@@ -11,6 +11,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
+use Drupal\aculta_forum\Service\TopicModerationAudit;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -28,6 +29,7 @@ final class TopicSplitForm extends FormBase {
     protected readonly ForumCommentMover $mover,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     protected readonly RouteMatchInterface $topicRoute,
+    protected readonly TopicModerationAudit $audit,
     protected readonly AccountInterface $account,
   ) {}
 
@@ -39,6 +41,7 @@ final class TopicSplitForm extends FormBase {
       $container->get('aculta_forum.comment_mover'),
       $container->get('entity_type.manager'),
       $container->get('current_route_match'),
+      $container->get('aculta_forum.topic_moderation_audit'),
       $container->get('current_user'),
     );
   }
@@ -138,6 +141,10 @@ final class TopicSplitForm extends FormBase {
     $selected = array_filter((array) $form_state->getValue('comments'));
     foreach (array_keys($selected) as $commentId) {
       $this->mover->move((int) $commentId, $destination, $this->account);
+    }
+    $source = $this->topic();
+    if ($source instanceof NodeInterface) {
+      $this->audit->record((int) $source->id(), 'split', $destination, (int) $this->account->id(), time(), count($selected));
     }
     $this->messenger()->addStatus($this->t('Comentários movidos. Tópico dividido.'));
     $form_state->setRedirect('entity.node.canonical', ['node' => $destination]);

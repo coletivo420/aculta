@@ -94,6 +94,10 @@ services:
     class: Drupal\aculta_forum\Hook\DiscussionHostAdminHooks
     arguments: ['@current_user']
 
+  aculta_forum.topic_moderation_audit:
+    class: Drupal\aculta_forum\Service\TopicModerationAudit
+    arguments: ['@keyvalue']
+
   Drupal\aculta_forum\Hook\DiscussionModerationEditHooks:
     class: Drupal\aculta_forum\Hook\DiscussionModerationEditHooks
     arguments: ['@keyvalue', '@current_user', '@datetime.time']

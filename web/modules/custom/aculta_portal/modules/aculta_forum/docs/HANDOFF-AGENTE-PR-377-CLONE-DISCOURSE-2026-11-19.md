@@ -231,6 +231,13 @@ Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve co
 - Validação: PHPStan exit 0; guard PASS; PHPCS sem erros no controlador.
 - DEFERRED: teste da rota e prova visual/HTMX do popup.
 
+## Auditoria de dividir e juntar (paridade Discourse) — 2026-11-20
+
+- `aculta_forum.topic_moderation_audit` (`TopicModerationAudit`, keyvalue `aculta_forum_topic_audit`): registra ação (split/merge), destino, moderador, data e quantidade de comentários por tópico de origem.
+- Gravado por `TopicSplitForm` e `TopicMergeForm`. Exibido no slot de registro do popup de controles do tópico, somente para moderação (sem exibição pública).
+- Validação: Unit do Fórum 290 OK (incluindo `TopicModerationAuditTest`); PHPStan e guard PASS; PHPCS sem erros.
+- Pendente: prova Kernel e visual; a auditoria não é apagável pela interface.
+
 ## Tags de tópico (paridade Discourse) — 2026-11-20
 
 - Mudança estrutural autorizada pelo usuário: vocabulário `aculta_forum_tags`, storage `node.field_aculta_tags` (cardinalidade ilimitada, referência a termo) e campo do tópico `field_aculta_tags` (opcional, criação automática de termo).
