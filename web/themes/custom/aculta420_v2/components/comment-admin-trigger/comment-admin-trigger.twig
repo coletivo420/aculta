@@ -7,6 +7,7 @@
 #}
 <button type="button" class="content-reply-bar__action content-reply-bar__action--admin comment-admin-trigger{% if not with_dialog %} use-htmx{% endif %}" data-action="{{ kind|default('comentario') }}-controles"{% if with_dialog %} aria-controls="{{ dialog_id }}" aria-expanded="false" aria-haspopup="dialog" data-aculta-dialog-trigger{% else %} data-hx-get="{{ url }}" data-hx-target="#aculta-admin-dialog-body" data-hx-swap="innerHTML"{% endif %} aria-label="{{ 'Controles administrativos de @name'|t({'@name': author_name}) }}" title="{{ 'Controles administrativos'|t }}">
   {{ include('aculta420_v2:icon', { name: 'shield-check', variant: 'duotone', size: 'md' }, with_context = false) }}
+  <span class="comment-admin-trigger__label">{{ (kind|default('comentario') == 'topico' ? 'Moderar tópico'|t : 'Moderar'|t) }}</span>
 </button>
 {% if with_dialog %}
   {{ include('aculta420_v2:popup', {

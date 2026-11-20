@@ -33,6 +33,7 @@
     <div class="discussion-reaction-bar__palette-wrapper">
       <button type="button" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--trigger" popovertarget="{{ palette_id }}" style="anchor-name: --{{ palette_id }}" aria-haspopup="dialog" aria-expanded="false" title="{{ 'Escolher reação'|t }}" aria-label="{{ 'Escolher reação'|t }}">
         {{ include('aculta420_v2:icon', { name: 'smiley', variant: 'regular', size: 'sm' }, with_context = false) }}
+        <span class="discussion-reaction-bar__label">{{ 'Reagir'|t }}</span>
       </button>
       <div id="{{ palette_id }}" class="discussion-reaction-bar__popover discussion-reaction-bar__popover--palette" style="position-anchor: --{{ palette_id }}" popover="auto" role="dialog" aria-label="{{ 'Escolher reação'|t }}" data-reaction-popover>
         <div class="discussion-reaction-bar__popover-list">
