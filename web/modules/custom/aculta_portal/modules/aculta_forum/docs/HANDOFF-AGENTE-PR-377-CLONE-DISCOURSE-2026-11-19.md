@@ -144,7 +144,7 @@ DEFERRED:
 
 Lacunas confirmadas nesta rodada:
 
-- `forum-opening-post`: não há inclusão de produção fora da página de visão geral da UI Patterns. A recontagem anterior dele estava errada. Como consumidores não têm abertura, o gap é só do Fórum: ainda não confirmado onde a abertura do tópico é renderizada.
+- `forum-opening-post`: **consumido em produção** por `aculta420_v2/src/Hook/PagePresentationHooks.php` (`#component: aculta420_v2:forum-opening-post`), dentro da página completa do tópico, em `$content['aculta_opening']`. A contagem anterior não cobria `src/Hook` do tema. Consumidores não têm abertura, por decisão.
 - `forum-topic-card`: 0 referências. **Decisão (2026-11-20):** não usar; a lista de tópicos fica só em linhas (`forum-topic-row`), como o Discourse. O cartão com miniatura é variante opcional do Discourse e não entra no Fórum. Documentado como não consumido por decisão, não como lacuna.
 
 ## Decisão — anexos só no Fórum; consumidores apenas mídia embutida — 2026-11-20
