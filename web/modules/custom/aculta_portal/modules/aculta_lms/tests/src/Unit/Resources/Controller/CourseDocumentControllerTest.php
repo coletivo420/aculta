@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_lms\Unit\Resources\Controller;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Drupal\aculta_lms\Access\CourseAuthoringAccessCheck;
 use Drupal\aculta_lms\Resources\Access\CourseDocumentAccessCheck;
 use Drupal\aculta_lms\Resources\Controller\CourseDocumentController;
@@ -40,7 +41,7 @@ final class CourseDocumentControllerTest extends UnitTestCase {
    */
   protected function setUp(): void {
     parent::setUp();
-    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container = new ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
     $generator = $this->createMock(UrlGeneratorInterface::class);
     $generator->method('generateFromRoute')->willReturnCallback(

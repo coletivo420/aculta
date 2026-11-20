@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit\Cart;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Drupal\aculta_portal\Cart\AddToCartAjax;
 use Drupal\aculta_portal\Cart\CartUtility;
 use Drupal\Core\Form\FormInterface;
@@ -71,7 +72,7 @@ class AddToCartAjaxHtmxResponseTest extends UnitTestCase {
   /**
    * Formulário simulado com os erros informados.
    */
-  private function formState(array $errors): FormStateInterface&\PHPUnit\Framework\MockObject\MockObject {
+  private function formState(array $errors): FormStateInterface&MockObject {
     $form = $this->createMock(FormInterface::class);
     $form->method('getFormId')->willReturn(self::FORM_ID);
     $state = $this->createMock(FormStateInterface::class);

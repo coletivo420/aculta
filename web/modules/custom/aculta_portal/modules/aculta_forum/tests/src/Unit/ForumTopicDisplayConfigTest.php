@@ -726,6 +726,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
    *
    * Drupal configuration is a mapping; only YAML lists have meaningful order.
    */
+
   /**
    * @param array<array-key, mixed> $expected
    * @param array<array-key, mixed> $actual
@@ -737,6 +738,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   /**
    * Recursively sorts associative maps while preserving sequence order.
    */
+
   /**
    * @param array<array-key, mixed> $value
    *
@@ -755,7 +757,8 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     return $value;
   }
 
-  /** @return array<array-key, mixed> */
+  /**
+   * @return array<array-key, mixed> */
   private static function parseConfigFile(string $path): array {
     $config = Yaml::parseFile($path);
     if (!is_array($config)) {
@@ -764,7 +767,9 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     return $config;
   }
 
-  /** @param array-key ...$path */
+  /**
+   * @param array-key ...$path
+   *   */
   private static function configValue(mixed $value, int|string ...$path): mixed {
     foreach ($path as $key) {
       if (!is_array($value) || !array_key_exists($key, $value)) {
@@ -774,6 +779,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     }
     return $value;
   }
+
   /**
    * @param array-key ...$path
    *
@@ -787,7 +793,9 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     return $value;
   }
 
-  /** @param array-key ...$path */
+  /**
+   * @param array-key ...$path
+   *   */
   private static function configBoolean(mixed $value, int|string ...$path): bool {
     $value = self::configValue($value, ...$path);
     if (is_bool($value)) {
@@ -796,6 +804,9 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     throw new \UnexpectedValueException('Expected a boolean in configuration.');
   }
 
+  /**
+   *
+   */
   private static function readSource(string $path): string {
     $source = file_get_contents($path);
     if (!is_string($source)) {
@@ -803,4 +814,5 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     }
     return $source;
   }
+
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_maps\Unit;
 
+use Drupal\Core\Url;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -232,7 +233,7 @@ final class MapRendererTest extends UnitTestCase {
     /** @var array<string, mixed> $licenseElem */
     $licenseElem = $attribution['license'] ?? [];
     $urlObj = $licenseElem['#url'] ?? NULL;
-    $this->assertInstanceOf(\Drupal\Core\Url::class, $urlObj);
+    $this->assertInstanceOf(Url::class, $urlObj);
     $this->assertSame('https://www.openstreetmap.org/copyright', $urlObj->getUri());
   }
 
