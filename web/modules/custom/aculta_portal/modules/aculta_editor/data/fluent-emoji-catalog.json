@@ -710,6 +710,24 @@
     "svg": "thumbs-up.svg"
   },
   {
+    "id": "thumbs-down",
+    "name": "Joinha para baixo",
+    "glyph": "👎",
+    "category": "direitos",
+    "keywords": [
+      "joinha para baixo",
+      "não gostei",
+      "não concordo",
+      "descurtir",
+      "descurtida",
+      "discordo",
+      "thumbs down",
+      "dislike",
+      "negativo"
+    ],
+    "svg": "thumbs-down.svg"
+  },
+  {
     "id": "clapping-hands",
     "name": "Palmas",
     "glyph": "👏",

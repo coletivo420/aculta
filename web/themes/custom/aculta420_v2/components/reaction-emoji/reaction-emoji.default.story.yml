@@ -4,3 +4,6 @@ props:
   variant: flat
   size: sm
   label: Brócolis
+
+# O emoji de descurtida pode ser selecionado na UI Patterns Library via
+# props.name = thumbs-down, sem criar novo SDC ou registro manual.

@@ -25,9 +25,10 @@ final class UiIconsPackTest extends UnitTestCase {
     self::assertArrayHasKey('aculta_phosphor_duotone', $data);
     self::assertArrayHasKey('aculta_fluent_emoji', $data);
     self::assertArrayHasKey('aculta_brocolis', $data);
+    self::assertArrayHasKey('aculta_reacoes', $data);
 
     // Valida propriedades de cada pack.
-    foreach (['aculta_phosphor_regular', 'aculta_phosphor_duotone', 'aculta_fluent_emoji', 'aculta_brocolis'] as $packId) {
+    foreach (['aculta_phosphor_regular', 'aculta_phosphor_duotone', 'aculta_fluent_emoji', 'aculta_brocolis', 'aculta_reacoes'] as $packId) {
       $pack = $data[$packId] ?? NULL;
       self::assertIsArray($pack);
       self::assertTrue($pack['enabled'] ?? FALSE);
@@ -70,6 +71,23 @@ final class UiIconsPackTest extends UnitTestCase {
     self::assertIsArray($fluentFiles);
     self::assertNotEmpty($fluentFiles, 'SVG do Fluent Emoji não encontrados.');
     self::assertGreaterThanOrEqual(48, count($fluentFiles));
+
+    // Thumbs-down belongs to both existing Fluent Emoji and reaction packs.
+    $colorThumbsDown = $themeDir . '/assets/icons/fluent-emoji/color/thumbs-down.svg';
+    $flatThumbsDown = $themeDir . '/assets/icons/fluent-emoji/flat/thumbs-down.svg';
+    $reactionThumbsDown = $themeDir . '/assets/icons/reacoes/thumbs-down.svg';
+    self::assertFileExists($colorThumbsDown);
+    self::assertFileExists($flatThumbsDown);
+    self::assertFileExists($reactionThumbsDown);
+    self::assertSame(hash_file('sha256', $colorThumbsDown), hash_file('sha256', $reactionThumbsDown));
+    $colorSvg = file_get_contents($colorThumbsDown);
+    $flatSvg = file_get_contents($flatThumbsDown);
+    self::assertIsString($colorSvg);
+    self::assertIsString($flatSvg);
+    self::assertStringContainsString('viewBox="0 0 32 32"', $colorSvg);
+    self::assertStringContainsString('viewBox="0 0 32 32"', $flatSvg);
+    self::assertSame(['assets/icons/fluent-emoji/color/*.svg'], $data['aculta_fluent_emoji']['config']['sources']);
+    self::assertSame(['assets/icons/reacoes/*.svg'], $data['aculta_reacoes']['config']['sources']);
   }
 
   /**

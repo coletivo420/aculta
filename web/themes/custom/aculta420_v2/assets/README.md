@@ -96,3 +96,13 @@ de SVGs oficiais do Microsoft Fluent Emoji, obtidos do repositório
 `icons/fluent-emoji/LICENSE`. Os arquivos são incorporados inline via SDC com
 `source()` no HTML renderizado, sem requisições externas nem dependências de
 terceiros em tempo de execução.
+
+O `thumbs-down` (👎) está incorporado às variantes oficiais `color/thumbs-down.svg`
+e `flat/thumbs-down.svg` do catálogo existente, ao `aculta_fluent_emoji` da
+UI Icons e ao catálogo curado `aculta_editor/data/fluent-emoji-catalog.json`.
+O mesmo SVG Color integra `icons/reacoes/thumbs-down.svg` no pack
+`aculta_reacoes`, mantendo o SDC `reaction-emoji`. São recursos oficiais
+Microsoft Fluent Emoji (licença MIT já preservada na pasta `fluent-emoji`),
+não uma nova biblioteca de ícones, sprite ou dependência externa.
+Os nomes `thumbs-down` (ícone) e `dislike` (valor da reação no Fórum)
+são deliberadamente distintos; inserir o emoji 👎 num texto não registra descurtida.
