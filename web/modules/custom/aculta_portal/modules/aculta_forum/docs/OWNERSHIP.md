@@ -5,7 +5,7 @@
 | Capacidade/dado | Fonte/dono | Integração permitida | Proibido |
 | --- | --- | --- | --- |
 | Nodes de tópico e publicação | Node/Core e `aculta_forum` para política de discussão | Entity API, Views, Access API | storage paralelo de tópico |
-| Respostas públicas do Growroom | Entity `aculta_forum_post` revisionável para novas respostas; arquivo Growroom histórico permanece read-only e separado para sempre, sem conversão de Comment | Entity/Revision/Workflow APIs, resposta pai e acesso no tópico | criar Comments novos no Growroom ou remover dados sem migração comprovada |
+| Respostas públicas do Growroom | Entity `aculta_forum_post` revisionável para novas respostas; os Comments do arquivo serão importados como conteúdo legado separado e read-only | Entity/Revision/Workflow APIs, resposta pai e acesso no tópico | criar Comments novos no Growroom corrente ou converter Comments do arquivo em ForumPost |
 | Contagem/atividade nas listas de tópicos | `comment_entity_statistics` do Core para Comments legados; `ForumPublicPostStatistics` agrega ForumPosts publicados | Plugins Views combinam contagem/timestamps; cache da lista invalida por `aculta_forum_post_list`; filtros Node access e Domain ficam fixos | escrever no agregado Core ou contar posts não publicados/idiomas não padrão |
 | Comments em Publicações, LMS e Wiki | Comment/Core | Field e API de contexto da entidade hospedeira | mover esses contextos para o storage do ForumPost público |
 | Categorias públicas | Taxonomy/Core e `aculta_forum` | vocabulário e Views; `PublicForumListViewHooks` prepara rótulos/URLs e totais públicos com EntityQuery access-checked e cache tags/contexts | categoria paralela; consulta de conteúdo no tema |
@@ -13,7 +13,7 @@
 | Ação de responder/citar | `aculta_forum` valida ForumPost público ou Comment contextual e seu provider | Form/Access API do contexto, resposta pai e cacheability | link `comment.reply` usado como substituto da resposta revisionável pública; classes/markup visual no módulo |
 | Identidade, apelido e User | User/Profile + `aculta_user` | Author Card API a definir | consulta de dados privados e cartão próprio do Forum |
 | Avatar/foto | User picture + `aculta_user` + `aculta_image` | render autorizado por finalidade `avatar` | processar/excluir arquivo fora de `aculta_image` |
-| Autoria histórica | entidade `aculta_legado_autor` + `aculta_user` | `LegacyAuthorManager`, campo existente, memorial coletivo | conta User, perfil, login ou cartão independente |
+| Autoria histórica | `aculta_forum_legacy` é o owner alvo da entidade `aculta_legado_autor`, fields, manager e memorial; o código ainda está parcialmente em `aculta_user` | Adapter de origem e apresentação inline no tópico/Comment do arquivo; memorial coletivo | conta User, perfil/rota individual, login ou afirmar que já há autores importados no Runtime |
 | Favorito/seguir/denúncia | Flag | seguir/salvar usam flags existentes; denúncias usam `sinalizar_comentario` para Comment e `sinalizar_post_forum` para posts revisionáveis, com permissão contextual, `HistoricForumFlagAccessHooks` e fila `aculta_user` do Growroom | armazenamento paralelo de ações; pôr acervo histórico ou outro contexto na fila pública; transferir flaggings sem preservar dono/timestamp |
 | Avisos de seguidores do Fórum | Flag `seguir_topico` para assinatura; `aculta_messenger` / `aculta_aviso` para agregação e leitura; `aculta_mailer` para transporte | Comment, ForumPost e revisão de tópico publicam `MessengerNoticeEvent`; consumer resolve UUID/revisão, revalida assinatura/acesso e persiste pelo ledger/`aculta_aviso` existente, com marcadores independentes | Gerar chat/thread ao seguir, inbox privada paralela, avisos duplicados, fila/SMTP/storage próprios no Fórum |
 | Conquistas | `aculta_game` avalia Comment ACULTA vigente e primeira publicação de ForumPost público; concessões e catálogo têm fonte única no `aculta_user` | trigger existente `forum_comment`, com migração/sync e autoria histórica excluídos | Forum contrib/legado, storage, contagem, XP, ranking ou concessão próprios no Forum |
@@ -25,10 +25,12 @@
 
 ## Cartões
 
-`aculta_user` é dono único de resolução de identidade e view-models para cartões
-de autor, participante e perfil. `aculta_forum` solicita a variante e informa
-apenas contexto/ação; não define estrutura ou consulta perfil. ACULTA420 seleciona
-o SDC, layout lateral/empilhado, light/dark e acessibilidade. Ver
+`aculta_user` é dono da identidade corrente e view-models para cartões de autor,
+participante e perfil. A variante histórica e os dados de autoria passam a
+pertencer a `aculta_forum_legacy`; o SDC `author-card` continua compartilhado.
+`aculta_forum` solicita a variante corrente e informa apenas contexto/ação; não
+define estrutura ou consulta perfil. ACULTA420 seleciona o SDC, layout
+lateral/empilhado, light/dark e acessibilidade. Ver
 `aculta_user/docs/AUTHOR-CARDS.md` e
 `docs/portal/FRONTEIRA-MODULO-TEMA.md`.
 
