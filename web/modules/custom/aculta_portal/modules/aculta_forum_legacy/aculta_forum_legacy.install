@@ -1,0 +1,31 @@
+<?php
+
+/**
+ * @file
+ * Install and update hooks for the historic Forum archive entities.
+ */
+
+declare(strict_types=1);
+
+/**
+ * Creates the own tables of the historic archive entities.
+ *
+ * The archive lives in its own entity types, never in the current Forum node
+ * or comment tables. Re-running this hook is safe: installed types are skipped.
+ */
+function aculta_forum_legacy_update_8001(): void {
+  $types = [
+    'aculta_forum_legacy_topics',
+    'aculta_forum_legacy_comments',
+    'aculta_forum_legacy_attachments',
+  ];
+  $entityTypeManager = \Drupal::entityTypeManager();
+  /** @var \Drupal\Core\Entity\EntityDefinitionUpdateManagerInterface $updateManager */
+  $updateManager = \Drupal::service('entity.definition_update_manager');
+  foreach ($types as $typeId) {
+    $definition = $entityTypeManager->getDefinition($typeId);
+    if ($updateManager->getEntityType($typeId) === NULL) {
+      $updateManager->installEntityType($definition);
+    }
+  }
+}

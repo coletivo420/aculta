@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum_legacy\Origin;
 
 use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum_legacy\Entity\LegacyForumComment;
+use Drupal\aculta_forum_legacy\Entity\LegacyForumTopic;
 use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
 use Drupal\aculta_forum\Origin\DiscussionOriginClassifierInterface;
 use Drupal\comment\CommentInterface;
@@ -26,6 +28,11 @@ final class LegacyDiscussionOriginClassifier implements DiscussionOriginClassifi
    * {@inheritdoc}
    */
   public function classify(EntityInterface $entity): ?DiscussionOriginClassification {
+    // Archive entities own their history: they are always ARCHIVE, with no marker.
+    if ($entity instanceof LegacyForumTopic || $entity instanceof LegacyForumComment) {
+      return DiscussionOriginClassification::from(DiscussionOrigin::ARCHIVE, $entity);
+    }
+
     if ($entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic') {
       return $this->hasLegacyAuthor($entity)
         ? DiscussionOriginClassification::from(DiscussionOrigin::ARCHIVE, $entity)

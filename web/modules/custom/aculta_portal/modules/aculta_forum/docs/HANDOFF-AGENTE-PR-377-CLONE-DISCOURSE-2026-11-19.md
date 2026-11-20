@@ -29,6 +29,30 @@ Pendências: P1 (Index, Statistics, UI Suite) e P2 (paridade Discourse) não ini
 - **Verificação:** PHPStan nível 10 exit 0; `phpstan-debt-guard` check e diff PASS; Unit `aculta_forum` 278 testes PASS.
 - **DEFERRED:** teste Kernel que prova a exclusão. As consultas dependem de `SiteManager` e do domínio do Fórum registrado no site, que exigem fixture de site própria. Até essa fixture existir, a correção não tem prova automatizada.
 
+## Entidades próprias do acervo histórico — 2026-11-20
+
+Decisão do responsável: o acervo do Growroom tem entidades próprias do módulo `aculta_forum_legacy`, separadas das entidades do Fórum corrente (`node`, `comment`, `aculta_forum_post`). O acervo é somente leitura: sem comentários, sem reações, sem moderação e sem criação pela interface.
+
+Entidades (todas `internal`, permissão `administer aculta legado`):
+
+- `aculta_forum_legacy_user` (autoria histórica, já existia).
+- `aculta_forum_legacy_topics` (tópicos históricos).
+- `aculta_forum_legacy_comments` (respostas históricas, sem campo de comentário ou reação).
+- `aculta_forum_legacy_attachments` (anexos históricos, com URI própria e sem vínculo com mídia corrente).
+
+Reações foram removidas do escopo: o acervo não aceita reações, e o sistema corrente não lê reações históricas.
+
+Comportamento:
+- `LegacyForumContentAccessControlHandler`: somente `view` para quem tem a permissão; `create`, `update` e `delete` negados pela interface. Importação passa pela API de entidade.
+- `LegacyDiscussionOriginClassifier`: entidades do acervo são sempre `ARCHIVE`, sem depender de marcador.
+
+Validação local: Kernel `LegacyForumContentEntitiesKernelTest` 1 teste, 20 asserções, exit OK; PHPStan nível 10 exit 0; guard PASS; PHPCS sem erros nos arquivos novos.
+
+Pendências, sem execução:
+- `aculta_forum_legacy_update_8001` cria as tabelas no Runtime. Não foi aplicado; exige autorização e snapshot (fluxo estrutural).
+- Migração das linhas marcadas com `field_autor_legado` em `node` e `comment` para as entidades novas: não iniciada. Antes, precisa de contagem somente leitura no Runtime.
+- Denúncias do acervo continuam no CGU, referenciadas pelo alvo; não são entidade do legado.
+
 ## Revalidação de continuidade — 2026-11-20
 
 Base: `origin/docs/forum-clone-discourse-ui-cgu-integracoes-20261119` em `506512bd8`. A cópia local de `docs/...` no checkout principal estava atrás do remoto em 141 commits sem commits próprios; o trabalho foi feito em worktree dedicado, sem tocar o worktree `aculta-pr377`, que tem alterações de outra frente.
