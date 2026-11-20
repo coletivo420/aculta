@@ -91,6 +91,12 @@
 .forum-reply-compact--density-compact .forum-reply-compact__header { flex-wrap: wrap; }
 .forum-reply-compact--density-compact .forum-reply-compact__text { font-size: var(--font-size-sm); }
 
+/* Celular real: a densidade compacta vale por largura de tela, sem depender de prop (mobile-first; desktop em 48rem). */
+@media (max-width: 47.9375rem) {
+  .forum-reply-compact .forum-reply-compact__header { flex-wrap: wrap; }
+  .forum-reply-compact .forum-reply-compact__text { font-size: var(--font-size-sm); }
+}
+
 /* Rodapé: barra de reações à esquerda e barra de respostas à direita, na mesma linha. */
 .forum-reply-compact__footer {
   display: flex;

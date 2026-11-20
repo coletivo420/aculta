@@ -118,6 +118,35 @@ Pendências:
 - **Espelhamento real das respostas:** `DiscussionReactionEntityViewHooks::discussionSide` alterna o lado por nível (raiz pela ordem; resposta em nível é oposta ao pai) e passa `accent_side` ao `forum-post-card`. O efeito é só a cor e a faixa do cartão.
 - **Decisão do responsável (2026-11-20):** ligar o layout espelhado completo. Implementado: `comment--field-aculta-discussion` define `author_position` (`side` quando o lado é `end`, senão `top`); `forum-comment` aceita e repassa a prop ao `forum-post-card`. Schema SDC PASS (151 componentes). **DEFERRED:** prova visual em navegador (coluna de autoria e reações à direita) e render Twig. Reações ainda não foram movidas para a direita pelo cartão; isso depende do CSS do `forum-post-card--author-side` e precisa de revisão visual.
 
+## Decisões de consumo: resposta compacta, espelhado e mobile em todos os consumidores — 2026-11-20
+
+Decisões do responsável (confirmadas em duas rodadas de pergunta):
+
+1. **Consumidores** (LMS, Wiki, Revista e comentários gerais) usam a **resposta compacta** (`forum-reply-compact`), que já tem Stories para desktop, espelhado, mobile e espelhado-mobile.
+2. **Espelhamento** nos consumidores vem da resposta compacta com `accent_side` alternado, igual ao Fórum.
+3. **Mobile** vale nas páginas reais, não só nas Stories.
+4. **Consumidores não têm abertura de tópico**: a conversa começa na primeira resposta.
+5. **Fórum**: o cartão do post (`forum-post-card`) continua com `author_position: side` no espelhado (entregue antes).
+
+Implementado nesta rodada:
+
+- `comment--field-aculta-discussion.html.twig`: o ramo da resposta compacta passa a valer para Revista e consumidores. A ordenação própria da Revista (`revista-comment-order`) continua só para `publication_comment`.
+- `DiscussionReactionEntityViewHooks::preprocessComment`: calcula `consumer_comment` (host que não é tópico do Fórum).
+- `forum-reply-compact.css`: regras de densidade compacta valem por largura de tela abaixo de 48rem (mobile-first, sem depender de prop).
+
+Validação: Unit do Fórum 279 testes OK; PHPStan exit 0; guard PASS; PHPCS sem erros no hook; schema SDC PASS (151 componentes).
+
+DEFERRED:
+
+- Stylelint do CSS da resposta compacta: binário ausente (exit 127). Não é PASS.
+- Teste Unit do flag `consumer_comment` em `preprocessComment`: exige mocks de storage, avatar e comentário.
+- Prova visual em navegador de mobile e espelhado nos quatro consumidores.
+
+Lacunas confirmadas nesta rodada:
+
+- `forum-opening-post`: não há inclusão de produção fora da página de visão geral da UI Patterns. A recontagem anterior dele estava errada. Como consumidores não têm abertura, o gap é só do Fórum: ainda não confirmado onde a abertura do tópico é renderizada.
+- `forum-topic-card`: 0 referências (decisão de uso ainda pendente).
+
 ## Decisão — anexos só no Fórum; consumidores apenas mídia embutida — 2026-11-20
 
 Decisão do responsável:

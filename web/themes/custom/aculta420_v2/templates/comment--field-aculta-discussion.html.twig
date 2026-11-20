@@ -11,7 +11,7 @@
 {% set author_posts_val = author_posts is defined ? author_posts : null %}
 {% set composer_target_id = 'discussion-composer-' ~ commented_entity_type ~ '-' ~ commented_entity_id ~ '-' ~ comment.id %}
 
-{% if publication_comment|default(false) %}
+{% if publication_comment|default(false) or consumer_comment|default(false) %}
   {% set author_avatar = author_card and author_card['#avatar'] is defined ? render_var(author_card['#avatar']) : null %}
   {% set removed_label = comment_removed_by_moderation|default(false) ? 'Conteúdo removido pela moderação'|t : 'Comentário excluído'|t %}
   {% set revista_content = comment_deleted|default(false) ? '<p class="forum-reply-compact__deleted">' ~ removed_label ~ '</p>' : comment_body %}
@@ -54,10 +54,14 @@
     }, with_context = false) }}
     </article>
   {% endset %}
-  {{ attach_library('aculta_forum/revista-comment-order') }}
-  <div class="revista-comment-sort" data-sort-total="{{ sort_total|default(0) }}" data-sort-created="{{ sort_created|default(0) }}">
+  {% if publication_comment|default(false) %}
+    {{ attach_library('aculta_forum/revista-comment-order') }}
+    <div class="revista-comment-sort" data-sort-total="{{ sort_total|default(0) }}" data-sort-created="{{ sort_created|default(0) }}">
+      {{ include('aculta420_v2:reply-indent', { depth: reply_depth|default(0), first: reply_first|default(false), content: reply_card }, with_context = false) }}
+    </div>
+  {% else %}
     {{ include('aculta420_v2:reply-indent', { depth: reply_depth|default(0), first: reply_first|default(false), content: reply_card }, with_context = false) }}
-  </div>
+  {% endif %}
 {% else %}
 {% set admin_markup = null %}
 {% set forum_delete_markup %}
