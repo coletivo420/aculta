@@ -119,9 +119,15 @@ final class DiscussionCommentModerationForm extends FormBase {
     ];
     // Edição administrativa: a moderação edita o comentário pelo formulário padrão; a marca é gravada ao salvar.
     $form['acoes']['editar_moderacao'] = [
-      '#type' => 'link',
-      '#title' => $this->t('Editar pela moderação'),
-      '#url' => Url::fromRoute('entity.comment.edit_form', ['comment' => $cid]),
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:moderation-action',
+      '#props' => [
+        'label' => (string) $this->t('Editar pela moderação'),
+        'url' => Url::fromRoute('entity.comment.edit_form', ['comment' => $cid])->toString(),
+        'icon' => 'pencil-simple',
+        'variant' => 'regular',
+        'tone' => 'neutral',
+      ],
     ];
     if ($tombstone === 'moderacao') {
       $form['acoes']['restaurar'] = [
