@@ -4,7 +4,7 @@
 
 ## Regra de negócio aprovada e semântica adotada
 
-**Todos os emojis/reactions positivos atuais, inclusive IDs desabilitados posteriormente, somam +1 no contador geral de curtidas da publicação**; a reação reservada `dislike` soma -1. Cada pessoa tem **um único voto por publicação**, podendo escolher 1 emoji positivo OU descurtir, trocar e desfazer. A descurtida é **um botão fixo dedicado**, não outra opção na paleta positiva. Já existe no banco `aculta_discussion_reaction` a UNIQUE `(entity_type, entity_id, uid)`; reutilizar, não criar tabela/voto paralelo.
+**Todos os emojis/reactions positivos atuais, inclusive IDs desabilitados posteriormente, somam +1 no contador geral de curtidas da publicação**; a reação reservada `dislike` soma -1. Cada pessoa tem **um único voto por publicação**, podendo escolher 1 emoji positivo OU descurtir, trocar e desfazer. A descurtida aparece como **um único botão de reação com emoji Microsoft Fluent `thumbs-down`**, junto ao botão positivo, no **mesmo componente visual `aculta420_v2:reaction-emoji`**. Não há botão nem ação visual separada de "Undo" ou "Desfazer": **clicar novamente na reação que está ativa a remove**. Isso vale para o emoji negativo, a curtida rápida e cada emoji da paleta. Clicar em outro emoji positivo ou na descurtida troca a reação do mesmo UID/alvo. O botão negativo fica fora da paleta de opções positivas, como controle fixo de mesmo estilo. Já existe no banco `aculta_discussion_reaction` a UNIQUE `(entity_type, entity_id, uid)`; reutilizar, não criar tabela/voto paralelo.
 
 ```text
 positivas = SUM(COUNT rows WHERE reaction != 'dislike')
@@ -30,7 +30,7 @@ O contrato **novo** prevalece sobre os estudos anteriores que tratavam apenas `b
 | `Service/DiscussionReactionManager.php` | Reservar `dislike`, permitir toggle sem paleta, ler todos positivos inclusive antigos, subtrair descurtidas do total do item, corrigir incremento/decremento de aggregates positivos e eventos positivos; saldo por autor após descurtidas |
 | `Controller/DiscussionReactionController.php` | Permitir `reaction=dislike` no POST/HTMX com CSRF e access já existentes |
 | `Service/DiscussionReactionBuilder.php` | Encaminhar saldo, positivas e descurtidas ao SDC |
-| `aculta420_v2:discussion-reaction-bar` | Botão único `Descurtir`, ativo desfaz, aria-pressed, quick-form HTMX e fallback; contador sempre visível |
+| `aculta420_v2:discussion-reaction-bar` | Botão Fluent `thumbs-down` igual ao curtir positivo, `aria-pressed` para reação ativa, segundo clique remove (não existe Undo separado), HTMX/fallback; contador sempre visível |
 | `aculta420_v2:discussion-reactions-received` | Exibir `Curtidas: saldo` com descrição e atributos acessíveis; manter badges por emoji |
 | `ForumMetricsProvider.php` | Corrigir `forum.reactions.active` para só positivos e acrescentar snapshots de descurtidas/saldo |
 | `aculta_statistics::MetricCatalog` | `forum.reactions.dislikes_current` e `forum.reactions.net_current`, TYPE_SNAPSHOT |
@@ -49,7 +49,7 @@ O contrato **novo** prevalece sobre os estudos anteriores que tratavam apenas `b
 3. **Recalcular agregados em trocas de polaridade:** positivo -> negativo, negativo -> positivo, desfazer negativo, positivo -> positivo, negativo -> negativo, escopo público -> privado e vice-versa. Verificar que `aculta_discussion_reaction_user_stats` segue contando somente positivos e `getUserStats()` apresenta saldo líquido sem mostrar negativos indevidamente.
 4. **Origem/ACL:** negar ARCHIVE, UNKNOWN, tópico despublicado, autoria própria, visitante não autenticado, UID bloqueado, usuário sem email_confirmed conforme regras, revogação de Group e troca de Host entre GET e POST. Proteção ocorre em endpoint, não apenas ocultando botão. Não criar moderação pedagógica LMS no CGU.
 5. **Cache e performance:** invalidar item/autores/Views/Stats após troca ou remoção; evitar COUNT de descurtidas com query N+1 para cada autor em lista; índice adequado `(author_uid, is_public_context, reaction)` só após EXPLAIN, schema update + index idempotente autorizado.
-6. **Score e exibição:** contador geral sempre visível para visitante e logado, botão negativo exatamente um na barra, sem aparecer na paleta, ícone existente `thumbs-down`, modo claro/escuro, 320/390/768/1440, zoom 200/400%, keyboard, aria-pressed, fallback sem JS e atualização HTMX. Revisar se o popup/toolbar do tópico usa todos os displays esperados, inclusive ForumPost, Comment contextual e Node Topic.
+6. **Score e exibição:** contador geral sempre visível para visitante e logado, botão negativo exatamente um na barra, sem aparecer na paleta, SVG `thumbs-down.svg` do pacote Microsoft Fluent Emoji (Color, Default, MIT), via `aculta420_v2:reaction-emoji`, modo claro/escuro, 320/390/768/1440, zoom 200/400%, keyboard, aria-pressed, fallback sem JS e atualização HTMX. Revisar se o popup/toolbar do tópico usa todos os displays esperados, inclusive ForumPost, Comment contextual e Node Topic.
 7. **Redirect não-JS:** conferir validação da origem de `destination`/`Referer` no controller existente; não introduzir open redirect. POST com CSRF, sem GET mutável.
 8. **Contador de autor público:** `getUserStats` é agregado legado que inclui scope `PUBLICATION` (Revista) por definição; decidir se User público mostra geral do Portal ou somente Growroom. Criar API de escopo separada para Game e Statistics, não usar `getUserStats` amplo como likes Growroom. Respeitar privacidade de autor.
 9. Não duplicar Comment histórico com `ForumPost`; CURRENT/CONTEXTUAL/ARCHIVE respeitados em tabelas, snapshots e badges.
@@ -90,3 +90,7 @@ O contrato **novo** prevalece sobre os estudos anteriores que tratavam apenas `b
 - [Roadmap Fórum, FDC-R0..13](PLANO-PARIDADE-DISCOURSE-FRONTEND-MODERADOR-ENQUETES-2026-11-20.md) e [estudo de Game/Discourse](ESTUDO-DISCOURSE-GAME-METRICAS-INTEGRACOES-2026-11-20.md).
 - [Roadmap de Game](../../aculta_game/docs/ROADMAP.md), [FST Statistics](../../aculta_statistics/docs/FORUM-ANALYTICS-PLANO-FST-00-11.md) e [Studio operacional](../../aculta_studio/docs/PLANO-FRONTEND-OPERACIONAL-2026-11-20.md).
 - [Prompt CLI de continuação integral](HANDOFF-CLI-DESCURTIDAS-2026-11-20.md).
+
+### Ajuste visual solicitado - 2026-11-20
+
+Foi substituído o ícone Phosphor negativo pelo SVG original Microsoft Fluent Emoji, na mesma biblioteca de reações já usada pelo ACULTA. Fonte: `microsoft/fluentui-emoji/assets/Thumbs down/Default/Color/thumbs_down_color_default.svg` (licença MIT). Botões positivos, negativos e paleta usam `aria-pressed` e enviam o ID atual ao `toggleReaction()`: segundo clique na seleção ativa **remove o voto**, sem outro botão. O emoji `thumbs-down` é um asset visual de reação; o ID de armazenamento negativo continua `dislike`, reservado fora de `allowed_reactions`.

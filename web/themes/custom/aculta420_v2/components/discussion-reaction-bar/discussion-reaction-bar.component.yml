@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Barra de Reações
-description: Reações positivas por emoji, um botão independente Descurtir e saldo geral descontado das descurtidas; a paleta não contém votos negativos.
+description: Reações positivas e descurtida com emojis Fluent, botão Descurtir idêntico ao de reação rápida, mesmo clique alterna a seleção e saldo geral descontado; sem controle Undo.
 status: stable
 group: Comunidade
 props:
