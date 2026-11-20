@@ -395,9 +395,14 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
 
     $build0 = $controller->page();
     $content0 = $this->getPageContentSlot($build0);
-    $this->assertNotEmpty($content0['list']['#items']);
-    $this->assertCount(15, $content0['list']['#items']);
-    $this->assertNotEmpty($content0['pager']['links']);
+    $list0 = $content0['list'] ?? NULL;
+    $this->assertIsArray($list0);
+    $items0 = $list0['#items'] ?? NULL;
+    $this->assertIsArray($items0);
+    $this->assertCount(15, $items0);
+    $pager0 = $content0['pager'] ?? NULL;
+    $this->assertIsArray($pager0);
+    $this->assertNotEmpty($pager0['links'] ?? NULL);
 
     // Page 1 (items 16 to 20).
     $request1 = Request::create('/salvos', 'GET', ['tab' => 'salvos', 'page' => '1']);
