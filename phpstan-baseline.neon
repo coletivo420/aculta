@@ -22981,30 +22981,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Unit/ContentIndexProviderServiceMapTest.php
 
 		-
-			rawMessage: 'Cannot call method getFilename() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Unit/ContentIndexProviderServiceMapTest.php
-
-		-
-			rawMessage: 'Cannot call method getPathname() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Unit/ContentIndexProviderServiceMapTest.php
-
-		-
-			rawMessage: 'Cannot call method isFile() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Unit/ContentIndexProviderServiceMapTest.php
-
-		-
-			rawMessage: 'Method Drupal\Tests\aculta_index\Unit\ContentIndexProviderServiceMapTest::providerServiceFiles() should return list<string> but returns list.'
-			identifier: return.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Unit/ContentIndexProviderServiceMapTest.php
-
-		-
 			rawMessage: 'Parameter #1 $array of function array_filter expects array, mixed given.'
 			identifier: argument.type
 			count: 1
@@ -23012,24 +22988,6 @@ parameters:
 
 		-
 			rawMessage: 'Parameter #1 $class of class Symfony\Component\DependencyInjection\Definition constructor expects string|null, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Unit/ContentIndexProviderServiceMapTest.php
-
-		-
-			rawMessage: 'Parameter #1 $filename of function file_get_contents expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Unit/ContentIndexProviderServiceMapTest.php
-
-		-
-			rawMessage: 'Parameter #1 $haystack of function str_contains expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Unit/ContentIndexProviderServiceMapTest.php
-
-		-
-			rawMessage: 'Parameter #1 $haystack of function str_ends_with expects string, mixed given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Unit/ContentIndexProviderServiceMapTest.php
