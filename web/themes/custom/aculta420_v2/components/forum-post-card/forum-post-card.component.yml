@@ -69,6 +69,10 @@ props:
       title: Contagem de posts do autor
       description: Número de posts do autor; null ou string vazia omite a contagem.
       default: null
+    author_reactions_received:
+      type: integer
+      title: Saldo acumulado de curtidas do autor
+      default: 0
     timestamp:
       type: [string, 'null']
       title: Data ou horário da publicação

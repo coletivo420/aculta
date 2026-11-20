@@ -13,6 +13,7 @@
   {{ include('aculta420_v2:forum-reply-mirror', {
     author_name: author_name|default('Participante'|t),
     author_posts: author_posts,
+    author_reactions_received: author_reactions_received|default(0),
     timestamp: timestamp,
     avatar: avatar_slot,
     body: body_slot,
@@ -28,6 +29,7 @@
     author_name: author_name|default('Participante'|t),
     author_role: null,
     author_posts: author_posts,
+    author_reactions_received: author_reactions_received|default(0),
     timestamp: timestamp,
     reactions: null,
     reply_url: null,

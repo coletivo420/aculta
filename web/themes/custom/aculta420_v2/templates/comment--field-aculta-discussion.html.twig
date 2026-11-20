@@ -84,6 +84,7 @@
   composer_target_id: composer_target_id,
   author_name: author_name_val|default('Participante'|t),
   author_posts: author_posts_val,
+  author_reactions_received: author_reactions_received|default(0),
   timestamp: created|default(null),
   accent_side: accent_side|default('start'),
   author_position: accent_side|default('start') == 'end' ? 'side' : 'top',

@@ -24,6 +24,10 @@ props:
       title: Data de publicação formatada
       description: Data pronta para exibição no cabeçalho do cartão.
       default: null
+    author_reactions_received:
+      type: integer
+      title: Saldo acumulado de curtidas do autor
+      default: 0
     author_posts:
       type: [string, integer, 'null']
       title: Contagem de posts do autor
