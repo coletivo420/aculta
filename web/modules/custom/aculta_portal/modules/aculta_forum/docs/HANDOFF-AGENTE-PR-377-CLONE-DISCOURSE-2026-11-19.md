@@ -75,6 +75,37 @@ Pendências, sem execução:
 - **DEFERRED:** `validate-aculta420-v2-sdc.php` (exige bootstrap Drupal com `DRUPAL_ROOT`, Drush e site instalado) e render do Twig na story. Sem Runtime nem banco de site, não há PASS dessas partes.
 - **Pendente:** aplicar `read_only` nas Views/templates do acervo quando o arquivo for exibido pelas entidades próprias; o cartão ainda não é usado por essas telas.
 
+## Matriz de consumo dos SDCs de Comunidade pelo Fórum — 2026-11-20
+
+Contagem: referências a cada SDC fora da própria pasta (PHP, Twig, YAML) em `aculta420_v2` e `aculta_portal`. Não é prova de renderização: "0" é lacuna confirmada; "≥1" é referência encontrada, ainda sem prova visual ou Kernel.
+
+Pedidos do responsável, com situação:
+
+- Postagem de abertura do tópico (`forum-opening-post`): 3 referências. Referenciado.
+- Citação (`forum-quote`): 1 referência. Referenciado.
+- Cartão de Post do Fórum (`forum-post-card`): 2 referências. Ganhou a prop `read_only` nesta rodada.
+- Cartão do Post Espelhado (`forum-reply-mirror`): 1 referência. Referenciado.
+- Compositor de Criação de Tópico (`discussion-topic-composer`): 1 referência, **só na Story**. O popup real usa `TopicPopupLayout`, não o SDC. **Lacuna**: o SDC não é o compositor de produção.
+- Compositor de Resposta da Discussão (`discussion-reply-composer`): 6 referências, incluindo template `discussion-reply-composer.html.twig`. Referenciado.
+- Ícones (`icon`): consumido em 60 pontos do tema e do portal.
+- Respostas em níveis (`reply-indent`): 2 referências.
+- Abas (`forum-tabs`): 2 referências.
+- Diretrizes do compositor (`forum-composer-guidelines`): 0 referências antes desta rodada. **Implementado**: `TopicPopupLayout::apply` monta o SDC recolhido com três dicas. Prova: `TopicPopupLayoutTest` (1 teste, 10 asserções, OK). Render do Twig não provado.
+
+Demais itens do grupo Comunidade sem consumidor (lacunas confirmadas):
+
+- `forum-author-line`: 0 referências.
+- `forum-topic-card`: 0 referências.
+- `comment-admin-trigger`: 0 referências.
+
+Demais itens do grupo Comunidade com referência: `comment-admin-controls`, `content-reply-bar`, `delete-confirm`, `discussion-content-composer`, `discussion-reaction-bar`, `discussion-reactions-received`, `forum-category`, `forum-category-header`, `forum-category-page`, `forum-comment`, `forum-list-page`, `forum-reply-compact`, `forum-search-page`, `forum-sidebar-panels`, `forum-topic`, `forum-topic-meta`, `forum-topic-page`, `forum-topic-row`, `reaction-emoji`.
+
+Pendências:
+
+1. Trocar a integração do compositor de criação de tópico para o SDC, ou documentar que o formulário é a fonte de produção e a Story é só de biblioteca.
+2. Integrar `forum-author-line`, `forum-topic-card` e `comment-admin-trigger` nas telas que deveriam usá-los, com prova de renderização.
+3. Provas de render (Twig e Kernel) de todos os itens marcados como referenciados. DEFERRED.
+
 ## Decisão — anexos só no Fórum; consumidores apenas mídia embutida — 2026-11-20
 
 Decisão do responsável:

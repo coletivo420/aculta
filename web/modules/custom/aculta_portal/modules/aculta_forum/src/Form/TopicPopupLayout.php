@@ -48,6 +48,21 @@ final class TopicPopupLayout {
         }
       }
     }
+    // Diretrizes do Compositor de Criação de Tópico (SDC forum-composer-guidelines).
+    $form['forum_composer_guidelines'] = [
+      '#theme' => 'portal_component',
+      '#name' => 'forum-composer-guidelines',
+      '#props' => [
+        'collapsed' => TRUE,
+        'tips' => [
+          (string) t('Use um título que resuma a dúvida ou o assunto.'),
+          (string) t('Cite a fonte quando citar pesquisas ou experiências de terceiros.'),
+          (string) t('Respeite as regras da comunidade antes de publicar.'),
+        ],
+        'community_rules' => NULL,
+      ],
+      '#weight' => -10,
+    ];
     if (isset($form['actions']) && is_array($form['actions'])) {
       // Sem pré-visualização. "Cancelar" (secundário) fecha o popup.
       unset($form['actions']['preview']);
