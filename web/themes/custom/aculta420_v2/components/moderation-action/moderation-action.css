@@ -1,0 +1,19 @@
+.moderation-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 2.75rem;
+  padding-inline: 0.75rem;
+  color: inherit;
+  text-decoration: none;
+  border-radius: 0.5rem;
+}
+
+.moderation-action:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.moderation-action--danger {
+  color: var(--color-danger, #b3261e);
+}

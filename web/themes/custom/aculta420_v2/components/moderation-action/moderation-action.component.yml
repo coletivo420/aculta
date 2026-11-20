@@ -1,0 +1,34 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Ação de moderação
+status: experimental
+description: Link de ação administrativa com ícone Phosphor. Usado nos controles de moderação de tópicos e comentários do Fórum.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [label, url, icon]
+  properties:
+    label:
+      type: string
+      title: Rótulo
+      description: Texto visível da ação.
+    url:
+      type: string
+      title: Destino
+      description: URL da ação.
+    icon:
+      type: string
+      title: Ícone Phosphor
+      description: Nome base do arquivo Phosphor, sem sufixo de peso.
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+    variant:
+      type: string
+      title: Peso do ícone
+      enum: [duotone, regular]
+      default: duotone
+    tone:
+      type: string
+      title: Tom
+      description: Neutro para ações comuns; perigo para ações destrutivas ou de exclusão.
+      enum: [neutral, danger]
+      default: neutral

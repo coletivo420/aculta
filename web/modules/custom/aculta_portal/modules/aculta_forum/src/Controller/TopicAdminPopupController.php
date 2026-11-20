@@ -173,7 +173,7 @@ final class TopicAdminPopupController extends ControllerBase {
         'reply_count' => $replyCount,
       ],
       '#slots' => [
-        'actions' => $actions === [] ? [] : $actions,
+        'actions' => array_map(fn(array $action): array => $this->actionComponent($action, $node), $actions),
         'log' => $log ?? [],
       ],
       '#cache' => [
@@ -181,6 +181,65 @@ final class TopicAdminPopupController extends ControllerBase {
         'tags' => array_merge($node->getCacheTags(), ['aculta_cgu_report_list']),
       ],
     ];
+  }
+
+  /**
+   * Renders one moderation action as the moderation-action component (Phosphor icon).
+   *
+   * @param array<string, mixed> $action
+   *   Link render array built above (#title, #url).
+   * @param \Drupal\node\NodeInterface $node
+   *   The topic.
+   *
+   * @return array<string, mixed>
+   *   Component render array.
+   */
+  private function actionComponent(array $action, NodeInterface $node): array {
+    $url = $action['#url'] ?? NULL;
+    if (!$url instanceof Url) {
+      throw new \LogicException('Moderation action without a Url.');
+    }
+    $route = $url->getRouteName();
+    $rawQuery = $url->getOption('query');
+    $query = is_array($rawQuery) ? $rawQuery : [];
+    [$icon, $tone] = match (TRUE) {
+      $route === 'aculta_forum.discussion_composer' && isset($query['excluir_topico']) => ['trash', 'danger'],
+      $route === 'aculta_forum.discussion_composer' => ['pencil-simple', 'neutral'],
+      $route === 'aculta_forum.topic_move' => ['arrows-left-right', 'neutral'],
+      $route === 'aculta_forum.topic_moderation_pin' => [
+        $node->isSticky() ? 'push-pin-simple-slash' : 'push-pin-simple',
+        'neutral',
+      ],
+      $route === 'aculta_forum.topic_moderation_close' => ['lock-simple', 'neutral'],
+      $route === 'aculta_forum.topic_moderation_remove' => ['prohibit', 'danger'],
+      $route === 'aculta_forum.topic_moderation_publish' => [$node->isPublished() ? 'eye-slash' : 'eye', 'neutral'],
+      $route === 'aculta_forum.topic_moderation_archive' => ['archive', 'neutral'],
+      $route === 'aculta_forum.topic_moderation_split' => ['arrows-split', 'neutral'],
+      $route === 'aculta_forum.topic_moderation_merge' => ['arrows-merge', 'neutral'],
+      default => ['dots-three', 'neutral'],
+    };
+    return [
+      '#type' => 'component',
+      '#component' => 'aculta420_v2:moderation-action',
+      '#props' => [
+        'label' => $this->labelOf($action),
+        'url' => $url->toString(),
+        'icon' => $icon,
+        'variant' => 'regular',
+        'tone' => $tone,
+      ],
+    ];
+  }
+
+  /**
+   * Plain-text label of a link render array.
+   *
+   * @param array<string, mixed> $action
+   *   Link render array.
+   */
+  private function labelOf(array $action): string {
+    $title = $action['#title'] ?? '';
+    return $title instanceof \Stringable || is_string($title) ? (string) $title : '';
   }
 
 }

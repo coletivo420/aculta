@@ -1,0 +1,7 @@
+name: Ação de moderação (perigo)
+props:
+  label: Excluir tópico
+  url: '#'
+  icon: trash
+  variant: duotone
+  tone: danger

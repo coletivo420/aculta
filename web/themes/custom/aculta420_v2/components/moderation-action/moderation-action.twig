@@ -1,0 +1,8 @@
+{#
+  Ação de moderação: ícone Phosphor com rótulo textual.
+  O rótulo é o nome acessível; o ícone é decorativo.
+#}
+<a class="moderation-action moderation-action--{{ tone|default('neutral') }}" href="{{ url }}">
+  {{ include('aculta420_v2:icon', { name: icon, variant: variant|default('duotone'), size: 'sm' }, with_context = false) }}
+  <span class="moderation-action__label">{{ label }}</span>
+</a>

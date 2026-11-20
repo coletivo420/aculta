@@ -1,0 +1,7 @@
+name: Ação de moderação
+props:
+  label: Fixar tópico
+  url: '#'
+  icon: push-pin-simple
+  variant: duotone
+  tone: neutral
