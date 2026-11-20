@@ -5,7 +5,13 @@
 > **Diretriz vigente (2026-11-19):** clone funcional Drupal do Discourse; motor transversal obrigatório de comentários de Growroom, Wiki, Revista e LMS, inclusive inventário de feedback avaliativo; CGU é a fila única de denúncias/casos; Index, Statistics, Messenger e UI Suite conservam ownership. [Auditoria](docs/AUDITORIA-CLONE-DISCOURSE-INTEGRACOES-2026-11-19.md) · [Plano](docs/PLANO-CLONE-DISCOURSE-UI-SUITE-CGU-2026-11-19.md) · [Matriz UI Patterns](docs/MATRIZ-PARIDADE-DISCOURSE-UI-PATTERNS-2026-11-19.md) · [Aceite](docs/MATRIZ-ACEITE-DISCOURSE-ACULTA-2026-11-19.md). Documento de planejamento, **não homologação de Runtime nem autorização de migração**.
 
 
-**Ciclo atual: 0.2.0-dev.4 - integração analítica FST.** O novo ciclo consolida
+**Ciclo atual: 0.2.0-dev.5 - fronteira do acervo legado.** Removido o caminho
+de conversão de Comments para ForumPost, que contrariava a separação histórica.
+ForumPost é publicação corrente com autoria Drupal; autoria Growroom continua
+restrita a tópicos e Comments classificados pelo addon opcional. Nenhuma
+importação ou alteração de Runtime foi executada.
+
+O ciclo anterior de integração analítica FST mantém suas entregas. O novo ciclo consolida
 comentários e respostas na página atual para Revista, Wiki, LMS e Growroom420.
 Inclui registro central dos providers pelo aculta_forum (também o da Wiki),
 Form API/HTMX, SDC de resposta, citação, acesso/cache e URLs em português.

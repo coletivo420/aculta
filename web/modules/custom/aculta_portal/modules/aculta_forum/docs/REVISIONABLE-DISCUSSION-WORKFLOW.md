@@ -8,6 +8,11 @@ que fazem parte da migração devem ser copiados e conferidos na nova entidade;
 somente então os Comments correspondentes do Fórum serão removidos. Comments da
 Revista, Wiki, LMS e outros hosts não pertencem a esta migração.
 
+> **Decisão superseded em 2026-11-19:** o texto histórico acima não rege a
+> implementação atual. Comments históricos Growroom permanecem separados e não
+> são convertidos para `ForumPost`; somente novas respostas Growroom usam a
+> entidade revisionável. Ver [política vigente](POLITICA-ACERVO-HISTORICO-GROWROOM-2026-11-19.md).
+
 ## Evidência e escolha arquitetural
 
 O Drupal instalado é Core 11.4.10. `Drupal\comment\Entity\Comment` declara

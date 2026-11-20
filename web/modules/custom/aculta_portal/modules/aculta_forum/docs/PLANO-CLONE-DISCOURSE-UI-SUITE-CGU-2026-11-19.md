@@ -121,8 +121,8 @@ esse baseline. A importação histórica continua não executada.
 - **Na baseline anterior a Dev.2, o addon ainda não estava implementado.** Na árvore atual há módulo/manifesto, serviços e provider de origem. Autoria, fields, memorial, apresentação e integrações seguem parcialmente acoplados a `aculta_user`/`aculta_forum`.
 - **Na baseline anterior a Dev.2, não havia classificador central de origem.** A implementação atual inclui contratos neutros no motor e provider opcional que reconhece `ARCHIVE`; a cobertura não removeu todos os acoplamentos listados no census.
 - **O ownership atual continua em `aculta_user` e `aculta_forum`.** `aculta_user` contém `Entity\LegacyAuthor`, a tabela/type `aculta_legado_autor`, manager, handler de acesso, memorial, apresentação e hooks de autoria/moderação. `aculta_forum` contém os fields, verificações de marcador, migrações e ferramentas relacionadas, inclusive as referências listadas no census abaixo. Não tratar a fronteira pretendida como já extraída.
-- `config/sync` contém storage/instâncias de `field_autor_legado` e displays de ForumPost que mencionam `legacy_author`; não existe configuração de addon no sync encontrada nesta branch. Esses arquivos/configurações são candidatos distintos de dados persistidos e exigem comparação por UUID/ID e dependências em clone.
-- As três migrations Comment→ForumPost estão registradas e executáveis pelo sistema Migrate, mas o responsável confirma que a importação histórica não foi executada no Runtime alvo. Portanto, ForumPosts/Flaggings históricos importados não são baseline existente nem devem ser presumidos. O censo somente leitura confirmará status/mapas vazios ou ausência de execução e distinguirá essa configuração/código de quaisquer resíduos de teste/refatoração. Não tocar no corpus fonte.
+- No snapshot anterior à Dev.5, `config/sync` continha storage/instâncias de `field_autor_legado` e displays de ForumPost que mencionavam `legacy_author`. Dev.5 removeu apenas as entradas de display de ForumPost; a extração dos fields legados permanece pendente. Configuração versionada não é dado importado.
+- O snapshot anterior à Dev.5 continha migrations Comment→ForumPost. Dev.5 removeu esse conversor para impedir mistura do acervo com ForumPost. O responsável confirma que a importação Growroom não foi feita; não há conteúdo histórico importado no alvo. Não tocar no corpus fonte.
 - Esta revisão foi somente leitura da árvore Git: não consultou o banco Runtime e não executou Drush, import, update, migration, uninstall, rebuild ou limpeza.
 
 ### Delta implementado em Dev.2–Dev.3 — 2026-11-19 (código local; sem Runtime)
@@ -131,9 +131,20 @@ esse baseline. A importação histórica continua não executada.
 - O motor fornece API central de classificação; o addon registra provider `ARCHIVE`. ForumPosts correntes, Comments contextuais e origem desconhecida têm regras próprias e testes focalizados.
 - Respostas a tópicos correntes usam o formulário revisionável `ForumPostSubmissionForm`. Game e Messenger consultam o resolver central.
 - A exclusão do arquivo Growroom das filas ordinárias de moderação foi movida para o addon. A política genérica de denúncias permaneceu no Fórum, mas agora usa o resolver central e falha fechada para origem diferente de `CURRENT`.
+- Dev.5 removeu do `aculta_forum` o pipeline executável Comment→ForumPost (posts, hierarquia, flaggings, destinos, audit command e contexto bypass), a dependência de Migrate, o campo-base `ForumPost.legacy_author` e suas entradas de display. A classificação do addon não trata ForumPost como histórico; User/Game tratam ForumPost como autoria corrente de conta Drupal.
+- Dev.5 restringe o cartão histórico ao Comment marcado sob tópico Fórum também marcado. Um marcador apenas no Comment não transforma tópico corrente em arquivo; `LegacyDiscussionOriginClassifierTest` prova CURRENT versus ARCHIVE, e `AuthorCardVariantResolverTest` cobre hosts Wiki/Revista/LMS/desconhecido. A apresentação histórica ainda está em `aculta_user` e precisa ser extraída para o addon.
 - Autoria/fields, memorial coletivo, apresentação histórica, ferramentas Migrate/auditoria e demais acoplamentos continuam pendentes de extração. Nenhuma importação, migração, configuração ou operação de dados foi executada no Runtime.
 
-### Auditoria estática preliminar dos acoplamentos — 2026-11-19
+### Snapshot da auditoria estática anterior à Dev.5 — 2026-11-19
+
+Os itens desta tabela registram o estado observado antes da fase Dev.5 e são
+evidência histórica da auditoria, não descrição integral do checkout atual.
+Quando houver conflito, prevalecem o delta Dev.2–Dev.5 acima e as fases atuais
+abaixo. Em particular, o addon `aculta_forum_legacy` já existe; a conversão
+Comment→ForumPost e o campo `ForumPost.legacy_author` foram removidos na Dev.5.
+O responsável confirma que a importação do acervo Growroom não ocorreu. Isso
+descreve a ausência de conteúdo histórico importado no alvo, não a inexistência
+do corpus de origem.
 
 Esta busca cobre código/configuração PHP, YAML e Twig versionados nesta worktree;
 não substitui o census de Runtime/config ativo do FDC-11.0. Achados que devem
@@ -141,11 +152,10 @@ orientar a extração e a revisão:
 
 | Área | Evidência atual | Destino/critério do plano |
 | --- | --- | --- |
-| Configuração de fields | `field.storage.*.field_autor_legado` e `field.field.*.field_autor_legado` continuam em `config/sync`; defaults relacionados existem em `aculta_forum` e `aculta_user`. Não há defaults do addon porque o módulo ainda não existe na branch. | Comparar config ativa, sync e defaults por UUID/ID/dependências em clone restaurável. A transferência ao futuro addon não prova ownership seguro nem autoriza import; provar instalação/atualização preservando storage, valores e dependências antes de remover definições antigas. |
-| Resíduo de refatoração em ForumPost/docs | O `ForumPost` atual não declara `legacy_author`, mas quatro displays de ForumPost no config sync ainda o listam como hidden. Documentos/roadmap de Forum e User também descrevem `ForumPost.legacy_author` ou autoria histórica no post revisionável, em conflito com a política atual de não converter Comments históricos em ForumPosts. | Tratar a chave de display e instruções normativas obsoletas como artefatos da refatoração, não como registros do acervo. Antes de removê-las, confirmar em config/schema/testes que não existe field atual nem dado histórico armazenado ali. Concentrar a política normativa e a semântica histórica em `aculta_forum_legacy`; manter changelog histórico apenas como registro datado e explicitamente supersedido, sem guiar implementação atual. |
-| Documentação e ferramentas de migração/refatoração | `docs/OWNERSHIP.md` ainda liga autoria histórica a `aculta_user` e cita fila/hook antigo; `REVISIONABLE-DISCUSSION-WORKFLOW.md` e seções do `ROADMAP.md` descrevem `ForumPost.legacy_author` e conversão Comment→ForumPost. No código do Fórum há auditoria Drush/Migration e plugins source/destination que conhecem os campos/autores legados. `MIGRATION-REMOVAL.md` é auditoria histórica da retirada do Drupal Forum contrib e inclui decisões de limpeza antigas. | Transferir política normativa e ferramentas read-only do acervo para a documentação/addon; atualizar ownership e roadmap atuais para não prescrever conversão nem dependência de User. Provar quais comandos/plugins foram executados e se criaram registros da refatoração. Conversores Comment→ForumPost ficam fora do fluxo executável; só propor sua retirada depois de verificar uso e dependências. Preservar auditorias/changelogs como evidência datada, marcando trechos superados sem apagar histórico. Distinguir retirada do contrib da extração do acervo Growroom. |
-| Acoplamentos diretos no Fórum | Não há classificador genérico de origem no código PHP. Uma busca estática em `src/` encontrou referências legadas em `DiscussionReplyController`, `DiscussionReplyAccess`, `ForumQuoteHooks`, `ForumHistoricModerationQueueHooks`, `HistoricForumFlagAccessHooks`, `PublicForumLastActivityAuthorHooks`, `ForumPostMigrationFieldHooks`, `ForumCommentMigrationAudit`, `ForumCommentMigrationAuditCommand`, `ForumCommentPost`, `ForumComment` (source Migrate), `ForumCommentFlagging` (source/destination), `ForumFlaggingMigrationContext`, `ForumCommentMover` e `ForumTopicMover`. Há leitura direta de `field_autor_legado`, acesso à entidade `aculta_legado_autor`, apresentação de autoria, exclusões de fila/flag, auditoria e suporte a conversão. | São acoplamentos reais que contradizem a fronteira pretendida, não prova de que o core já esteja desacoplado. No FDC-11.2, classificar cada arquivo como semântica de arquivo a mover para o addon, adapter a substituir por contrato genérico, ou ferramenta de conversão/refatoração a retirar. O acervo ainda não foi importado no Runtime alvo; preservar corpus/manifests fonte e não tratar os módulos como se já tivessem dados históricos persistidos. Cobrir rotas e consumidores antes de remover os marcadores diretos. |
-| Migrações de Comment para ForumPost | `migrations/aculta_forum_comment_posts.yml`, `aculta_forum_comment_parents.yml` e `aculta_forum_comment_flaggings.yml` estão registradas no módulo. A source filtra tipo/campo/host Forum e Domain, mas não `field_autor_legado`, status publicado nem rejeição; o destino cria ForumPosts e transporta `legacy_author`; as migrations seguintes recriam parent/child e flaggings no alvo ForumPost. Os destinos estendem `EntityContentBase`; no Core 11, o `save()` herdado chama `setSyncing(TRUE)`. | A inclusão do acervo histórico conflita com a decisão vigente: Comments Growroom históricos nunca podem ser convertidos, ter sua árvore refeita ou suas flags transferidas. Nenhum import é autorizado nesta fase. O plano deve restringir a origem por classificador central fail-closed; eventual migração de Comments correntes precisa ser escopo separado e aprovado. O estado `isSyncing` suprime eventos de atividade nos hooks atuais do Fórum e os eventos de publicação do Messenger para Nodes, mas não substitui teste de todos os consumers nem supressão CGU. Procurar execuções/mapas antes de qualquer alteração. Se a refatoração criou ForumPosts/flagging, identificar somente esses destinos e removê-los em plano reversível autorizado; preservar integralmente Comments/autores/tópicos/flags históricas de origem. |
+| Configuração de fields | No snapshot anterior à Dev.5, `field.storage.*.field_autor_legado` e `field.field.*.field_autor_legado` estavam em `config/sync`, com defaults em `aculta_forum`/`aculta_user`; a transferência ao addon ainda não havia sido feita. | Fields e ownership continuam pendentes de extração. Comparar config ativa, sync e defaults por UUID/ID/dependências em clone restaurável; não presumir valores de conteúdo importado. A transferência não autoriza operação estrutural no Runtime. |
+| Resíduo de refatoração em ForumPost/docs | No baseline, quatro displays do ForumPost listavam `legacy_author`, embora a entidade não declarasse o campo; a política atual limita autoria histórica a tópicos e Comments do arquivo. | Dev.5 removeu a chave de display dos defaults e config sync, o hook que adicionava o campo-base, as leituras em User/Forum e a classificação de ForumPost como `ARCHIVE`. Nenhuma importação ocorreu; remoção de eventual schema/config ativa Runtime permanece separada e não foi executada. Documentos normativos antigos estão marcados como supersedidos; changelog fica apenas histórico. |
+| Documentação e ferramentas de migração/refatoração | O snapshot anterior à Dev.5 continha auditoria Drush/Migration, source/destination e migrations Comment→ForumPost; documentos antigos também descreviam essa conversão. | Dev.5 remove o fluxo executável de conversão e sua ponte de flagging porque misturavam o acervo com ForumPost. A importação do acervo não ocorreu e nenhum dado foi limpo. Preservar decisões antigas apenas como histórico datado e marcar o que foi supersedido. O futuro importador pertence exclusivamente ao addon e deverá gravar o formato legado separado, sob plano próprio e autorização operacional. |
+| Acoplamentos atuais no Fórum | Após Dev.5, a busca estática ainda encontra checks diretos de `field_autor_legado` em `ForumTopicMover`/`ForumCommentMover`, integração de autoria dos Comments e participação/moderação no User, além de origem, perfil, memorial e integração de módulos consumidores ainda não extraídos. O classificador e a fila de moderação já foram parcialmente transferidos; o motor não possui mais hook específico de fila histórica nem código `legacy_author` em ForumPost. | Continuar a extração em etapas: todos os checks e políticas específicas do arquivo ficam no addon; APIs do motor permanecem genéricas por contrato; User/CGU/Index/Statistics/Messenger/Game deixam de consultar markers diretamente. Provar instalação do Forum sem addon e com addon, mantendo somente a dependência unidirecional addon→Forum. |
 | Acoplamentos em User, Game e Messenger | `aculta_user` ainda define a entidade/tabela `aculta_legado_autor`, manager, access handler, nome de exibição, rota MAIN `/u/lendashistoricas`, memorial coletivo, reserva literal do slug em `AccountNames::RESERVED`, cartões, hooks de autoria/moderação, `ReportQueue` e exceção em `ParticipationRules`. A varredura também encontrou integração genérica por bundle em `ParticipationRules::publishedPublicForumCommentCount`, `hasPublishedDiscussionComment`, `ActivityController` (listas de tópicos/comentários/posts), `ParticipationHooks`, `NodeCoAuthorHooks`, `CoAuthorSettingsForm`/`CoAuthorAdminController` e `AuthorCardVariantResolver`; não classificam todos os itens por proveniência. Em particular, `hasPublishedDiscussionComment()` conta ForumPosts publicados por UID sem filtrar origem, e `publishedPublicForumCommentCount()` conta Comments publicados sem excluir autoria histórica; `isSyncing` não protege essas consultas posteriores à gravação. `aculta_game::ForumParticipationPolicy` bloqueia marcadores legados e entidades sincronizadas no caminho de concessão de conquista; `aculta_messenger::ForumNoticeAccessPolicy`, `MessageSubscribeEventHooks` e `MessageSubscribeEventWorker` verificam o campo, enquanto outros caminhos do Messenger reconhecem o bundle do tópico corrente. | Mover entidade/config/rota/memorial/apresentação e regras exclusivamente históricas para o addon. A reserva do slug deve usar contrato genérico de slugs reservados, com o addon contribuindo `lendashistoricas`; não deixar literal legado em `aculta_user`. Manter recursos correntes de conta, coautoria, atividade e participação no domínio/adapter ACULTA, mas substituir verificações históricas por consulta ao contrato genérico de origem. Para cada consulta por bundle **e para cada agregação derivada por UID**, provar se precisa incluir `CURRENT`, excluir `ARCHIVE`/`UNKNOWN` ou tratar contexto próprio; UID e bundle sozinhos não provam origem. Game, Messenger, User e demais consumidores principais não devem ler nomes de field nem classes do addon. Preservar a política: importação/reconstrução não gera participação, avisos, assinaturas, XP ou conquistas e autores históricos não viram perfil/conta corrente; testar tanto efeitos imediatos de criação quanto consultas/agregações posteriores. |
 | Classificação de origem | Não foram encontrados `ForumDiscussionOriginPolicy`, `CurrentDiscussionOriginClassifier` ou provider `aculta_forum_legacy` em PHP. `DiscussionContextResolver` resolve hosts de discussão; `ForumAnalyticsScopeResolver` trata escopo analítico. Ambos são contratos diferentes de classificar legado/corrente/contextual. O histórico ainda é detectado por campos/classes diretamente. | Projetar e testar um resolver central genérico para `ARCHIVE`, `CURRENT`, `CONTEXTUAL` e `UNKNOWN`; provider de arquivo pertence ao addon opcional. Testar addon ausente/presente, marker ausente, precedência, host cruzado e saída inválida. Falhas de origem para escrita/eventos devem ser fechadas. Views, Search API e agregadores ainda precisam consumir a classificação. |
 | Views e navegação | Views públicas/administrativas filtram `node:aculta_forum_topic` por bundle/status; `PublicForumListViewHooks` calcula contagens por bundle/categoria. Esses caminhos não filtram a origem histórica por si mesmos. | Separar listagem atual, filas e contagens do catálogo histórico. Aplicar filtro de origem por provider em Views/query/access e nas contagens auxiliares; preservar rota/canonical de leitura histórica e grants. Só usar marker após o census provar cobertura; não presumir que todo registro possui marker. |
@@ -157,7 +167,11 @@ orientar a extração e a revisão:
 | Autoria e UI | `aculta_user::DiscussionCommentAuthorHooks` renderiza cartão legado sempre que um Comment `aculta_discussion_post` tem `field_autor_legado`; em hosts diferentes de `author_forum`, chama `buildLegacy()`. `aculta_magazine/docs/README.md` descreve autoria vinculada ao acervo no Comment editorial `revista`. O hook também renderiza `legacy_author` em `aculta_forum_post`, entidade de publicação corrente, embora ForumPost não seja conteúdo histórico autorizado por F-D44. Isso pode expor autoria Growroom fora de tópicos/comentários do arquivo. `AuthorCardBuilder` e o SDC `author-card` declaram o cartão/variante históricos no User/tema. | Mover classificação, nome de exibição e decisão de renderizar autoria histórica ao addon. Exibir o cartão somente quando tópico/comentário for classificado `ARCHIVE` dentro do Fórum legado; um marker isolado em Wiki, Revista, LMS, ForumPost ou host desconhecido não pode expor `LegacyAuthor`. ForumPosts correntes usam identidade de User. Qualquer `legacy_author` persistido em ForumPost é candidato de refatoração somente se a provenance da migration o provar. Manter o SDC e a variante visual reutilizáveis, mas sem política de origem no tema. Atualizar `aculta_magazine/docs/README.md` e cobrir testes de host cruzado para que F-D44 só se aplique a tópicos e comentários do arquivo. |
 | Dependências e testes de ownership | Não há manifesto do addon para auditar. `aculta_forum.info.yml` declara `aculta_user` como dependência obrigatória, além de serviços atuais de identidade/participação; `aculta_user` guarda hoje entity/schema/rota históricos, embora seu `.info.yml` não declare dependência do Fórum. `AcultaUserInstallRollbackKernelTest` lista `aculta_legado_autor` como tabela/entity de User e espera que uninstall de `aculta_user` a remova. | Não remover em bloco a integração de identidade ACULTA corrente. Separar no census dependências correntes necessárias de serviços/fields legados; substituir apenas a parte corrente por adapter opcional quando requerido por portabilidade e mover ownership histórico para addon. Rever o teste de rollback de User para enumerar só o storage que continuar pertencendo a User. Criar testes do addon para transferir o provider/ownership da entidade e dos fields existentes, preservando ID e contrato de storage, confirmar baseline vazio no Runtime atual e bloquear uninstall após futura importação; provar também a matriz sem `aculta_user` e com addon ausente/presente. Manifestos e service containers dos módulos principais não podem exigir o addon. |
 
-### Census de fixtures e testes acoplados — HEAD publicado `65c1f8145`
+### Census histórico de fixtures e testes acoplados — HEAD publicado `65c1f8145`
+
+Este census precede a Dev.5. A lista abaixo documenta os candidatos encontrados
+naquele HEAD; os testes e fixtures de conversão removidos na Dev.5 já não fazem
+parte da árvore atual. Recalcular o inventário após concluir a extração do addon.
 
 Uma busca textual versionada por `aculta_legado_autor`, `field_autor_legado`,
 `legacy_author`, hooks de fila/Flagging histórica e `legacy_flag_id` encontrou
@@ -410,123 +424,42 @@ fora do host histórico nunca pode promover uma entidade a `ARCHIVE`. Depois da
 importação futura aprovada, um teste separado de integração no clone valida os
 IDs de origem reais contra o manifesto, sem expor dados pessoais.
 
-### Estado atual do acervo, importação futura e dados da refatoração
+### Estado atual do acervo e dados da refatoração
 
-O responsável confirma que a importação do Growroom ainda não ocorreu e que
-não há autores, tópicos ou comentários históricos importados no Runtime alvo.
-O corpus e os manifests versionados/gerados que servem de fonte para a futura
-importação não são conteúdo do banco Runtime e não entram em limpeza. F-D44
-continua definindo a entidade canônica `aculta_legado_autor` e a identidade que
-será importada; a definição da entidade ou uma tabela vazia não prova que haja
-autores ou conteúdo históricos persistidos. O addon deverá importar o corpus
-somente em fase futura aprovada, mantendo IDs de origem, autoria, hierarquia,
-URLs e regras de apresentação.
+O responsável confirma que a importação histórica do Growroom ainda não foi
+feita; não há autores, tópicos ou Comments desse acervo importados no Runtime.
+Não foi feita leitura do banco Runtime nesta fase, portanto não afirmo contagem
+ou estado de registros de teste/refatoração persistidos. Nenhum dado foi
+excluído ou migrado.
 
-“Limpar dados da refatoração” significa remover registros ou artefatos
-persistidos criados pela própria refatoração, não apagar o corpus de origem nem
-dados históricos que ainda serão importados. Antes de qualquer remoção, provar
-a origem e separar esses artefatos do conteúdo corrente de Wiki, Revista, LMS,
-Fórum ou outros hosts. Uma vez comprovado que o registro foi criado pela
-refatoração, removê-lo é o resultado esperado da fase de limpeza. A extração de
-ownership e essa limpeza são operações distintas. Nenhuma exclusão persistente
-será executada nesta fase de planejamento; a operação futura precisa de lista
-exata, método reversível e validação em clone. Não é necessário manter tabelas
-temporárias/paralelas comprovadamente criadas pela refatoração. O censo verifica
-se o storage canônico/fields existem e estão vazios, sem presumir linhas.
-ForumPosts/Flaggings de importação, caso encontrados apesar de a importação não
-ter sido executada, exigem investigação de proveniência; só registros provados
-como artefatos da refatoração entram na limpeza. Não exportar dados pessoais.
+Dev.5 removeu do código e do Config Sync o caminho de conversão Comment→ForumPost,
+o campo-base `ForumPost.legacy_author`, os displays correspondentes, plugins,
+mapas declarativos e a ponte de Flagging/Migrate. A separação de autoria futura
+segue F-D44 e pertence ao addon opcional; a transferência de entity/field/config
+ownership permanece uma operação estrutural que exige clone, plano reversível e
+autorização operacional específica. O addon ainda não executa a importação do
+corpus.
 
-Para confirmar o baseline informado e identificar eventual resíduo de teste ou
-refatoração, o census deve conferir status e mapas das migrations. Como a
-importação não foi executada no Runtime alvo, os destinos históricos esperados
-são zero; esta matriz documenta o que verificar se a execução estiver marcada,
-se houver dados parciais ou se aparecerem alvos inesperados:
+“Apagar dados da refatoração” refere-se somente a registros comprovadamente
+criados pela própria refatoração. Como a importação não ocorreu, não há
+acervo histórico importado para apagar. Este trabalho não executou `drush`,
+`updatedb`, `config:import`, Composer, rebuild, rollback nem exclusão persistente.
+Se futuramente surgir evidência de escrita de teste/refatoração no Runtime,
+identificar os IDs e a proveniência antes de qualquer limpeza; não inferir pela
+data, autor, bundle ou semelhança. Corpus e manifests de origem não são alvos.
 
-| Migration | Evidência de proveniência | Possível efeito da refatoração |
-| --- | --- | --- |
-| `aculta_forum_comment_posts` | Map/message tables do Migrate: cada CID de origem mapeado para ID de destino `aculta_forum_post`; conferir CID de origem, ID de destino e existência/estado sem expor corpo ou autoria. | Cria ou atualiza ForumPosts a partir de Comments, incluindo dados `legacy_author`. O destination define explicitamente `ROLLBACK_DELETE`; teste Kernel confirma que rollback exclui ForumPosts importados e preserva os Comments origem. |
-| `aculta_forum_comment_parents` | Mapa da migration e IDs de destino; compara `parent` atual com a relação derivada dos CIDs de origem/pai. | Atualiza a hierarquia via destination `entity:aculta_forum_post`; o rollback padrão de EntityContentBase também pode excluir destinos mapeados, não apenas limpar `parent`. |
-| `aculta_forum_comment_flaggings` | Map/message tables próprios e campo `entity_type/entity_id` dos flaggings mapeados, cruzados com lookup da migration de posts; conferir `aculta_cgu_report.legacy_flag_id` pelo ID de cada flagging destino. | Cria flaggings contra ForumPosts destino. O hook `flagging_insert` pode criar denúncia CGU e chamar `ModerationNotifier`, que pode enviar e-mail via Mailer; o rollback Core exclui o flagging, mas o hook atual só remove denúncia estritamente pendente, não as que avançaram de estado. |
+### Fase futura de censo/limpeza, somente se houver evidência de registros
 
-Mapas ausentes, incompletos ou incompatíveis não autorizam inferir origem por
-UID, data, texto ou semelhança do conteúdo. Se o census divergir do baseline
-de importação não executada, interromper a limpeza e investigar a origem; não
-classificar automaticamente esses registros como legado original ou como
-refatoração. Exigir evidência de clone/backup e revisão antes de qualquer plano
-reversível.
-Não executar `drush migrate:rollback` em lote como atalho: destinos do Migrate
-usam `ROLLBACK_DELETE`, e o rollback pode excluir ForumPosts que hoje tenham
-edições, filhos ou relações posteriores. Primeiro inventariar revisões,
-respostas, flaggings, reações, referências e eventos ligados aos IDs de destino;
-provar o comportamento na versão Core efetiva e em clone restaurável. Os
-O corpus/manifests de origem, conteúdo corrente dos demais hosts e qualquer
-registro cuja proveniência não tenha sido demonstrada nunca são alvos dessa
-limpeza. Como não há importação histórica no Runtime alvo, não presumir
-Comments/autores/tópicos históricos de origem no banco. Core: [EntityContentBase
-no Drupal 11](https://api.drupal.org/api/drupal/core%21modules%21migrate%21src%21Plugin%21migrate%21destination%21EntityContentBase.php/11.x).
-
-Para a migration de flaggings, incluir no census apenas IDs de denúncias
-relacionados por `legacy_flag_id` aos flaggings destinos provados pelo mapa.
-Conferir status, decisões, vínculos do caso, mensagens pendentes e logs do
-Mailer antes de planejar a remoção de qualquer registro CGU; a exclusão de uma
-Flagging não remove automaticamente denúncias fora do estado `pendente` nem
-desfaz e-mails já enviados. Não classificar denúncia como dado da refatoração
-por motivo, data ou alvo apenas. Bloquear a ponte/notificação durante qualquer
-importação futura até o teste provar zero efeitos externos.
-
-O escopo do census de proveniência não termina nas três migrations. A
-refatoração pode ter produzido efeitos persistidos por hooks, workers ou
-projeções; a tabela abaixo define domínios a verificar, não afirma que existam
-registros deles no Runtime:
-
-| Domínio a verificar | Evidência para atribuir à refatoração | Tratamento planejado |
-| --- | --- | --- |
-| Revisões, relações pai/filho, reações e referências em ForumPosts de destino | ID de destino ligado ao CID e à migration; revisar histórico/revisões e relações atuais; reações e referências só entram se ligadas ao ID exato | Remover os registros comprovados e tratar alterações posteriores dependentes no plano reversível; não usar rollback em lote. |
-| Eventos de atividade/participação, contagens ou concessões do Game | Ledger/event ID ou referência explícita ao ID de destino/importação; comparar hooks e regras de supressão efetivamente vigentes na versão executada | Apagar eventos/registros comprovados da refatoração; separar projeções reconstruíveis de concessões/participações persistidas e reconciliar saldos sem remover por janela de tempo, UID ou similaridade. |
-| Filas, avisos, subscriptions e mensagens do Messenger | Item de fila com entidade/source ID, logs de worker ou vínculo explícito com operação de importação; auditar também itens já consumidos | Remover itens e registros pendentes comprovados; mensagens/notificações já entregues são efeitos externos e não são desfeitos pelo rollback, portanto registrar como não reversíveis. |
-| Documentos de Search API/Index e métricas/projeções de Statistics | IDs de entidade de destino nos trackers/índices ou chaves de origem no ledger de métricas; snapshots agregados antes/depois sem exportar conteúdo pessoal | Remover projeções comprovadas e reconstruir somente após plano operacional próprio com comparação de baseline; nunca executar rebuild durante esta fase. Isolar métricas históricas das correntes. |
-| Cache, estado temporário e logs de execução | Chaves namespaced pela migration/entidade e retenção documentada; logs sem copiar PII para o relatório | Registrar como estado operacional, não como acervo. Não limpar globalmente nem tratar cache/log como prova única da origem de conteúdo. |
-
-Em todos esses domínios, IDs e vínculos explícitos são evidência; horário,
-autor, texto, bundle ou coincidência de contagem não bastam. O census deve
-anotar também efeitos que não possam ser revertidos (e-mail ou mensagem já
-entregues) para que a remoção do registro de origem não seja descrita como
-reversão total. Artefatos reconstruíveis só serão reindexados/reconciliados em
-etapa operacional própria, autorizada e com comparação de baseline.
-
-### Fase planejada: remoção de dados comprovadamente produzidos pela refatoração
-
-Esta é uma fase separada do FDC-11.0 (census) e do FDC-11.3 (transferência de
-ownership). O censo prova proveniência; a transferência não apaga dados; a fase
-de limpeza remove registros persistidos da refatoração, caso existam. Como a
-importação histórica não ocorreu, o resultado esperado do censo no Runtime é
-zero ForumPosts/Flaggings/métricas/eventos produzidos por essas migrations; se
-houver registros, investigar a divergência antes de classificá-los. Esta fase
-ocorre depois do FDC-11.0 e antes de desativar ou retirar em FDC-11.2 as
-definições/plugins necessários à proveniência. Manter mapas e definições de
-migration até concluir o censo e qualquer limpeza necessária; não os apagar
-para simplificar a extração. Para cada resíduo comprovado, identificar IDs
-exatos nos domínios acima, incluindo ForumPosts, relações pai/filho, Flaggings
-e denúncias CGU relacionadas por `legacy_flag_id`. Em clone restaurável,
-inspecionar revisões, filhos, reações, referências, casos/decisões, filas,
-eventos de atividade/participação, mensageria, projeções e efeitos já entregues;
-produzir prévia, método reversível e comparação antes/depois por conjunto de
-IDs. A validação deve provar que o corpus fonte e conteúdo corrente de outros
-hosts permanecem intactos. Não executar rollback em lote; e-mails e eventos
-externos já entregues não são apagáveis por rollback, e denúncias que avançaram
-de estado precisam de tratamento próprio.
-
-Todos os registros cuja origem na refatoração esteja demonstrada por mapas e
-proveniência são alvo de remoção, depois de resolvidas suas dependências e
-preparados backup, reversão e autorização operacional da execução concreta.
-Registros sem evidência suficiente permanecem intocados até nova prova. F-D44
-determina manter a entidade/tabela canônica `aculta_legado_autor` para a futura
-importação; o plano não presume linhas de autores, tópicos ou comentários no
-Runtime atual. Não confundir registros duplicados criados pelas migrations
-com a definição/storage canônica. Se o censo confirmar o baseline vazio e
-nenhum resíduo de refatoração, esta fase registra resultado sem exclusão; não
-cria nem mantém tabela paralela para satisfazer o plano.
+1. Fazer censo somente leitura em ambiente autorizado, sem exportar PII, para
+   distinguir conteúdo corrente, conteúdo de origem e resíduos de refatoração.
+2. Se houver registros atribuíveis à refatoração, listar IDs e dependências
+   exatos (relações, Flags/CGU, eventos, filas, mensagens e projeções) e criar
+   prévia reversível em clone restaurável.
+3. Apagar somente os registros de refatoração comprovados, após aprovação
+   operacional específica. Conteúdo legado de origem, Comments contextuais e
+   corpus/manifests não entram nessa limpeza.
+4. Se não houver resíduo, registrar censo vazio; não criar tabela ou mapa apenas
+   para cumprir o plano.
 
 ### Pipeline de coleta e curadoria do acervo
 

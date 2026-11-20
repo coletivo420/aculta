@@ -37,7 +37,6 @@ hidden:
   created: true
   first_published: true
   langcode: true
-  legacy_author: true
   parent: true
   revision_log: true
   revision_timestamp: true

@@ -90,7 +90,6 @@ final class ForumPostParticipationPolicyKernelTest extends KernelTestBase {
       'label' => 'Domain',
     ])->save();
     $this->legacyAuthorField('node', 'aculta_forum_topic');
-    $this->legacyAuthorField('aculta_forum_post', 'aculta_forum_post');
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
 
     $this->author = User::create(['name' => 'autora', 'status' => 1]);
@@ -178,13 +177,9 @@ final class ForumPostParticipationPolicyKernelTest extends KernelTestBase {
   }
 
   /**
-   * Historical authorship on the post or its topic blocks the trigger.
+   * A legacy topic cannot generate current participation from a ForumPost.
    */
-  public function testLegacyAuthorExcludesPostAndTopic(): void {
-    $post = $this->post();
-    $post->set('field_autor_legado', 'Autor antigo');
-    self::assertFalse($this->policy->isEligiblePost($post));
-
+  public function testLegacyTopicExcludesCurrentPost(): void {
     $this->topic->set('field_autor_legado', 'Autor antigo');
     $this->topic->save();
     self::assertFalse($this->policy->isEligiblePost($this->post()));

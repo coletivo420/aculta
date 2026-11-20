@@ -6,7 +6,6 @@ namespace Drupal\aculta_forum\Hook;
 
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Service\ForumPublicPostStatistics;
-use Drupal\aculta_user\Entity\LegacyAuthor;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -34,13 +33,6 @@ final class PublicForumLastActivityAuthorHooks {
    * @var \Drupal\user\UserInterface[]
    */
   private array $accounts = [];
-
-  /**
-   * Historical authors needed for activity cards, keyed by entity ID.
-   *
-   * @var \Drupal\aculta_user\Entity\LegacyAuthor[]
-   */
-  private array $legacyAuthors = [];
 
   /**
    * Activity and identity batches already prepared for a View render.
@@ -120,14 +112,6 @@ final class PublicForumLastActivityAuthorHooks {
 
     if ($postTimestamp >= $commentTimestamp && (int) $post['last_post_id'] > 0) {
       $postEntity = $this->forumPosts[(int) $post['last_post_id']] ?? NULL;
-      if ($postEntity instanceof ForumPost && $postEntity->hasField('legacy_author') && !$postEntity->get('legacy_author')->isEmpty()) {
-        $legacyAuthor = $this->legacyAuthors[self::intValue($postEntity->get('legacy_author')->target_id)] ?? NULL;
-        if ($legacyAuthor instanceof LegacyAuthor) {
-          $variables['last_comment_author'] = $this->authorCardBuilder->buildLegacyForum($legacyAuthor);
-        }
-        return;
-      }
-
       $accountId = $postEntity instanceof ForumPost ? (int) $postEntity->getOwnerId() : 0;
     }
     else {
@@ -174,7 +158,6 @@ final class PublicForumLastActivityAuthorHooks {
    */
   private function preloadAuthors(ViewExecutable $view, array $statistics): void {
     $accountIds = [];
-    $legacyAuthorIds = [];
     foreach ($view->result as $resultRow) {
       $topicId = self::intValue($view->field['nid']->getValue($resultRow));
       $commentCount = self::intValue($view->field['last_comment_count']->getValue($resultRow));
@@ -189,13 +172,7 @@ final class PublicForumLastActivityAuthorHooks {
 
       if ($postTimestamp >= $commentTimestamp && (int) $post['last_post_id'] > 0) {
         $postEntity = $this->forumPosts[(int) $post['last_post_id']] ?? NULL;
-        if ($postEntity instanceof ForumPost && $postEntity->hasField('legacy_author') && !$postEntity->get('legacy_author')->isEmpty()) {
-          $legacyAuthorId = self::intValue($postEntity->get('legacy_author')->target_id);
-          if ($legacyAuthorId > 0) {
-            $legacyAuthorIds[] = $legacyAuthorId;
-          }
-        }
-        elseif ($postEntity instanceof ForumPost && $postEntity->getOwnerId() > 0) {
+        if ($postEntity instanceof ForumPost && $postEntity->getOwnerId() > 0) {
           $accountIds[] = (int) $postEntity->getOwnerId();
         }
       }
@@ -210,14 +187,6 @@ final class PublicForumLastActivityAuthorHooks {
     $accountIds = array_values(array_diff(array_unique($accountIds), array_keys($this->accounts)));
     if ($accountIds !== []) {
       $this->accounts += $this->entityTypeManager->getStorage('user')->loadMultiple($accountIds);
-    }
-    $legacyAuthorIds = array_values(array_diff(array_unique($legacyAuthorIds), array_keys($this->legacyAuthors)));
-    if ($legacyAuthorIds !== []) {
-      foreach ($this->entityTypeManager->getStorage('aculta_legado_autor')->loadMultiple($legacyAuthorIds) as $authorId => $author) {
-        if ($author instanceof LegacyAuthor) {
-          $this->legacyAuthors[$authorId] = $author;
-        }
-      }
     }
   }
 

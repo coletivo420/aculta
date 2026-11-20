@@ -604,3 +604,19 @@ migração ou alteração de Runtime foi executada.
 - Implementado gerenciador de idempotência contra duplo envio e concorrência (`DiscussionReplyIdempotencyManager`).
 - Unificadas ações inline em `#links['comment-reply']` e `#links['comment-quote']` em conformidade com o contrato Drupal Core de `Link::preRenderLinks`.
 - Fechados achados COM-01 a COM-12 e gerada documentação de homologação em `HOMOLOGACAO-COMENTARIOS-0.2.0.md`.
+## 0.2.0-dev.5
+
+- Remove o pipeline executável Comment→ForumPost, incluindo migrations de
+  posts, pais e denúncias; esses destinos violavam a política de manter o
+  acervo Growroom separado e sem reações importadas.
+- Remove o campo-base `ForumPost.legacy_author`, suas entradas de display e as
+  decisões de autoria histórica em Game/User para ForumPosts. Posts correntes
+  usam a conta Drupal; autoria legada continua em tópicos e Comments do arquivo.
+- Remove do `aculta_forum` a dependência de Migrate e a auditoria que validava o
+  conversor. Não executa importação, updatedb, config import nem limpeza de
+  dados no Runtime; qualquer schema/config ativo residual requer etapa própria.
+- Limita o cartão histórico ao Comment marcado sob tópico Fórum também marcado;
+  um marcador somente no Comment não converte tópico corrente em arquivo.
+  Marcadores residuais em Wiki, Revista, LMS e origens desconhecidas não expõem
+  autoria Growroom. A extração da apresentação de `aculta_user` segue pendente.
+

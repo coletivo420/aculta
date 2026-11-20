@@ -5,6 +5,12 @@ registra o que foi inventariado, classificado, reescrito, consolidado e
 aposentado, com evidência no código e no Git. Ele é um recorte verificável, não
 uma declaração de que toda a dívida foi zerada.
 
+As disposições registradas abaixo são o estado da auditoria em 2026-11-10.
+Mudanças posteriores substituem essas linhas quando indicado; os testes de
+conversão do acervo Growroom foram removidos na fase Dev.5 de 2026-11-19 porque
+a importação não ocorreu e Comment histórico não deve ser convertido em
+ForumPost.
+
 ## 1. Método
 
 - Inventário gerado por `scripts/audit-custom-tests.php` (somente leitura, sem
@@ -177,9 +183,9 @@ O catálogo sinaliza heurísticas, não condenações. Nesta rodada:
 | `web/modules/custom/aculta_portal/modules/aculta_commerce/tests/src/Unit/Shipping/FlatRatePluginTest.php` | manter: contrato vigente |
 | `web/modules/custom/aculta_portal/modules/aculta_donation/tests/src/Kernel/DonationPortKernelTest.php` | manter: contrato vigente |
 | `web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Kernel/ActivityLocationMigrationKernelTest.php` | manter: migração ativa |
-| `web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/ForumCommentMigrationBatchKernelTest.php` | manter: migração ativa |
-| `web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/ForumCommentMigrationDestinationKernelTest.php` | manter: migração ativa |
-| `web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/ForumFlaggingMigrationContextKernelTest.php` | manter: migração ativa |
+| `web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/ForumCommentMigrationBatchKernelTest.php` | removido na Dev.5: pipeline de conversão não é usado; a importação ainda não ocorreu |
+| `web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/ForumCommentMigrationDestinationKernelTest.php` | removido na Dev.5: Comment histórico não é destino ForumPost |
+| `web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel/ForumFlaggingMigrationContextKernelTest.php` | removido na Dev.5 junto ao contexto exclusivo do conversor |
 | `web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel/DocumentFingerprintUniqueIndexKernelTest.php` | manter: contrato vigente |
 | `web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Kernel/ContentIndexForumAccessKernelTest.php` | manter: contrato vigente |
 | `web/modules/custom/aculta_portal/modules/aculta_lms/tests/src/Kernel/AcultaLmsInstallTest.php` | manter: contrato vigente |

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum_legacy\Unit;
 
 use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Origin\CoreDiscussionOriginClassifier;
 use Drupal\aculta_forum_legacy\Origin\LegacyDiscussionOriginClassifier;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
@@ -52,13 +54,13 @@ final class LegacyDiscussionOriginClassifierTest extends UnitTestCase {
   }
 
   /**
-   * A Growroom Comment is archive when it or its host has legacy attribution.
+   * A Growroom Comment is archive only when its Forum topic is marked.
    *
    * @covers ::classify
    * @dataProvider archiveMarkerProvider
    */
-  public function testMarkedCommentIsArchive(bool $commentMarked, bool $topicMarked): void {
-    $host = $this->markedTopic($topicMarked);
+  public function testMarkedCommentIsArchive(bool $commentMarked): void {
+    $host = $this->markedTopic(TRUE);
     $comment = $this->markedComment($commentMarked, $host);
 
     $result = (new LegacyDiscussionOriginClassifier())->classify($comment);
@@ -68,35 +70,51 @@ final class LegacyDiscussionOriginClassifierTest extends UnitTestCase {
   }
 
   /**
-   * A ForumPost linked to an explicitly marked Growroom topic is archive.
+   * A Comment marker on a current Forum topic does not override CURRENT.
    *
    * @covers ::classify
    */
-  public function testForumPostLinkedToMarkedTopicIsArchive(): void {
-    $topic = $this->markedTopic();
-    $reference = $this->createMock(FieldItemListInterface::class);
-    $reference->method('__get')->with('entity')->willReturn($topic);
-    $reference->method('isEmpty')->willReturn(FALSE);
-    $post = $this->createMock(FieldableEntityInterface::class);
-    $post->method('getEntityTypeId')->willReturn('aculta_forum_post');
-    $post->method('hasField')->willReturnCallback(static fn (string $name): bool => $name === 'topic');
-    $post->method('get')->with('topic')->willReturn($reference);
+  public function testCommentMarkerOnCurrentTopicDoesNotPromoteItToArchive(): void {
+    $host = $this->createMock(NodeInterface::class);
+    $host->method('bundle')->willReturn('aculta_forum_topic');
+    $host->method('getOwnerId')->willReturn(42);
+    $host->method('hasField')->with('field_autor_legado')->willReturn(FALSE);
 
-    $result = (new LegacyDiscussionOriginClassifier())->classify($post);
+    $comment = $this->markedComment(TRUE, $host);
+    $comment->method('getOwnerId')->willReturn(43);
 
-    self::assertNotNull($result);
-    self::assertSame(DiscussionOrigin::ARCHIVE, $result->origin);
+    $legacy = (new LegacyDiscussionOriginClassifier())->classify($comment);
+    $current = (new CoreDiscussionOriginClassifier(new DiscussionContextResolver([])))
+      ->classify($comment);
+
+    self::assertNull($legacy);
+    self::assertNotNull($current);
+    self::assertSame(DiscussionOrigin::CURRENT, $current->origin);
   }
 
   /**
-   * Provides marker combinations accepted for imported topic threads.
+   * Revisionable ForumPosts are never historical Comment archive records.
    *
-   * @return iterable<string, array{bool, bool}>
-   *   Marker combinations.
+   * @covers ::classify
+   */
+  public function testForumPostIsNotClassifiedAsArchive(): void {
+    $post = $this->createMock(FieldableEntityInterface::class);
+    $post->method('getEntityTypeId')->willReturn('aculta_forum_post');
+
+    $result = (new LegacyDiscussionOriginClassifier())->classify($post);
+
+    self::assertNull($result);
+  }
+
+  /**
+   * Provides Comment marker states for a marked historical host.
+   *
+   * @return iterable<string, array{bool}>
+   *   Comment marker state.
    */
   public static function archiveMarkerProvider(): iterable {
-    yield 'comment marker' => [TRUE, FALSE];
-    yield 'topic marker' => [FALSE, TRUE];
+    yield 'comment marker' => [TRUE];
+    yield 'comment without marker' => [FALSE];
   }
 
   /**
@@ -112,7 +130,7 @@ final class LegacyDiscussionOriginClassifierTest extends UnitTestCase {
   /**
    * Creates a Forum Comment with optional archive attribution.
    */
-  private function markedComment(bool $marked, ?NodeInterface $host = NULL): CommentInterface {
+  private function markedComment(bool $marked, ?NodeInterface $host = NULL): CommentInterface&MockObject {
     $comment = $this->createMock(CommentInterface::class);
     $comment->method('bundle')->willReturn('aculta_discussion_post');
     $comment->method('getFieldName')->willReturn('field_aculta_discussion');

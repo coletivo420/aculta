@@ -143,11 +143,6 @@ final class ReportQueue {
    * Checks the marker shared by imported historical topics and comments.
    */
   private function hasHistoricalAuthor(EntityInterface $entity): bool {
-    if ($entity->getEntityTypeId() === 'aculta_forum_post'
-      && $entity instanceof FieldableEntityInterface
-      && $entity->hasField('legacy_author')) {
-      return !$entity->get('legacy_author')->isEmpty();
-    }
     return $entity instanceof FieldableEntityInterface
       && $entity->hasField('field_autor_legado')
       && !$entity->get('field_autor_legado')->isEmpty();

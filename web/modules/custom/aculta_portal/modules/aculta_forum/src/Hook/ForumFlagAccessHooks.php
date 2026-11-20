@@ -6,7 +6,6 @@ namespace Drupal\aculta_forum\Hook;
 
 use Drupal\comment\CommentInterface;
 use Drupal\aculta_forum\Entity\ForumPost;
-use Drupal\aculta_forum\Migration\ForumFlaggingMigrationContext;
 use Drupal\aculta_forum\Origin\DiscussionOrigin;
 use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
@@ -40,7 +39,6 @@ final class ForumFlagAccessHooks {
     private readonly AccountProxyInterface $currentUser,
     private readonly DiscussionOriginResolverInterface $originResolver,
     private readonly ?DomainSiteManager $siteManager = NULL,
-    private readonly ?ForumFlaggingMigrationContext $flaggingMigrationContext = NULL,
   ) {}
 
   /**
@@ -125,14 +123,10 @@ final class ForumFlagAccessHooks {
    * for archived material as well.
    */
   #[Hook('flagging_presave')]
-  public function preventHistoricalFlagging(FlaggingInterface $flagging): void {
+  public function preventInvalidForumFlagging(FlaggingInterface $flagging): void {
     if (!in_array($flagging->getFlagId(), self::FLAGS, TRUE) && $flagging->getFlagId() !== self::POST_FLAG) {
       return;
     }
-    if ($this->flaggingMigrationContext?->authorizes($flagging)) {
-      return;
-    }
-
     if (!$this->currentUser->hasPermission('report aculta forum content')) {
       throw new AccessDeniedHttpException('A conta não pode denunciar conteúdo do Fórum público.');
     }

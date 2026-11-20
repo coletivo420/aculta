@@ -2,6 +2,25 @@
 
 Data: 2026-11-19. Branch de trabalho: `docs/forum-clone-discourse-ui-cgu-integracoes-20261119`, PR: https://github.com/coletivo420/aculta/pull/377, destino: `dev`. **Manter commits nessa branch**, sem force-push ou bypass do PHPStan level 10. Esta é uma entrega de código inicial, **não é homologação do Runtime**.
 
+## Atualização Dev.5 — 2026-11-19
+
+A importação histórica do Growroom **ainda não foi feita**. Não há conteúdo
+histórico importado no alvo; esta afirmação não descreve nem remove o corpus de
+origem. Dev.5 remove do motor a conversão Comment→ForumPost e a autoria
+`ForumPost.legacy_author`, além dos displays, plugins, mapas e bypass de
+Flagging que existiam exclusivamente para esse fluxo. Nenhum registro foi
+apagado, migrado ou alterado no Runtime.
+
+Validação local da fase: Unit focal Fórum/Legacy/User 453 testes e 2.837
+asserções PASS (24 depreciações); lint PHP, PHPCS, PHPStan nível 10, `phpstan-debt-guard check`
+e `diff`, descoberta de suítes, índice de status e gate Portal Drupal 12 PASS.
+Kernel focal foi tentado, mas não iniciou por falta de `SIMPLETEST_DB` (9 casos,
+zero asserções); HTTP/Functional está DEFERRED por falta de
+`SIMPLETEST_BASE_URL`. A suíte Unit completa foi tentada, mas a descoberta
+parou antes dos testes porque o checkout não contém o módulo contrib
+`webform_score`, exigido por `WebformScoreAccessTest`. A revisão independente
+R2 ainda está pendente. Nenhuma operação no Runtime foi executada.
+
 ## Instrução principal
 
 Você está continuando o clone funcional Drupal do Discourse nativo sobre `aculta_forum`, sistema único de comentários de Growroom corrente, Wiki, Revista, LMS e demais hosts registrados. **Não misture os Comments históricos do Growroom com comentários padrão nem os converta em ForumPost**. A política permanente está em [POLITICA-ACERVO-HISTORICO-GROWROOM-2026-11-19.md](POLITICA-ACERVO-HISTORICO-GROWROOM-2026-11-19.md); ela prevalece sobre qualquer documentação histórica de migração. Históricos ficam read-only, com identidade, links e estatísticas próprios. Novas publicações Growroom usam ForumPost; Wiki/Revista/LMS usam Comment contextual sem criar tópicos públicos paralelos.
@@ -45,7 +64,7 @@ Usar MariaDB **de testes**, não `aculta_runtime`, para Kernel; gates Drupal/Run
 1. **Citação cruzada:** `DiscussionReplyController`, `ForumQuoteHooks`, `DiscussionReplyAccess`, `DiscussionReplyFormHooks` e form endpoint devem negar fontes de outro host, com ACL revogada, tombstone, contexto LMS restrito, wiki não publicada, campos/bundles diferentes e acervo histórico. Exigir teste Functional HTTP/HTMX autenticado além dos Unit.
 2. **GET/HEAD não destrutivo:** `TopicDeletionDecisionForm` deve apenas apresentar confirmação em GET/HEAD e só executar em submit POST com CSRF da Form API. Testar GET/HEAD, POST inválido, token, perfil insuficiente, id ausente, dupla requisição, resultado efetivo e retorno de formulário. Revisar transação/idempotência em `TopicDeletionModerationManager` antes de aplicar exclusão real.
 3. **CGU purpose real:** `ReportService` deve resolver Comment pelo host, não pelo bundle `comment`; Revista=revista, Wiki=wiki, Growroom corrente=forum; LMS/feedback Group ficam fail-closed até adapter Educador/Group, sem autorização global por conveniência. Validar fila/flagging e escopo de permissões.
-4. **Separação histórica:** `field_autor_legado`/`legacy_author` e proveniência devem identificar o arquivo, sem permitir reply/edit/quote/reaction/flag em rotas alternativas, busca/caches, formulários administrativos e GraphQL/API se houver. Arquivo não vira Comment padrão ou ForumPost.
+4. **Separação histórica:** `field_autor_legado` nos tópicos/Comments e a proveniência devem identificar o arquivo, sem permitir reply/edit/quote/reaction/flag em rotas alternativas, busca/caches, formulários administrativos e GraphQL/API se houver. `ForumPost` é corrente e não usa autoria histórica; o arquivo não vira Comment padrão nem ForumPost.
 
 ## Próximos pacotes de implementação
 

@@ -29,30 +29,33 @@ final class DiscussionCommentAuthorHooks {
   ) {}
 
   /**
-   * Implements hook_entity_view() for shared discussion comments.
-   */
-  /**
+   * Adds the appropriate author card to a rendered discussion entity.
+   *
    * @param array<array-key, mixed> $build
-   *   Dados recebidos.
+   *   Render array to which the author card can be added.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity being rendered.
+   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+   *   The active entity display.
+   * @param string $view_mode
+   *   The active view mode.
    */
   #[Hook('entity_view')]
-  public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
+  public function entityView(
+    array &$build,
+    EntityInterface $entity,
+    EntityViewDisplayInterface $display,
+    string $view_mode,
+  ): void {
     if (!$entity instanceof ContentEntityInterface) {
       return;
     }
     if ($entity->getEntityTypeId() === 'aculta_forum_post') {
-      if ($entity->hasField('legacy_author') && !$entity->get('legacy_author')->isEmpty()) {
-        $legacyAuthor = $entity->get('legacy_author')->entity;
-        if ($legacyAuthor instanceof LegacyAuthor) {
-          $build['author_card'] = $this->authorCardBuilder->buildLegacyForum($legacyAuthor) + ['#weight' => -20];
-        }
-        return;
-      }
-
       $author = $entity instanceof EntityOwnerInterface ? $entity->getOwner() : NULL;
       if ($author instanceof UserInterface) {
-        // Sem apelido não há identidade pública; o acervo é o fallback obrigatório.
-        $card = $this->authorCardBuilder->build($author, 'author_forum') ?? $this->authorCardBuilder->buildFallback($author);
+        // Sem apelido, usa-se o cartão de fallback obrigatório.
+        $card = $this->authorCardBuilder->build($author, 'author_forum')
+          ?? $this->authorCardBuilder->buildFallback($author);
         $build['author_card'] = $card + ['#weight' => -20];
       }
       return;
@@ -66,14 +69,17 @@ final class DiscussionCommentAuthorHooks {
 
     $host = $entity->getCommentedEntity();
     $variant = $host === NULL ? NULL : $this->variantResolver->forHost($host);
+    $archivedForumHost = $variant === 'author_forum'
+      && $host->hasField('field_autor_legado')
+      && !$host->get('field_autor_legado')->isEmpty();
 
-    if ($entity->hasField('field_autor_legado') && !$entity->get('field_autor_legado')->isEmpty()) {
+    if ($archivedForumHost
+      && $entity->hasField('field_autor_legado')
+      && !$entity->get('field_autor_legado')->isEmpty()) {
       $legacyAuthor = $entity->get('field_autor_legado')->entity;
       if ($legacyAuthor instanceof LegacyAuthor) {
-        $builder = $variant === 'author_forum'
-          ? $this->authorCardBuilder->buildLegacyForum($legacyAuthor)
-          : $this->authorCardBuilder->buildLegacy($legacyAuthor);
-        $build['author_card'] = $builder + ['#weight' => -20];
+        $build['author_card'] = $this->authorCardBuilder->buildLegacyForum($legacyAuthor)
+          + ['#weight' => -20];
       }
       return;
     }

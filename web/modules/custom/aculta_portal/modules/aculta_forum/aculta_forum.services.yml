@@ -12,14 +12,6 @@ services:
   aculta_forum.public_post_statistics:
     class: Drupal\aculta_forum\Service\ForumPublicPostStatistics
     arguments: ['@database']
-  aculta_forum.comment_migration_audit:
-    class: Drupal\aculta_forum\Migration\ForumCommentMigrationAudit
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_site', '@module_handler']
-
-  aculta_forum.flagging_migration_context:
-    class: Drupal\aculta_forum\Migration\ForumFlaggingMigrationContext
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_site', '@migrate.lookup']
-
   Drupal\aculta_forum\Controller\ForumPostModerationFormController:
     class: Drupal\aculta_forum\Controller\ForumPostModerationFormController
     arguments: ['@entity_type.manager', '@entity.form_builder']
@@ -108,8 +100,6 @@ services:
     class: Drupal\aculta_forum\Hook\ForumPostBundleHooks
   Drupal\aculta_forum\Hook\PublicForumViewsDataHooks:
     class: Drupal\aculta_forum\Hook\PublicForumViewsDataHooks
-  Drupal\aculta_forum\Hook\ForumPostMigrationFieldHooks:
-    class: Drupal\aculta_forum\Hook\ForumPostMigrationFieldHooks
   Drupal\aculta_forum\Hook\ForumQuoteHooks:
     class: Drupal\aculta_forum\Hook\ForumQuoteHooks
     arguments: ['@aculta_forum.discussion_context_resolver', '@current_user', '@aculta_forum.quote_builder', '@request_stack', '@string_translation', '@aculta_forum.discussion_origin_resolver']
@@ -118,7 +108,7 @@ services:
     arguments: ['@aculta_forum.topic_mover', '@current_user']
   Drupal\aculta_forum\Hook\ForumFlagAccessHooks:
     class: Drupal\aculta_forum\Hook\ForumFlagAccessHooks
-    arguments: ['@entity_type.manager', '@current_user', '@aculta_forum.discussion_origin_resolver', '@aculta_portal.domain_site', '@aculta_forum.flagging_migration_context']
+    arguments: ['@entity_type.manager', '@current_user', '@aculta_forum.discussion_origin_resolver', '@aculta_portal.domain_site']
   Drupal\aculta_forum\Hook\PublicForumExposedFormHooks:
     class: Drupal\aculta_forum\Hook\PublicForumExposedFormHooks
     arguments: ['@entity_type.manager', '@current_user', '@entity.repository', '@string_translation']

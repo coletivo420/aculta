@@ -187,7 +187,7 @@ final class ForumFlagAccessHooksTest extends UnitTestCase {
     $currentUser->method('hasPermission')->with('report aculta forum content')->willReturn(TRUE);
 
     $this->expectException(AccessDeniedHttpException::class);
-    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventHistoricalFlagging($flagging);
+    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventInvalidForumFlagging($flagging);
   }
 
   /**
@@ -210,7 +210,7 @@ final class ForumFlagAccessHooksTest extends UnitTestCase {
     $currentUser->method('hasPermission')->with('report aculta forum content')->willReturn(TRUE);
 
     $this->expectException(AccessDeniedHttpException::class);
-    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventHistoricalFlagging($flagging);
+    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventInvalidForumFlagging($flagging);
   }
 
   /**
@@ -224,7 +224,7 @@ final class ForumFlagAccessHooksTest extends UnitTestCase {
     $flagging->method('getFlagId')->willReturn('sinalizar_topico');
 
     $this->expectException(AccessDeniedHttpException::class);
-    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventHistoricalFlagging($flagging);
+    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventInvalidForumFlagging($flagging);
   }
 
   /**
@@ -243,7 +243,7 @@ final class ForumFlagAccessHooksTest extends UnitTestCase {
     $flagging->method('getFlaggableId')->willReturn('404');
 
     $this->expectException(AccessDeniedHttpException::class);
-    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventHistoricalFlagging($flagging);
+    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventInvalidForumFlagging($flagging);
   }
 
   /**
@@ -259,7 +259,7 @@ final class ForumFlagAccessHooksTest extends UnitTestCase {
     $flagging->method('getFlaggableType')->willReturn('arbitrary_entity');
 
     $this->expectException(AccessDeniedHttpException::class);
-    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventHistoricalFlagging($flagging);
+    (new ForumFlagAccessHooks($manager, $currentUser, $this->originResolver()))->preventInvalidForumFlagging($flagging);
   }
 
   /**

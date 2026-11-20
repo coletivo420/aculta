@@ -33,7 +33,6 @@ hidden:
   created: true
   first_published: true
   langcode: true
-  legacy_author: true
   moderation_state: true
   parent: true
   revision_timestamp: true
