@@ -1,15 +1,15 @@
 .moderation-submit {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: .5rem;
   min-block-size: 2.75rem;
-  padding-inline: 0.875rem;
+  padding-inline: .875rem;
   border: 1px solid currentColor;
-  border-radius: 0.5rem;
   background: transparent;
-  color: inherit;
   font: inherit;
   cursor: pointer;
+  color: inherit;
+  border-radius: .5rem;
 }
 
 .moderation-submit:focus-visible {
@@ -17,6 +17,18 @@
   outline-offset: 2px;
 }
 
+.moderation-submit--primary {
+  color: var(--color-primary);
+}
+
+.moderation-submit--success {
+  color: var(--color-success);
+}
+
+.moderation-submit--warning {
+  color: var(--color-warning-text, var(--color-warning));
+}
+
 .moderation-submit--danger {
-  color: var(--color-danger, #b3261e);
+  color: var(--color-danger);
 }

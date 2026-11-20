@@ -29,6 +29,6 @@ props:
     tone:
       type: string
       title: Tom
-      description: Neutro para ações comuns; perigo para ações destrutivas ou de exclusão.
-      enum: [neutral, danger]
+      description: "Cor por tipo de ação: primário para edição e organização, sucesso para restaurar ou republicar, aviso para despublicar ou fechar, perigo para remover e excluir."
+      enum: [neutral, primary, success, warning, danger]
       default: neutral

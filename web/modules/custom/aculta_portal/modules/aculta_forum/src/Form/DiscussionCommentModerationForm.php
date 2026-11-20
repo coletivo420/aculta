@@ -117,7 +117,8 @@ final class DiscussionCommentModerationForm extends FormBase {
       '#value' => $comment->isPublished() ? $this->t('Despublicar') : $this->t('Republicar'),
       '#acao' => $comment->isPublished() ? 'despublicar' : 'republicar',
       '#moderation_icon' => $comment->isPublished() ? 'eye-slash' : 'eye',
-      '#moderation_tone' => 'neutral',
+      '#moderation_tone' => $comment->isPublished() ? 'warning' : 'success',
+      '#moderation_variant' => $comment->isPublished() ? 'duotone' : 'regular',
     ];
     // Edição administrativa: a moderação edita o comentário pelo formulário padrão; a marca é gravada ao salvar.
     $form['acoes']['editar_moderacao'] = [
@@ -128,7 +129,7 @@ final class DiscussionCommentModerationForm extends FormBase {
         'url' => Url::fromRoute('entity.comment.edit_form', ['comment' => $cid])->toString(),
         'icon' => 'pencil-simple',
         'variant' => 'regular',
-        'tone' => 'neutral',
+        'tone' => 'primary',
       ],
     ];
     if ($tombstone === 'moderacao') {
@@ -137,7 +138,7 @@ final class DiscussionCommentModerationForm extends FormBase {
         '#value' => $this->t('Restaurar comentário'),
         '#acao' => 'restaurar',
         '#moderation_icon' => 'arrow-u-up-left',
-        '#moderation_tone' => 'neutral',
+        '#moderation_tone' => 'success',
       ];
     }
     elseif (!$tombstone) {
@@ -147,6 +148,7 @@ final class DiscussionCommentModerationForm extends FormBase {
         '#acao' => 'remover',
         '#moderation_icon' => 'prohibit',
         '#moderation_tone' => 'danger',
+        '#moderation_variant' => 'duotone',
       ];
     }
     // Exclusão física só depois de marcar que é definitiva.
@@ -160,6 +162,7 @@ final class DiscussionCommentModerationForm extends FormBase {
       '#acao' => 'excluir',
       '#moderation_icon' => 'trash',
       '#moderation_tone' => 'danger',
+      '#moderation_variant' => 'duotone',
     ];
 
     // Envio por HTMX para o mesmo endereço: o corpo do popup é trocado pelo resultado.

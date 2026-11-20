@@ -1,13 +1,13 @@
 .flag-button {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: .5rem;
   min-block-size: 2.75rem;
-  padding-inline: 0.875rem;
+  padding-inline: .875rem;
   border: 1px solid currentColor;
-  border-radius: 999px;
-  color: inherit;
   text-decoration: none;
+  color: inherit;
+  border-radius: 999px;
 }
 
 .flag-button:focus-visible {

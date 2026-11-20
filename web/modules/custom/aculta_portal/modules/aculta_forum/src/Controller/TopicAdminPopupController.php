@@ -202,22 +202,26 @@ final class TopicAdminPopupController extends ControllerBase {
     $route = $url->getRouteName();
     $rawQuery = $url->getOption('query');
     $query = is_array($rawQuery) ? $rawQuery : [];
+    // Cor por tipo de ação; ícone duotone para ações de alto impacto, regular para as demais.
     [$icon, $tone] = match (TRUE) {
       $route === 'aculta_forum.discussion_composer' && isset($query['excluir_topico']) => ['trash', 'danger'],
-      $route === 'aculta_forum.discussion_composer' => ['pencil-simple', 'neutral'],
-      $route === 'aculta_forum.topic_move' => ['arrows-left-right', 'neutral'],
+      $route === 'aculta_forum.discussion_composer' => ['pencil-simple', 'primary'],
+      $route === 'aculta_forum.topic_move' => ['arrows-left-right', 'primary'],
       $route === 'aculta_forum.topic_moderation_pin' => [
         $node->isSticky() ? 'push-pin-simple-slash' : 'push-pin-simple',
-        'neutral',
+        'primary',
       ],
-      $route === 'aculta_forum.topic_moderation_close' => ['lock-simple', 'neutral'],
+      $route === 'aculta_forum.topic_moderation_close' => ['lock-simple', 'warning'],
       $route === 'aculta_forum.topic_moderation_remove' => ['prohibit', 'danger'],
-      $route === 'aculta_forum.topic_moderation_publish' => [$node->isPublished() ? 'eye-slash' : 'eye', 'neutral'],
+      $route === 'aculta_forum.topic_moderation_publish' => $node->isPublished()
+        ? ['eye-slash', 'warning']
+        : ['eye', 'success'],
       $route === 'aculta_forum.topic_moderation_archive' => ['archive', 'neutral'],
-      $route === 'aculta_forum.topic_moderation_split' => ['arrows-split', 'neutral'],
-      $route === 'aculta_forum.topic_moderation_merge' => ['arrows-merge', 'neutral'],
+      $route === 'aculta_forum.topic_moderation_split' => ['arrows-split', 'primary'],
+      $route === 'aculta_forum.topic_moderation_merge' => ['arrows-merge', 'primary'],
       default => ['dots-three', 'neutral'],
     };
+    $variant = in_array($tone, ['danger', 'warning'], TRUE) ? 'duotone' : 'regular';
     return [
       '#type' => 'component',
       '#component' => 'aculta420_v2:moderation-action',
@@ -225,7 +229,7 @@ final class TopicAdminPopupController extends ControllerBase {
         'label' => $this->labelOf($action),
         'url' => $url->toString(),
         'icon' => $icon,
-        'variant' => 'regular',
+        'variant' => $variant,
         'tone' => $tone,
       ],
     ];

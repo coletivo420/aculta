@@ -1,12 +1,12 @@
 .moderation-action {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: .5rem;
   min-block-size: 2.75rem;
-  padding-inline: 0.75rem;
-  color: inherit;
+  padding-inline: .75rem;
   text-decoration: none;
-  border-radius: 0.5rem;
+  color: inherit;
+  border-radius: .5rem;
 }
 
 .moderation-action:focus-visible {
@@ -14,6 +14,18 @@
   outline-offset: 2px;
 }
 
+.moderation-action--primary {
+  color: var(--color-primary);
+}
+
+.moderation-action--success {
+  color: var(--color-success);
+}
+
+.moderation-action--warning {
+  color: var(--color-warning-text, var(--color-warning));
+}
+
 .moderation-action--danger {
-  color: var(--color-danger, #b3261e);
+  color: var(--color-danger);
 }

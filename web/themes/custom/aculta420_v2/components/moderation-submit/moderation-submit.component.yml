@@ -26,7 +26,7 @@ props:
       type: string
       title: Tom
       description: Neutro para ações comuns; perigo para remover e excluir.
-      enum: [neutral, danger]
+      enum: [neutral, primary, success, warning, danger]
       default: neutral
     attributes:
       type: Drupal\Core\Template\Attribute
