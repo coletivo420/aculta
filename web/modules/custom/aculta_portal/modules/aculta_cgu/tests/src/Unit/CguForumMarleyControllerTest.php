@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_cgu\Unit;
 use Drupal\aculta_cgu\Controller\CguForumMarleyController;
 use Drupal\aculta_cgu\Service\CguReportQueue;
 use Drupal\aculta_cgu\Service\ReportService;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
@@ -72,6 +73,8 @@ final class CguForumMarleyControllerTest extends UnitTestCase {
     $form = (string) file_get_contents($root . '/src/Form/CguReportDecisionForm.php');
     self::assertStringContainsString("'forum'", $controller);
     self::assertStringContainsString("->access('view', \$account, TRUE)", $controller);
+    self::assertStringContainsString("runInSite('forum'", $controller);
+    self::assertStringContainsString("getSiteKeyValueForDomainId", $controller);
     self::assertStringContainsString('CguReportDecisionForm::class', $controller);
     self::assertStringContainsString('->resolvePurpose($entity)', $controller);
     self::assertStringContainsString('->decideReport(', $form);
@@ -96,6 +99,7 @@ final class CguForumMarleyControllerTest extends UnitTestCase {
       $this->createMock(AccountProxyInterface::class),
       $this->createMock(DateFormatterInterface::class),
       $this->createMock(FormBuilderInterface::class),
+      $this->createMock(DomainSiteManagerInterface::class),
     );
   }
 

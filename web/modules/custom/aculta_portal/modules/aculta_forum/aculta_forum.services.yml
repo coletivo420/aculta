@@ -434,3 +434,10 @@ services:
   Drupal\aculta_forum\Hook\ForumMentionTokenHooks:
     class: Drupal\aculta_forum\Hook\ForumMentionTokenHooks
     arguments: ['@aculta_forum.identity_tokens', '@entity_type.manager']
+
+  # Forum owns the scoped Marley topic commands and their entity ACL.
+  aculta_forum.marley_topic_actions:
+    class: Drupal\aculta_forum\Service\ForumMarleyTopicActions
+    arguments:
+      - '@aculta_portal.domain_site'
+      - '@aculta_forum.topic_author_deletion'

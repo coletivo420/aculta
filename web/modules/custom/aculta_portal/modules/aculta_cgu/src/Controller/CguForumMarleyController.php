@@ -9,6 +9,10 @@ use Drupal\aculta_cgu\Form\CguReportDecisionForm;
 use Drupal\aculta_cgu\ModerationScope;
 use Drupal\aculta_cgu\Service\CguReportQueue;
 use Drupal\aculta_cgu\Service\ReportService;
+use Drupal\aculta_portal\Domain\DomainSiteManagerInterface;
+use Drupal\aculta_forum\Service\ForumMarleyTopicActions;
+use Drupal\comment\CommentInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Controller\ControllerBase;
@@ -41,6 +45,8 @@ final class CguForumMarleyController extends ControllerBase {
     private readonly AccountProxyInterface $account,
     private readonly DateFormatterInterface $dates,
     private readonly FormBuilderInterface $forms,
+    private readonly DomainSiteManagerInterface $sites,
+    private readonly ?ForumMarleyTopicActions $forumTopicActions = NULL,
   ) {}
 
   /**
@@ -54,6 +60,10 @@ final class CguForumMarleyController extends ControllerBase {
       $container->get('current_user'),
       $container->get('date.formatter'),
       $container->get('form_builder'),
+      $container->get('aculta_portal.domain_site'),
+      $container->has('aculta_forum.marley_topic_actions')
+        ? $container->get('aculta_forum.marley_topic_actions')
+        : NULL,
     );
   }
 
@@ -82,7 +92,7 @@ final class CguForumMarleyController extends ControllerBase {
       return AccessResult::forbidden()->cachePerPermissions()->cachePerUser()
         ->addCacheableDependency($aculta_cgu_report);
     }
-    return $permission->andIf($target->access('view', $account, TRUE))
+    return $permission->andIf($this->targetViewAccess($target, $account))
       ->addCacheableDependency($target)
       ->addCacheableDependency($aculta_cgu_report);
   }
@@ -113,7 +123,7 @@ final class CguForumMarleyController extends ControllerBase {
       $type = $item['target_type'];
       $id = $item['target_id'];
       $entity = $this->loadForumTarget($type, $id);
-      if ($entity === NULL || !$entity->access('view', $this->account)) {
+      if ($entity === NULL || !$this->targetViewAccess($entity, $this->account)->isAllowed()) {
         continue;
       }
       // The queue may include flags not yet migrated to CGU. Such legacy
@@ -258,6 +268,9 @@ final class CguForumMarleyController extends ControllerBase {
     // On submit, CguReportDecisionForm delegates to ReportService.
     $form = $this->forms->getForm(CguReportDecisionForm::class, $aculta_cgu_report);
     $label = (string) ($target->label() ?: $this->t('Publicação do Fórum'));
+    $topicActions = $target instanceof NodeInterface && $this->forumTopicActions !== NULL
+      ? $this->forumTopicActions->buildActions($target, $this->account)
+      : [];
 
     return $this->workspace(
       (string) $this->t('Decidir denúncia #@id', ['@id' => $aculta_cgu_report->id()]),
@@ -272,6 +285,12 @@ final class CguForumMarleyController extends ControllerBase {
           'content' => [
             'label' => $this->targetLabel($target, $label),
             'note' => ['#plain_text' => (string) $this->t('Nenhuma ação sobre a visibilidade do conteúdo ocorre ao decidir o relato.')],
+            'topic_controls' => $topicActions === [] ? [] : [
+              '#type' => 'container',
+              '#attributes' => ['class' => ['studio-marley-workspace__control-row']],
+              'title' => ['#type' => 'html_tag', '#tag' => 'h3', '#value' => $this->t('Controles do tópico')],
+              'links' => ['#theme' => 'item_list', '#items' => $topicActions],
+            ],
           ],
         ]),
         'aside' => $this->component('surface-panel', [
@@ -312,11 +331,15 @@ final class CguForumMarleyController extends ControllerBase {
     if (!$entity instanceof EntityInterface) {
       return NULL;
     }
-    // Legacy Growroom content and LMS/Wiki/Revista hosts are not targets of
-    // this queue even if an old CGU record was misclassified as 'forum'.
-    if ($type === 'node' && (!$entity instanceof NodeInterface || $entity->bundle() !== 'aculta_forum_topic')) {
+
+    $topic = $this->forumTopic($entity);
+    if (!$topic instanceof NodeInterface || !$topic->hasField('field_domain_source')
+      || $topic->get('field_domain_source')->isEmpty()
+      || $this->sites->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum') {
       return NULL;
     }
+    // A report purpose label alone never authorizes a host from LMS/Wiki,
+    // Revista or legacy Growroom to enter this forum queue.
     try {
       return $this->reports->resolvePurpose($entity) === 'forum' ? $entity : NULL;
     }
@@ -326,7 +349,44 @@ final class CguForumMarleyController extends ControllerBase {
   }
 
   /**
-   * Builds a target name, preserving entity view permissions.
+   * Returns the Forum topic underlying a topic/reply/comment.
+   */
+  private function forumTopic(EntityInterface $entity): ?NodeInterface {
+    if ($entity instanceof NodeInterface) {
+      return $entity->bundle() === 'aculta_forum_topic' ? $entity : NULL;
+    }
+    if ($entity instanceof CommentInterface) {
+      $host = $entity->getCommentedEntity();
+      return $host instanceof EntityInterface && !($host instanceof CommentInterface)
+        ? $this->forumTopic($host) : NULL;
+    }
+    if ($entity->getEntityTypeId() === 'aculta_forum_post'
+      && $entity instanceof ContentEntityInterface && $entity->hasField('topic')) {
+      $topic = $entity->get('topic')->entity;
+      return $topic instanceof NodeInterface && $topic->bundle() === 'aculta_forum_topic'
+        ? $topic : NULL;
+    }
+    return NULL;
+  }
+
+  /**
+   * Performs both target and host entity access in the owner Forum domain.
+   */
+  private function targetViewAccess(EntityInterface $entity, AccountInterface $account): AccessResultInterface {
+    $topic = $this->forumTopic($entity);
+    if (!$topic instanceof NodeInterface) {
+      return AccessResult::forbidden()->cachePerUser();
+    }
+    $access = $this->sites->runInSite('forum', static fn (): AccessResultInterface =>
+      $entity->access('view', $account, TRUE)->andIf($topic->access('view', $account, TRUE)),
+    );
+    return $access instanceof AccessResultInterface
+      ? $access
+      : AccessResult::forbidden()->cachePerUser();
+  }
+
+  /**
+   * Creates a canonical owner-domain URL only when it is viewable.
    *
    * @return array<string, mixed>
    *   Safe link or escaped label.
@@ -334,10 +394,16 @@ final class CguForumMarleyController extends ControllerBase {
   private function targetLabel(EntityInterface $entity, string $label): array {
     if ($entity->hasLinkTemplate('canonical')) {
       try {
-        return ['#type' => 'link', '#title' => $label, '#url' => $entity->toUrl()];
+        $url = $entity->toUrl();
+        if ($url->isRouted()) {
+          $forumUrl = $this->sites->routeUrl('forum', $url->getRouteName(), $url->getRouteParameters());
+          if ($forumUrl instanceof Url) {
+            return ['#type' => 'link', '#title' => $label, '#url' => $forumUrl];
+          }
+        }
       }
       catch (\Throwable) {
-        // Content may be viewable but have no working canonical route.
+        // Missing canonical route: display only the escaped entity label.
       }
     }
     return ['#plain_text' => $label];

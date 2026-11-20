@@ -75,3 +75,5 @@ services:
       - '@current_user'
       - '@date.formatter'
       - '@form_builder'
+      - '@aculta_portal.domain_site'
+      - '@?aculta_forum.marley_topic_actions'

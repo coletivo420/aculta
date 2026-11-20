@@ -382,3 +382,53 @@ aculta_forum.topic_moderation_split:
     parameters:
       node:
         type: 'entity:node'
+
+# ConfirmFormBase reuses the Forum owner commands in the FRONTEND Marley.
+# Domain+entity+permission access is checked by the Forum service, not CGU.
+aculta_forum.marley_topic_close:
+  path: '/marley/forum/topico/{node}/fechar'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationCloseForm'
+    _title: 'Fechar ou reabrir tópico'
+  requirements:
+    _custom_access: 'aculta_forum.marley_topic_actions:access'
+    node: '\d+'
+  options:
+    _aculta_site_key: account
+    parameters:
+      node:
+        type: entity:node
+    no_cache: true
+  methods: [GET, HEAD, POST]
+
+aculta_forum.marley_topic_pin:
+  path: '/marley/forum/topico/{node}/fixar'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationPinForm'
+    _title: 'Fixar ou desafixar tópico'
+  requirements:
+    _custom_access: 'aculta_forum.marley_topic_actions:access'
+    node: '\d+'
+  options:
+    _aculta_site_key: account
+    parameters:
+      node:
+        type: entity:node
+    no_cache: true
+  methods: [GET, HEAD, POST]
+
+aculta_forum.marley_topic_archive:
+  path: '/marley/forum/topico/{node}/arquivar'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationArchiveForm'
+    _title: 'Arquivar ou desarquivar tópico'
+  requirements:
+    _custom_access: 'aculta_forum.marley_topic_actions:access'
+    node: '\d+'
+  options:
+    _aculta_site_key: account
+    parameters:
+      node:
+        type: entity:node
+    no_cache: true
+  methods: [GET, HEAD, POST]
