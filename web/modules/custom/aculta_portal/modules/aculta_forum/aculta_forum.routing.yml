@@ -242,3 +242,16 @@ aculta_forum.comment_moderation:
     _htmx_route: TRUE
     _aculta_site_keys: [forum, magazine, courses, wiki]
   methods: [GET, POST]
+
+aculta_forum.topic_admin_popup:
+  path: '/forum/topicos/{node}/controles'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\TopicAdminPopupController::view'
+    _title: 'Ações de moderação do tópico'
+  requirements:
+    _permission: 'move aculta forum topics'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'

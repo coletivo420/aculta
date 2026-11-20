@@ -200,7 +200,12 @@ Decisão do responsável: usar o ícone de administração existente (`comment-a
 - `comment-admin-popup.js`: o seletor passa a `[data-action$="-controles"]`, então o mesmo popup atende comentário e tópico.
 - Validação: schema SDC PASS (151 componentes, 2895 verificações); `node --check` OK.
 
-Próximo passo: a rota que devolve o conteúdo do popup do tópico (ações de mover categoria) por HTMX, e ligar o trigger com `kind: topico` na página do tópico. DEFERRED até essa rota existir.
+Implementado depois:
+
+- Rota `aculta_forum.topic_admin_popup` (`/forum/topicos/{node}/controles`), protegida por `move aculta forum topics`. Controller `TopicAdminPopupController` devolve o link de mover categoria.
+- Página do tópico (`PagePresentationHooks::composeForumTopic`, visão completa): para quem pode mover, o popup `aculta-admin-dialog` e o trigger `comment-admin-trigger` com `kind: topico` são mesclados ao `$page`. A biblioteca `aculta_forum/comment-admin-popup` é anexada.
+- Validação: PHPStan exit 0; guard PASS; schema SDC PASS.
+- DEFERRED: teste da rota (o controlador depende do contêiner do Drupal) e prova visual/HTMX do popup na página real.
 
 Desfeito nesta rodada: o `forum-topic-admin-menu` criado antes, que não era necessário.
 

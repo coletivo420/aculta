@@ -526,6 +526,36 @@ final class PagePresentationHooks {
     ];
 
     if ($viewMode === 'full') {
+      // Administração do tópico: ícone (comment-admin-trigger, kind topico) abre o popup por HTMX.
+      $pageAdmin = [];
+      if ($this->currentUser->hasPermission('move aculta forum topics')) {
+        $pageAdmin['aculta_admin_popup'] = [
+          '#theme' => 'portal_component',
+          '#name' => 'popup',
+          '#props' => [
+            'id' => 'aculta-admin-dialog',
+            'title' => (string) t('Ações de moderação do tópico'),
+            'close_label' => (string) t('Fechar'),
+          ],
+          '#slots' => [
+            'content' => ['#markup' => '<div id="aculta-admin-dialog-body" class="aculta-admin-dialog__body"></div>'],
+          ],
+        ];
+        $pageAdmin['aculta_admin_trigger'] = [
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:comment-admin-trigger',
+          '#props' => [
+            'kind' => 'topico',
+            'author_name' => $owner->getDisplayName(),
+            'url' => Url::fromRoute('aculta_forum.topic_admin_popup', ['node' => $node->id()])->toString(),
+          ],
+          '#attached' => ['library' => ['aculta_forum/comment-admin-popup']],
+          '#cache' => [
+            'contexts' => ['user.permissions'],
+            'tags' => $node->getCacheTags(),
+          ],
+        ];
+      }
       $categoryEntity = $node->hasField('field_aculta_categories') && !$node->get('field_aculta_categories')->isEmpty()
         ? $node->get('field_aculta_categories')->entity
         : NULL;
@@ -540,6 +570,7 @@ final class PagePresentationHooks {
         ],
         '#slots' => ['topic' => $topic],
       ];
+      $page += $pageAdmin;
       $cacheability = CacheableMetadata::createFromRenderArray($page)
         ->addCacheableDependency($owner);
       if ($categoryEntity !== NULL) {
