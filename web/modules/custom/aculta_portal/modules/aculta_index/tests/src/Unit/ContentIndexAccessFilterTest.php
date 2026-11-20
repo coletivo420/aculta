@@ -29,6 +29,7 @@ use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\RequestStack;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests original entity access revalidation for catalog candidates.
@@ -457,7 +458,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
    * @param list<string> $cacheTags
    *   Source cache tags.
    */
-  private function translation(AccessResult $access, array $cacheTags): ContentEntityInterface {
+  private function translation(AccessResult $access, array $cacheTags): ContentEntityInterface&MockObject {
     $translation = $this->createMock(ContentEntityInterface::class);
     $translation->method('access')->with('view', self::anything(), TRUE)->willReturn($access);
     $translation->method('getCacheContexts')->willReturn([]);

@@ -113,6 +113,10 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
     $this->assertGreaterThanOrEqual(count(self::EXPECTED_PROVIDER_IDS), $contributed, 'Há menos definições de provider que o contrato.');
 
     $container->setDefinition(
+      'aculta_forum.discussion_origin_resolver',
+      (new Definition(\Drupal\aculta_forum\Origin\DiscussionOriginResolver::class, [[]]))->setPublic(TRUE),
+    );
+    $container->setDefinition(
       'aculta_index.provider_registry',
       (new Definition(ContentIndexProviderRegistry::class, [new TaggedIteratorArgument('aculta_index.provider')]))
         ->setPublic(TRUE),

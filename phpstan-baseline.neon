@@ -22861,18 +22861,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Performance/ContentIndexMaintenanceBenchmarkTest.php
 
 		-
-			rawMessage: 'Call to an undefined method Drupal\Core\Entity\ContentEntityInterface::method().'
-			identifier: method.notFound
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Unit/ContentIndexAccessFilterTest.php
-
-		-
-			rawMessage: 'Cannot call method willReturn() on mixed.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Unit/ContentIndexAccessFilterTest.php
-
-		-
 			rawMessage: 'Parameter #1 $entities of method Drupal\Tests\aculta_index\Unit\ContentIndexAccessFilterTest::entityManager() expects array<string, Drupal\Core\Entity\ContentEntityInterface>, array<int, Drupal\Core\Entity\ContentEntityInterface> given.'
 			identifier: argument.type
 			count: 2
