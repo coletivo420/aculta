@@ -4,8 +4,8 @@
   gap: .5rem;
   min-block-size: 2.75rem;
   padding-inline: .875rem;
-  text-decoration: none;
   cursor: pointer;
+  text-decoration: none;
   color: inherit;
   border: 1px solid currentColor;
   border-radius: 999px;
