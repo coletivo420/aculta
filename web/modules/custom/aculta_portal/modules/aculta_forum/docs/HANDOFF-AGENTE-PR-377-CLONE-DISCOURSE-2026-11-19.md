@@ -147,6 +147,15 @@ Lacunas confirmadas nesta rodada:
 - `forum-opening-post`: **consumido em produção** por `aculta420_v2/src/Hook/PagePresentationHooks.php` (`#component: aculta420_v2:forum-opening-post`), dentro da página completa do tópico, em `$content['aculta_opening']`. A contagem anterior não cobria `src/Hook` do tema. Regra: o post de abertura é sempre o primeiro post do tópico do Fórum (`aculta_forum_topic`); a montagem ocorre só nesse bundle. Consumidores (LMS, Wiki, Revista e comentários) não têm post de abertura, por decisão.
 - `forum-topic-card`: 0 referências. **Decisão (2026-11-20):** não usar; a lista de tópicos fica só em linhas (`forum-topic-row`), como o Discourse. O cartão com miniatura é variante opcional do Discourse e não entra no Fórum. Documentado como não consumido por decisão, não como lacuna.
 
+## Recontagem de consumo por código (somente twig, php e yml) — 2026-11-20
+
+Recontagem excluindo docs, CHANGELOG e Stories. Antes, `forum-topic-card` e `forum-reply-mirror` pareciam consumidos por causa de docs.
+
+- Sem consumidor de código: `forum-topic-card` (decisão: não usar, lista só em linhas) e `forum-reply-mirror` (coberto pela resposta compacta espelhada e pelo `forum-post-card` com `author_position: side`).
+- Todos os demais SDCs de Comunidade têm consumidor de código.
+
+Pendente de decisão do responsável: remover ou manter como componentes sem uso. Nada foi apagado.
+
 ## Decisão — anexos só no Fórum; consumidores apenas mídia embutida — 2026-11-20
 
 Decisão do responsável:
