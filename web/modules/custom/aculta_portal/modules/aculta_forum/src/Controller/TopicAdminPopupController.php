@@ -98,12 +98,27 @@ final class TopicAdminPopupController extends ControllerBase {
       '#items' => $items,
     ];
 
+    // Controles do tópico em paridade com o Discourse, somente os que têm rota e acesso no código.
     $actions = [];
+    if ($node->access('update')) {
+      $actions[] = [
+        '#type' => 'link',
+        '#title' => $this->t('Editar tópico'),
+        '#url' => Url::fromRoute('aculta_forum.discussion_composer', ['entity_type' => 'node', 'entity_id' => $nid], ['query' => ['editar_topico' => 1]]),
+      ];
+    }
     if ($this->currentUser()->hasPermission('move aculta forum topics')) {
       $actions[] = [
         '#type' => 'link',
         '#title' => $this->t('Mover tópico de categoria'),
         '#url' => Url::fromRoute('aculta_forum.topic_move', ['node' => $nid]),
+      ];
+    }
+    if ($node->access('delete')) {
+      $actions[] = [
+        '#type' => 'link',
+        '#title' => $this->t('Excluir tópico'),
+        '#url' => Url::fromRoute('aculta_forum.discussion_composer', ['entity_type' => 'node', 'entity_id' => $nid], ['query' => ['excluir_topico' => 1]]),
       ];
     }
 

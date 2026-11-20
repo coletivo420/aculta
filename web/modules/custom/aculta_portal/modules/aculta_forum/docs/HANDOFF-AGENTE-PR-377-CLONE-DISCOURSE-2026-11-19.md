@@ -209,6 +209,19 @@ Implementado depois:
 
 Desfeito nesta rodada: o `forum-topic-admin-menu` criado antes, que não era necessário.
 
+## Paridade dos controles de tópico com o Discourse — 2026-11-20
+
+Decisão do responsável: os controles do `topic-admin-controls` são os controles de moderação do tópico, em paridade com o Discourse (mover, apagar, etc.), e não a estrutura de fatos do comentário.
+
+Implementado (com rota e acesso no código):
+- Editar tópico: `aculta_forum.discussion_composer` com `editar_topico=1`, visível com `access('update')`.
+- Mover tópico de categoria: `aculta_forum.topic_move`, permissão `move aculta forum topics`.
+- Excluir tópico: `aculta_forum.discussion_composer` com `excluir_topico=1`, visível com `access('delete')`.
+- Registro de decisões do CGU sobre o tópico (slot `log`).
+
+Lacunas de paridade (sem rota ou funcionalidade no código; não implementadas):
+- Fechar/abrir tópico, fixar/desafixar, arquivar, tornar não listado, tags, dividir/juntar tópico, despublicar/republicar tópico.
+
 ## topic-admin-controls: moderação de tópicos com correspondência no CGU — 2026-11-20
 
 Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve corresponder aos controles de moderação dos comentários no `aculta_cgu`; criar `topic-admin-controls` com a mesma correspondência para tópicos.
