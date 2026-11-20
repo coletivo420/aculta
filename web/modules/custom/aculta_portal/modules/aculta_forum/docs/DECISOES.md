@@ -1,3 +1,5 @@
+> **ADENDO VINCULANTE F-D50 a F-D54 - 2026-11-20:** F-D50 backend global exclusivo de `administrator`; F-D51 novo papel `moderador` abaixo de `content_editor`, somente moderação comunitária no frontend; F-D52 editores, Educadores e demais operadores de TODAS as suítes usam frontend próprio, com moderação pedagógica LMS independente; F-D53 enquetes nativas dentro do popup Criar tópico, integradas a `aculta_statistics`; F-D54 moderação frontend via popups + comandos comuns ao backend administrativo, sem herdar ACL e sem converter acervo histórico. Normativa técnica: [novo plano](PLANO-PARIDADE-DISCOURSE-FRONTEND-MODERADOR-ENQUETES-2026-11-20.md) e [política transversal](../../../../../../../docs/portal/FRONTEND-OPERACIONAL-BACKEND-EXCLUSIVO-ADMIN-2026-11-20.md). Decisões anteriores em conflito ficam supersedidas prospectivamente, não descrevem estado já implementado.
+
 # Decisões — ACULTA Fórum
 
 Data: 2026-10-15. Fonte: decisões explícitas do responsável nesta sessão.

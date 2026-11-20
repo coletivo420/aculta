@@ -1,3 +1,5 @@
+> **ALTERAÇÃO PRIORITÁRIA 2026-11-20:** o [plano FDC-R0 a R8](PLANO-PARIDADE-DISCOURSE-FRONTEND-MODERADOR-ENQUETES-2026-11-20.md) substitui a ordem de execução FDC abaixo quando divergir: backend somente admins; frontend operacional em todos os módulos; `moderador` novo abaixo de `content_editor`; LMS modera pedagogia separado; enquetes nativas dentro do popup Criar tópico e `aculta_statistics`. Pacotes antigos ficam como inventário/controles a revalidar, não como autorização de conceder acesso administrativo a moderador.
+
 > **POLÍTICA VIGENTE (2026-11-19):** [acervo histórico Growroom](POLITICA-ACERVO-HISTORICO-GROWROOM-2026-11-19.md). Comentários históricos **não são comentários padrão** e **não serão migrados** para ForumPost. Coexistência técnica não autoriza conversão, mesclagem, recontagem como atividade corrente ou moderação pela fila comum. A separação física requer inventário e homologação; alterações desta PR são apenas guardas iniciais.
 
 # Política ACULTA Forum: clone funcional Drupal do Discourse

@@ -39,6 +39,26 @@ Legenda: I = teste a implementar; V = teste histórico a reexecutar no HEAD; sem
 | T-28 | Composer novo Growroom | Kernel + browser | Cria apenas ForumPost, jamais Comment Core; fluxo sem JS permanece funcional |
 | T-25 | Segurança de UI Patterns | Composer lock + security audit | Confirmar release instalada corrigida para SA-CONTRIB-2026-075 e ausência de configuração insegura |
 
+## Ampliação vinculante de aceite T-29 a T-40 (2026-11-20)
+
+Todos iniciam em **PLANNED** e só viram PASS com comando/ambiente/commit/resultado. [Política frontend global](../../../../../../../docs/portal/FRONTEND-OPERACIONAL-BACKEND-EXCLUSIVO-ADMIN-2026-11-20.md) e [plano executivo atualizado](PLANO-PARIDADE-DISCOURSE-FRONTEND-MODERADOR-ENQUETES-2026-11-20.md).
+
+| ID | Cenário | Aceite mínimo |
+| --- | --- | --- |
+| T-29 | Papéis não-admin nas rotas backend | Moderador, content_editor, Educador e gerente, isolados/combinados, recebem 403/404 em rotas administrativas GET/POST/HTMX/JSON; administrator mantém acesso |
+| T-30 | Moderação comunitária frontend | Moderador opera CGU/ForumPost/Node/Comment por popups no site público, sem nenhuma permissão genérica de admin |
+| T-31 | Frontend editorial | Content_editor conclui tarefas autorizadas de Wiki/Marley sem redirecionamento ao backend |
+| T-32 | LMS pedagógico independente | Educador só pode moderar turma/curso/Group autorizado em GanjaLab; moderador global/editor não recebe acesso |
+| T-33 | Frontend operacional transversal | Todas as suítes com operadores não-admin proveem UI própria e negam fallbacks administrativos |
+| T-34 | Popup ponta a ponta | Form API/CSRF/validação/feedback/fragmento/foco/aria/fallback sem JS, sem mutação GET |
+| T-35 | Split/merge do storage real | Transação e locks com ForumPost atual; integridade de revisão, thread, flags, permalink, cache e dados históricos |
+| T-36 | Poll Builder | Criar tópico com/sem enquete, única/múltipla, 2..20 opções, fechamento opcional, resultado e atomicidade |
+| T-37 | Voto e ACL | Voto único lógico por conta, concorrência/idempotência, revogação de acesso, tópico fechado/despublicado/histórico |
+| T-38 | Privacidade da enquete | Cédula anônima para público, número de votantes distinto de seleções múltiplas, audit trail de encerramento/reabertura |
+| T-39 | Integração FST | Eventos de enquete deduplicados, snapshots reconciliados, analytics público não contém UID, conteúdo nem votos individuais |
+| T-40 | Privilégio cumulativo | Somar moderador + content_editor ou demais papéis não contorna backend/admin-only nem o contexto LMS |
+
+
 ## Política de status
 
 Cada feature registra `planned | code | unit | kernel | functional | browser | runtime | production` com referência a commit, comando, duração, resultado e evidências; falha/BLOCKED/DEFERRED não se tornam PASS. Matriz de papéis: anônimo, autenticado, autor, editor Fórum, editor Revista, editor Wiki, Educador LMS, membro do curso, membro do Group restrito, não-membro, moderador CGU por purpose, global CGU, admin MAIN. Cobrir domínio incorreto, cache quente e revogação entre duas requisições.

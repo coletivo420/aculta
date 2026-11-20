@@ -1,0 +1,10 @@
+uuid: 72f52a07-50d2-4b6c-ae0e-5d0b87281df2
+langcode: pt-br
+status: true
+dependencies: {}
+id: moderador
+label: Moderador
+weight: -3
+is_admin: false
+permissions:
+  - 'access content'

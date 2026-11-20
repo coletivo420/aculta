@@ -1,3 +1,5 @@
+> **NOVO CONTRATO DE PAPÉIS (2026-11-20):** somente `administrator` acessará backend em qualquer suíte; novo `moderador` abaixo de `content_editor` modera a comunidade por popup/frontend, sem direitos editoriais herdados; `content_editor` trabalha no frontend Wiki/Revista; Educador opera e modera pedagogia no frontend GanjaLab com ACL própria. Concessões antigas em `content_editor` e `lms_teacher` ainda precisam de migração/retirada segura - não considerar esta política já aplicada. [Política transversal](FRONTEND-OPERACIONAL-BACKEND-EXCLUSIVO-ADMIN-2026-11-20.md) e [plano Fórum](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/PLANO-PARIDADE-DISCOURSE-FRONTEND-MODERADOR-ENQUETES-2026-11-20.md).
+
 # Papéis e hierarquia
 
 As permissões e hooks listados abaixo descrevem o sistema ACULTA Forum atual e

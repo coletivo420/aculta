@@ -1,3 +1,5 @@
+> **POLÍTICA APROVADA 2026-11-20:** todas as rotas administrativas descritas abaixo serão **exclusivas de `administrator`**. Moderadores usarão workspace e popups **frontend** (a implementar); `content_editor` e Educador também terão suas suítes frontend. O texto abaixo descreve o **código atual**, não prova que os gates admin-only estão ativos. [Roadmap novo](PLANO-PARIDADE-DISCOURSE-FRONTEND-MODERADOR-ENQUETES-2026-11-20.md).
+
 # Administração do Fórum geral
 
 `/painel-administrativo/forum` é a aba **Início**, intitulada **Painel

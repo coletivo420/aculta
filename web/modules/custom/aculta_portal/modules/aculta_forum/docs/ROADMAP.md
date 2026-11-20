@@ -1,3 +1,5 @@
+> **DECISÃO VIGENTE 2026-11-20 - roadmap operacional ajustado:** [plano FDC-R0 a FDC-R8, moderador frontend e enquetes](PLANO-PARIDADE-DISCOURSE-FRONTEND-MODERADOR-ENQUETES-2026-11-20.md). Todo backend é exclusivo de administradores; todas as suítes têm trabalho operacional no frontend; moderação pedagógica é própria do LMS. As seções abaixo são registro histórico/escopo técnico e não prevalecem sobre este plano.
+
 > **POLÍTICA VIGENTE (2026-11-19):** [acervo histórico Growroom](POLITICA-ACERVO-HISTORICO-GROWROOM-2026-11-19.md). Comentários históricos **não são comentários padrão** e **não serão migrados** para ForumPost. Coexistência técnica não autoriza conversão, mesclagem, recontagem como atividade corrente ou moderação pela fila comum. A separação física requer inventário e homologação; alterações desta PR são apenas guardas iniciais.
 
 > Seções antigas abaixo que propõem conversão Comment→ForumPost, `ForumPost.legacy_author` ou migração de Flagging estão supersedidas por essa política e pelo ciclo `0.2.0-dev.5`. Permanecem como histórico datado; os plugins e configurações executáveis foram removidos. A importação Growroom não ocorreu.
