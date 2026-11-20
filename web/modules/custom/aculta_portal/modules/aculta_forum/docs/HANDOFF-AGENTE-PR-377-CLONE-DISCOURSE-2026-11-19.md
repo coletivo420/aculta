@@ -61,6 +61,13 @@ Pendências, sem execução:
 - **Custo conhecido:** tópicos correntes sem dono (`uid` vazio) passam a ficar fora do índice por falha fechada. Precisa de revisão de dados antes de qualquer reindexação.
 - **DEFERRED:** reindexação do Runtime e teste Kernel de busca. Não executados.
 
+## P1 FDC-06 (complemento) — tópicos do acervo fora das métricas — 2026-11-20
+
+- **Antes:** só as respostas eram filtradas. Contagens de tópicos, tópicos sem resposta e reações em tópico usavam `applyPublicTopicConditions`, que não exclui tópicos com `field_autor_legado`.
+- **Agora:** `ForumMetricsProvider` aplica `applyCurrentTopicScope` em todas as consultas de tópico (13 pontos). Tópicos do acervo saem das métricas correntes; as respostas continuam filtradas pelo host.
+- **Verificação:** PHPStan nível 10 exit 0; guard PASS; Unit `aculta_forum` 278 testes sem falhas.
+- **DEFERRED:** Kernel de prova das contagens (mesma fixture de site pendente da fase anterior).
+
 ## Revalidação de continuidade — 2026-11-20
 
 Base: `origin/docs/forum-clone-discourse-ui-cgu-integracoes-20261119` em `506512bd8`. A cópia local de `docs/...` no checkout principal estava atrás do remoto em 141 commits sem commits próprios; o trabalho foi feito em worktree dedicado, sem tocar o worktree `aculta-pr377`, que tem alterações de outra frente.
