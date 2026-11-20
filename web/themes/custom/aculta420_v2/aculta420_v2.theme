@@ -40,3 +40,15 @@ function aculta420_v2_theme_suggestions_input_alter(array &$suggestions, array $
     $suggestions[] = 'input__submit__moderation';
   }
 }
+
+/**
+ * Implements hook_preprocess_views_view().
+ *
+ * Expõe se o usuário está autenticado, para abas que só existem para quem tem conta.
+ *
+ * @param array<string, mixed> $variables
+ *   View template variables.
+ */
+function aculta420_v2_preprocess_views_view(array &$variables): void {
+  $variables['forum_logged_in'] = (bool) \Drupal::currentUser()->isAuthenticated();
+}
