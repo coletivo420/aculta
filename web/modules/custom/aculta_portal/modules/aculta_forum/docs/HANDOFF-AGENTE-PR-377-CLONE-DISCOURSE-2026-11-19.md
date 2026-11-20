@@ -184,6 +184,14 @@ Decisão do responsável: a sequência é por posição, com a abertura na posi�
 
 DEFERRED: prova visual e de ordem real nos consumidores e no Fórum.
 
+## Respostas em níveis (`reply-indent`) — consumo e posições — 2026-11-20
+
+- Consumo: `reply-indent` é incluído por `comment--field-aculta-discussion`, `comment--comments` e `forum-comment` (Fórum e consumidores). A seta de primeira resposta (`reply_first`) vem de `DiscussionReactionEntityViewHooks` pelos irmãos do mesmo pai.
+- Posições: respostas aninhadas criam posições como `0.1`. A sequência de lados usa a ordem `thread` ASC, que já coloca cada resposta aninhada na ordem de exibição, então a alternância conta também os níveis.
+- Profundidade: `DiscussionReactionEntityViewHooks::replyDepth()` lê a coluna `thread` (`01/` raiz, `01.01/` nível 1), limitado a 3, o máximo do SDC.
+- Prova: Unit do Fórum 285 testes OK; PHPStan exit 0; guard PASS; PHPCS sem erros.
+- DEFERRED: prova visual de recuo e seta nas páginas reais, e Kernel de ordem com respostas aninhadas.
+
 ## Recontagem de consumo por código (somente twig, php e yml) — 2026-11-20
 
 Recontagem excluindo docs, CHANGELOG e Stories. Antes, `forum-topic-card` e `forum-reply-mirror` pareciam consumidos por causa de docs.

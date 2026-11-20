@@ -89,7 +89,7 @@ final class DiscussionReactionEntityViewHooks {
     $threadComment = $variables['comment'] ?? NULL;
     if ($threadComment instanceof CommentInterface) {
       $thread = $threadComment->get('thread')->value;
-      $variables['reply_depth'] = min(3, is_string($thread) ? substr_count($thread, '.') : 0);
+      $variables['reply_depth'] = self::replyDepth(is_string($thread) ? $thread : NULL);
       // Resposta em nível: lado oposto ao cartão ao qual responde (pai). A raiz segue a alternância da conversa.
       // Sequência por posição: consumidores começam na 1.ª resposta; no Fórum a abertura é a posição 0.
       $isConsumer = self::isConsumerHost($threadComment->getCommentedEntity());
@@ -308,6 +308,13 @@ final class DiscussionReactionEntityViewHooks {
    */
   public static function isConsumerHost(?EntityInterface $host): bool {
     return !($host instanceof NodeInterface && $host->bundle() === 'aculta_forum_topic');
+  }
+
+  /**
+   * Nível da resposta a partir da coluna thread do Drupal (ex.: 01/ = raiz, 01.01/ = nível 1), limitado a 3.
+   */
+  public static function replyDepth(?string $thread): int {
+    return min(3, $thread === NULL ? 0 : substr_count($thread, '.'));
   }
 
   /**

@@ -62,6 +62,17 @@ final class ConsumerCommentHostTest extends UnitTestCase {
   }
 
   /**
+   * Reply level comes from the Drupal thread column: root 01/, first level 01.01/, capped at 3.
+   */
+  public function testReplyDepthFollowsThreadColumnAndCapsAtThree(): void {
+    self::assertSame(0, DiscussionReactionEntityViewHooks::replyDepth('01/'));
+    self::assertSame(1, DiscussionReactionEntityViewHooks::replyDepth('01.01/'));
+    self::assertSame(2, DiscussionReactionEntityViewHooks::replyDepth('01.01.01/'));
+    self::assertSame(3, DiscussionReactionEntityViewHooks::replyDepth('01.01.01.01/'));
+    self::assertSame(0, DiscussionReactionEntityViewHooks::replyDepth(NULL));
+  }
+
+  /**
    * Builds a node double with the given bundle.
    */
   private function node(string $bundle): NodeInterface {
