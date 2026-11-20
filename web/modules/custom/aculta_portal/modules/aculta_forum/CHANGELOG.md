@@ -604,6 +604,15 @@ migração ou alteração de Runtime foi executada.
 - Implementado gerenciador de idempotência contra duplo envio e concorrência (`DiscussionReplyIdempotencyManager`).
 - Unificadas ações inline em `#links['comment-reply']` e `#links['comment-quote']` em conformidade com o contrato Drupal Core de `Link::preRenderLinks`.
 - Fechados achados COM-01 a COM-12 e gerada documentação de homologação em `HOMOLOGACAO-COMENTARIOS-0.2.0.md`.
+## 0.2.0-dev.6
+
+- `ForumTopicMover` e `ForumCommentMover` usam o resolver genérico de origem e
+  operam somente sobre tópicos, Comments e descendentes classificados
+  `CURRENT`. O motor não consulta `field_autor_legado` nesses movedores; origem
+  `ARCHIVE` ou `UNKNOWN` falha fechada.
+- As fixtures Kernel agora usam owner Drupal para cenários correntes e origem
+  desconhecida para provar negação sem field legado. Nenhuma operação Runtime.
+
 ## 0.2.0-dev.5
 
 - Remove o pipeline executável Comment→ForumPost, incluindo migrations de

@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Unit;
 
 use Drupal\aculta_forum\Service\ForumTopicMover;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableDependencyInterface;
@@ -19,7 +22,6 @@ use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -80,7 +82,11 @@ final class ForumTopicMoverTest extends UnitTestCase {
   /**
    * Creates a movable public topic or an immutable historic topic.
    *
-   * @return array{ForumTopicMover, NodeInterface&MockObject, AccountInterface&MockObject}
+   * @return array{
+   *   ForumTopicMover,
+   *   NodeInterface&\PHPUnit\Framework\MockObject\MockObject,
+   *   AccountInterface&\PHPUnit\Framework\MockObject\MockObject
+   *   }
    *   The service, node and account under test.
    */
   private function subject(bool $isPublic, bool $canMove = TRUE): array {
@@ -100,8 +106,6 @@ final class ForumTopicMoverTest extends UnitTestCase {
     $account = $this->createMock(AccountInterface::class);
     $account->method('hasPermission')->with('move aculta forum topics')->willReturn($canMove);
 
-    $legacy = $this->createMock(FieldItemListInterface::class);
-    $legacy->method('isEmpty')->willReturn($isPublic);
     $domain_field = $this->createMock(FieldItemListInterface::class);
     $domain_field->method('getValue')->willReturn([['target_id' => 'forum_aculta_org']]);
     $category = $this->createMock(FieldItemListInterface::class);
@@ -112,7 +116,6 @@ final class ForumTopicMoverTest extends UnitTestCase {
     $node->method('bundle')->willReturn('aculta_forum_topic');
     $node->method('hasField')->willReturn(TRUE);
     $node->method('get')->willReturnMap([
-      ['field_autor_legado', $legacy],
       ['field_domain_source', $domain_field],
       ['field_aculta_categories', $category],
     ]);
@@ -140,9 +143,21 @@ final class ForumTopicMoverTest extends UnitTestCase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
+    $originResolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $originResolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from(
+        $isPublic ? DiscussionOrigin::CURRENT : DiscussionOrigin::ARCHIVE,
+        $node,
+      ),
+    );
 
     return [
-      new ForumTopicMover($manager, $purpose, $this->createMock(LoggerInterface::class)),
+      new ForumTopicMover(
+        $manager,
+        $purpose,
+        $originResolver,
+        $this->createMock(LoggerInterface::class),
+      ),
       $node,
       $account,
     ];

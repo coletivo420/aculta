@@ -21,6 +21,16 @@ parou antes dos testes porque o checkout não contém o módulo contrib
 `webform_score`, exigido por `WebformScoreAccessTest`. A revisão independente
 R2 ainda está pendente. Nenhuma operação no Runtime foi executada.
 
+## Atualização Dev.6 — 2026-11-19
+
+`ForumTopicMover` e `ForumCommentMover` agora usam `DiscussionOriginResolver`;
+eles movem somente tópico, Comment e descendentes classificados `CURRENT`.
+Origem `ARCHIVE` ou `UNKNOWN` falha fechada, sem ler `field_autor_legado` no
+motor. As fixtures Kernel deixaram de instalar esse field.
+
+Gates da Dev.6 ainda precisam ser executados. O Kernel local segue condicionado
+a `SIMPLETEST_DB`; não usar o Runtime para liberar essa validação.
+
 ## Instrução principal
 
 Você está continuando o clone funcional Drupal do Discourse nativo sobre `aculta_forum`, sistema único de comentários de Growroom corrente, Wiki, Revista, LMS e demais hosts registrados. **Não misture os Comments históricos do Growroom com comentários padrão nem os converta em ForumPost**. A política permanente está em [POLITICA-ACERVO-HISTORICO-GROWROOM-2026-11-19.md](POLITICA-ACERVO-HISTORICO-GROWROOM-2026-11-19.md); ela prevalece sobre qualquer documentação histórica de migração. Históricos ficam read-only, com identidade, links e estatísticas próprios. Novas publicações Growroom usam ForumPost; Wiki/Revista/LMS usam Comment contextual sem criar tópicos públicos paralelos.

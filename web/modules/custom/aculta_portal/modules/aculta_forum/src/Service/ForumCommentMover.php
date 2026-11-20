@@ -7,6 +7,8 @@ namespace Drupal\aculta_forum\Service;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_forum\Event\ForumCommentSubtreeMovedEvent;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentStatisticsInterface;
 use Drupal\comment\CommentStorageInterface;
@@ -21,6 +23,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\domain\DomainInterface;
 use Drupal\node\NodeInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -40,6 +43,7 @@ final class ForumCommentMover {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ConfigFactoryInterface $configFactory,
     private readonly ForumDiscussionWriteGuard $discussionWriteGuard,
+    private readonly DiscussionOriginResolverInterface $originResolver,
     #[Autowire(service: 'aculta_portal.domain_site')]
     private readonly DomainSiteManager $siteManager,
     private readonly LockBackendInterface $lock,
@@ -55,11 +59,15 @@ final class ForumCommentMover {
    * Returns access to the Forum-only move operation for one Comment. */
   public function access(CommentInterface $comment, AccountInterface $account): AccessResultInterface {
     $source = $comment->getCommentedEntity();
+    $commentOrigin = $this->originResolver->classify($comment);
     if (!$source instanceof NodeInterface || !$this->isMovableTopic($source)
       || $comment->bundle() !== self::COMMENT_TYPE
       || $comment->getFieldName() !== self::FIELD_NAME
-      || $comment->getCommentedEntityTypeId() !== 'node') {
-      $result = AccessResult::forbidden()->addCacheableDependency($comment);
+      || $comment->getCommentedEntityTypeId() !== 'node'
+      || $commentOrigin->origin !== DiscussionOrigin::CURRENT) {
+      $result = AccessResult::forbidden()
+        ->addCacheableDependency($comment)
+        ->addCacheableDependency($commentOrigin);
       if ($source instanceof NodeInterface) {
         $result->addCacheableDependency($source);
       }
@@ -74,7 +82,8 @@ final class ForumCommentMover {
     $result = ($allowed ? AccessResult::allowed() : AccessResult::forbidden())
       ->addCacheContexts(['user.permissions'])
       ->addCacheableDependency($comment)
-      ->addCacheableDependency($source);
+      ->addCacheableDependency($source)
+      ->addCacheableDependency($commentOrigin);
     if ($forum_domain !== NULL) {
       $result->addCacheableDependency($forum_domain);
     }
@@ -110,6 +119,7 @@ final class ForumCommentMover {
    * Returns accessible, open public topics eligible as destinations.
    *
    * @return array<int, \Drupal\Core\StringTranslation\TranslatableMarkup|string|null>
+   *   Destination topic labels keyed by node ID.
    */
   public function destinations(CommentInterface $comment, AccountInterface $account): array {
     if (!$this->access($comment, $account)->isAllowed()) {
@@ -117,7 +127,7 @@ final class ForumCommentMover {
     }
     $source = $comment->getCommentedEntity();
     $domain = $this->siteManager->getDomain(SiteKey::Forum);
-    if (!$source instanceof NodeInterface || !$domain instanceof \Drupal\domain\DomainInterface) {
+    if (!$source instanceof NodeInterface || !$domain instanceof DomainInterface) {
       return [];
     }
 
@@ -314,6 +324,7 @@ final class ForumCommentMover {
    * Loads and validates a complete descendant tree in stable thread order.
    *
    * @return array<int, CommentInterface>
+   *   The root Comment and every descendant in stable thread order.
    */
   private function loadSubtree(CommentInterface $root): array {
     $this->assertMovableComment($root);
@@ -334,7 +345,8 @@ final class ForumCommentMover {
         if ((int) $child->getCommentedEntityId() !== $source_id
           || $child->getCommentedEntityTypeId() !== 'node'
           || $child->getFieldName() !== self::FIELD_NAME
-          || $child->bundle() !== self::COMMENT_TYPE) {
+          || $child->bundle() !== self::COMMENT_TYPE
+          || $this->originResolver->classify($child)->origin !== DiscussionOrigin::CURRENT) {
           throw new \InvalidArgumentException('A descendant belongs to an incompatible discussion context.');
         }
         $cid = (int) $child->id();
@@ -367,7 +379,8 @@ final class ForumCommentMover {
       || $comment->bundle() !== self::COMMENT_TYPE
       || $comment->getCommentedEntityTypeId() !== 'node'
       || $comment->getFieldName() !== self::FIELD_NAME
-      || (int) $comment->getCommentedEntityId() !== (int) $source->id()) {
+      || (int) $comment->getCommentedEntityId() !== (int) $source->id()
+      || $this->originResolver->classify($comment)->origin !== DiscussionOrigin::CURRENT) {
       throw new \InvalidArgumentException('Only shared discussion Comments on public ACULTA Forum topics can move.');
     }
   }
@@ -380,8 +393,7 @@ final class ForumCommentMover {
       && $topic->isPublished()
       && $topic->hasField(self::FIELD_NAME)
       && $topic->hasField('field_domain_source')
-      && $topic->hasField('field_autor_legado')
-      && $topic->get('field_autor_legado')->isEmpty()
+      && $this->originResolver->classify($topic)->origin === DiscussionOrigin::CURRENT
       && $fieldDef !== NULL
       && $fieldDef->getFieldStorageDefinition()->getSetting('comment_type') === self::COMMENT_TYPE;
   }
@@ -413,6 +425,7 @@ final class ForumCommentMover {
    * Allocates a Core-compatible thread slot under the Comment Core lock.
    *
    * @return array{0: string, 1: string}
+   *   The new thread value and acquired Core-compatible lock name.
    */
   private function allocateRootThread(CommentStorageInterface $storage, CommentInterface $probe, int $destinationId): array {
     for ($attempt = 0; $attempt < 500; $attempt++) {

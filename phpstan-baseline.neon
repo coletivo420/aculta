@@ -46838,54 +46838,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Badge/BadgeService.php
 
 		-
-			rawMessage: Cannot access offset 'size' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Plugin/views/field/AuthorCard.php
-
-		-
-			rawMessage: Cannot access offset 'variant' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Plugin/views/field/AuthorCard.php
-
-		-
-			rawMessage: Cannot cast mixed to int.
-			identifier: cast.int
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Plugin/views/field/AuthorCard.php
-
-		-
-			rawMessage: Cannot cast mixed to string.
-			identifier: cast.string
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Plugin/views/field/AuthorCard.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Plugin\views\field\AuthorCard::__construct() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Plugin/views/field/AuthorCard.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Plugin\views\field\AuthorCard::buildOptionsForm() has parameter $form with no type specified.'
-			identifier: missingType.parameter
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Plugin/views/field/AuthorCard.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Plugin\views\field\AuthorCard::create() has parameter $configuration with no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Plugin/views/field/AuthorCard.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Plugin\views\field\AuthorCard::defineOptions() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Plugin/views/field/AuthorCard.php
-
-		-
 			rawMessage: 'Function aculta_wiki_schema() return type has no value type specified in iterable type array.'
 			identifier: missingType.iterableValue
 			count: 1
