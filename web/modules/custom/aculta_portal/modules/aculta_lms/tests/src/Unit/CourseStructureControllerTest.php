@@ -44,6 +44,7 @@ final class CourseStructureControllerTest extends UnitTestCase {
   }
 
   /**
+   * Lists lessons and activities that belong to owned entities.
    */
   public function testCourseStructureListsLessonsAndActivitiesFromOwnedEntities(): void {
     $course = $this->createMock(GroupInterface::class);
@@ -155,6 +156,8 @@ final class CourseStructureControllerTest extends UnitTestCase {
   /**
    * Creates entity storage around a query fixture.
    *
+   * @param \Drupal\Core\Entity\Query\QueryInterface $query
+   *   Query fixture returned by the storage.
    * @param array<int|string, ContentEntityInterface> $entities
    *   Entities keyed by their storage IDs.
    */

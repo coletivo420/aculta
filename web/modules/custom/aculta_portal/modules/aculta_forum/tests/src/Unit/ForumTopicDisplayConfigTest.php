@@ -728,8 +728,14 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
    */
 
   /**
+   * Asserts that two configuration maps match after key normalization.
+   *
    * @param array<array-key, mixed> $expected
+   *   Expected configuration.
    * @param array<array-key, mixed> $actual
+   *   Actual configuration.
+   * @param string $message
+   *   Optional assertion message.
    */
   private static function assertConfigSame(array $expected, array $actual, string $message = ''): void {
     self::assertSame(self::normalizeConfigMap($expected), self::normalizeConfigMap($actual), $message);
@@ -737,12 +743,12 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
 
   /**
    * Recursively sorts associative maps while preserving sequence order.
-   */
-
-  /**
+   *
    * @param array<array-key, mixed> $value
+   *   Configuration value to normalize.
    *
    * @return array<array-key, mixed>
+   *   The normalized configuration value.
    */
   private static function normalizeConfigMap(array $value): array {
     foreach ($value as &$item) {
@@ -758,7 +764,14 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
-   * @return array<array-key, mixed> */
+   * Parses a YAML configuration file into a map.
+   *
+   * @param string $path
+   *   Absolute path to the YAML file.
+   *
+   * @return array<array-key, mixed>
+   *   The parsed configuration map.
+   */
   private static function parseConfigFile(string $path): array {
     $config = Yaml::parseFile($path);
     if (!is_array($config)) {
@@ -768,8 +781,16 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * Reads a value from nested configuration keys.
+   *
+   * @param mixed $value
+   *   Configuration root.
    * @param array-key ...$path
-   *   */
+   *   Keys to traverse.
+   *
+   * @return mixed
+   *   The configuration value found at the path.
+   */
   private static function configValue(mixed $value, int|string ...$path): mixed {
     foreach ($path as $key) {
       if (!is_array($value) || !array_key_exists($key, $value)) {
@@ -781,9 +802,15 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * Reads an array from nested configuration keys.
+   *
+   * @param mixed $value
+   *   Configuration root.
    * @param array-key ...$path
+   *   Keys to traverse.
    *
    * @return array<array-key, mixed>
+   *   The array found at the path.
    */
   private static function configArray(mixed $value, int|string ...$path): array {
     $value = self::configValue($value, ...$path);
@@ -794,8 +821,16 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * Reads a boolean from nested configuration keys.
+   *
+   * @param mixed $value
+   *   Configuration root.
    * @param array-key ...$path
-   *   */
+   *   Keys to traverse.
+   *
+   * @return bool
+   *   The boolean configuration value.
+   */
   private static function configBoolean(mixed $value, int|string ...$path): bool {
     $value = self::configValue($value, ...$path);
     if (is_bool($value)) {
@@ -805,7 +840,13 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   }
 
   /**
+   * Reads a source file as a string.
    *
+   * @param string $path
+   *   Absolute path to the file.
+   *
+   * @return string
+   *   The file contents.
    */
   private static function readSource(string $path): string {
     $source = file_get_contents($path);

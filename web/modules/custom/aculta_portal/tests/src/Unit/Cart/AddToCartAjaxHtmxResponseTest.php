@@ -84,7 +84,7 @@ class AddToCartAjaxHtmxResponseTest extends UnitTestCase {
   /**
    * Sucesso: caixa de status, contador no HX-Trigger e limpeza das mensagens do Commerce.
    */
-  public function testSucessoDevolveStatusECarrinhoEContador(): void {
+  public function testSucessoDevolveStatusComContadorDoCarrinho(): void {
     $messenger = $this->createMock(MessengerInterface::class);
     $messenger->expects($this->once())->method('deleteAll');
 

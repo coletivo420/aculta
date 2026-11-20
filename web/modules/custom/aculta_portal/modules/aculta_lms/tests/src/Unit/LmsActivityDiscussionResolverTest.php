@@ -265,6 +265,8 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
   /**
    * Configures cache metadata on a cacheable mock entity.
    *
+   * @param \Drupal\Core\Cache\CacheableDependencyInterface&\PHPUnit\Framework\MockObject\MockObject $entity
+   *   Entity fixture that receives the cache metadata.
    * @param list<string> $tags
    *   Cache tags for the mock.
    */
