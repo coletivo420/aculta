@@ -1,0 +1,6 @@
+name: Botão de envio de moderação (perigo)
+props:
+  label: Excluir de vez
+  icon: trash
+  variant: regular
+  tone: danger

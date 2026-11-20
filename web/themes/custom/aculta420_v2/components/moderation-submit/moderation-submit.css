@@ -1,0 +1,22 @@
+.moderation-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 2.75rem;
+  padding-inline: 0.875rem;
+  border: 1px solid currentColor;
+  border-radius: 0.5rem;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.moderation-submit:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.moderation-submit--danger {
+  color: var(--color-danger, #b3261e);
+}

@@ -116,6 +116,8 @@ final class DiscussionCommentModerationForm extends FormBase {
       '#type' => 'submit',
       '#value' => $comment->isPublished() ? $this->t('Despublicar') : $this->t('Republicar'),
       '#acao' => $comment->isPublished() ? 'despublicar' : 'republicar',
+      '#moderation_icon' => $comment->isPublished() ? 'eye-slash' : 'eye',
+      '#moderation_tone' => 'neutral',
     ];
     // Edição administrativa: a moderação edita o comentário pelo formulário padrão; a marca é gravada ao salvar.
     $form['acoes']['editar_moderacao'] = [
@@ -134,6 +136,8 @@ final class DiscussionCommentModerationForm extends FormBase {
         '#type' => 'submit',
         '#value' => $this->t('Restaurar comentário'),
         '#acao' => 'restaurar',
+        '#moderation_icon' => 'arrow-u-up-left',
+        '#moderation_tone' => 'neutral',
       ];
     }
     elseif (!$tombstone) {
@@ -141,6 +145,8 @@ final class DiscussionCommentModerationForm extends FormBase {
         '#type' => 'submit',
         '#value' => $this->t('Remover pela moderação'),
         '#acao' => 'remover',
+        '#moderation_icon' => 'prohibit',
+        '#moderation_tone' => 'danger',
       ];
     }
     // Exclusão física só depois de marcar que é definitiva.
@@ -148,7 +154,13 @@ final class DiscussionCommentModerationForm extends FormBase {
       '#type' => 'checkbox',
       '#title' => $this->t('Entendo que a exclusão é definitiva.'),
     ];
-    $form['acoes']['excluir'] = ['#type' => 'submit', '#value' => $this->t('Excluir de vez'), '#acao' => 'excluir'];
+    $form['acoes']['excluir'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Excluir de vez'),
+      '#acao' => 'excluir',
+      '#moderation_icon' => 'trash',
+      '#moderation_tone' => 'danger',
+    ];
 
     // Envio por HTMX para o mesmo endereço: o corpo do popup é trocado pelo resultado.
     if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {

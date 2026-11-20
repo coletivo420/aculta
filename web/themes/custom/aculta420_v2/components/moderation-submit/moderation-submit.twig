@@ -1,0 +1,8 @@
+{#
+  Botão de envio da moderação: ícone Phosphor com rótulo. Os atributos
+  (name, value, id, type) vêm da Form API e precisam chegar ao <button>.
+#}
+<button{{ attributes }} class="moderation-submit moderation-submit--{{ tone|default('neutral') }}">
+  {{ include('aculta420_v2:icon', { name: icon, variant: variant|default('regular'), size: 'sm' }, with_context = false) }}
+  <span class="moderation-submit__label">{{ label }}</span>
+</button>

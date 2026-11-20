@@ -1,0 +1,35 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Botão de envio de moderação
+status: experimental
+description: Botão de envio dos controles administrativos de comentário (despublicar, remover, restaurar, excluir), com ícone Phosphor. Mantém o nome e valor do envio da Form API.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [label, icon]
+  properties:
+    label:
+      type: string
+      title: Rótulo
+      description: Texto do botão de envio.
+    icon:
+      type: string
+      title: Ícone Phosphor
+      description: Nome base do arquivo Phosphor.
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+    variant:
+      type: string
+      title: Peso do ícone
+      enum: [duotone, regular]
+      default: regular
+    tone:
+      type: string
+      title: Tom
+      description: Neutro para ações comuns; perigo para remover e excluir.
+      enum: [neutral, danger]
+      default: neutral
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos do envio
+      default: null
+      description: Atributos da Form API (nome, valor, id e tipo) aplicados ao botão.
