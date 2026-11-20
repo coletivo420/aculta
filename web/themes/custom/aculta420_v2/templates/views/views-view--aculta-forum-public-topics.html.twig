@@ -19,6 +19,7 @@
 {% if forum_logged_in %}
 {% set tab_items = tab_items|merge([{ label: 'Não lidas'|t, href: url('view.aculta_forum_unread_topics.page_unread'), active: current_display == 'page_unread', count: null }]) %}
 {% endif %}
+{% set tab_items = tab_items|map(item => item|merge({ href: item.href ~ (forum_query|default('')) })) %}
 
 {% embed 'aculta420_v2:forum-list-page' %}
 {% block header %}
