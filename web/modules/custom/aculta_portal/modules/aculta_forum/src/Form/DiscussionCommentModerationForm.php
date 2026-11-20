@@ -13,6 +13,7 @@ use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\aculta_forum\Hook\DiscussionModerationEditHooks;
 use Drupal\Core\Url;
 use Drupal\aculta_forum\Service\DiscussionReactionManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -30,6 +31,7 @@ final class DiscussionCommentModerationForm extends FormBase {
     protected readonly DateFormatterInterface $modDates,
     protected readonly EntityTypeManagerInterface $modEntities,
     protected readonly DiscussionReactionManager $modReactions,
+    protected readonly DiscussionModerationEditHooks $modEdits,
   ) {}
 
   /**
@@ -47,6 +49,7 @@ final class DiscussionCommentModerationForm extends FormBase {
       $container->get('date.formatter'),
       $container->get('entity_type.manager'),
       $container->get('aculta_forum.discussion_reaction_manager'),
+      $container->get(DiscussionModerationEditHooks::class),
     );
   }
 
@@ -96,6 +99,9 @@ final class DiscussionCommentModerationForm extends FormBase {
     $form['info'] = [
       '#theme' => 'portal_component',
       '#name' => 'comment-admin-controls',
+      '#slots' => [
+        'log' => $this->moderationEditLog($cid),
+      ],
       '#props' => [
         'author_name' => (string) $comment->getAuthorName(),
         'state_label' => $state,
@@ -110,6 +116,12 @@ final class DiscussionCommentModerationForm extends FormBase {
       '#type' => 'submit',
       '#value' => $comment->isPublished() ? $this->t('Despublicar') : $this->t('Republicar'),
       '#acao' => $comment->isPublished() ? 'despublicar' : 'republicar',
+    ];
+    // Edição administrativa: a moderação edita o comentário pelo formulário padrão; a marca é gravada ao salvar.
+    $form['acoes']['editar_moderacao'] = [
+      '#type' => 'link',
+      '#title' => $this->t('Editar pela moderação'),
+      '#url' => Url::fromRoute('entity.comment.edit_form', ['comment' => $cid]),
     ];
     if ($tombstone === 'moderacao') {
       $form['acoes']['restaurar'] = [
@@ -235,6 +247,32 @@ final class DiscussionCommentModerationForm extends FormBase {
   private function reactionTotal(int $cid): int {
     $reactions = $this->modReactions->loadReactions('comment', $cid, NULL);
     return (int) $reactions['total_count'];
+  }
+
+  /**
+   * Administrative log of moderator edits (date and moderator), shown only in the admin controls.
+   *
+   * @return array<string, mixed>
+   *   Render array; empty when nobody moderated the reply.
+   */
+  private function moderationEditLog(int $cid): array {
+    $entries = $this->modEdits->editLog($cid);
+    if ($entries === []) {
+      return [];
+    }
+    $items = [];
+    foreach ($entries as $entry) {
+      $user = $this->modEntities->getStorage('user')->load($entry['uid']);
+      $name = $user !== NULL ? (string) $user->getDisplayName() : (string) $this->t('Usuário removido');
+      $items[] = (string) $this->t('@name editou em @date', [
+        '@name' => $name,
+        '@date' => $this->modDates->format($entry['time'], 'short'),
+      ]);
+    }
+    return [
+      '#theme' => 'item_list',
+      '#items' => $items,
+    ];
   }
 
 }

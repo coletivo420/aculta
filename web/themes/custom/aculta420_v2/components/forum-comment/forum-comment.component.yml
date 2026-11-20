@@ -26,6 +26,11 @@ props:
       enum: [start, end]
       default: start
       description: start = normal (faixa à esquerda); end = espelhado (faixa e autoria à direita). Definido pelo módulo do fórum pela ordem da resposta.
+    edited_by_moderation:
+      type: boolean
+      title: Editado pela moderação
+      description: Verdadeiro quando um moderador salvou a edição; mostra o selo no cartão.
+      default: false
     author_position:
       type: string
       title: Posição da autoria

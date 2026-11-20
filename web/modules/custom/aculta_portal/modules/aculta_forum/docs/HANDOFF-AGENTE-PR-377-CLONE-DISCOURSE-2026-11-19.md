@@ -231,6 +231,16 @@ Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve co
 - Validação: PHPStan exit 0; guard PASS; PHPCS sem erros no controlador.
 - DEFERRED: teste da rota e prova visual/HTMX do popup.
 
+## Edição e exclusão pelo autor; marca e log da moderação — 2026-11-20
+
+Decisões do responsável:
+
+- Editar e excluir pela barra de resposta é só do autor. A moderação edita e exclui pelos controles administrativos (`DiscussionCommentModerationForm`), com os comportamentos já previstos (remover, restaurar, excluir definitivamente).
+- Ao salvar a edição, um moderador (não autor) gera a marca "Editado pela moderação". A marca é permanente: não há caminho para removê-la, e é independente de "Removido pela moderação".
+- Log administrativo: cada edição de moderador grava quem editou e quando (`DiscussionModerationEditHooks`, coleção `aculta_forum_comment_moderation_edit_log`). Aparece só nos controles administrativos (slot `log`), sem exibição pública. O público vê apenas o selo.
+- Validação: `DiscussionModerationEditHooksTest` (autor não é marcado; moderador é marcado e registrado com uid e data), OK. PHPStan exit 0; guard PASS; schema SDC PASS.
+- DEFERRED: prova visual do selo e do log nos controles, e Kernel de exclusão/edição pela moderação.
+
 ## Migração do acervo: mapeamento de tópico (lote 1 de campos) — 2026-11-20
 
 - `LegacyArchiveTopicMapper::map()` converte uma linha de tópico (nid, título, corpo, autor legado, domínio, criação) nos valores de `aculta_forum_legacy_topics`. Função pura: não lê nem escreve no banco.

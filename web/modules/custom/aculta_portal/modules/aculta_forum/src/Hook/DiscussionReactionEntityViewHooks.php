@@ -112,7 +112,8 @@ final class DiscussionReactionEntityViewHooks {
       $tombstone = $this->keyValueFactory->get('aculta_forum_comment_tombstones')->get((string) $cid);
       $deleted = (bool) $tombstone;
       $variables['comment_deleted'] = $deleted;
-      $variables['delete_allowed'] = $isAdmin || ($isOwner && !$deleted);
+      // Excluir pela barra é só do autor; a moderação exclui pelos controles administrativos.
+      $variables['delete_allowed'] = $isOwner && !$deleted;
       $variables['comment_removed_by_moderation'] = $tombstone === 'moderacao';
       // Controles administrativos: só para quem pode moderar (ver DiscussionCommentModerationForm).
       $variables['delete_token'] = $this->csrfGenerator->get('aculta_forum.comment.delete.' . $cid);
@@ -136,7 +137,8 @@ final class DiscussionReactionEntityViewHooks {
         if (!$deleted) {
           $actions['reply_url'] = $composer . '?resposta=' . $cid;
           $actions['quote_url'] = $composer . '?citar=' . $cid;
-          if ($threadComment->access('update', $this->currentUser)) {
+          // Editar pela barra é só do autor; moderador edita pelo painel administrativo.
+          if ((int) $threadComment->getOwnerId() === (int) $this->currentUser->id() && $threadComment->access('update', $this->currentUser)) {
             $actions['edit_url'] = $composer . '?editar=' . $cid;
           }
         }

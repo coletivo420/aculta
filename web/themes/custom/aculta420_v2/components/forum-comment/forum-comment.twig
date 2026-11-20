@@ -35,7 +35,8 @@
     body: body_slot,
     actions: actions_slot,
     reactions_slot: reactions_slot_val,
-    reply: null
+    reply: null,
+    badge: edited_by_moderation|default(false) ? include('aculta420_v2:badge', { label: 'Editado pela moderação'|t, variant: 'neutral' }, with_context = false) : null
   }, with_context = false) }}
   {% endif %}
   {% if admin_slot_val|trim != '' %}<div class="forum-comment__admin">{{ admin_slot_val }}</div>{% endif %}
