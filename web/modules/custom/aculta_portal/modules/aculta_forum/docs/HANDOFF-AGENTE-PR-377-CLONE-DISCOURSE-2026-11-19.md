@@ -209,6 +209,14 @@ Implementado depois:
 
 Desfeito nesta rodada: o `forum-topic-admin-menu` criado antes, que não era necessário.
 
+## Popups do Fórum e dos consumidores; anexos provados por configuração — 2026-11-20
+
+Decisões do responsável: todos os popups do Fórum e dos consumidores (LMS, Wiki, Revista, comentários) usam o estilo do Stories `popup`; os popovers ficam como estão.
+
+- Verificado: os módulos LMS, Wiki e Revista não têm diálogo próprio. Os modais vêm dos componentes do Fórum e já usam `aculta420_v2:popup`.
+- Popovers mantidos: `discussion-reaction-bar`, `discussion-reactions-received` e `delete-confirm` (`popover="auto"`).
+- Anexos (decisão de consumidores): `ConsumerAttachmentPolicyTest` lê `config/sync` e prova que o bundle de comentário compartilhado não tem campo de arquivo ou imagem nem aponta para `forum_attachment`. 1 teste, 14 asserções, OK.
+
 ## Estilo do popup nas telas do Fórum — 2026-11-20
 
 Decisão do responsável: todos os popups do Fórum usam o estilo do Stories `popup`, exceto os popovers nativos ancorados (`discussion-reaction-bar` e `discussion-reactions-received`). Os popups fora do Fórum não entram neste escopo.
