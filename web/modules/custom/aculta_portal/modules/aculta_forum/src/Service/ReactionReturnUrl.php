@@ -62,7 +62,7 @@ final class ReactionReturnUrl {
     }
 
     $path = $parts['path'] ?? '/';
-    if (!is_string($path) || !str_starts_with($path, '/') || str_starts_with($path, '//')) {
+    if (!str_starts_with($path, '/') || str_starts_with($path, '//')) {
       return NULL;
     }
 

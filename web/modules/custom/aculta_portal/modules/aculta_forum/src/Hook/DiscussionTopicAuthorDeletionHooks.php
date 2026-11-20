@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
+use Drupal\Core\Session\AccountProxyInterface;
+use Drupal\Core\Url;
+use Drupal\Core\Link;
 use Drupal\Core\Render\Markup;
 use Drupal\node\NodeInterface;
 use Drupal\aculta_forum\Service\TopicAuthorDeletion;
@@ -14,7 +19,42 @@ use Drupal\aculta_forum\Service\TopicAuthorDeletion;
  */
 final class DiscussionTopicAuthorDeletionHooks {
 
-  public function __construct(private readonly TopicAuthorDeletion $deletion) {}
+  public function __construct(
+    private readonly TopicAuthorDeletion $deletion,
+    private readonly Connection $database,
+    private readonly EntityTypeManagerInterface $entityTypeManager,
+    private readonly AccountProxyInterface $currentUser,
+  ) {}
+
+  /**
+   * First comment of this topic, by another account, posted after the user's last read.
+   *
+   * The history table is written by the core read endpoint after the page renders,
+   * so during render the previous timestamp is still the one used here.
+   */
+  private function firstUnreadCommentId(NodeInterface $topic): int {
+    $uid = (int) $this->currentUser->id();
+    if ($uid <= 0) {
+      return 0;
+    }
+    $lastReadRaw = $this->database->select('history', 'h')
+      ->fields('h', ['timestamp'])
+      ->condition('h.nid', (int) $topic->id())
+      ->condition('h.uid', $uid)
+      ->execute()?->fetchField();
+    $lastRead = is_numeric($lastReadRaw) ? (int) $lastReadRaw : 0;
+    $ids = $this->entityTypeManager->getStorage('comment')->getQuery()
+      ->accessCheck(TRUE)
+      ->condition('entity_type', 'node')
+      ->condition('entity_id', $topic->id())
+      ->condition('status', 1)
+      ->condition('created', $lastRead, '>')
+      ->condition('uid', $uid, '<>')
+      ->sort('cid', 'ASC')
+      ->range(0, 1)
+      ->execute();
+    return $ids === [] ? 0 : (int) reset($ids);
+  }
 
   /**
    * Replaces the body with the automatic message when the author deleted the topic.
@@ -28,6 +68,16 @@ final class DiscussionTopicAuthorDeletionHooks {
   public function nodeView(array &$build, NodeInterface $entity): void {
     if ($entity->bundle() !== 'aculta_forum_topic') {
       return;
+    }
+    $firstUnread = $this->firstUnreadCommentId($entity);
+    if ($firstUnread > 0) {
+      $build['jump_to_first_unread'] = [
+        '#type' => 'link',
+        '#title' => t('Primeira não lida'),
+        '#url' => Url::fromRoute('entity.node.canonical', ['node' => $entity->id()], ['fragment' => 'aculta-comment-' . $firstUnread]),
+        '#attributes' => ['class' => ['aculta-forum-jump-unread']],
+        '#cache' => ['contexts' => ['user'], 'max-age' => 0],
+      ];
     }
     if ($entity->isSticky()) {
       $build['pinned_badge'] = [

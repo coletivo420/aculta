@@ -88,7 +88,7 @@ services:
 
   Drupal\aculta_forum\Hook\DiscussionTopicAuthorDeletionHooks:
     class: Drupal\aculta_forum\Hook\DiscussionTopicAuthorDeletionHooks
-    arguments: ['@aculta_forum.topic_author_deletion']
+    arguments: ['@aculta_forum.topic_author_deletion', '@database', '@entity_type.manager', '@current_user']
 
   Drupal\aculta_forum\Hook\DiscussionHostAdminHooks:
     class: Drupal\aculta_forum\Hook\DiscussionHostAdminHooks

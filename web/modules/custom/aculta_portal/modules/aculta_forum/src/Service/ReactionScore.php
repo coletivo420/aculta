@@ -30,7 +30,7 @@ final class ReactionScore {
     $positive = 0;
     $dislikes = 0;
     foreach ($counts as $reaction => $count) {
-      if (!is_int($count) && (!is_string($count) || !ctype_digit($count))) {
+      if (!is_int($count) && !ctype_digit((string) $count)) {
         continue;
       }
       $quantity = max(0, (int) $count);

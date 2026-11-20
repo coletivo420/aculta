@@ -153,6 +153,7 @@ class DiscussionReactionManager {
     $query->groupBy('reaction');
 
     $recordsRaw = $query->execute()?->fetchAllKeyed();
+    /** @var array<string, int|string> $records */
     $records = is_array($recordsRaw) ? $recordsRaw : [];
     $score = ReactionScore::summarize($records);
     $result['positive_count'] = $score['positive_count'];
@@ -387,7 +388,7 @@ class DiscussionReactionManager {
       }
     }
     finally {
-      if ($locked && $this->lock !== NULL) {
+      if ($locked) {
         $this->lock->release($lockName);
       }
     }

@@ -93,8 +93,15 @@ final class UiIconsPackTest extends UnitTestCase {
     self::assertFileExists($mediumColor);
     self::assertFileExists($mediumFlat);
     self::assertSame(hash_file('sha256', $mediumColor), hash_file('sha256', $medium));
-    self::assertSame(['assets/icons/fluent-emoji/color/*.svg'], $data['aculta_fluent_emoji']['config']['sources']);
-    self::assertSame(['assets/icons/reacoes/*.svg'], $data['aculta_reacoes']['config']['sources']);
+    /** @var array<string, mixed> $dataArray */
+    $dataArray = $data;
+    $fluentEmoji = is_array($dataArray['aculta_fluent_emoji'] ?? NULL) ? $dataArray['aculta_fluent_emoji'] : [];
+    $fluentConfig = is_array($fluentEmoji['config'] ?? NULL) ? $fluentEmoji['config'] : [];
+    self::assertSame(['assets/icons/fluent-emoji/color/*.svg'], $fluentConfig['sources'] ?? NULL);
+
+    $reacoes = is_array($dataArray['aculta_reacoes'] ?? NULL) ? $dataArray['aculta_reacoes'] : [];
+    $reacoesConfig = is_array($reacoes['config'] ?? NULL) ? $reacoes['config'] : [];
+    self::assertSame(['assets/icons/reacoes/*.svg'], $reacoesConfig['sources'] ?? NULL);
   }
 
   /**

@@ -115,7 +115,8 @@ final class ForumSettingsFormKernelTest extends KernelTestBase {
     $defaultReaction = $fieldset['default_reaction'] ?? NULL;
     self::assertIsArray($defaultReaction);
     self::assertSame('item', $defaultReaction['#type'] ?? NULL);
-    self::assertStringContainsString('Brócolis', (string) ($defaultReaction['#markup'] ?? ''));
+    $markup = $defaultReaction['#markup'] ?? '';
+    self::assertStringContainsString('Brócolis', is_string($markup) || $markup instanceof \Stringable ? (string) $markup : '');
 
     $table = $fieldset['reactions_table'] ?? NULL;
     self::assertIsArray($table);

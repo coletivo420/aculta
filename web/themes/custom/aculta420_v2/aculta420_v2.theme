@@ -53,6 +53,6 @@ function aculta420_v2_preprocess_views_view(array &$variables): void {
   $variables['forum_logged_in'] = (bool) \Drupal::currentUser()->isAuthenticated();
   // Filtro de categoria da listagem (?categoria=ID) é mantido ao trocar a ordenação.
   $categoria = \Drupal::request()->query->get('categoria');
-  $id = is_string($categoria) || is_int($categoria) ? (string) $categoria : '';
+  $id = is_string($categoria) ? $categoria : '';
   $variables['forum_query'] = ctype_digit($id) ? '?categoria=' . $id : '';
 }
