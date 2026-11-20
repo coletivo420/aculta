@@ -356,3 +356,29 @@ aculta_forum.topic_moderation_archive:
     parameters:
       node:
         type: 'entity:node'
+
+aculta_forum.topic_moderation_merge:
+  path: '/painel-administrativo/forum/{node}/juntar-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicMergeForm'
+    _title: 'Juntar tópico'
+  requirements:
+    _permission: 'move aculta forum topics'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+aculta_forum.topic_moderation_split:
+  path: '/painel-administrativo/forum/{node}/dividir-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicSplitForm'
+    _title: 'Dividir tópico'
+  requirements:
+    _permission: 'move aculta forum topics'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'

@@ -135,6 +135,16 @@ final class TopicAdminPopupController extends ControllerBase {
       ];
       $actions[] = [
         '#type' => 'link',
+        '#title' => $this->t('Dividir tópico'),
+        '#url' => Url::fromRoute('aculta_forum.topic_moderation_split', ['node' => $nid]),
+      ];
+      $actions[] = [
+        '#type' => 'link',
+        '#title' => $this->t('Juntar tópico'),
+        '#url' => Url::fromRoute('aculta_forum.topic_moderation_merge', ['node' => $nid]),
+      ];
+      $actions[] = [
+        '#type' => 'link',
         '#title' => $node->isSticky() ? $this->t('Desafixar tópico') : $this->t('Fixar tópico'),
         '#url' => Url::fromRoute('aculta_forum.topic_moderation_pin', ['node' => $nid]),
       ];

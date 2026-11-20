@@ -231,6 +231,14 @@ Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve co
 - Validação: PHPStan exit 0; guard PASS; PHPCS sem erros no controlador.
 - DEFERRED: teste da rota e prova visual/HTMX do popup.
 
+## Dividir e juntar tópico (paridade Discourse) — 2026-11-20
+
+- Dividir: `aculta_forum.topic_moderation_split` (`/painel-administrativo/forum/{node}/dividir-topico`), `TopicSplitForm`. Move os comentários de nível principal escolhidos, com suas respostas, para outro tópico público, pelo serviço `aculta_forum.comment_mover`.
+- Juntar: `aculta_forum.topic_moderation_merge` (`/painel-administrativo/forum/{node}/juntar-topico`), `TopicMergeForm`. Move todos os comentários de nível principal para o destino e fecha o tópico de origem.
+- Decisão: dividir move para tópico existente (não cria tópico novo). Criar tópico novo na divisão fica pendente.
+- Validação: Unit do Fórum OK (288); PHPStan e guard PASS; PHPCS sem erros. DEFERRED: Kernel, prova visual e Runtime.
+- Pendente: tags (exige campo novo no tópico, mudança estrutural com structural-plan).
+
 ## Despublicar e arquivar tópico (paridade Discourse) — 2026-11-20
 
 - Despublicar/republicar: `aculta_forum.topic_moderation_publish` (`/painel-administrativo/forum/{node}/publicar-topico`), confirmação via `TopicModerationPublishForm`, usa `setUnpublished`/`setPublished`. Ação no popup de controles do tópico.
