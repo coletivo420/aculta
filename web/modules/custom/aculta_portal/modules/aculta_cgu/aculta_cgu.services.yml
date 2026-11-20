@@ -63,3 +63,15 @@ services:
     arguments: ['@database']
     tags:
       - { name: aculta_statistics.metric_provider }
+
+  # Frontend Marley: composition only. CGU owns queue, decisions and scope;
+  # the Forum owns target access, never the Studio shell.
+  aculta_cgu.forum_marley_controller:
+    class: Drupal\aculta_cgu\Controller\CguForumMarleyController
+    arguments:
+      - '@aculta_cgu.report_queue'
+      - '@aculta_cgu.report_service'
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@date.formatter'
+      - '@form_builder'
