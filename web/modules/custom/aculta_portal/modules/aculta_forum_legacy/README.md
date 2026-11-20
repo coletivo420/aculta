@@ -4,7 +4,30 @@ Addon opcional do `aculta_forum` para a integração do arquivo histórico
 Growroom. Projetos que não adotam esse arquivo não precisam instalar este
 módulo; o Fórum principal não depende dele.
 
-## Fase atual — Dev.5
+## Entidades próprias do acervo — Dev.6
+
+O acervo Growroom tem entidades próprias, separadas das entidades correntes do
+Fórum (`node`, `comment`, `aculta_forum_post`):
+
+- `aculta_forum_legacy_user`: autoria histórica.
+- `aculta_forum_legacy_topics`: tópicos históricos.
+- `aculta_forum_legacy_comments`: respostas históricas.
+- `aculta_forum_legacy_attachments`: anexos históricos, com URI própria.
+
+Comportamento previsto, sem exceção: o acervo é somente leitura. Não aceita
+comentários, reações, moderação nem criação pela interface. O handler de acesso
+permite apenas `view` a quem tem `administer aculta legado`. A importação deve
+usar a API de entidade e não a interface.
+
+`LegacyDiscussionOriginClassifier` classifica essas entidades como `ARCHIVE`
+sem depender de marcador. A remoção de reações foi decisão explícita: o acervo
+não as recebe e o motor corrente não as lê.
+
+O update `aculta_forum_legacy_update_8001` cria as quatro tabelas. Ele não foi
+aplicado no Runtime: depende de autorização e snapshot. A migração das linhas
+marcadas com `field_autor_legado` em `node` e `comment` ainda não começou.
+
+## Fase anterior — Dev.5
 
 O addon fornece o provider tagged que reconhece `ARCHIVE` em tópico Growroom e
 Comment ligado a tópico marcado com autoria histórica. ForumPosts são conteúdo

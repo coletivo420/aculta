@@ -50,3 +50,12 @@ Na PR #377, `DiscussionReplyController`, `ForumQuoteHooks` e `DiscussionReplyAcc
 5. Se isolamento físico for requerido, apresentar **proposta específica sem conversão de conteúdo**, dry-run, testes de integridade, rollback e autorização operacional distinta.
 
 Consultar [ownership](OWNERSHIP.md), [plano FDC](PLANO-CLONE-DISCOURSE-UI-SUITE-CGU-2026-11-19.md) e [matriz de aceite](MATRIZ-ACEITE-DISCOURSE-ACULTA-2026-11-19.md).
+
+## Atualização 2026-11-20 — entidades próprias
+
+O acervo tem entidades próprias no addon `aculta_forum_legacy`:
+`aculta_forum_legacy_topics`, `aculta_forum_legacy_comments` e
+`aculta_forum_legacy_attachments`, além de `aculta_forum_legacy_user`. Elas
+são somente leitura: sem comentários, reações, moderação ou criação pela
+interface. Não são misturadas com as entidades correntes do Fórum.
+

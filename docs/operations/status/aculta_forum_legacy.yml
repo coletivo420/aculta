@@ -1,7 +1,11 @@
 # Fonte do índice de status do README raiz.
-version: 0.1.0-dev.5
+version: 0.1.0-dev.6
 state: Dev
 progress_note: >-
+  Dev.6: entidades próprias e somente leitura do acervo: aculta_forum_legacy_topics,
+  aculta_forum_legacy_comments e aculta_forum_legacy_attachments, separadas das
+  entidades correntes. Sem comentários, reações, moderação ou criação pela interface.
+  Update 8001 cria as tabelas e não foi aplicado no Runtime.
   Dev.5: rota/controlador do memorial coletivo, formatador de nome e cartões
   inline de autoria histórica pertencem ao addon; User mantém cartões de contas.
   Dev.4: entidade aculta_forum_legacy_user, manager, handler e fields foram
@@ -13,4 +17,4 @@ progress_note: >-
   Kernel valida pai, tópico e revisão. Importadores/auditoria, reserva do slug,
   regras de moderação/participação e outros acoplamentos históricos ainda
   permanecem pendentes. A importação histórica não foi executada.
-next_phase: 'Extrair para o addon os gates de moderação/participação do arquivo e a reserva de slug; localizar e mover importadores/auditoria histórica. Testar addon ausente/presente sem executar importação ou operações estruturais.'
+next_phase: 'Autorizar e aplicar update 8001 com snapshot; contar linhas históricas marcadas em node e comment no Runtime (somente leitura); migrar o acervo para as entidades próprias; depois remover fields históricos dos tipos correntes.'
