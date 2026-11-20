@@ -44804,12 +44804,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/CourseAuthoringControllerTest.php
 
 		-
-			rawMessage: Cannot access offset '#props' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/CourseAuthoringControllerTest.php
-
-		-
 			rawMessage: Cannot access offset '#title' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -44818,7 +44812,7 @@ parameters:
 		-
 			rawMessage: Cannot access offset '#type' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/CourseAuthoringControllerTest.php
 
 		-
@@ -44867,12 +44861,6 @@ parameters:
 			rawMessage: Cannot access offset 'structure' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/CourseAuthoringControllerTest.php
-
-		-
-			rawMessage: Cannot access offset 'variant' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/CourseAuthoringControllerTest.php
 
 		-
@@ -45506,18 +45494,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/StudioAccountSectionControllerTest.php
 
 		-
-			rawMessage: Cannot access offset 'connections' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/StudioConnectionsBlockTest.php
-
-		-
-			rawMessage: Cannot access offset 'title' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/StudioConnectionsBlockTest.php
-
-		-
 			rawMessage: 'Binary operation "+" between (array|float|int) and mixed results in an error.'
 			identifier: binaryOp.invalid
 			count: 3
@@ -45658,7 +45634,7 @@ parameters:
 		-
 			rawMessage: Cannot access offset '#items' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 8
+			count: 7
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/StudioProfileControllerTest.php
 
 		-
@@ -45676,13 +45652,13 @@ parameters:
 		-
 			rawMessage: Cannot access offset '#slots' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 19
+			count: 18
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/StudioProfileControllerTest.php
 
 		-
 			rawMessage: Cannot access offset '#theme' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/StudioProfileControllerTest.php
 
 		-
@@ -45700,7 +45676,7 @@ parameters:
 		-
 			rawMessage: Cannot access offset 'actions' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 9
+			count: 7
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/StudioProfileControllerTest.php
 
 		-
@@ -52576,25 +52552,25 @@ parameters:
 		-
 			rawMessage: Cannot access offset '#rows' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
+			count: 1
 			path: web/modules/custom/aculta_portal/tests/src/Unit/Controller/DonationReportControllerTest.php
 
 		-
 			rawMessage: Cannot access offset 'content' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			count: 2
 			path: web/modules/custom/aculta_portal/tests/src/Unit/Controller/DonationReportControllerTest.php
 
 		-
 			rawMessage: Cannot access offset 'conteudo' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			count: 2
 			path: web/modules/custom/aculta_portal/tests/src/Unit/Controller/DonationReportControllerTest.php
 
 		-
 			rawMessage: Cannot access offset 'resumo' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
+			count: 2
 			path: web/modules/custom/aculta_portal/tests/src/Unit/Controller/DonationReportControllerTest.php
 
 		-
@@ -52606,12 +52582,6 @@ parameters:
 		-
 			rawMessage: Cannot cast mixed to float.
 			identifier: cast.double
-			count: 1
-			path: web/modules/custom/aculta_portal/tests/src/Unit/Controller/DonationReportControllerTest.php
-
-		-
-			rawMessage: 'Parameter #2 $array of method PHPUnit\Framework\Assert::assertArrayHasKey() expects array<mixed>|ArrayAccess<(int|string), mixed>, mixed given.'
-			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/tests/src/Unit/Controller/DonationReportControllerTest.php
 

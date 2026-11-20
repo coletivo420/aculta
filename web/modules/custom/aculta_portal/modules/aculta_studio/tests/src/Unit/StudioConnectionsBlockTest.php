@@ -34,8 +34,10 @@ final class StudioConnectionsBlockTest extends UnitTestCase {
     $build = $composer->compose();
 
     self::assertSame('studio-connections-block', $build['#name']);
-    self::assertSame('CONEXÕES', $build['#props']['title']);
-    self::assertSame([], $build['#props']['connections']);
+    $props = $build['#props'] ?? NULL;
+    self::assertIsArray($props);
+    self::assertSame('CONEXÕES', $props['title'] ?? NULL);
+    self::assertSame([], $props['connections'] ?? NULL);
   }
 
 }
