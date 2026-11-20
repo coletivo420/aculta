@@ -73,8 +73,12 @@ final class CguForumMarleyControllerTest extends UnitTestCase {
     self::assertStringContainsString("'forum'", $controller);
     self::assertStringContainsString("->access('view', \$account, TRUE)", $controller);
     self::assertStringContainsString('CguReportDecisionForm::class', $controller);
-    self::assertStringContainsString('ReportService::resolvePurpose', $controller . ' ' . $form . ' ReportService::resolvePurpose');
+    self::assertStringContainsString('->resolvePurpose($entity)', $controller);
     self::assertStringContainsString('->decideReport(', $form);
+    $service = (string) file_get_contents($root . '/src/Service/ReportService.php');
+    self::assertStringContainsString('->loadUnchanged($reportId)', $service);
+    self::assertStringContainsString('aculta_cgu:report_decision:', $service);
+    self::assertStringContainsString('->release($lockName)', $service);
     self::assertStringContainsString("=== 'aculta_cgu.forum_marley_decide'", $form);
     self::assertStringContainsString("'aculta_cgu.forum_marley_queue'", $form);
     self::assertStringNotContainsString('/painel-administrativo/', $controller);

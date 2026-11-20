@@ -41,3 +41,7 @@
 ## Continuação da PR #394
 
 Ler também [Stories Marley](../../aculta_studio/docs/STORIES-MARLEY-DISCOURSE-2026-11-20.md), [Plano Discourse](../../aculta_forum/docs/PLANO-PARIDADE-DISCOURSE-FRONTEND-MODERADOR-ENQUETES-2026-11-20.md) e [handoff integral](../../aculta_forum/docs/HANDOFF-AGENTE-CLI-FORUM-COMPLETO-2026-11-20.md). **Este é um marco funcional parcial**, não substitui FDC-R0..R14, T01..70, DV01..19 e SM01..08.
+
+## Proteção contra decisão concorrente
+
+O `ReportService::decideReport()` agora obtém `lock` específico por ID de denúncia, busca a entidade atual por `loadUnchanged()`, revalida o escopo do moderador e a transição antes de salvar; `finally` libera o lock. O mesmo código serve à rota administrativa e ao Marley frontend. Assim, um formulário aberto antes da decisão de outro moderador não pode sobrescrever o status final. O teste estrutural foi atualizado; teste Kernel de dois POSTs sobre o mesmo registro permanece obrigatório na homologação.

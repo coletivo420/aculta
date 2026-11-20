@@ -209,32 +209,59 @@ final class ReportService {
       throw new AccessDeniedHttpException('Usuário sem permissão para moderar denúncias deste purpose.');
     }
 
-    $currentVal = $report->get('status')->value;
-    $current = is_scalar($currentVal) ? (string) $currentVal : '';
-    if (!in_array($status, self::TRANSITIONS[$current] ?? [], TRUE)) {
-      throw new ReportNotAllowedException(sprintf('Transição de status inválida: %s para %s.', $current, $status));
-    }
     $notes = trim($notes);
     if (mb_strlen($notes) > self::NOTES_MAX_LENGTH) {
       throw new ReportNotAllowedException('Parecer da moderação excede o tamanho máximo.');
     }
 
-    $report->set('status', $status);
-    $report->set('decision_notes', $notes);
-    if ($status !== self::STATUS_REVIEW) {
-      $report->set('decided_by', (int) $moderator->id());
-      $report->set('decided_at', $this->time->getRequestTime());
+    $reportId = (int) $report->id();
+    if ($reportId <= 0) {
+      throw new ReportNotAllowedException('Denúncia inválida para decisão.');
     }
-    $report->save();
+    // A lock plus fresh reload prevents two frontend/admin moderators from
+    // deciding a stale report concurrently and overwriting a final decision.
+    $lockName = 'aculta_cgu:report_decision:' . $reportId;
+    if (!$this->lock->acquire($lockName, 15.0)) {
+      throw new ReportNotAllowedException('Esta denúncia está sendo avaliada em outra sessão.');
+    }
 
-    // Auditoria sem dado do denunciante.
-    $this->logger->info('Denúncia @id (purpose @purpose): @from para @to por moderador @uid.', [
-      '@id' => (int) $report->id(),
-      '@purpose' => $purpose,
-      '@from' => $current,
-      '@to' => $status,
-      '@uid' => (int) $moderator->id(),
-    ]);
+    try {
+      $fresh = $this->entityTypeManager->getStorage('aculta_cgu_report')->loadUnchanged($reportId);
+      if (!$fresh instanceof CguReport) {
+        throw new ReportNotAllowedException('Denúncia não encontrada.');
+      }
+      $freshPurpose = $fresh->get('purpose')->value;
+      $purpose = is_scalar($freshPurpose) ? (string) $freshPurpose : '';
+      if (!ModerationScope::allows($moderator, $purpose)) {
+        throw new AccessDeniedHttpException('Usuário sem permissão para moderar denúncias deste purpose.');
+      }
+
+      $currentVal = $fresh->get('status')->value;
+      $current = is_scalar($currentVal) ? (string) $currentVal : '';
+      if (!in_array($status, self::TRANSITIONS[$current] ?? [], TRUE)) {
+        throw new ReportNotAllowedException(sprintf('Transição de status inválida: %s para %s.', $current, $status));
+      }
+
+      $fresh->set('status', $status);
+      $fresh->set('decision_notes', $notes);
+      if ($status !== self::STATUS_REVIEW) {
+        $fresh->set('decided_by', (int) $moderator->id());
+        $fresh->set('decided_at', $this->time->getRequestTime());
+      }
+      $fresh->save();
+
+      // Audit never reveals the reporting user's identity.
+      $this->logger->info('Denúncia @id (purpose @purpose): @from para @to por moderador @uid.', [
+        '@id' => $reportId,
+        '@purpose' => $purpose,
+        '@from' => $current,
+        '@to' => $status,
+        '@uid' => (int) $moderator->id(),
+      ]);
+    }
+    finally {
+      $this->lock->release($lockName);
+    }
   }
 
   /**
