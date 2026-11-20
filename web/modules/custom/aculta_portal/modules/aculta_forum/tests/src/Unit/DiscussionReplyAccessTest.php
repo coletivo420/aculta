@@ -46,6 +46,7 @@ final class DiscussionReplyAccessTest extends UnitTestCase {
       new DiscussionContextResolver([$provider]),
       $this->createMock(EntityTypeManagerInterface::class),
       $this->originResolver(DiscussionOrigin::ARCHIVE),
+      $this->createMock(\Drupal\aculta_forum\Service\TopicAuthorDeletion::class),
     );
     self::assertFalse($access->checkAccess($host, $this->createMock(AccountInterface::class))->isAllowed());
   }
@@ -67,7 +68,7 @@ final class DiscussionReplyAccessTest extends UnitTestCase {
 
     $account = $this->createMock(AccountInterface::class);
 
-    $access = new DiscussionReplyAccess($resolver, $entityTypeManager, $this->originResolver(DiscussionOrigin::CURRENT));
+    $access = new DiscussionReplyAccess($resolver, $entityTypeManager, $this->originResolver(DiscussionOrigin::CURRENT), $this->createMock(\Drupal\aculta_forum\Service\TopicAuthorDeletion::class));
     $result = $access->checkAccess($host, $account);
 
     $this->assertFalse($result->isAllowed());
@@ -106,7 +107,7 @@ final class DiscussionReplyAccessTest extends UnitTestCase {
     $host->method('hasField')->willReturnCallback(static fn (string $name): bool => $name === 'field_aculta_discussion');
     $host->method('get')->with('field_aculta_discussion')->willReturn($fieldItemList);
 
-    $access = new DiscussionReplyAccess($resolver, $entityTypeManager, $this->originResolver(DiscussionOrigin::CONTEXTUAL));
+    $access = new DiscussionReplyAccess($resolver, $entityTypeManager, $this->originResolver(DiscussionOrigin::CONTEXTUAL), $this->createMock(\Drupal\aculta_forum\Service\TopicAuthorDeletion::class));
     $result = $access->checkAccess($host, $account);
 
     $this->assertTrue($result->isAllowed());
@@ -146,6 +147,7 @@ final class DiscussionReplyAccessTest extends UnitTestCase {
       $contextResolver,
       $this->createMock(EntityTypeManagerInterface::class),
       $originResolver,
+      $this->createMock(\Drupal\aculta_forum\Service\TopicAuthorDeletion::class),
     );
 
     self::assertTrue($access->checkAccess($host, $account)->isAllowed());
@@ -184,7 +186,7 @@ final class DiscussionReplyAccessTest extends UnitTestCase {
     $host->method('hasField')->willReturnCallback(static fn (string $name): bool => $name === 'field_aculta_discussion');
     $host->method('get')->with('field_aculta_discussion')->willReturn($fieldItemList);
 
-    $access = new DiscussionReplyAccess($resolver, $entityTypeManager, $this->originResolver(DiscussionOrigin::CONTEXTUAL));
+    $access = new DiscussionReplyAccess($resolver, $entityTypeManager, $this->originResolver(DiscussionOrigin::CONTEXTUAL), $this->createMock(\Drupal\aculta_forum\Service\TopicAuthorDeletion::class));
     $result = $access->checkAccess($host, $account);
 
     $this->assertFalse($result->isAllowed());

@@ -257,7 +257,7 @@ Remoção de tópico pela moderação
 
 Fechar tópico
 - Ação "Fechar ou reabrir tópico" nos controles; tópico fechado fica legível e mostra "Tópico fechado pela moderação." (PARCIAL: marca, formulário e aviso implementados).
-- PENDENTE: bloquear novas respostas no tópico fechado (não implementado; depende da regra de acesso de DiscussionReplyAccess).
+- Bloqueio de novas respostas em tópico fechado: IMPLEMENTADO em `DiscussionReplyAccess::checkAccess` (negado com "Topic is closed by moderation."); leitura continua. Unit do Fórum 287 OK; prova de ponta a ponta (Kernel) DEFERRED.
 
 Excluir tópico totalmente
 - Ação "Excluir tópico" nos controles, com o acesso decidido pelo Drupal (EXISTENTE; sem alteração nesta rodada).

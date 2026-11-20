@@ -185,6 +185,7 @@ final class DiscussionReplyForumPostKernelTest extends KernelTestBase {
       $contextResolver,
       $this->container->get('entity_type.manager'),
       $originResolver,
+      $this->container->get('aculta_forum.topic_author_deletion'),
     );
   }
 

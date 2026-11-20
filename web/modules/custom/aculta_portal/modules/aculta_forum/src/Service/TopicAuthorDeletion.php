@@ -12,7 +12,7 @@ use Drupal\Core\Session\AccountInterface;
 /**
  * Author deletion of a topic: the topic stays open with an automatic message and moderation is notified.
  */
-final class TopicAuthorDeletion {
+class TopicAuthorDeletion {
 
   /**
    * Key-value collection of topic tombstones, keyed by node id. Value 'autor' = deleted by its author.

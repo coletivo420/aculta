@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Service;
 
+
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Origin\DiscussionOrigin;
@@ -27,12 +28,17 @@ class DiscussionReplyAccess {
     protected readonly DiscussionContextResolver $contextResolver,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     protected readonly DiscussionOriginResolverInterface $originResolver,
+    protected readonly TopicAuthorDeletion $topicState,
   ) {}
 
   /**
    * Checks whether the given account can reply to the discussion host.
    */
   public function checkAccess(EntityInterface $host, AccountInterface $account, ?int $parentId = NULL): AccessResultInterface {
+    // Tópico fechado pela moderação: leitura continua, novas respostas não.
+    if ($host instanceof NodeInterface && $this->topicState->isClosed((int) $host->id())) {
+      return AccessResult::forbidden('Topic is closed by moderation.')->addCacheableDependency($host);
+    }
     $origin = $this->originResolver->classify($host);
     if (in_array($origin->origin, [DiscussionOrigin::ARCHIVE, DiscussionOrigin::UNKNOWN], TRUE)) {
       return AccessResult::forbidden('Discussion origin is not writable.')
