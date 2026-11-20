@@ -2,6 +2,20 @@
 
 Data: 2026-11-19. Branch de trabalho: `docs/forum-clone-discourse-ui-cgu-integracoes-20261119`, PR: https://github.com/coletivo420/aculta/pull/377, destino: `dev`. **Manter commits nessa branch**, sem force-push ou bypass do PHPStan level 10. Esta é uma entrega de código inicial, **não é homologação do Runtime**.
 
+## Revalidação de continuidade — 2026-11-20
+
+Base: `origin/docs/forum-clone-discourse-ui-cgu-integracoes-20261119` em `506512bd8`. A cópia local de `docs/...` no checkout principal estava atrás do remoto em 141 commits sem commits próprios; o trabalho foi feito em worktree dedicado, sem tocar o worktree `aculta-pr377`, que tem alterações de outra frente.
+
+Resultados medidos nesta rodada:
+
+- Unit `aculta_forum`: 278 testes e 2.130 asserções PASS, com 17 depreciações PHPUnit.
+- Unit `aculta_cgu`: 3 testes e 19 asserções PASS.
+- Focal não-Kernel dos P0 (`DiscussionReplyControllerQuoteTest`, `DiscussionReplyAccessTest`, `ForumQuoteHooksTest`, `TopicDeletionRoutesTest`): 15 testes e 94 asserções PASS, com 49 depreciações.
+- `php -l` nos PHP alterados existentes: PASS.
+- Kernel focal (`CguReportPolicyKernelTest`, `ForumCguIntegrationKernelTest`): **DEFERRED**. Os 14 casos falham antes da execução por falta de `SIMPLETEST_DB`. A tentativa de carregar `secrets/simpletest-db.env` para rodar no banco `aculta_simpletest` foi bloqueada pelo classificador de permissões da sessão; não houve execução de teste nem acesso ao Runtime. Precisa de autorização explícita do responsável para repetir.
+
+Não executados nesta rodada: PHPCS, PHPStan nível 10 do escopo, Functional HTTP/HTMX autenticado, ESLint e o CI deste SHA. Os itens P1/P2 do plano (Index, Statistics, UI Suite, paridade Discourse) permanecem pendentes.
+
 ## Handoff — fronteira módulo/tema e validação local — 2026-11-20
 
 O código desta fase foi publicado na PR em `55f022ad3` (`refactor(portal): concluir fronteira entre módulo e tema`); o registro da redução PHPStan foi publicado em `006983f84` (`docs(phpstan): registrar redução de dívida validada`). O HEAD remoto da PR foi confirmado em `006983f84`. A revisão humana foi informada pelo responsável. Nenhuma alteração foi integrada em `dev` nem aplicada ao Runtime.
