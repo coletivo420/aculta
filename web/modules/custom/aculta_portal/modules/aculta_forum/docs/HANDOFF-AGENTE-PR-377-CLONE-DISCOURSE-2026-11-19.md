@@ -2,6 +2,31 @@
 
 Data: 2026-11-19. Branch de trabalho: `docs/forum-clone-discourse-ui-cgu-integracoes-20261119`, PR: https://github.com/coletivo420/aculta/pull/377, destino: `dev`. **Manter commits nessa branch**, sem force-push ou bypass do PHPStan level 10. Esta é uma entrega de código inicial, **não é homologação do Runtime**.
 
+## Handoff — fronteira módulo/tema e validação local — 2026-11-20
+
+O código desta fase foi publicado na PR em `55f022ad3` (`refactor(portal): concluir fronteira entre módulo e tema`); o registro da redução PHPStan foi publicado em `006983f84` (`docs(phpstan): registrar redução de dívida validada`). O HEAD remoto da PR foi confirmado em `006983f84`. A revisão humana foi informada pelo responsável. Nenhuma alteração foi integrada em `dev` nem aplicada ao Runtime.
+
+### Feito e validado
+
+- Concluído o lote de fronteira Portal/tema: estilos de checkout e loja passaram ao tema V2, render arrays usam o contrato de componente do Portal e o validador da fronteira passou. O teste `ForumTopicDisplayConfigTest` foi corrigido para garantir que `aculta_forum` não dependa do campo histórico `field_autor_legado`, agora pertencente ao addon opcional `aculta_forum_legacy`.
+- Corrigida dívida PHPStan em arquivos alterados e removidas entradas resolvidas do baseline, sem baixar nível ou adicionar `@phpstan-ignore`. Relatório e snapshot refletem o SHA do commit funcional.
+- PHP lint: PASS, 196/196 arquivos. PHPStan 2.3.5 nível 10: PASS, zero erros não suprimidos. `phpstan-debt-guard check` e `diff`: PASS; 243 entradas removidas e 14 contagens reduzidas. Bats dos guardrails: PASS, 20 casos.
+- Unit focal Fórum/H5P e testes Unit alterados: PASS, 330 testes e 2.356 asserções; PHPUnit reportou 17 depreciações. Stylelint, validador Portal Drupal 12 (1.248 verificações), fronteira módulo/tema (7.306 verificações), classes mapeadas e fundamentos V2: PASS.
+- O acervo Growroom não foi migrado, convertido, excluído nem misturado. Não foram executados Drush, sync/import de configuração, migrações ou operações no Runtime.
+
+### Pendências e resultados não verdes
+
+- PHPCS retornou código 123: zero erros e 309 avisos nos PHP examinados (292 de linha longa, 16 funções globais e 1 descrição `t()`); não declarar PHPCS PASS.
+- A suíte Unit completa não concluiu: o processo terminou por redeclaração de `aculta_messenger_schema()` ao carregar a cópia do módulo na worktree e no checkout principal. Os testes focais acima passaram após corrigir as expectativas obsoletas do campo legado.
+- Kernel permanece DEFERRED sem `SIMPLETEST_DB` de teste isolado. ESLint permanece DEFERRED porque o executável `eslint` não está instalado. Os checks de CI disparados pelo push não foram consultados nesta rodada.
+
+### Próximos passos
+
+1. Consultar os checks da PR para o SHA `006983f84`, distinguindo falha, pendente, cancelado e skipped.
+2. Repetir a Unit completa em ambiente que não carregue `aculta_messenger.install` das duas árvores; não usar banco do Runtime. Rodar Kernel focal somente com banco descartável de testes.
+3. Resolver ou classificar os avisos PHPCS por comparação com a base, sem alterações cosméticas em massa; executar ESLint quando houver binário disponível.
+4. Retomar os itens pendentes do plano FDC e da matriz de aceite deste handoff. O resumo desta fase de fronteira não equivale a aceite funcional integral do clone Discourse.
+
 ## Atualização Dev.5 — 2026-11-19
 
 A importação histórica do Growroom **ainda não foi feita**. Não há conteúdo
