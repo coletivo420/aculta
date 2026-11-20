@@ -231,6 +231,16 @@ Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve co
 - Validação: PHPStan exit 0; guard PASS; PHPCS sem erros no controlador.
 - DEFERRED: teste da rota e prova visual/HTMX do popup.
 
+## Controles administrativos nos consumidores — 2026-11-20
+
+Decisão: os controles administrativos valem também para os consumidores do Fórum (Wiki, Revista, LMS e comentários).
+
+- Respostas: o gatilho `comment-admin-trigger` já aparece em cada resposta de consumidor para quem pode administrar comentários (existente).
+- Discussão do conteúdo-host: novo gatilho na página do host (`DiscussionHostAdminHooks`, node_view), que abre o popup por HTMX (`aculta_forum.discussion_host_admin_popup`). A ação "Abrir ou fechar discussão" leva ao formulário `DiscussionHostStatusForm` (alterna o campo `field_aculta_discussion`).
+- Componentes e Stories: `discussion-admin-controls` (novo, com story default e README) e `comment-admin-trigger` (reutilizado com `kind: topico`).
+- Validação: schema SDC PASS (153 componentes); Unit do Fórum 288 OK; PHPStan e guard PASS; PHPCS sem erros nos arquivos novos.
+- DEFERRED: Kernel do formulário de abrir/fechar discussão e prova visual/HTMX do popup nos consumidores.
+
 ## Revisão das decisões recentes — comportamento esperado para confirmação — 2026-11-20
 
 Legenda: IMPLEMENTADO (código, com validação local) · PARCIAL · PENDENTE.

@@ -90,6 +90,10 @@ services:
     class: Drupal\aculta_forum\Hook\DiscussionTopicAuthorDeletionHooks
     arguments: ['@aculta_forum.topic_author_deletion']
 
+  Drupal\aculta_forum\Hook\DiscussionHostAdminHooks:
+    class: Drupal\aculta_forum\Hook\DiscussionHostAdminHooks
+    arguments: ['@current_user']
+
   Drupal\aculta_forum\Hook\DiscussionModerationEditHooks:
     class: Drupal\aculta_forum\Hook\DiscussionModerationEditHooks
     arguments: ['@keyvalue', '@current_user', '@datetime.time']

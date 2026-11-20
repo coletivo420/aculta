@@ -1,0 +1,12 @@
+{#
+/**
+ * @file
+ * Modal de controles da discussão de um conteúdo: situação e ações autorizadas.
+ */
+#}
+<section class="discussion-admin-controls">
+  <p class="discussion-admin-controls__state">{{ 'Discussão'|t }}: {{ state_label }}</p>
+  {% if actions %}
+    <div class="discussion-admin-controls__actions">{{ actions }}</div>
+  {% endif %}
+</section>

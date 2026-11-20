@@ -1,0 +1,9 @@
+.discussion-admin-controls__state {
+  margin-block: var(--spacing-sm);
+}
+
+.discussion-admin-controls__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}

@@ -1,0 +1,7 @@
+name: Controles administrativos da discussão
+props:
+  state_label: Aberta
+slots:
+  actions:
+    type: inline_template
+    template: '<a href="#">Fechar discussão</a>'

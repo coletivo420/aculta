@@ -281,3 +281,29 @@ aculta_forum.topic_moderation_close:
     parameters:
       node:
         type: 'entity:node'
+
+aculta_forum.discussion_host_status:
+  path: '/painel-administrativo/discussao/{node}/status'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\DiscussionHostStatusForm'
+    _title: 'Abrir ou fechar discussão pela moderação'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+aculta_forum.discussion_host_admin_popup:
+  path: '/discussao/{node}/controles'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\DiscussionHostAdminPopupController::view'
+    _title: 'Controles da discussão'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
