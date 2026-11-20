@@ -235,7 +235,7 @@ Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve co
 
 - Ação "Fixar tópico"/"Desafixar tópico" nos controles administrativos, com formulário de confirmação `TopicModerationPinForm` (rota `aculta_forum.topic_moderation_pin`) que usa o campo sticky do nó.
 - Página do tópico mostra o selo "Fixado".
-- PENDENTE: ordenação das listagens com tópicos fixados no topo (exige ajuste das Views).
+- Fixados no topo: IMPLEMENTADO na configuração. `sticky` DESC é o primeiro critério em `views.view.aculta_forum_public_topics` (listagem pública e "Mais comentadas", em `config/sync` e na instalação do módulo). A linha `forum-topic-row` recebe `pinned` do campo `sticky` e mostra o selo "Fixo". Story fixada (default) e não fixada (`unpinned`). PENDENTE: prova no Runtime (import de config e visual) e teste Kernel da ordenação.
 - Validação: Unit do Fórum 288 OK; PHPStan e guard PASS. DEFERRED: Kernel e visual.
 
 ## Controles administrativos nos consumidores — 2026-11-20
