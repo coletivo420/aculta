@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_mode.node.full
     - field.field.node.aculta_forum_topic.body
     - field.field.node.aculta_forum_topic.field_aculta_categories
+    - field.field.node.aculta_forum_topic.field_aculta_tags
     - field.field.node.aculta_forum_topic.field_aculta_discussion
     - field.field.node.aculta_forum_topic.field_domain_source
     - node.type.aculta_forum_topic
@@ -44,6 +45,14 @@ content:
     region: content
     settings: { }
     third_party_settings: { }
+  field_aculta_tags:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {}
+    weight: 9
+    region: content
   field_aculta_discussion:
     type: comment_default
     label: hidden

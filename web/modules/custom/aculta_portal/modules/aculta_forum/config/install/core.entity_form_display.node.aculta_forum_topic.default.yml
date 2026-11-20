@@ -5,6 +5,7 @@ dependencies:
   config:
     - field.field.node.aculta_forum_topic.body
     - field.field.node.aculta_forum_topic.field_aculta_categories
+    - field.field.node.aculta_forum_topic.field_aculta_tags
     - field.field.node.aculta_forum_topic.field_domain_source
     - node.type.aculta_forum_topic
   module:
@@ -29,6 +30,16 @@ content:
     weight: 20
     region: content
     settings: { }
+    third_party_settings: { }
+  field_aculta_tags:
+    type: entity_reference_autocomplete_tags
+    weight: 21
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: { }
   title:
     type: string_textfield
