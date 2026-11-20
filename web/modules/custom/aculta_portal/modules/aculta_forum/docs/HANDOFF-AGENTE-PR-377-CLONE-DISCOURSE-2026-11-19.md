@@ -106,6 +106,13 @@ Pendências:
 2. Integrar `forum-author-line`, `forum-topic-card` e `comment-admin-trigger` nas telas que deveriam usá-los, com prova de renderização.
 3. Provas de render (Twig e Kernel) de todos os itens marcados como referenciados. DEFERRED.
 
+## Compositor de tópico e cartão espelhado — verificação e decisão — 2026-11-20
+
+- **Compositor de criação de tópico (`discussion-topic-composer`):** agora enquadra o formulário Drupal real. `TopicPopupLayout` define `#theme_wrappers = discussion_topic_composer`, e o template do módulo chama o SDC com `standalone_popup: false` e o formulário no slot `form`. Os campos não são movidos, então valores e handlers continuam os mesmos. Prova: `TopicPopupLayoutTest` (1 teste, 11 asserções, OK). Render Twig e Kernel DEFERRED.
+- **Cartão espelhado (`forum-reply-mirror`):** não é usado pelo Fórum. Ele aparece só na página de visão geral da UI Patterns.
+- **Espelhamento real das respostas:** `DiscussionReactionEntityViewHooks::discussionSide` alterna o lado por nível (raiz pela ordem; resposta em nível é oposta ao pai) e passa `accent_side` ao `forum-post-card`. O efeito é só a cor e a faixa do cartão.
+- **Lacuna:** o layout espelhado completo do contrato (`author_position: side`, autoria e reações à direita) não é passado. Ligar isso muda o visual de todas as respostas. Aguarda decisão do responsável.
+
 ## Decisão — anexos só no Fórum; consumidores apenas mídia embutida — 2026-11-20
 
 Decisão do responsável:
