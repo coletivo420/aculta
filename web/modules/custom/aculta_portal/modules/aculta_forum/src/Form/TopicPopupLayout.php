@@ -48,6 +48,9 @@ final class TopicPopupLayout {
         }
       }
     }
+    // Moldura real: o SDC discussion-topic-composer envolve o formulário sem mover campos.
+    $form['#theme_wrappers'] = ['discussion_topic_composer'];
+
     // Diretrizes do Compositor de Criação de Tópico (SDC forum-composer-guidelines).
     $form['forum_composer_guidelines'] = [
       '#theme' => 'portal_component',

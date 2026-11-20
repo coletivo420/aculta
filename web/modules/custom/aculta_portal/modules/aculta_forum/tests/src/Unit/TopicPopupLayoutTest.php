@@ -27,6 +27,7 @@ final class TopicPopupLayoutTest extends UnitTestCase {
     $form = ['title' => [], 'body' => [], 'actions' => []];
     TopicPopupLayout::apply($form);
 
+    self::assertSame(['discussion_topic_composer'], $form['#theme_wrappers']);
     self::assertArrayHasKey('forum_composer_guidelines', $form);
     $guidelines = $form['forum_composer_guidelines'];
     self::assertIsArray($guidelines);

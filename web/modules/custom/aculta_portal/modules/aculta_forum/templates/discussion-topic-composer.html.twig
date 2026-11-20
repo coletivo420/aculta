@@ -1,0 +1,12 @@
+{#
+ * Moldura do compositor de criação de tópico: o SDC discussion-topic-composer
+ * recebe o formulário Drupal real (children) no slot form, sem mover campos.
+#}
+{{ include('aculta420_v2:discussion-topic-composer', {
+  target_id: target_id,
+  status: status,
+  host_title: host_title,
+  messages: messages,
+  standalone_popup: false,
+  form: children,
+}, with_context: false) }}
