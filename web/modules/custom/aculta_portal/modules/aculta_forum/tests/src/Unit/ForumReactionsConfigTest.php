@@ -68,6 +68,7 @@ final class ForumReactionsConfigTest extends UnitTestCase {
     self::assertStringContainsString("name: 'arrow-counter-clockwise'", $bar);
     self::assertStringContainsString("{{ 'Desfazer'|t }}", $bar);
     self::assertStringContainsString('user_reaction is empty', $bar);
+    self::assertStringContainsString("default_reaction|default('broccoli')", $bar);
   }
 
   /**

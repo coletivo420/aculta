@@ -44,6 +44,11 @@ class DiscussionReactionManager {
    */
   public const UNDO_ACTION = 'undo';
 
+  /**
+   * Fixed quick-like emoji. The positive popup remains configurable.
+   */
+  public const DEFAULT_REACTION = 'broccoli';
+
   public function __construct(
     protected readonly Connection $database,
     protected readonly ConfigFactoryInterface $configFactory,
@@ -77,15 +82,23 @@ class DiscussionReactionManager {
         }
       }
     }
-    return $allowed;
+    // The primary Like control is always broccoli even if an old sync import
+    // disabled or removed it. Reactions as a whole remain independently gated
+    // by reactions_enabled and the permission/access service.
+    $broccoli = [
+      'id' => self::DEFAULT_REACTION,
+      'icon' => self::DEFAULT_REACTION,
+      'label' => 'Curtir',
+      'enabled' => TRUE,
+    ];
+    return [self::DEFAULT_REACTION => $broccoli] + array_diff_key($allowed, [self::DEFAULT_REACTION => TRUE]);
   }
 
   /**
-   * Returns default reaction ID.
+   * Returns the immutable primary quick-like reaction ID.
    */
   public function getDefaultReaction(): string {
-    $default = $this->configFactory->get('aculta_forum.settings')->get('default_reaction');
-    return is_string($default) && isset($this->getAllowedReactions()[$default]) ? $default : 'broccoli';
+    return self::DEFAULT_REACTION;
   }
 
   /**

@@ -117,19 +117,11 @@ final class ForumSettingsForm extends ConfigFormBase {
     ];
 
     $allowedReactions = $this->allowedReactions($config->get('allowed_reactions'));
-    $defaultReaction = $this->stringValue($config->get('default_reaction'), 'broccoli');
-
-    $options = [];
-    foreach ($allowedReactions as $reaction) {
-      $options[$reaction['id']] = $reaction['label'] . ' (' . $reaction['id'] . ')';
-    }
-
     $form['reactions_fieldset']['default_reaction'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Reação padrão de clique rápido'),
-      '#options' => $options,
-      '#default_value' => $defaultReaction,
-      '#description' => $this->t('Reação aplicada diretamente ao clicar no botão principal de curtir.'),
+      '#type' => 'item',
+      '#title' => $this->t('Curtida rápida padrão'),
+      '#markup' => $this->t('Brócolis (broccoli) - fixo. A paleta positiva permanece editável.'),
+      '#description' => $this->t('A curtida rápida é sempre o emoji Brócolis; este valor não é alterável pelo formulário.'),
     ];
 
     $form['reactions_fieldset']['reactions_table'] = [
@@ -225,20 +217,9 @@ final class ForumSettingsForm extends ConfigFormBase {
       return;
     }
 
-    $defaultReactionValue = $form_state->getValue('default_reaction');
-    if ($defaultReactionValue === NULL) {
-      $defaultReactionValue = $this->stringValue($config->get('default_reaction'), 'broccoli');
-    }
-    if (!is_string($defaultReactionValue)) {
-      $form_state->setErrorByName('default_reaction', $this->t('Selecione uma reação padrão válida.'));
-      return;
-    }
-
+    // Ignore submitted/legacy values: the primary Like is always broccoli.
+    $defaultReactionValue = 'broccoli';
     $existing = $this->allowedReactions($config->get('allowed_reactions'));
-    if ($existing !== [] && !in_array($defaultReactionValue, array_column($existing, 'id'), TRUE)) {
-      $form_state->setErrorByName('default_reaction', $this->t('A reação padrão deve estar na lista de reações permitidas.'));
-      return;
-    }
 
     $rawSubmittedTable = $form_state->getValue('reactions_table');
     $submittedTable = is_array($rawSubmittedTable) ? $rawSubmittedTable : [];
@@ -269,6 +250,12 @@ final class ForumSettingsForm extends ConfigFormBase {
       if ($enabled === NULL) {
         $form_state->setErrorByName('reactions_table][' . $index . '][enabled', $this->t('Informe um estado válido para a reação.'));
         return;
+      }
+
+      if ($item['id'] === 'broccoli') {
+        $icon = 'broccoli';
+        $label = 'Curtir';
+        $enabled = TRUE;
       }
 
       $updatedReactions[] = [

@@ -114,7 +114,8 @@ final class ForumSettingsFormKernelTest extends KernelTestBase {
     self::assertIsArray($fieldset);
     $defaultReaction = $fieldset['default_reaction'] ?? NULL;
     self::assertIsArray($defaultReaction);
-    self::assertSame(['heart' => 'Coração (heart)'], $defaultReaction['#options'] ?? NULL);
+    self::assertSame('item', $defaultReaction['#type'] ?? NULL);
+    self::assertStringContainsString('Brócolis', (string) ($defaultReaction['#markup'] ?? ''));
 
     $table = $fieldset['reactions_table'] ?? NULL;
     self::assertIsArray($table);
@@ -141,7 +142,7 @@ final class ForumSettingsFormKernelTest extends KernelTestBase {
     self::assertSame(3, $saved->get('reply_max_depth'));
     self::assertSame('direct_delete', $saved->get('topic_author_delete_policy'));
     self::assertTrue($saved->get('reactions_enabled'));
-    self::assertSame('heart', $saved->get('default_reaction'));
+    self::assertSame('broccoli', $saved->get('default_reaction'));
     self::assertSame([
       ['id' => 'heart', 'icon' => 'heart-new', 'label' => 'Novo rótulo', 'enabled' => FALSE],
     ], $saved->get('allowed_reactions'));
