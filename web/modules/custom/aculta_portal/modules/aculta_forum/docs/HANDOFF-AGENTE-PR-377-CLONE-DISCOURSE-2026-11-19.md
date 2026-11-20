@@ -139,7 +139,7 @@ Validação: Unit do Fórum 279 testes OK; PHPStan exit 0; guard PASS; PHPCS sem
 DEFERRED:
 
 - Stylelint do CSS da resposta compacta: binário ausente (exit 127). Não é PASS.
-- Teste Unit do flag `consumer_comment` em `preprocessComment`: exige mocks de storage, avatar e comentário.
+- Flag `consumer_comment`: decisão extraída para `DiscussionReactionEntityViewHooks::isConsumerHost()` e provada por `ConsumerCommentHostTest` (3 testes, 6 asserções, OK). A montagem completa do `preprocessComment` continua sem teste Unit, por exigir mocks de storage e avatar.
 - Prova visual em navegador de mobile e espelhado nos quatro consumidores.
 
 Lacunas confirmadas nesta rodada:

@@ -96,7 +96,7 @@ final class DiscussionReactionEntityViewHooks {
       $host = $threadComment->getCommentedEntity();
       $variables['publication_comment'] = $host instanceof NodeInterface && $host->bundle() === 'revista';
       // Consumidores (LMS, Wiki, Revista e comentários gerais) usam a resposta compacta; o Fórum mantém o cartão do post.
-      $variables['consumer_comment'] = !($host instanceof NodeInterface && $host->bundle() === 'aculta_forum_topic');
+      $variables['consumer_comment'] = self::isConsumerHost($host);
       // Controles administrativos valem para todo comentário da discussão (fórum, LMS, Revista e Wiki).
       $variables['admin_url'] = $this->currentUser->hasPermission('administer comments')
         ? Url::fromRoute('aculta_forum.comment_moderation', ['comment' => (int) $threadComment->id()])->toString()
@@ -299,6 +299,13 @@ final class DiscussionReactionEntityViewHooks {
       $authorCardCache['tags'] = $authorCardTags;
       $build['author_card']['#cache'] = $authorCardCache;
     }
+  }
+
+  /**
+   * Consumidores do motor de discussão (LMS, Wiki, Revista, comentários): qualquer host que não seja tópico do Fórum.
+   */
+  public static function isConsumerHost(?EntityInterface $host): bool {
+    return !($host instanceof NodeInterface && $host->bundle() === 'aculta_forum_topic');
   }
 
   /**
