@@ -19,7 +19,8 @@ zero asserções); HTTP/Functional está DEFERRED por falta de
 `SIMPLETEST_BASE_URL`. A suíte Unit completa foi tentada, mas a descoberta
 parou antes dos testes porque o checkout não contém o módulo contrib
 `webform_score`, exigido por `WebformScoreAccessTest`. A revisão independente
-R2 ainda está pendente. Nenhuma operação no Runtime foi executada.
+R2 da Dev.5 foi concluída sem achados no escopo revisado. Nenhuma operação no
+Runtime foi executada.
 
 ## Atualização Dev.6 — 2026-11-19
 
@@ -28,8 +29,19 @@ eles movem somente tópico, Comment e descendentes classificados `CURRENT`.
 Origem `ARCHIVE` ou `UNKNOWN` falha fechada, sem ler `field_autor_legado` no
 motor. As fixtures Kernel deixaram de instalar esse field.
 
-Gates da Dev.6 ainda precisam ser executados. O Kernel local segue condicionado
-a `SIMPLETEST_DB`; não usar o Runtime para liberar essa validação.
+Validação local Dev.6: PHP lint e PHPCS nos seis arquivos PHP alterados PASS;
+PHPStan nível 10 global (0 erros/0 file errors) e `phpstan-debt-guard check`/
+`diff` PASS; Unit focal Fórum/Forum Legacy/User-Identity 300 testes e 2.220
+assertions PASS (25 depreciações); gate Portal Drupal 12 PASS (1.248 checks),
+índice de status PASS (43 componentes) e `git diff --check` PASS. A correção de
+tipos em `aculta_user` removeu nove ocorrências reais do baseline de
+`AuthorCard.php`, sem supressões.
+
+Revisão independente R2 da Dev.6 concluída sem achados. Os dois Kernel focais
+estão DEFERRED por falta de `SIMPLETEST_DB`; a descoberta PHPUnit ampla também
+falha antes da execução porque falta o módulo contrib `webform_score`. CI do
+novo commit ainda estava pendente/em execução na última consulta. Nenhuma
+operação no Runtime foi executada.
 
 ## Instrução principal
 
