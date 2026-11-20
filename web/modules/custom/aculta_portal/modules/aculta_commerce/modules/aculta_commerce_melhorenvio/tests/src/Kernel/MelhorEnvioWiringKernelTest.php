@@ -423,7 +423,7 @@ final class MelhorEnvioWiringKernelTest extends KernelTestBase {
     self::assertIsArray($attributes);
     $cache = $build['#cache'] ?? NULL;
     self::assertIsArray($cache);
-    self::assertSame('aculta_portal_button', $connect['#type']);
+    self::assertSame('portal_button', $connect['#type']);
     self::assertSame('primary', $props['variant'] ?? NULL);
     self::assertSame('melhorenvio_autorizacao', $attributes['data-aculta-popup'] ?? NULL);
     $url = $props['url'] ?? NULL;

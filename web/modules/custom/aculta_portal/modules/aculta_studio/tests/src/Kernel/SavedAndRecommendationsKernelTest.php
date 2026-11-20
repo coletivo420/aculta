@@ -337,8 +337,8 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $controller = $this->container->get('aculta_studio.saved_controller');
     $build = $controller->page();
 
-    $this->assertSame('component', $build['#type']);
-    $this->assertSame('aculta420_v2:saved-content-page', $build['#component']);
+    $this->assertSame('portal_component', $build['#theme']);
+    $this->assertSame('saved-content-page', $build['#name']);
     $this->assertArrayHasKey('content', $build['#slots']);
     $this->assertContains('user', $build['#cache']['contexts']);
     $this->assertContains('url.query_args:tab', $build['#cache']['contexts']);
@@ -566,8 +566,8 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
    *   Content slot render array.
    */
   private function getPageContentSlot(array $build): array {
-    self::assertSame('component', $build['#type'] ?? NULL);
-    self::assertSame('aculta420_v2:saved-content-page', $build['#component'] ?? NULL);
+    self::assertSame('portal_component', $build['#theme'] ?? NULL);
+    self::assertSame('saved-content-page', $build['#name'] ?? NULL);
     $componentSlots = $build['#slots'] ?? NULL;
     if (!is_array($componentSlots)) {
       throw new \UnexpectedValueException('A página de salvos deve expor slots.');

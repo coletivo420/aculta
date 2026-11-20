@@ -243,8 +243,8 @@ final class RelatedContentBlockKernelTest extends KernelTestBase {
 
     $build = $block->build();
     $this->assertNotEmpty($build);
-    $this->assertSame('component', $build['#type']);
-    $this->assertSame('aculta420_v2:related-content', $build['#component']);
+    $this->assertSame('portal_component', $build['#theme']);
+    $this->assertSame('related-content', $build['#name']);
     $content = $this->contentSlot($build);
     $this->assertSame('item_list', $content['#theme'] ?? NULL);
     $contentTitle = $content['#title'] ?? NULL;

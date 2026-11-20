@@ -21793,12 +21793,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Kernel/ContentIndexForumTopicProviderKernelTest.php
 
 		-
-			rawMessage: 'Parameter #2 $arguments of class Symfony\Component\DependencyInjection\Definition constructor expects array, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Kernel/ContentIndexForumTopicProviderKernelTest.php
-
-		-
 			rawMessage: 'Argument of an invalid type mixed supplied for foreach, only iterables are supported.'
 			identifier: foreach.nonIterable
 			count: 1
@@ -22706,12 +22700,6 @@ parameters:
 
 		-
 			rawMessage: 'Parameter #1 $name of method Symfony\Component\DependencyInjection\Definition::addTag() expects string, mixed given.'
-			identifier: argument.type
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Kernel/ForumAccessKernelTestBase.php
-
-		-
-			rawMessage: 'Parameter #2 $arguments of class Symfony\Component\DependencyInjection\Definition constructor expects array, mixed given.'
 			identifier: argument.type
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_index/tests/src/Kernel/ForumAccessKernelTestBase.php
@@ -43356,24 +43344,6 @@ parameters:
 			identifier: assign.propertyType
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Functional/StatisticsDashboardFunctionalTest.php
-
-		-
-			rawMessage: Cannot access offset '#component' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Kernel/ConsentBannerHooksKernelTest.php
-
-		-
-			rawMessage: Cannot access offset '#props' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Kernel/ConsentBannerHooksKernelTest.php
-
-		-
-			rawMessage: Cannot access offset '#type' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_statistics/tests/src/Kernel/ConsentBannerHooksKernelTest.php
 
 		-
 			rawMessage: Cannot access offset 'acultaStatistics' on mixed.

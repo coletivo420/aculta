@@ -22,7 +22,7 @@ final class ConsentBannerHooksKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['aculta_statistics', 'aculta_file_uploader', 'file' ];
+  protected static $modules = ['aculta_statistics', 'aculta_file_uploader', 'file'];
 
   /**
    * {@inheritdoc}
@@ -68,9 +68,11 @@ final class ConsentBannerHooksKernelTest extends KernelTestBase {
 
     $this->hook()->pageBottom($pageBottom);
 
-    $this->assertSame('component', $pageBottom['aculta_statistics_consent_banner']['#type']);
-    $this->assertSame('aculta420_v2:consent-banner', $pageBottom['aculta_statistics_consent_banner']['#component']);
-    $this->assertSame('/sobre/politica-de-privacidade', $pageBottom['aculta_statistics_consent_banner']['#props']['privacy_url']);
+    $banner = $pageBottom['aculta_statistics_consent_banner'] ?? NULL;
+    $this->assertIsArray($banner);
+    $this->assertSame('portal_component', $banner['#theme'] ?? NULL);
+    $this->assertSame('consent-banner', $banner['#name'] ?? NULL);
+    $this->assertSame('/sobre/politica-de-privacidade', $banner['#props']['privacy_url'] ?? NULL);
   }
 
   /**

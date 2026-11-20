@@ -18,11 +18,16 @@ use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\node\Entity\Node;
+use Drupal\user\Entity\User;
 use Drupal\node\Entity\NodeType;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
+use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Origin\CoreDiscussionOriginClassifier;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolver;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -71,10 +76,26 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
       Yaml::PARSE_CUSTOM_TAGS,
     )['services'];
     $service = $ownerServices['aculta_forum.content_index_provider'];
-    $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
+    $rawArguments = $service['arguments'] ?? [];
+    $arguments = array_map(
+      static fn (mixed $argument): mixed => is_string($argument) && str_starts_with($argument, '@')
+        ? new Reference(substr($argument, 1))
+        : $argument,
+      is_array($rawArguments) ? $rawArguments : [],
+    );
+    $definition = (new Definition($service['class'], $arguments))->setPublic(TRUE);
     foreach ($service['tags'] ?? [] as $tag) {
       $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
     }
+    // Current topics are indexable only through the Forum origin resolver.
+    $container->setDefinition(
+      'aculta_forum.discussion_origin_classifier.core',
+      new Definition(CoreDiscussionOriginClassifier::class, [new Definition(DiscussionContextResolver::class, [[]])]),
+    );
+    $container->setDefinition(
+      'aculta_forum.discussion_origin_resolver',
+      new Definition(DiscussionOriginResolver::class, [[new Reference('aculta_forum.discussion_origin_classifier.core')]]),
+    );
     $container->setDefinition('aculta_forum.content_index_provider', $definition);
   }
 
@@ -125,10 +146,14 @@ final class ContentIndexForumTopicProviderKernelTest extends KernelTestBase {
    * Backfills a Forum topic, updates its projection, then deletes it.
    */
   public function testForumTopicsAndCommentsFollowEntityCrud(): void {
+    // Current topics need a current owner; ownerless topics fail closed.
+    $author = User::create(['name' => 'autora-indice', 'status' => 1]);
+    $author->save();
     $topic = Node::create([
       'type' => 'aculta_forum_topic',
       'title' => 'Tópico inicial',
       'status' => TRUE,
+      'uid' => $author->id(),
     ]);
     $topic->save();
     $comment = Comment::create([
