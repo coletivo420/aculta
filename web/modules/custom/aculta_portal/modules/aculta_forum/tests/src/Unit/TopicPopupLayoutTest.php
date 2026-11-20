@@ -24,10 +24,11 @@ final class TopicPopupLayoutTest extends UnitTestCase {
     $container = new ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
-    $form = ['title' => [], 'body' => [], 'actions' => []];
+    $form = ['title' => [], 'body' => [], 'field_aculta_tags' => [], 'actions' => []];
     TopicPopupLayout::apply($form);
 
     self::assertSame(['discussion_topic_composer'], $form['#theme_wrappers']);
+    self::assertArrayHasKey('field_aculta_tags', $form);
     self::assertArrayHasKey('forum_composer_guidelines', $form);
     $guidelines = $form['forum_composer_guidelines'];
     self::assertIsArray($guidelines);

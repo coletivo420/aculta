@@ -17,7 +17,9 @@ final class CommentModerationAccess {
 
   public function access(AccountInterface $account, Request $request, CommentInterface $comment): AccessResultInterface {
     $isHtmx = $request->headers->has('HX-Request');
-    return AccessResult::allowedIf($isHtmx && $account->hasPermission('administer comments'))
+    $hasPermission = $account->hasPermission('administer comments')
+      || $account->hasPermission('moderate aculta forum comments');
+    return AccessResult::allowedIf($isHtmx && $hasPermission)
       ->addCacheContexts(['user.permissions', 'headers:HX-Request'])
       ->addCacheableDependency($comment);
   }

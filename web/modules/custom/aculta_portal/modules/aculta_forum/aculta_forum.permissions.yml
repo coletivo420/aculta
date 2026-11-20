@@ -27,3 +27,27 @@ moderate aculta forum topic deletions:
   description: 'Permite aprovar e rejeitar solicitações de exclusão de tópicos na fila de moderação.'
   restrict access: true
 
+moderate aculta forum topics:
+  title: 'Moderar tópicos do Fórum'
+  description: 'Permite fechar, fixar, arquivar e gerenciar tópicos no frontend do Fórum.'
+
+moderate aculta forum posts:
+  title: 'Moderar publicações e respostas do Fórum'
+  description: 'Permite aprovar, ocultar e revisar publicações no Fórum comunitário.'
+
+moderate aculta forum comments:
+  title: 'Moderar comentários de discussão'
+  description: 'Permite moderar comentários nos tópicos sem privilégios administrativos globais.'
+
+review aculta forum reports:
+  title: 'Revisar denúncias do Fórum'
+  description: 'Permite acessar a fila de denúncias do Fórum no Studio Marley.'
+
+reorganize aculta forum topics:
+  title: 'Reorganizar tópicos do Fórum'
+  description: 'Permite dividir, mesclar e mover tópicos e publicações.'
+
+close aculta forum polls:
+  title: 'Encerrar enquetes do Fórum'
+  description: 'Permite fechar ou reabrir enquetes de tópicos no Fórum.'
+

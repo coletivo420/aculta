@@ -17,7 +17,7 @@ final class TopicPopupLayout {
   /**
    * Campos do nó que o popup mantém. Menu, autor, revisão e abas saem.
    */
-  private const KEEP = ['title', 'body', 'field_aculta_categories', 'actions', 'form_id', 'form_build_id', 'form_token'];
+  private const KEEP = ['title', 'body', 'field_aculta_categories', 'field_aculta_tags', 'actions', 'form_id', 'form_build_id', 'form_token'];
 
   /**
    * Aplica o layout do popup ao formulário do nó aculta_forum_topic.

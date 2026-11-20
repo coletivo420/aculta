@@ -142,7 +142,10 @@ final class TopicAdminPopupController extends ControllerBase {
       ];
     }
 
-    if ($this->currentUser()->hasPermission('administer comments')) {
+    $canModerate = $this->currentUser()->hasPermission('administer comments')
+      || $this->currentUser()->hasPermission('moderate aculta forum topics');
+
+    if ($canModerate) {
       $actions[] = [
         '#type' => 'link',
         '#title' => $node->isPublished() ? $this->t('Despublicar tópico') : $this->t('Republicar tópico'),
@@ -152,16 +155,6 @@ final class TopicAdminPopupController extends ControllerBase {
         '#type' => 'link',
         '#title' => $this->t('Arquivar ou desarquivar tópico'),
         '#url' => Url::fromRoute('aculta_forum.topic_moderation_archive', ['node' => $nid]),
-      ];
-      $actions[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Dividir tópico'),
-        '#url' => Url::fromRoute('aculta_forum.topic_moderation_split', ['node' => $nid]),
-      ];
-      $actions[] = [
-        '#type' => 'link',
-        '#title' => $this->t('Juntar tópico'),
-        '#url' => Url::fromRoute('aculta_forum.topic_moderation_merge', ['node' => $nid]),
       ];
       $actions[] = [
         '#type' => 'link',
@@ -177,6 +170,20 @@ final class TopicAdminPopupController extends ControllerBase {
         '#type' => 'link',
         '#title' => $this->t('Remover pela moderação'),
         '#url' => Url::fromRoute('aculta_forum.topic_moderation_remove', ['node' => $nid]),
+      ];
+    }
+
+    if ($this->currentUser()->hasPermission('move aculta forum topics')
+      || $this->currentUser()->hasPermission('reorganize aculta forum topics')) {
+      $actions[] = [
+        '#type' => 'link',
+        '#title' => $this->t('Dividir tópico'),
+        '#url' => Url::fromRoute('aculta_forum.topic_moderation_split', ['node' => $nid]),
+      ];
+      $actions[] = [
+        '#type' => 'link',
+        '#title' => $this->t('Juntar tópico'),
+        '#url' => Url::fromRoute('aculta_forum.topic_moderation_merge', ['node' => $nid]),
       ];
     }
 

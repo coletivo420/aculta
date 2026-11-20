@@ -100,12 +100,14 @@ final class DiscussionReactionEntityViewHooks {
       // Consumidores (LMS, Wiki, Revista e comentários gerais) usam a resposta compacta; o Fórum mantém o cartão do post.
       $variables['consumer_comment'] = self::isConsumerHost($host);
       // Controles administrativos valem para todo comentário da discussão (fórum, LMS, Revista e Wiki).
-      $variables['admin_url'] = $this->currentUser->hasPermission('administer comments')
+      $canModerate = $this->currentUser->hasPermission('administer comments')
+        || $this->currentUser->hasPermission('moderate aculta forum comments');
+      $variables['admin_url'] = $canModerate
         ? Url::fromRoute('aculta_forum.comment_moderation', ['comment' => (int) $threadComment->id()])->toString()
         : NULL;
       // Estado de exclusão vale para todo comentário da discussão, não só para a Revista.
       $cid = (int) $threadComment->id();
-      $isAdmin = $this->currentUser->hasPermission('administer comments');
+      $isAdmin = $canModerate;
       // Estado: resposta excluída pelo autor fica como "Comentário excluído", sem edição, resposta nem citação.
       // Valor do tombstone: TRUE = excluído pelo autor; 'moderacao' = removido pela moderação.
       $tombstone = $this->keyValueFactory->get('aculta_forum_comment_tombstones')->get((string) $cid);
@@ -187,10 +189,8 @@ final class DiscussionReactionEntityViewHooks {
     $variables['content'] = $content;
     $variables['reaction_bar'] = $content['reaction_bar'];
     // Contador de reações recebidas (somente leitura), com os dados da própria barra de reação.
-    $barProps = $variables['reaction_bar']['#props'] ?? [];
-    if (!is_array($barProps)) {
-      $barProps = [];
-    }
+    /** @var array<string, int|string|array<mixed>> $barProps */
+    $barProps = is_array($variables['reaction_bar']['#props'] ?? NULL) ? $variables['reaction_bar']['#props'] : [];
     $reactions = $barProps['reactions'] ?? NULL;
     if (is_array($reactions)) {
       $allowedReactions = $barProps['allowed_reactions'] ?? [];
