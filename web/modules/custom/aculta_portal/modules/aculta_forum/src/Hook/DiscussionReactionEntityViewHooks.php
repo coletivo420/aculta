@@ -91,9 +91,9 @@ final class DiscussionReactionEntityViewHooks {
       $thread = $threadComment->get('thread')->value;
       $variables['reply_depth'] = min(3, is_string($thread) ? substr_count($thread, '.') : 0);
       // Resposta em nível: lado oposto ao cartão ao qual responde (pai). A raiz segue a alternância da conversa.
-      $variables['accent_side'] = self::isConsumerHost($threadComment->getCommentedEntity())
-        ? $this->consumerSide($threadComment)
-        : $this->discussionSide($threadComment);
+      // Sequência por posição: consumidores começam na 1.ª resposta; no Fórum a abertura é a posição 0.
+      $isConsumer = self::isConsumerHost($threadComment->getCommentedEntity());
+      $variables['accent_side'] = $this->sequenceSide($threadComment, $isConsumer ? 0 : 1);
       // Comentários de publicação da Revista: sem tópico; a publicação é o próprio tópico.
       $host = $threadComment->getCommentedEntity();
       $variables['publication_comment'] = $host instanceof NodeInterface && $host->bundle() === 'revista';
@@ -318,9 +318,9 @@ final class DiscussionReactionEntityViewHooks {
   }
 
   /**
-   * Posição da resposta na ordem de exibição do host (thread ASC), para alternar o lado.
+   * Lado pela posição da resposta na ordem de exibição (thread ASC). O offset coloca a abertura na posição 0.
    */
-  private function consumerSide(CommentInterface $comment): string {
+  private function sequenceSide(CommentInterface $comment, int $offset): string {
     $storage = $this->entityTypeManager->getStorage('comment');
     $ids = $storage->getQuery()
       ->accessCheck(FALSE)
@@ -331,34 +331,7 @@ final class DiscussionReactionEntityViewHooks {
       ->sort('thread', 'ASC')
       ->execute();
     $position = array_search((int) $comment->id(), array_map('intval', array_values($ids)), TRUE);
-    return self::alternatingSide($position === FALSE ? 0 : $position);
-  }
-
-  /**
-   * Lado do cartão de uma resposta: a raiz alterna (1.ª espelhada); uma resposta em nível é o oposto do pai.
-   */
-  private function discussionSide(CommentInterface $comment, int $guard = 0): string {
-    if ($guard > 20) {
-      return 'start';
-    }
-    $pid = (int) ($comment->get('pid')->target_id ?? 0);
-    if ($pid === 0) {
-      $roots = $this->entityTypeManager->getStorage('comment')->getQuery()
-        ->accessCheck(FALSE)
-        ->condition('pid', NULL, 'IS NULL')
-        ->condition('entity_id', $comment->getCommentedEntityId())
-        ->condition('field_name', 'field_aculta_discussion')
-        ->condition('status', 1)
-        ->sort('thread', 'ASC')
-        ->execute();
-      $position = array_search((int) $comment->id(), array_values(array_map('intval', $roots)), TRUE);
-      return ($position !== FALSE && $position % 2 === 0) ? 'end' : 'start';
-    }
-    $parent = $this->entityTypeManager->getStorage('comment')->load($pid);
-    if (!$parent instanceof CommentInterface) {
-      return 'start';
-    }
-    return $this->discussionSide($parent, $guard + 1) === 'end' ? 'start' : 'end';
+    return self::alternatingSide(($position === FALSE ? 0 : $position) + $offset);
   }
 
   /**

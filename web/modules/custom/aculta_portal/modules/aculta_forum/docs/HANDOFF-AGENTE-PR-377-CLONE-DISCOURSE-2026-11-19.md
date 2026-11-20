@@ -172,6 +172,18 @@ Decisão do responsável: no design compacto, a alternância é resposta > espel
 
 Pendente: prova de ordem real (Kernel de comentários em LMS, Wiki e Revista) e visual. DEFERRED.
 
+## Sequência de lados no Fórum e nos consumidores — 2026-11-20
+
+Decisão do responsável: a sequência é por posição, com a abertura na posição 0 no Fórum.
+
+- Fórum: abertura > espelhada > resposta > espelhada, e assim por diante. A 1.ª resposta é espelhada (`alternatingSide(índice + 1)`).
+- Consumidores (LMS, Wiki, Revista, comentários): resposta > espelhada > resposta > espelhada (`alternatingSide(índice)`).
+- `forum-reply-mirror` vale para toda resposta espelhada (lado `end`), raiz ou aninhada. A restrição por profundidade foi removida.
+- Código: `sequenceSide` em `DiscussionReactionEntityViewHooks`; `discussionSide` (árvore) removido por não ser mais usado.
+- Prova: Unit do Fórum 284 testes OK; PHPStan exit 0; guard PASS; PHPCS sem erros.
+
+DEFERRED: prova visual e de ordem real nos consumidores e no Fórum.
+
 ## Recontagem de consumo por código (somente twig, php e yml) — 2026-11-20
 
 Recontagem excluindo docs, CHANGELOG e Stories. Antes, `forum-topic-card` e `forum-reply-mirror` pareciam consumidos por causa de docs.

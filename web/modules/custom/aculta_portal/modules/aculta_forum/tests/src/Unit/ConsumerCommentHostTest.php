@@ -53,6 +53,15 @@ final class ConsumerCommentHostTest extends UnitTestCase {
   }
 
   /**
+   * Forum sequence: opening is position 0, so the first reply is mirrored, then reply, mirrored, and so on.
+   */
+  public function testForumSequenceStartsMirroredAfterOpening(): void {
+    self::assertSame('end', DiscussionReactionEntityViewHooks::alternatingSide(0 + 1));
+    self::assertSame('start', DiscussionReactionEntityViewHooks::alternatingSide(1 + 1));
+    self::assertSame('end', DiscussionReactionEntityViewHooks::alternatingSide(2 + 1));
+  }
+
+  /**
    * Builds a node double with the given bundle.
    */
   private function node(string $bundle): NodeInterface {
