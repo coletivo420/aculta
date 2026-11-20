@@ -6,6 +6,7 @@ namespace Drupal\aculta_messenger\Hook;
 
 use Drupal\comment\CommentInterface;
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_messenger\Aviso\ForumMentionNoticeRecorder;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducerInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 
@@ -16,6 +17,7 @@ final class ForumAvisoHooks {
 
   public function __construct(
     private readonly ForumNoticeEventProducerInterface $events,
+    private readonly ForumMentionNoticeRecorder $mentions,
   ) {}
 
   /**
@@ -24,6 +26,7 @@ final class ForumAvisoHooks {
   #[Hook('comment_insert')]
   public function commentInsert(CommentInterface $comment): void {
     $this->events->publishComment($comment);
+    $this->mentions->recordForComment($comment);
   }
 
   /**

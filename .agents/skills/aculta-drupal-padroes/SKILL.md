@@ -21,6 +21,12 @@ Para erros PHPStan e contratos de tipos, use a skill `aculta-phpstan` e apenas a
 8. **Estilo:** prefira `declare(strict_types=1)`, classes `final` quando nao houver extensao prevista e retornos antecipados; excecoes justificadas quando uma API Drupal exigir extensao. Seção 13.
 9. **Gates:** rode `php scripts/validate-aculta-portal-drupal12.php` em mudança no Portal. Gate sem `vendor/` ou Drush: DEFERRED, com o motivo.
 
+## Identidade de usuário: o nome pode mudar
+
+- Nunca persista o nome de usuário ou de exibição como texto. Grave o `uid` e renderize o nome atual pelo ID.
+- Citações, menções e referências em texto usam token estável (`{uid:N}`) resolvido na renderização (`ForumIdentityTokens::render`). Um teste de renomeação deve mostrar que o conteúdo antigo passa a exibir o nome novo.
+- Componentes, templates e views recebem o nome calculado pelo código (`getDisplayName()` ou `label()` do usuário), nunca um valor salvo.
+
 ## APIs de componentes e renderização
 
 - SDC é a API de componentes visuais do tema. Leia o contrato `.component.yml` e chame o componente sem passar entidade, usuário, markup não confiável ou render array inteiro como prop.

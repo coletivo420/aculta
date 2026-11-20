@@ -265,3 +265,6 @@ services:
   aculta_messenger.pm.mapper:
     class: Drupal\aculta_messenger\Mapper\PrivateMessageMapper
     autowire: true
+  Drupal\aculta_messenger\Aviso\ForumMentionNoticeRecorder:
+    class: Drupal\aculta_messenger\Aviso\ForumMentionNoticeRecorder
+    autowire: true

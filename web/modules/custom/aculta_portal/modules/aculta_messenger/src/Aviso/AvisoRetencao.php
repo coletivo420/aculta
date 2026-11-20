@@ -22,7 +22,7 @@ final class AvisoRetencao {
 
   /**
    * Tipos de aviso sujeitos à retenção: somente os avisos do Fórum. */
-  public const TIPOS = [Aviso::TIPO_RESPOSTA, Aviso::TIPO_ATUALIZACAO];
+  public const TIPOS = [Aviso::TIPO_RESPOSTA, Aviso::TIPO_ATUALIZACAO, Aviso::TIPO_MENCAO, Aviso::TIPO_CITACAO];
 
   /**
    * Timestamp abaixo do qual (inclusive) um aviso criado está vencido. */

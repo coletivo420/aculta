@@ -188,7 +188,7 @@ final class ForumQuoteHooks {
     }
     $processedBody = $bodyItem->get('processed');
     $bodyValue = $processedBody->getValue();
-    $quote = $this->quoteBuilder->build(is_scalar($bodyValue) ? (string) $bodyValue : '', $parent->getAuthorName());
+    $quote = $this->quoteBuilder->build(is_scalar($bodyValue) ? (string) $bodyValue : '', $parent->getAuthorName(), (int) $parent->id(), (int) $parent->getOwnerId());
     if ($quote === NULL) {
       return;
     }

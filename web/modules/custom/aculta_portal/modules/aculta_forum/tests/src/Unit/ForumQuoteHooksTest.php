@@ -151,7 +151,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
     self::assertIsArray($form['comment_body']['widget'][0]);
     self::assertIsArray($form['comment_body']['widget'][0]['value']);
     self::assertSame(
-      '<blockquote><p>Original mensagem.</p><cite>Pessoa autora</cite></blockquote><p></p>',
+      '<blockquote data-aculta-quote-cid="42"><p>Original mensagem.</p><cite>Pessoa autora</cite></blockquote><p></p>',
       $form['comment_body']['widget'][0]['value']['#default_value'],
     );
     self::assertIsArray($form['#cache']);
@@ -178,7 +178,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
     self::assertIsArray($form['comment_body']['widget']);
     self::assertIsArray($form['comment_body']['widget'][0]);
     self::assertSame(
-      '<blockquote><p>Original mensagem.</p><cite>Pessoa autora</cite></blockquote><p></p>',
+      '<blockquote data-aculta-quote-cid="42"><p>Original mensagem.</p><cite>Pessoa autora</cite></blockquote><p></p>',
       $form['comment_body']['widget'][0]['#default_value'],
     );
     self::assertArrayNotHasKey('value', $form['comment_body']['widget'][0]);

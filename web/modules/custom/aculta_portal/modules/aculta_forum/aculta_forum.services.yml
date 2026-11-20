@@ -425,3 +425,11 @@ services:
       - { name: event_subscriber }
   aculta_forum.popup_only_access:
     class: Drupal\aculta_forum\Access\ForumPopupOnlyAccess
+  aculta_forum.identity_tokens:
+    class: Drupal\aculta_forum\Service\ForumIdentityTokens
+
+  Drupal\aculta_forum\Service\ForumIdentityTokens: '@aculta_forum.identity_tokens'
+
+  Drupal\aculta_forum\Hook\ForumMentionTokenHooks:
+    class: Drupal\aculta_forum\Hook\ForumMentionTokenHooks
+    arguments: ['@aculta_forum.identity_tokens', '@entity_type.manager']
