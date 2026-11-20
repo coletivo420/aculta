@@ -4,7 +4,7 @@ Addon opcional do `aculta_forum` para a integração do arquivo histórico
 Growroom. Projetos que não adotam esse arquivo não precisam instalar este
 módulo; o Fórum principal não depende dele.
 
-## Fase atual — Dev.4
+## Fase atual — Dev.5
 
 O addon fornece o provider tagged que reconhece `ARCHIVE` em tópico Growroom e
 Comment ligado a tópico marcado com autoria histórica. ForumPosts são conteúdo
@@ -18,10 +18,8 @@ ordinárias de moderação. A política genérica de denúncias do Fórum perman
 motor e usa o resolver de origem; o motor não lê campos ou entidades de autoria
 legada diretamente.
 
-A entidade `aculta_forum_legacy_user`, seu handler, manager/serviço e fields de referência já pertencem ao addon. Os defaults do motor não instalam os fields históricos. A configuração versionada de instalação limpa e sync reflete o novo owner; nenhuma operação estrutural foi executada no Runtime. O memorial coletivo, reserva do slug, apresentação histórica e ferramentas de importação/auditoria ainda não foram extraídos. O código principal ainda contém acoplamentos a remover em etapas.
+A entidade `aculta_forum_legacy_user`, seu handler, manager/serviço, fields, memorial coletivo e apresentação inline da autoria já pertencem ao addon. Os defaults do motor não instalam os fields históricos. A configuração versionada de instalação limpa e sync reflete o novo owner; nenhuma operação estrutural foi executada no Runtime. A reserva do slug e as ferramentas de importação/auditoria ainda não foram extraídas. A rota pública do memorial mantém `/u/lendashistoricas` no domínio MAIN; não cria perfis individuais. O código principal ainda contém acoplamentos a remover em etapas.
 A importação Growroom não foi executada no Runtime alvo. O pipeline futuro deve
 importar o corpus aprovado sem converter Comments históricos para ForumPosts.
 
-O addon declara dependência somente do `aculta_forum` para publicar seu provider.
-`aculta_forum`, Portal, User, CGU, Index, Statistics, Messenger, Game, Wiki,
-Revista e LMS não dependem deste addon.
+O addon depende de `aculta_forum` para classificar a origem e de `aculta_user` para reutilizar o avatar institucional e o contrato genérico de cartão. Essas dependências são unidirecionais: `aculta_forum`, Portal, User, CGU, Index, Statistics, Messenger, Game, Wiki, Revista e LMS não dependem deste addon.

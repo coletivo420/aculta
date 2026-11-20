@@ -7,8 +7,8 @@ namespace Drupal\aculta_user\Hook;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\aculta_user\Identity\AuthorCardVariantResolver;
 use Drupal\comment\CommentInterface;
-use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\user\EntityOwnerInterface;
@@ -51,7 +51,7 @@ final class DiscussionCommentAuthorHooks {
     }
     if ($entity->getEntityTypeId() === 'aculta_forum_post') {
       $author = $entity instanceof EntityOwnerInterface ? $entity->getOwner() : NULL;
-      if ($author instanceof UserInterface) {
+      if ($author instanceof UserInterface && $author->isAuthenticated()) {
         // Sem apelido, usa-se o cartão de fallback obrigatório.
         $card = $this->authorCardBuilder->build($author, 'author_forum')
           ?? $this->authorCardBuilder->buildFallback($author);
@@ -68,26 +68,14 @@ final class DiscussionCommentAuthorHooks {
 
     $host = $entity->getCommentedEntity();
     $variant = $host === NULL ? NULL : $this->variantResolver->forHost($host);
-    $archivedForumHost = $variant === 'author_forum'
-      && $host->hasField('field_autor_legado')
-      && !$host->get('field_autor_legado')->isEmpty();
-
-    if ($archivedForumHost
-      && $entity->hasField('field_autor_legado')
-      && !$entity->get('field_autor_legado')->isEmpty()) {
-      $legacyAuthor = $entity->get('field_autor_legado')->entity;
-      if ($legacyAuthor instanceof ContentEntityInterface && $legacyAuthor->getEntityTypeId() === 'aculta_forum_legacy_user') {
-        $build['author_card'] = $this->authorCardBuilder->buildLegacyForum($legacyAuthor)
-          + ['#weight' => -20];
-      }
-      return;
-    }
-
     if ($variant === NULL) {
       return;
     }
 
     $author = $entity->getOwner();
+    if (!$author->isAuthenticated()) {
+      return;
+    }
     $card = $this->authorCardBuilder->build($author, $variant) ?? $this->authorCardBuilder->buildFallback($author);
     $card['#weight'] = -20;
     $build['author_card'] = $card;

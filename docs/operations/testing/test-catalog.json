@@ -1,9 +1,9 @@
 {
-    "generated_at": "2026-11-20T01:15:33+00:00",
+    "generated_at": "2026-11-20T01:44:25+00:00",
     "generator": "scripts/audit-custom-tests.php",
-    "total_files": 981,
+    "total_files": 982,
     "by_type": {
-        "unit": 708,
+        "unit": 709,
         "kernel": 250,
         "functional": 8,
         "performance": 4,
@@ -11,14 +11,14 @@
         "functionaljs": 8
     },
     "by_extension": {
-        "src": 977,
+        "src": 978,
         "processor": 1,
         "fixtures": 3
     },
     "flag_counts": {
         "doc_comment_metadata": 24,
         "environment_skip": 16,
-        "mock_isolated": 470,
+        "mock_isolated": 471,
         "review_by_name": 20,
         "static_config_contract": 47
     },
@@ -4466,6 +4466,38 @@
                 "mock_isolated",
                 "doc_comment_metadata"
             ]
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_forum_legacy/tests/src/Unit/LegacyForumUserCardBuilderTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_forum_legacy"
+            ],
+            "test_methods": 3,
+            "assertions": 10,
+            "assertions_per_test": 3.33,
+            "first_import": "Drupal\\aculta_forum_legacy\\Author\\LegacyForumUserCardBuilder",
+            "fixture": false,
+            "flags": [
+                "mock_isolated"
+            ]
+        },
+        {
+            "path": "web/modules/custom/aculta_portal/modules/aculta_forum_legacy/tests/src/Unit/LegacyForumUserDisplayNameTest.php",
+            "extension": "src",
+            "type": "unit",
+            "base_class": "UnitTestCase",
+            "groups": [
+                "aculta_forum_legacy"
+            ],
+            "test_methods": 1,
+            "assertions": 1,
+            "assertions_per_test": 1,
+            "first_import": "Drupal\\aculta_forum_legacy\\Author\\LegacyForumUserDisplayName",
+            "fixture": false,
+            "flags": []
         },
         {
             "path": "web/modules/custom/aculta_portal/modules/aculta_forum_legacy/tests/src/Unit/LegacyForumUserManagerTest.php",
@@ -13038,21 +13070,6 @@
             ]
         },
         {
-            "path": "web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit/LegacyAuthorDisplayNameTest.php",
-            "extension": "src",
-            "type": "unit",
-            "base_class": "UnitTestCase",
-            "groups": [
-                "aculta_user"
-            ],
-            "test_methods": 1,
-            "assertions": 1,
-            "assertions_per_test": 1,
-            "first_import": "Drupal\\aculta_user\\Identity\\LegacyAuthorDisplayName",
-            "fixture": false,
-            "flags": []
-        },
-        {
             "path": "web/modules/custom/aculta_portal/modules/aculta_user/tests/src/Unit/LegacyMemorialReservedTest.php",
             "extension": "src",
             "type": "unit",
@@ -13210,8 +13227,8 @@
                 "aculta_user"
             ],
             "test_methods": 3,
-            "assertions": 15,
-            "assertions_per_test": 5,
+            "assertions": 16,
+            "assertions_per_test": 5.33,
             "first_import": "Drupal\\aculta_image\\ImageCatalog",
             "fixture": false,
             "flags": [

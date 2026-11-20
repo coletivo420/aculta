@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_user\Identity;
 
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\user\UserInterface;
 
 /**
@@ -16,67 +15,6 @@ final class AuthorCardBuilder {
   public function __construct(
     private readonly AuthorIdentityResolver $identityResolver,
   ) {}
-
-  /**
-   * Builds a historical card without creating or exposing a User account.
-   *
-   * @return array<array-key, mixed>
-   *   Render array do cartão histórico.
-   */
-  public function buildLegacy(ContentEntityInterface $author): array {
-    return $this->buildLegacyWithDisplayName($author, (string) $author->label());
-  }
-
-  /**
-   * Builds a historical author card for Forum content.
-   */
-
-  /**
-   * Cartão histórico do Fórum.
-   *
-   * @return array<array-key, mixed>
-   *   Render array do cartão.
-   */
-  public function buildLegacyForum(ContentEntityInterface $author): array {
-    return $this->buildLegacyWithDisplayName(
-      $author,
-      LegacyAuthorDisplayName::forForum((string) $author->label()),
-    );
-  }
-
-  /**
-   * Builds the shared historical card with an explicitly selected display name.
-   */
-
-  /**
-   * Cartão histórico com o nome de exibição informado.
-   *
-   * @return array<array-key, mixed>
-   *   Render array do cartão.
-   */
-  private function buildLegacyWithDisplayName(ContentEntityInterface $author, string $displayName): array {
-    if ($author->getEntityTypeId() !== 'aculta_forum_legacy_user') {
-      throw new \InvalidArgumentException('The entity is not a forum legacy user.');
-    }
-    $build = [
-      '#theme' => 'aculta_user_author_card',
-      '#variant' => 'author_growroom_historico',
-      '#display_name' => $displayName,
-      '#profile_url' => NULL,
-      '#avatar' => NULL,
-      '#has_avatar' => FALSE,
-      '#member_since' => NULL,
-      '#bio' => NULL,
-      '#social_links' => [],
-      '#designation' => NULL,
-      '#actions' => [],
-      '#reactions_received' => 0,
-      '#reactions_given' => 0,
-      '#source_label' => 'Acervo histórico Growroom',
-    ];
-    CacheableMetadata::createFromObject($author)->applyTo($build);
-    return $build;
-  }
 
   /**
    * Builds an author card render array for a supported user variant.

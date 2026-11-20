@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_user\Controller;
+namespace Drupal\aculta_forum_legacy\Controller;
 
 use Drupal\Component\Utility\Html;
 use Drupal\aculta_user\Avatar\AvatarResolver;

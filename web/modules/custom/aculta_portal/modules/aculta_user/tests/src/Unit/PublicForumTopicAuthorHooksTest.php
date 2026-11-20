@@ -36,7 +36,7 @@ final class PublicForumTopicAuthorHooksTest extends UnitTestCase {
     $account = $this->accountWithPublicNickname();
     $node = $this->createMock(NodeInterface::class);
     $node->method('bundle')->willReturn('aculta_forum_topic');
-    $node->method('hasField')->with('field_autor_legado')->willReturn(FALSE);
+    $node->expects(self::never())->method('hasField');
     $node->method('getOwner')->willReturn($account);
     $build = [];
 
@@ -62,7 +62,6 @@ final class PublicForumTopicAuthorHooksTest extends UnitTestCase {
     $build = [];
 
     $this->hook()->entityView($build, $node, $this->createMock(EntityViewDisplayInterface::class), 'full');
-
 
     self::assertArrayNotHasKey('author_card', $build);
 
@@ -118,6 +117,7 @@ final class PublicForumTopicAuthorHooksTest extends UnitTestCase {
   private function accountWithPublicNickname(): UserInterface {
     $account = $this->createMock(UserInterface::class);
     $account->method('id')->willReturn('42');
+    $account->method('isAuthenticated')->willReturn(TRUE);
     $account->method('getRoles')->willReturn(['authenticated']);
     $account->method('getCacheTags')->willReturn(['user:42']);
     $account->method('getCacheContexts')->willReturn([]);

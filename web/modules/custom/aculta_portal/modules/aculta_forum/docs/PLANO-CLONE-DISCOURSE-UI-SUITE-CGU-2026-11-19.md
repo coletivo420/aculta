@@ -576,3 +576,8 @@ Os pacotes FDC-00/01/02/04/11 exigem revisão independente de segurança. FDC-03
 ### Atualização F-D49 — entidade de autoria
 
 Em 2026-11-19, o responsável determinou substituir a entidade `aculta_legado_autor` por `aculta_forum_legacy_user`. A implementação desta fase moveu a classe, handler, manager, serviço e configuração dos fields para `aculta_forum_legacy`; a tabela declarada agora é `aculta_forum_legacy_user`. F-D44 continua definindo memorial coletivo e apresentação individual apenas inline nos tópicos/comentários do arquivo. A configuração de instalação/sync foi atualizada no repositório. Isso não executa transferência de provider, updatedb, config import ou migração no Runtime; qualquer mudança estrutural futura requer o processo operacional próprio.
+
+
+### Dev.5 — memorial e cartões históricos
+
+A rota `/u/lendashistoricas` e o controlador foram movidos ao addon mantendo URL, domínio MAIN e acesso público. O formatador `-gr`, builder e hook que renderizam autoria histórica em tópico/Comment Growroom também pertencem agora ao addon. Os hooks do User mantêm cartões de conta corrente. A reserva literal do slug ainda está em `AccountNames`; regras de moderação/participação continuam lendo fields em `aculta_user`. Nenhuma atualização estrutural ou operação Runtime foi executada.

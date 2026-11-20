@@ -6,7 +6,6 @@ namespace Drupal\aculta_user\Hook;
 
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\node\NodeInterface;
@@ -22,7 +21,7 @@ final class PublicForumTopicAuthorHooks {
   ) {}
 
   /**
-   * Adds the current author card or historical attribution to forum topics.
+   * Adds the current account author card to public Forum topics.
    *
    * @param array<array-key, mixed> $build
    *   Dados recebidos.
@@ -40,15 +39,10 @@ final class PublicForumTopicAuthorHooks {
       return;
     }
 
-    if ($entity->hasField('field_autor_legado') && !$entity->get('field_autor_legado')->isEmpty()) {
-      $legacyAuthor = $entity->get('field_autor_legado')->entity;
-      if ($legacyAuthor instanceof ContentEntityInterface && $legacyAuthor->getEntityTypeId() === 'aculta_forum_legacy_user') {
-        $build['author_card'] = $this->authorCardBuilder->buildLegacyForum($legacyAuthor) + ['#weight' => -20];
-      }
+    $author = $entity->getOwner();
+    if (!$author->isAuthenticated()) {
       return;
     }
-
-    $author = $entity->getOwner();
 
     $card = $this->authorCardBuilder->build($author, 'author_forum');
     if ($card === NULL) {

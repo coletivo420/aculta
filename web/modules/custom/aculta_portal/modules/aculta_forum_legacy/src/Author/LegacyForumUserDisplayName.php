@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_user\Identity;
+namespace Drupal\aculta_forum_legacy\Author;
 
 /**
  * Formats historical Growroom authors when attached to Forum content.
  */
-final class LegacyAuthorDisplayName {
+final class LegacyForumUserDisplayName {
 
   /**
    * Adds the source suffix used to distinguish archived Forum authors.

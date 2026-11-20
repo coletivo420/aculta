@@ -1,14 +1,16 @@
 # Fonte do índice de status do README raiz.
-version: 0.1.0-dev.4
+version: 0.1.0-dev.5
 state: Dev
 progress_note: >-
+  Dev.5: rota/controlador do memorial coletivo, formatador de nome e cartões
+  inline de autoria histórica pertencem ao addon; User mantém cartões de contas.
   Dev.4: entidade aculta_forum_legacy_user, manager, handler e fields foram
   transferidos para o addon; defaults do motor deixam de instalar os fields.
   Sem operações estruturais no Runtime. Dev.3: addon opcional classifica ARCHIVE e mantém o arquivo fora da fila
   ordinária de moderação; denúncias genéricas usam o resolver central, sem
   leitura direta de autoria legada no motor. Game e Messenger consultam o
   resolver. Respostas a tópicos correntes usam ForumPost;
-  Kernel valida pai, tópico e revisão. Extração de autoria, memorial,
-  importadores, moderação e demais acoplamentos ainda não concluída. A
-  importação histórica não foi executada.
-next_phase: 'Extrair para o addon autoria, memorial, migrations/auditoria, marcadores, UI e política histórica ainda acoplados a aculta_forum/aculta_user; cobrir addon ausente/presente e manter a importação sem execução.'
+  Kernel valida pai, tópico e revisão. Importadores/auditoria, reserva do slug,
+  regras de moderação/participação e outros acoplamentos históricos ainda
+  permanecem pendentes. A importação histórica não foi executada.
+next_phase: 'Extrair para o addon os gates de moderação/participação do arquivo e a reserva de slug; localizar e mover importadores/auditoria histórica. Testar addon ausente/presente sem executar importação ou operações estruturais.'

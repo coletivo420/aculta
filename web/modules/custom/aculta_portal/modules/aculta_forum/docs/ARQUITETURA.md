@@ -120,11 +120,13 @@ A decisão F-D41 e o contrato detalhado estão em [`DECISOES.md`](DECISOES.md),
 
 ## Legado histórico
 
-Autoria legada permanece na entidade própria existente `aculta_forum_legacy_user`,
-sem User ativo, login, amizade ou mensagem. O vínculo fica em `field_autor_legado`
-e a identificação pública aponta ao memorial coletivo `/u/lendashistoricas`.
-Reutilizar `LegacyAuthor`, `LegacyAuthorManager` e `LegacyMemorialController` de
-`aculta_user`; não copiar nem transformar autores históricos em contas.
+Autoria legada permanece na entidade própria `aculta_forum_legacy_user`, sem User
+ativo, login, amizade ou mensagem. O vínculo fica em `field_autor_legado` e a
+identificação pública aponta ao memorial coletivo `/u/lendashistoricas`. A
+entidade, manager, apresentação histórica e controller do memorial pertencem ao
+addon opcional `aculta_forum_legacy`; `aculta_user` fornece somente APIs
+compartilhadas de avatar/cartão. Não copiar nem transformar autores históricos
+em contas.
 
 Tópicos e comentários importados do acervo Growroom são somente leitura para
 todos os papéis. A discussão chega fechada e não pode ser reaberta; update,

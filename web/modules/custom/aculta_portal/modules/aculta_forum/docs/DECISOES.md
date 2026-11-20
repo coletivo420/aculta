@@ -145,3 +145,8 @@ instaladas. Cada aplicação exige código/configuração, evidência e registro
 
 
 | F-D49 | A entidade de autoria histórica do addon tem o ID canônico `aculta_forum_legacy_user` e tabela própria de mesmo nome; ela não é entidade User nem cria perfil individual. F-D44 continua vigente quanto ao memorial coletivo e à exibição inline no contexto do Fórum; somente sua referência ao ID anterior foi substituída. A importação Growroom ainda não foi executada e não há registros importados no Runtime alvo. | Determinado pelo responsável em 2026-11-19. A refatoração de código/config não executa atualização estrutural ou migração no Runtime. |
+
+
+## Dev.5 — extração da apresentação histórica (2026-11-19)
+
+A rota pública `/u/lendashistoricas`, o controlador do memorial, o formatador `-gr` e o builder/hook de cartões inline para Nodes/Comments do arquivo foram movidos para `aculta_forum_legacy`. `aculta_user` apresenta somente contas correntes nesses hooks. F-D44 permanece válida: memorial coletivo sem sufixo, nome histórico individual apenas inline nos tópicos e comentários do Fórum, sem rota individual. A reserva do slug, regras de moderação/participação e upgrade estrutural permanecem pendentes.

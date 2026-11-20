@@ -1,4 +1,11 @@
 services:
+  aculta_forum_legacy.author_card_builder:
+    class: Drupal\aculta_forum_legacy\Author\LegacyForumUserCardBuilder
+
+  Drupal\aculta_forum_legacy\Hook\LegacyForumUserAuthorHooks:
+    class: Drupal\aculta_forum_legacy\Hook\LegacyForumUserAuthorHooks
+    arguments: ['@aculta_forum_legacy.author_card_builder']
+
   aculta_forum_legacy.user_manager:
     class: Drupal\aculta_forum_legacy\Author\LegacyForumUserManager
     arguments: ['@entity_type.manager']
