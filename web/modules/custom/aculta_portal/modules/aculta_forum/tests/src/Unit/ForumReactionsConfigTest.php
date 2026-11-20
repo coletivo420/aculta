@@ -44,6 +44,8 @@ final class ForumReactionsConfigTest extends UnitTestCase {
     self::assertContains('clap', $reactionIds);
     self::assertContains('laugh', $reactionIds);
     self::assertContains('pray', $reactionIds);
+    // Dislike is a separate button and never an emoji palette entry.
+    self::assertNotContains('dislike', $reactionIds);
   }
 
   /**

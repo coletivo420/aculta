@@ -138,3 +138,15 @@
 .discussion-reaction-bar__popover[popover]:not(:popover-open) {
   display: none;
 }
+
+/* Descurtir é um botão fixo e único, separado da paleta de reações. */
+.discussion-reaction-bar__btn--dislike.is-active {
+  color: var(--color-status-error, var(--color-text));
+  border-color: var(--color-status-error, var(--color-border));
+  background-color: var(--color-status-error-surface, var(--color-surface-subtle));
+}
+
+.discussion-reaction-bar__btn--dislike:focus-visible {
+  outline: 2px solid var(--color-focus, currentColor);
+  outline-offset: 2px;
+}

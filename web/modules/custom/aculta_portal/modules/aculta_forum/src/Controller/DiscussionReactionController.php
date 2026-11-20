@@ -69,8 +69,7 @@ class DiscussionReactionController extends ControllerBase {
       $reactionId = $this->reactionManager->getDefaultReaction();
     }
 
-    $allowed = $this->reactionManager->getAllowedReactions();
-    if (!isset($allowed[$reactionId])) {
+    if (!$this->reactionManager->isAllowedReaction($reactionId)) {
       throw new BadRequestHttpException('Invalid reaction identifier.');
     }
 

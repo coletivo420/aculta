@@ -59,6 +59,8 @@ final class DiscussionReactionManagerOriginTest extends UnitTestCase {
 
     self::assertSame([
       'total_count' => 0,
+      'positive_count' => 0,
+      'dislike_count' => 0,
       'user_reaction' => NULL,
       'reactions' => [],
     ], $manager->loadReactions('comment', 17, 2));

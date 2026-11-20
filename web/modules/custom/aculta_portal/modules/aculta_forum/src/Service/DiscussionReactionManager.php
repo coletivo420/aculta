@@ -29,6 +29,11 @@ class DiscussionReactionManager {
   public const TABLE_REACTIONS = 'aculta_discussion_reaction';
   public const TABLE_STATS = 'aculta_discussion_reaction_user_stats';
 
+  /**
+   * Reserved negative reaction, stored in the existing one-vote-per-user row.
+   */
+  public const DISLIKE_REACTION = ReactionScore::DISLIKE;
+
   public function __construct(
     protected readonly Connection $database,
     protected readonly ConfigFactoryInterface $configFactory,
@@ -51,7 +56,7 @@ class DiscussionReactionManager {
     $allowed = [];
     if (is_iterable($raw)) {
       foreach ($raw as $item) {
-        if (is_array($item) && !empty($item['enabled']) && isset($item['id'], $item['icon'], $item['label']) && is_string($item['id']) && is_string($item['icon']) && is_string($item['label'])) {
+        if (is_array($item) && !empty($item['enabled']) && isset($item['id'], $item['icon'], $item['label']) && $item['id'] !== self::DISLIKE_REACTION && is_string($item['id']) && is_string($item['icon']) && is_string($item['label'])) {
           $allowed[$item['id']] = [
             'id' => $item['id'],
             'icon' => $item['icon'],
@@ -73,6 +78,14 @@ class DiscussionReactionManager {
   }
 
   /**
+   * Validates a positive configured reaction or the separate dislike action.
+   */
+  public function isAllowedReaction(string $reactionId): bool {
+    return $reactionId === self::DISLIKE_REACTION
+      || isset($this->getAllowedReactions()[$reactionId]);
+  }
+
+  /**
    * Loads aggregated reaction summary for a target entity.
    *
    * @param string $entityType
@@ -84,6 +97,8 @@ class DiscussionReactionManager {
    *
    * @return array{
    *   total_count: int,
+   *   positive_count: int,
+   *   dislike_count: int,
    *   user_reaction: ?string,
    *   reactions: array<
    *     string,
@@ -104,10 +119,8 @@ class DiscussionReactionManager {
     $allowed = $this->getAllowedReactions();
     $result = $this->emptyReactionSummary();
 
-    if (empty($allowed)) {
-      return $result;
-    }
-
+    // Count every persisted positive reaction, including retired emoji IDs.
+    // Disabled palette entries must not make historical likes disappear.
     $query = $this->database->select(self::TABLE_REACTIONS, 'r')
       ->fields('r', ['reaction'])
       ->condition('entity_type', $entityType)
@@ -117,6 +130,10 @@ class DiscussionReactionManager {
 
     $recordsRaw = $query->execute()?->fetchAllKeyed();
     $records = is_array($recordsRaw) ? $recordsRaw : [];
+    $score = ReactionScore::summarize($records);
+    $result['positive_count'] = $score['positive_count'];
+    $result['dislike_count'] = $score['dislike_count'];
+    $result['total_count'] = $score['total_count'];
 
     if ($currentUid !== NULL && $currentUid > 0) {
       $userRec = $this->database->select(self::TABLE_REACTIONS, 'r')
@@ -141,7 +158,6 @@ class DiscussionReactionManager {
           'count' => $count,
           'user_reacted' => $isUserReacted,
         ];
-        $result['total_count'] += $count;
       }
     }
 
@@ -162,12 +178,14 @@ class DiscussionReactionManager {
   /**
    * Returns an empty summary without leaking rows from an unsupported origin.
    *
-   * @return array{total_count: int, user_reaction: ?string, reactions: array<string, array{id: string, count: int, user_reacted: bool}>}
+   * @return array{total_count: int, positive_count: int, dislike_count: int, user_reaction: ?string, reactions: array<string, array{id: string, count: int, user_reacted: bool}>}
    *   Empty reaction summary.
    */
   private function emptyReactionSummary(): array {
     return [
       'total_count' => 0,
+      'positive_count' => 0,
+      'dislike_count' => 0,
       'user_reaction' => NULL,
       'reactions' => [],
     ];
@@ -190,8 +208,7 @@ class DiscussionReactionManager {
    *   }
    */
   public function toggleReaction(EntityInterface $entity, int $uid, string $reactionId): array {
-    $allowed = $this->getAllowedReactions();
-    if (!isset($allowed[$reactionId])) {
+    if (!$this->isAllowedReaction($reactionId)) {
       throw new \InvalidArgumentException(sprintf('Reaction "%s" is not allowed.', $reactionId));
     }
 
@@ -227,13 +244,16 @@ class DiscussionReactionManager {
         // a visibilidade atual e subtrair de um contador antigo desalinharia
         // agregados quando o conteúdo mudou de escopo.
         $wasPublic = isset($existing['is_public_context']) && is_numeric($existing['is_public_context']) && (int) $existing['is_public_context'] === 1;
+        $wasPositive = $wasPublic && $prevReaction !== self::DISLIKE_REACTION;
+        $isPositive = $isPublic && $reactionId !== self::DISLIKE_REACTION;
+
         if ($prevReaction === $reactionId) {
           // Same emoji: remove reaction.
           $this->database->delete(self::TABLE_REACTIONS)
             ->condition('id', $existingId)
             ->execute();
 
-          if ($wasPublic) {
+          if ($wasPositive) {
             $this->decrementStats($uid, $authorUid);
           }
           $this->invalidateEntityCache($entity, $uid, $authorUid);
@@ -258,13 +278,16 @@ class DiscussionReactionManager {
           ->condition('id', $existingId)
           ->execute();
 
-        if ($wasPublic !== $isPublic) {
-          if ($wasPublic) {
+        if ($wasPositive !== $isPositive) {
+          if ($wasPositive) {
             $this->decrementStats($uid, $authorUid);
           }
           else {
             $this->incrementStats($uid, $authorUid);
           }
+        }
+        if (!$wasPositive && $isPositive) {
+          $this->dispatcher->dispatch(new ForumReactionEvent($reactionId), ForumReactionEvent::ADDED);
         }
 
         $this->invalidateEntityCache($entity, $uid, $authorUid);
@@ -296,9 +319,9 @@ class DiscussionReactionManager {
         ])
         ->execute();
 
-      if ($isPublic) {
+      if ($isPublic && $reactionId !== self::DISLIKE_REACTION) {
         $this->incrementStats($uid, $authorUid);
-        // Só a inclusão nova e pública gera `added`; troca e remoção não.
+        // Events and existing user stats represent positive reactions only.
         $this->dispatcher->dispatch(new ForumReactionEvent($reactionId), ForumReactionEvent::ADDED);
       }
       $this->invalidateEntityCache($entity, $uid, $authorUid);
@@ -428,8 +451,20 @@ class DiscussionReactionManager {
       ?->fetchAssoc();
 
     if (is_array($record)) {
+      // The O(1) legacy aggregate holds positive reactions only. Subtract
+      // current dislikes from the author's displayed received total.
+      $dislikeRaw = $this->database->select(self::TABLE_REACTIONS, 'r')
+        ->condition('author_uid', $uid)
+        ->condition('is_public_context', 1)
+        ->condition('reaction', self::DISLIKE_REACTION)
+        ->countQuery()
+        ->execute()
+        ?->fetchField();
+      $dislikes = is_numeric($dislikeRaw) ? max(0, (int) $dislikeRaw) : 0;
+      $positiveReceived = isset($record['reactions_received']) && is_numeric($record['reactions_received'])
+        ? max(0, (int) $record['reactions_received']) : 0;
       return [
-        'reactions_received' => isset($record['reactions_received']) && is_numeric($record['reactions_received']) ? (int) $record['reactions_received'] : 0,
+        'reactions_received' => max(0, $positiveReceived - $dislikes),
         'reactions_given' => isset($record['reactions_given']) && is_numeric($record['reactions_given']) ? (int) $record['reactions_given'] : 0,
       ];
     }

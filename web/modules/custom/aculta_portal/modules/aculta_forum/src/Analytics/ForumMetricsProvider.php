@@ -51,6 +51,8 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       'forum.response.first_p90_minutes',
       'forum.response.unanswered_over_72h',
       'forum.reactions.active',
+      'forum.reactions.dislikes_current',
+      'forum.reactions.net_current',
       'forum.moderation.posts_pending',
     ];
   }
@@ -74,6 +76,8 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       'forum.response.first_median_minutes' => $this->responseDistribution($windowEnd - self::RESPONSE_COHORT_DAYS * 86400, $windowEnd, 50),
       'forum.response.first_p90_minutes' => $this->responseDistribution($windowEnd - self::RESPONSE_COHORT_DAYS * 86400, $windowEnd, 90),
       'forum.reactions.active' => $this->countActiveReactions(),
+      'forum.reactions.dislikes_current' => $this->countActiveReactions(DiscussionReactionManager::DISLIKE_REACTION),
+      'forum.reactions.net_current' => $this->countNetActiveReactions(),
       'forum.moderation.posts_pending' => $this->countPendingPosts(),
       default => NULL,
     };
@@ -334,7 +338,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
   /**
    * Reações vigentes em conteúdo comprovadamente público.
    */
-  private function countActiveReactions(): ?int {
+  private function countActiveReactions(?string $reaction = NULL): ?int {
     $schema = $this->database->schema();
     if (!$schema->tableExists(DiscussionReactionManager::TABLE_REACTIONS)) {
       return NULL;
@@ -345,6 +349,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     $nodes->join('node_field_data', 'n', 'n.nid = r.entity_id');
     $nodes->condition('r.entity_type', 'node');
     $nodes->condition('r.is_public_context', 1);
+    $nodes->condition('r.reaction', $reaction ?? DiscussionReactionManager::DISLIKE_REACTION, $reaction === NULL ? '<>' : '=');
     if (!$this->applyCurrentTopicScope($nodes)) {
       return NULL;
     }
@@ -360,6 +365,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $comments->join('node_field_data', 'n', 'n.nid = c.entity_id');
       $comments->condition('r.entity_type', 'comment');
       $comments->condition('r.is_public_context', 1);
+      $comments->condition('r.reaction', $reaction ?? DiscussionReactionManager::DISLIKE_REACTION, $reaction === NULL ? '<>' : '=');
       $comments->condition('c.status', 1);
       $comments->condition('c.default_langcode', 1);
       if (!$this->applyCurrentCommentScope($comments)) {
@@ -378,6 +384,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $posts->join('node_field_data', 'n', 'n.nid = p.topic');
       $posts->condition('r.entity_type', 'aculta_forum_post');
       $posts->condition('r.is_public_context', 1);
+      $posts->condition('r.reaction', $reaction ?? DiscussionReactionManager::DISLIKE_REACTION, $reaction === NULL ? '<>' : '=');
       $posts->condition('p.status', 1);
       $posts->condition('p.default_langcode', 1);
       if (!$this->applyCurrentTopicScope($posts)) {
@@ -391,6 +398,18 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     }
 
     return $total;
+  }
+
+  /**
+   * Snapshot of the aggregate public score, with no negative displayed value.
+   */
+  private function countNetActiveReactions(): ?int {
+    $positives = $this->countActiveReactions();
+    $dislikes = $this->countActiveReactions(DiscussionReactionManager::DISLIKE_REACTION);
+    if ($positives === NULL || $dislikes === NULL) {
+      return NULL;
+    }
+    return max(0, $positives - $dislikes);
   }
 
   /**

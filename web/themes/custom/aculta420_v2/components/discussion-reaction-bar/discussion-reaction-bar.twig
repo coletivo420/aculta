@@ -29,6 +29,16 @@
       </button>
     </form>
 
+    {# A descurtida é uma ação única, fora da paleta de emojis positivos. #}
+    {% set is_dislike_active = (user_reaction == 'dislike') %}
+    <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__quick-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <input type="hidden" name="reaction" value="dislike">
+      <button type="submit" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--dislike{% if is_dislike_active %} is-active{% endif %}" title="{{ is_dislike_active ? 'Desfazer descurtida'|t : 'Descurtir'|t }}" aria-label="{{ is_dislike_active ? 'Desfazer descurtida'|t : 'Descurtir'|t }}" aria-pressed="{{ is_dislike_active ? 'true' : 'false' }}">
+        {{ include('aculta420_v2:icon', { name: 'thumbs-down', variant: is_dislike_active ? 'fill' : 'regular', size: 'sm' }, with_context = false) }}
+      </button>
+    </form>
+
     {# Paleta de reações integrada à Barra de Reações. #}
     <div class="discussion-reaction-bar__palette-wrapper">
       <button type="button" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--trigger" popovertarget="{{ palette_id }}" style="anchor-name: --{{ palette_id }}" aria-haspopup="dialog" aria-expanded="false" title="{{ 'Escolher reação'|t }}" aria-label="{{ 'Escolher reação'|t }}">
@@ -52,8 +62,13 @@
       </div>
     </div>
   </div>
-{% else %}
-  {# Sem permissão para reagir: somente as reações recebidas. #}
-  {{ include('aculta420_v2:discussion-reactions-received', { target_id: target_id, reactions: reactions, allowed_reactions: allowed_reactions }, with_context = false) }}
 {% endif %}
+  {# A soma geral inclui todas as reações positivas, menos as descurtidas. #}
+  {{ include('aculta420_v2:discussion-reactions-received', {
+    target_id: target_id,
+    reactions: reactions,
+    allowed_reactions: allowed_reactions,
+    total_count: total_count|default(0),
+    positive_count: positive_count|default(0)
+  }, with_context = false) }}
 </div>

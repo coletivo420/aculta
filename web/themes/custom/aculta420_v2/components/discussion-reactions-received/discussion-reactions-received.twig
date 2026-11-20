@@ -9,6 +9,10 @@
 {% set more_id = 'received-more-' ~ uid %}
 
 <div id="{{ target_id }}-received" class="discussion-reactions-received" data-discussion-reactions-received>
+  <span class="discussion-reactions-received__badge discussion-reactions-received__net" title="{{ 'Total de curtidas positivas menos descurtidas'|t }}" aria-live="polite">
+    <span>{{ 'Curtidas'|t }}:</span>
+    <strong class="discussion-reactions-received__count">{{ total_count|default(0) }}</strong>
+  </span>
   <div class="discussion-reactions-received__list">
     {% for key, item in reactions|slice(0, 2, true) %}
       {% set emoji_icon = allowed_reactions[key] is defined ? allowed_reactions[key].icon : key %}
