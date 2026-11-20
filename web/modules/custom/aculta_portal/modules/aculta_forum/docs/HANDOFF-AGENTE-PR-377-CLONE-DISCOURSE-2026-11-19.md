@@ -23,6 +23,12 @@ Pendentes, sem execução nesta rodada: teste Runtime (exige decisão sobre chec
 
 Pendências: P1 (Index, Statistics, UI Suite) e P2 (paridade Discourse) não iniciados.
 
+## P1 FDC-06 — métricas excluem acervo histórico — 2026-11-20
+
+- **Corrigido:** `ForumMetricsProvider` contava como respostas públicas os `Comment` de tópicos com `field_autor_legado` (acervo). Agora as consultas de Comment passam por `applyCurrentCommentScope`, que aplica o escopo público e exclui tópicos hospedeiros do acervo, pela mesma fronteira de `LegacyDiscussionOriginClassifier`. Posts `ForumPost` correntes não mudam.
+- **Verificação:** PHPStan nível 10 exit 0; `phpstan-debt-guard` check e diff PASS; Unit `aculta_forum` 278 testes PASS.
+- **DEFERRED:** teste Kernel que prova a exclusão. As consultas dependem de `SiteManager` e do domínio do Fórum registrado no site, que exigem fixture de site própria. Até essa fixture existir, a correção não tem prova automatizada.
+
 ## Revalidação de continuidade — 2026-11-20
 
 Base: `origin/docs/forum-clone-discourse-ui-cgu-integracoes-20261119` em `506512bd8`. A cópia local de `docs/...` no checkout principal estava atrás do remoto em 141 commits sem commits próprios; o trabalho foi feito em worktree dedicado, sem tocar o worktree `aculta-pr377`, que tem alterações de outra frente.

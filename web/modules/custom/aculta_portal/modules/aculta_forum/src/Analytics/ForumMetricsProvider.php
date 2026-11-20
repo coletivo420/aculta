@@ -103,7 +103,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $comments->condition('c.status', 1);
       $comments->condition('c.comment_type', 'aculta_discussion_post');
       $comments->condition('c.default_langcode', 1);
-      if (!$this->scopeResolver->applyPublicTopicConditions($comments, 'n')) {
+      if (!$this->applyCurrentCommentScope($comments)) {
         return NULL;
       }
       $count = $this->countResult($comments->countQuery());
@@ -362,7 +362,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $comments->condition('r.is_public_context', 1);
       $comments->condition('c.status', 1);
       $comments->condition('c.default_langcode', 1);
-      if (!$this->scopeResolver->applyPublicTopicConditions($comments, 'n')) {
+      if (!$this->applyCurrentCommentScope($comments)) {
         return NULL;
       }
       $count = $this->countResult($comments->countQuery());
@@ -458,7 +458,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $comments->condition('c.default_langcode', 1);
       $comments->condition('c.created', $from, '>=');
       $comments->condition('c.created', $to, '<');
-      $queries[] = $this->scopeResolver->applyPublicTopicConditions($comments, 'n') ? $comments : NULL;
+      $queries[] = $this->applyCurrentCommentScope($comments) ? $comments : NULL;
     }
 
     if ($schema->tableExists('aculta_forum_post_field_data')) {
@@ -501,7 +501,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $comments->condition('c.comment_type', 'aculta_discussion_post');
       $comments->condition('c.default_langcode', 1);
       $comments->groupBy('c.uid');
-      $queries[] = $this->scopeResolver->applyPublicTopicConditions($comments, 'n') ? $comments : NULL;
+      $queries[] = $this->applyCurrentCommentScope($comments) ? $comments : NULL;
     }
 
     if ($schema->tableExists('aculta_forum_post_field_data')) {
@@ -540,7 +540,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $comments->condition('n.created', $to, '<');
       $comments->where('c.uid <> n.uid');
       $comments->groupBy('c.entity_id');
-      $queries[] = $this->scopeResolver->applyPublicTopicConditions($comments, 'n') ? $comments : NULL;
+      $queries[] = $this->applyCurrentCommentScope($comments) ? $comments : NULL;
     }
 
     if ($schema->tableExists('aculta_forum_post_field_data')) {
@@ -558,6 +558,45 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     }
 
     return $queries;
+  }
+
+  /**
+   * Excludes Comments whose host topic belongs to the historic archive.
+   *
+   * A topic with a legacy author is the archive boundary (see
+   * LegacyDiscussionOriginClassifier). Its Comments stay read-only in the
+   * archive and must not be counted as current public replies.
+   *
+   * @param \Drupal\Core\Database\Query\SelectInterface $comments
+   *   Comment query already joined to node_field_data as "n".
+   */
+  private function excludeArchiveHosts(SelectInterface $comments): void {
+    if (!$this->database->schema()->tableExists('node__field_autor_legado')) {
+      return;
+    }
+    $legacy = $this->database->select('node__field_autor_legado', 'la');
+    $legacy->addExpression('1');
+    $legacy->where('la.entity_id = n.nid');
+    $legacy->condition('la.deleted', 0);
+    $legacy->isNotNull('la.field_autor_legado_target_id');
+    $comments->notExists($legacy);
+  }
+
+  /**
+   * Applies the public topic scope and excludes archive Comments.
+   *
+   * @param \Drupal\Core\Database\Query\SelectInterface $comments
+   *   Comment query joined to node_field_data as "n".
+   *
+   * @return bool
+   *   FALSE when the public scope cannot be applied to the query.
+   */
+  private function applyCurrentCommentScope(SelectInterface $comments): bool {
+    if (!$this->scopeResolver->applyPublicTopicConditions($comments, 'n')) {
+      return FALSE;
+    }
+    $this->excludeArchiveHosts($comments);
+    return TRUE;
   }
 
 }
