@@ -111,7 +111,7 @@ Pendências:
 - **Compositor de criação de tópico (`discussion-topic-composer`):** agora enquadra o formulário Drupal real. `TopicPopupLayout` define `#theme_wrappers = discussion_topic_composer`, e o template do módulo chama o SDC com `standalone_popup: false` e o formulário no slot `form`. Os campos não são movidos, então valores e handlers continuam os mesmos. Prova: `TopicPopupLayoutTest` (1 teste, 11 asserções, OK). Render Twig e Kernel DEFERRED.
 - **Cartão espelhado (`forum-reply-mirror`):** não é usado pelo Fórum. Ele aparece só na página de visão geral da UI Patterns.
 - **Espelhamento real das respostas:** `DiscussionReactionEntityViewHooks::discussionSide` alterna o lado por nível (raiz pela ordem; resposta em nível é oposta ao pai) e passa `accent_side` ao `forum-post-card`. O efeito é só a cor e a faixa do cartão.
-- **Lacuna:** o layout espelhado completo do contrato (`author_position: side`, autoria e reações à direita) não é passado. Ligar isso muda o visual de todas as respostas. Aguarda decisão do responsável.
+- **Decisão do responsável (2026-11-20):** ligar o layout espelhado completo. Implementado: `comment--field-aculta-discussion` define `author_position` (`side` quando o lado é `end`, senão `top`); `forum-comment` aceita e repassa a prop ao `forum-post-card`. Schema SDC PASS (151 componentes). **DEFERRED:** prova visual em navegador (coluna de autoria e reações à direita) e render Twig. Reações ainda não foram movidas para a direita pelo cartão; isso depende do CSS do `forum-post-card--author-side` e precisa de revisão visual.
 
 ## Decisão — anexos só no Fórum; consumidores apenas mídia embutida — 2026-11-20
 

@@ -26,6 +26,12 @@ props:
       enum: [start, end]
       default: start
       description: start = normal (faixa à esquerda); end = espelhado (faixa e autoria à direita). Definido pelo módulo do fórum pela ordem da resposta.
+    author_position:
+      type: string
+      title: Posição da autoria
+      enum: [top, side]
+      default: top
+      description: "side = autoria em coluna à direita (layout espelhado). Padrão top. Derivado do lado da resposta no template do comentário."
     attributes:
       type: Drupal\Core\Template\Attribute
       title: Atributos do comentário

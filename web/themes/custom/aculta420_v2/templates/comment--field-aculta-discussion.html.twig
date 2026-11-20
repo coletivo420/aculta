@@ -82,6 +82,7 @@
   author_posts: author_posts_val,
   timestamp: created|default(null),
   accent_side: accent_side|default('start'),
+  author_position: accent_side|default('start') == 'end' ? 'side' : 'top',
   reply_depth: reply_depth|default(0),
   reply_first: reply_first|default(false)
 } %}
