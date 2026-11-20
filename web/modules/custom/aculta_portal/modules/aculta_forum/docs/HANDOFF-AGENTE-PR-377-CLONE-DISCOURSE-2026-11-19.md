@@ -85,7 +85,7 @@ Decisão do responsável:
 
 Plano ajustado:
 
-1. Auditar os consumidores para confirmar que não expõem campo de anexo nem upload além da mídia embutida. Pendente.
+1. Auditoria de configuração (2026-11-20): o bundle de comentário `aculta_discussion_post`, usado por Wiki, Revista e LMS contextual, tem apenas `comment_body`, `field_aculta_published_at`, `field_aculta_rejected` e `field_autor_legado`. Nenhum campo de arquivo ou anexo. Campos de mídia de LMS, Wiki e Commerce são galeria, capa e imagem, não anexo. Resultado: a regra vale por configuração. Falta prova em teste de recusa e de upload no formulário do consumidor. Pendente.
 2. Impedir anexo nos consumidores pelo mesmo mecanismo de origem/contexto, com teste que prove a recusa. Pendente.
 3. A lacuna de anexos do acervo no índice (abaixo) fica restrita ao Fórum: anexo só é indexável por referência de tópico ou resposta `CURRENT` do próprio Fórum.
 
