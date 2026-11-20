@@ -9,6 +9,17 @@
 {% set comment_card %}
 <article{{ attributes.addClass('comment', 'comment--discussion', 'js-comment', status ? 'comment--' ~ status) }}>
   {{ context }}
+  {% if accent_side|default('start') == 'end' %}
+  {{ include('aculta420_v2:forum-reply-mirror', {
+    author_name: author_name|default('Participante'|t),
+    author_posts: author_posts,
+    timestamp: timestamp,
+    avatar: avatar_slot,
+    body: body_slot,
+    actions: actions_slot,
+    reactions_slot: reactions_slot_val
+  }, with_context = false) }}
+  {% else %}
   {{ include('aculta420_v2:forum-post-card', {
     stripe: 'brand',
     accent_side: accent_side|default('start'),
@@ -26,6 +37,7 @@
     reactions_slot: reactions_slot_val,
     reply: null
   }, with_context = false) }}
+  {% endif %}
   {% if admin_slot_val|trim != '' %}<div class="forum-comment__admin">{{ admin_slot_val }}</div>{% endif %}
   <div id="{{ composer_target_id }}" class="discussion-reply-target"></div>
 </article>

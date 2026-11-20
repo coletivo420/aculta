@@ -38,3 +38,14 @@
     flex-direction: row-reverse;
   }
 }
+
+/* Desktop espelhado (contrato): reações à direita, ações à esquerda, na mesma linha do rodapé.
+   No DOM, reações vêm antes das ações; row-reverse as leva para a direita. */
+@media (min-width: 48rem) {
+  .forum-reply-mirror .forum-post-card__footer {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+  }
+}

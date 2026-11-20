@@ -147,6 +147,20 @@ Lacunas confirmadas nesta rodada:
 - `forum-opening-post`: **consumido em produção** por `aculta420_v2/src/Hook/PagePresentationHooks.php` (`#component: aculta420_v2:forum-opening-post`), dentro da página completa do tópico, em `$content['aculta_opening']`. A contagem anterior não cobria `src/Hook` do tema. Regra: o post de abertura é sempre o primeiro post do tópico do Fórum (`aculta_forum_topic`); a montagem ocorre só nesse bundle. Consumidores (LMS, Wiki, Revista e comentários) não têm post de abertura, por decisão.
 - `forum-topic-card`: 0 referências. **Decisão (2026-11-20):** não usar; a lista de tópicos fica só em linhas (`forum-topic-row`), como o Discourse. O cartão com miniatura é variante opcional do Discourse e não entra no Fórum. Documentado como não consumido por decisão, não como lacuna.
 
+## Decisão — cartão espelhado no Fórum: forum-reply-mirror no desktop, variante mobile — 2026-11-20
+
+Decisão do responsável: no Fórum, o desktop espelhado usa `forum-reply-mirror` e o mobile usa a variante "Cartão do Post do Fórum Espelhado (mobile)" (a story `forum-reply-mirror.mobile.story.yml`). O lado normal continua em `forum-post-card`.
+
+Implementado:
+
+- `forum-comment.twig`: quando `accent_side` é `end`, renderiza `forum-reply-mirror` com as mesmas slots (avatar, corpo, ações, reações). Lado normal segue com `forum-post-card`.
+- `forum-reply-mirror.twig`: passa `author_position: 'side'` (autoria em coluna à direita, como o contrato).
+- `forum-reply-mirror.css`: no desktop (48rem), o rodapé vira linha com reações à direita e ações à esquerda (`row-reverse`).
+
+Validação: schema SDC PASS (151 componentes, 2891 verificações).
+
+DEFERRED: stylelint (binário ausente, exit 127) e prova visual de desktop e mobile nos consumidores.
+
 ## Recontagem de consumo por código (somente twig, php e yml) — 2026-11-20
 
 Recontagem excluindo docs, CHANGELOG e Stories. Antes, `forum-topic-card` e `forum-reply-mirror` pareciam consumidos por causa de docs.
