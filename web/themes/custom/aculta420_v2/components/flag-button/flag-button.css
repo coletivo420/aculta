@@ -5,8 +5,9 @@
   min-block-size: 2.75rem;
   padding-inline: .875rem;
   text-decoration: none;
-  border: 1px solid currentColor;
+  cursor: pointer;
   color: inherit;
+  border: 1px solid currentColor;
   border-radius: 999px;
 }
 
