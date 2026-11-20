@@ -330,3 +330,29 @@ aculta_forum.pinned_topics:
     _permission: 'administer comments'
   options:
     _admin_route: TRUE
+
+aculta_forum.topic_moderation_publish:
+  path: '/painel-administrativo/forum/{node}/publicar-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationPublishForm'
+    _title: 'Despublicar ou republicar tópico'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+aculta_forum.topic_moderation_archive:
+  path: '/painel-administrativo/forum/{node}/arquivar-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationArchiveForm'
+    _title: 'Arquivar ou desarquivar tópico'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'

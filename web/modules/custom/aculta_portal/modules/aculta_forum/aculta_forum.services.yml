@@ -84,7 +84,7 @@ services:
     class: Drupal\aculta_forum\Hook\DiscussionModerationHooks
   aculta_forum.topic_author_deletion:
     class: Drupal\aculta_forum\Service\TopicAuthorDeletion
-    arguments: ['@keyvalue', '@aculta_cgu.report_service']
+    arguments: ['@keyvalue', '@aculta_cgu.report_service', '@cache_tags.invalidator']
 
   Drupal\aculta_forum\Hook\DiscussionTopicAuthorDeletionHooks:
     class: Drupal\aculta_forum\Hook\DiscussionTopicAuthorDeletionHooks

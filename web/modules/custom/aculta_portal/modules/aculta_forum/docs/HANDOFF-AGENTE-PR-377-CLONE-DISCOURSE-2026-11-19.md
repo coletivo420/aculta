@@ -231,6 +231,14 @@ Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve co
 - Validação: PHPStan exit 0; guard PASS; PHPCS sem erros no controlador.
 - DEFERRED: teste da rota e prova visual/HTMX do popup.
 
+## Despublicar e arquivar tópico (paridade Discourse) — 2026-11-20
+
+- Despublicar/republicar: `aculta_forum.topic_moderation_publish` (`/painel-administrativo/forum/{node}/publicar-topico`), confirmação via `TopicModerationPublishForm`, usa `setUnpublished`/`setPublished`. Ação no popup de controles do tópico.
+- Arquivar/desarquivar: `aculta_forum.topic_moderation_archive`, estado no keyvalue `aculta_forum_topic_archived` (serviço `TopicAuthorDeletion::isArchived/setArchived`). Arquivado fica somente leitura: `DiscussionReplyAccess` nega novas respostas e a página mostra o aviso "Tópico arquivado: somente leitura.".
+- Atualização automática: o serviço de estado invalida as tags de cache do nó em cada mudança (fechar, arquivar, remover, autor), para que a página mostre o novo estado sem limpar cache.
+- Validação: Unit do Fórum OK (288); PHPStan e guard PASS; PHPCS sem erros nos arquivos alterados. DEFERRED: Kernel e prova visual e no Runtime.
+- Pendente: tags e dividir/juntar.
+
 ## Controles administrativos de tópicos fixados — 2026-11-20
 
 - Página `aculta_forum.pinned_topics` (`/painel-administrativo/forum/fixados`): lista os tópicos fixados com título, categoria, autor e data, e ação "Desafixar". Renderiza o SDC `data-table` (slot `table`) com cartões no mobile.

@@ -36,7 +36,7 @@ class DiscussionReplyAccess {
    */
   public function checkAccess(EntityInterface $host, AccountInterface $account, ?int $parentId = NULL): AccessResultInterface {
     // Tópico fechado pela moderação: leitura continua, novas respostas não.
-    if ($host instanceof NodeInterface && $this->topicState->isClosed((int) $host->id())) {
+    if ($host instanceof NodeInterface && ($this->topicState->isClosed((int) $host->id()) || $this->topicState->isArchived((int) $host->id()))) {
       return AccessResult::forbidden('Topic is closed by moderation.')->addCacheableDependency($host);
     }
     $origin = $this->originResolver->classify($host);

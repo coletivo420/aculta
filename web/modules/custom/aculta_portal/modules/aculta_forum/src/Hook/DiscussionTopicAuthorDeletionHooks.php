@@ -35,6 +35,12 @@ final class DiscussionTopicAuthorDeletionHooks {
         '#weight' => -60,
       ];
     }
+    if ($this->deletion->isArchived((int) $entity->id())) {
+      $build['archived_notice'] = [
+        '#markup' => Markup::create('<p class="forum-topic-archived">' . t('Tópico arquivado: somente leitura.') . '</p>'),
+        '#weight' => -55,
+      ];
+    }
     if ($this->deletion->isClosed((int) $entity->id())) {
       $build['closed_notice'] = [
         '#markup' => Markup::create('<p class="forum-topic-closed">' . t('Tópico fechado pela moderação.') . '</p>'),
