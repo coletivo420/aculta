@@ -236,7 +236,9 @@ Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve co
 Decisão do responsável: o autor jamais exclui pela barra de resposta; só a moderação exclui, pelos controles administrativos.
 
 - Implementado: `delete_allowed` é sempre falso na barra (`DiscussionReactionEntityViewHooks`).
-- Pendente (não implementado): ao o autor excluir um tópico, o tópico permanece aberto com a mensagem própria "Tópico excluído pelo autor", e a moderação é avisada pelo CGU (relatório pendente). Hoje `TopicDeleteConfirmForm` chama `processDeletion`, que exclui ou envia para a fila; o fluxo novo exige marca de tombstone do tópico, a mensagem na página e o relatório no CGU. DEFERRED.
+- Implementado nesta rodada: `aculta_forum` declara dependência de `aculta_cgu` em `aculta_forum.info.yml` (o CGU não depende do Fórum). Exclusão do tópico pelo autor: `TopicAuthorDeletion` grava a marca (`aculta_forum_topic_tombstones`), abre o tópico com a mensagem "Conteúdo excluído pelo(a) autor(a)." (`DiscussionTopicAuthorDeletionHooks`, node_view) e cria o relatório pendente no CGU via `aculta_cgu.report_service`. Unit do Fórum 287 OK; PHPStan e guard PASS.
+- Ainda não provado: Kernel do fluxo de exclusão e prova visual da mensagem.
+- Histórico anterior: ao o autor excluir um tópico, o tópico permanece aberto com a mensagem própria "Tópico excluído pelo autor", e a moderação é avisada pelo CGU (relatório pendente). Hoje `TopicDeleteConfirmForm` chama `processDeletion`, que exclui ou envia para a fila; o fluxo novo exige marca de tombstone do tópico, a mensagem na página e o relatório no CGU. DEFERRED.
 
 ## Edição e exclusão pelo autor; marca e log da moderação — 2026-11-20
 

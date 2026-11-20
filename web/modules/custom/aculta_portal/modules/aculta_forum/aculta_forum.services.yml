@@ -82,6 +82,14 @@ services:
     arguments: ['@current_user', '@entity_type.manager', '@aculta_user.avatar_resolver', '@aculta_user.author_card_builder']
   Drupal\aculta_forum\Hook\DiscussionModerationHooks:
     class: Drupal\aculta_forum\Hook\DiscussionModerationHooks
+  aculta_forum.topic_author_deletion:
+    class: Drupal\aculta_forum\Service\TopicAuthorDeletion
+    arguments: ['@keyvalue', '@aculta_cgu.report_service']
+
+  Drupal\aculta_forum\Hook\DiscussionTopicAuthorDeletionHooks:
+    class: Drupal\aculta_forum\Hook\DiscussionTopicAuthorDeletionHooks
+    arguments: ['@aculta_forum.topic_author_deletion']
+
   Drupal\aculta_forum\Hook\DiscussionModerationEditHooks:
     class: Drupal\aculta_forum\Hook\DiscussionModerationEditHooks
     arguments: ['@keyvalue', '@current_user', '@datetime.time']
@@ -97,7 +105,7 @@ services:
     class: Drupal\aculta_forum\Access\CommentModerationAccess
   Drupal\aculta_forum\Form\DiscussionCommentModerationForm:
     class: Drupal\aculta_forum\Form\DiscussionCommentModerationForm
-    arguments: ['@current_route_match', '@keyvalue', '@logger.factory', '@current_user', '@date.formatter', '@entity_type.manager', '@aculta_forum.discussion_reaction_manager']
+    arguments: ['@current_route_match', '@keyvalue', '@logger.factory', '@current_user', '@date.formatter', '@entity_type.manager', '@aculta_forum.discussion_reaction_manager', '@Drupal\aculta_forum\Hook\DiscussionModerationEditHooks']
   Drupal\aculta_forum\Hook\RevistaDiscussionPageHooks:
     class: Drupal\aculta_forum\Hook\RevistaDiscussionPageHooks
     arguments: ['@current_route_match', '@current_user']

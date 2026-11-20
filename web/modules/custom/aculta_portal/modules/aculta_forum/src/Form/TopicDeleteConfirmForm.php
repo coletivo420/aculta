@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Form;
 
+use Drupal\aculta_forum\Service\TopicAuthorDeletion;
 use Drupal\aculta_forum\Service\TopicDeletionModerationManager;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
@@ -22,11 +23,13 @@ final class TopicDeleteConfirmForm extends FormBase {
 
   public function __construct(
     protected readonly TopicDeletionModerationManager $moderationManager,
+    protected readonly TopicAuthorDeletion $authorDeletion,
   ) {}
 
   public static function create(ContainerInterface $container): static {
     return new static(
-      $container->get('aculta_forum.topic_deletion_moderation_manager')
+      $container->get('aculta_forum.topic_deletion_moderation_manager'),
+      $container->get('aculta_forum.topic_author_deletion')
     );
   }
 
@@ -126,14 +129,21 @@ final class TopicDeleteConfirmForm extends FormBase {
       return;
     }
 
-    $result = $this->moderationManager->processDeletion($this->topic, $this->currentUser());
-    $redirectUrl = Url::fromRoute('<front>')->toString();
-
-    if ($result === 'deleted') {
-      $this->messenger()->addStatus($this->t('O tópico foi excluído com sucesso.'));
+    // O autor não exclui o tópico de fato: ele permanece aberto com a mensagem automática e a moderação é avisada.
+    if ((int) $this->topic->getOwnerId() === (int) $this->currentUser()->id()) {
+      $this->authorDeletion->mark($this->topic, $this->currentUser());
+      $this->messenger()->addStatus($this->t('Conteúdo excluído pelo(a) autor(a). A moderação foi avisada.'));
+      $redirectUrl = Url::fromRoute('entity.node.canonical', ['node' => $this->topic->id()])->toString();
     }
     else {
-      $this->messenger()->addStatus($this->t('A solicitação de exclusão do tópico foi enviada para a fila de moderação.'));
+      $result = $this->moderationManager->processDeletion($this->topic, $this->currentUser());
+      $redirectUrl = Url::fromRoute('<front>')->toString();
+      if ($result === 'deleted') {
+        $this->messenger()->addStatus($this->t('O tópico foi excluído com sucesso.'));
+      }
+      else {
+        $this->messenger()->addStatus($this->t('A solicitação de exclusão do tópico foi enviada para a fila de moderação.'));
+      }
     }
 
     $response = new Response('', 200, ['HX-Redirect' => $redirectUrl]);
