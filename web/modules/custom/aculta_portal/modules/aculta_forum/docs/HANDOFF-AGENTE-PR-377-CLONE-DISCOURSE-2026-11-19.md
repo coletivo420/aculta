@@ -209,6 +209,13 @@ Implementado depois:
 
 Desfeito nesta rodada: o `forum-topic-admin-menu` criado antes, que não era necessário.
 
+## Migração do acervo: mapeamento de tópico (lote 1 de campos) — 2026-11-20
+
+- `LegacyArchiveTopicMapper::map()` converte uma linha de tópico (nid, título, corpo, autor legado, domínio, criação) nos valores de `aculta_forum_legacy_topics`. Função pura: não lê nem escreve no banco.
+- Chave estável `node:<nid>` (via `LegacyArchiveOrigin`); título limitado a 255 caracteres; título vazio recebe placeholder com o nid; linha sem id positivo é recusada.
+- Prova: `LegacyArchiveTopicMapperTest` (3 testes, 14 asserções, OK). PHPStan exit 0; guard PASS.
+- Pendente: leitura da fonte, escrita idempotente das entidades, e cópia dos comentários. Nenhuma linha foi migrada; Runtime não foi tocado.
+
 ## Popups do Fórum e dos consumidores; anexos provados por configuração — 2026-11-20
 
 Decisões do responsável: todos os popups do Fórum e dos consumidores (LMS, Wiki, Revista, comentários) usam o estilo do Stories `popup`; os popovers ficam como estão.
