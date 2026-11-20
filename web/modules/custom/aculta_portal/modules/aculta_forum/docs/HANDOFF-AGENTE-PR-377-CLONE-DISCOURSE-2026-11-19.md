@@ -231,6 +231,45 @@ Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve co
 - Validação: PHPStan exit 0; guard PASS; PHPCS sem erros no controlador.
 - DEFERRED: teste da rota e prova visual/HTMX do popup.
 
+## Revisão das decisões recentes — comportamento esperado para confirmação — 2026-11-20
+
+Legenda: IMPLEMENTADO (código, com validação local) · PARCIAL · PENDENTE.
+
+Barra de resposta (consumidores e Fórum)
+- Autor: pode editar a própria resposta pela barra (IMPLEMENTADO).
+- Ninguém exclui pela barra (IMPLEMENTADO: delete_allowed = FALSE).
+- Moderador não edita pela barra (IMPLEMENTADO).
+
+Edição administrativa de comentário
+- Moderador edita pelo painel administrativo (link "Editar pela moderação", IMPLEMENTADO).
+- Ao salvar, o comentário recebe "Editado pela moderação": selo visível, marca permanente, sem caminho de remoção (IMPLEMENTADO; Unit prova autor não marcado e moderador marcado).
+- Log administrativo com quem editou e quando, só nos controles administrativos, sem exibição pública (IMPLEMENTADO; Unit cobre uid e data).
+
+Exclusão de comentário
+- Autor: mensagem própria "Comentário excluído pelo autor" (EXISTENTE).
+- Moderação: "Removido pela moderação" pelos controles, com restaurar (EXISTENTE; mensagem de tombstone 'moderacao').
+
+Exclusão de tópico pelo autor
+- Tópico continua aberto com "Conteúdo excluído pelo(a) autor(a).", e o CGU recebe relatório pendente (IMPLEMENTADO; Forum depende de aculta_cgu no info.yml).
+
+Remoção de tópico pela moderação
+- Tópico continua aberto com "Conteúdo removido pela moderação.", pela ação "Remover pela moderação" nos controles (PARCIAL: formulário e marca implementados; ainda sem prova Kernel).
+
+Fechar tópico
+- Ação "Fechar ou reabrir tópico" nos controles; tópico fechado fica legível e mostra "Tópico fechado pela moderação." (PARCIAL: marca, formulário e aviso implementados).
+- PENDENTE: bloquear novas respostas no tópico fechado (não implementado; depende da regra de acesso de DiscussionReplyAccess).
+
+Excluir tópico totalmente
+- Ação "Excluir tópico" nos controles, com o acesso decidido pelo Drupal (EXISTENTE; sem alteração nesta rodada).
+
+Controles administrativos do tópico
+- Editar, mover de categoria, excluir, fechar/reabrir, remover pela moderação, registro do CGU (IMPLEMENTADO no popup; visual e rota DEFERRED).
+- Lacunas de paridade com o Discourse (fixar, arquivar, tags, dividir/juntar, despublicar): PENDENTES.
+
+Provas
+- Forum Unit 287 OK; PHPStan e guard PASS nesta rodada.
+- DEFERRED: Kernel dos fluxos de exclusão e remoção; prova visual; stylelint ausente (exit 127).
+
 ## Correção: o autor nunca exclui pela barra — 2026-11-20
 
 Decisão do responsável: o autor jamais exclui pela barra de resposta; só a moderação exclui, pelos controles administrativos.

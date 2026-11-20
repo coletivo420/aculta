@@ -21,14 +21,27 @@ final class DiscussionTopicAuthorDeletionHooks {
    *
    * @param array<string, mixed> $build
    *   Node render array.
+   * @param \Drupal\node\NodeInterface $entity
+   *   The node being rendered.
    */
   #[Hook('node_view')]
   public function nodeView(array &$build, NodeInterface $entity): void {
-    if ($entity->bundle() !== 'aculta_forum_topic' || !$this->deletion->isDeletedByAuthor((int) $entity->id())) {
+    if ($entity->bundle() !== 'aculta_forum_topic') {
       return;
     }
+    if ($this->deletion->isClosed((int) $entity->id())) {
+      $build['closed_notice'] = [
+        '#markup' => Markup::create('<p class="forum-topic-closed">' . t('Tópico fechado pela moderação.') . '</p>'),
+        '#weight' => -50,
+      ];
+    }
+    $tombstone = $this->deletion->tombstone((int) $entity->id());
+    if ($tombstone === NULL) {
+      return;
+    }
+    $message = $tombstone === 'moderacao' ? t('Conteúdo removido pela moderação.') : t('Conteúdo excluído pelo(a) autor(a).');
     $build['body'] = [
-      '#markup' => Markup::create('<p class="forum-topic-deleted-by-author">' . t('Conteúdo excluído pelo(a) autor(a).') . '</p>'),
+      '#markup' => Markup::create('<p class="forum-topic-tombstone forum-topic-tombstone--' . $tombstone . '">' . $message . '</p>'),
       '#cache' => ['tags' => $entity->getCacheTags()],
     ];
   }

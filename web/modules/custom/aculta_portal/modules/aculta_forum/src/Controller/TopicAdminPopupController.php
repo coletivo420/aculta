@@ -122,6 +122,19 @@ final class TopicAdminPopupController extends ControllerBase {
       ];
     }
 
+    if ($this->currentUser()->hasPermission('administer comments')) {
+      $actions[] = [
+        '#type' => 'link',
+        '#title' => $this->t('Fechar ou reabrir tópico'),
+        '#url' => Url::fromRoute('aculta_forum.topic_moderation_close', ['node' => $nid]),
+      ];
+      $actions[] = [
+        '#type' => 'link',
+        '#title' => $this->t('Remover pela moderação'),
+        '#url' => Url::fromRoute('aculta_forum.topic_moderation_remove', ['node' => $nid]),
+      ];
+    }
+
     $published = $node->isPublished();
     return [
       '#type' => 'component',

@@ -255,3 +255,29 @@ aculta_forum.topic_admin_popup:
     parameters:
       node:
         type: 'entity:node'
+
+aculta_forum.topic_moderation_remove:
+  path: '/painel-administrativo/forum/{node}/remover-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationRemoveForm'
+    _title: 'Remover tópico pela moderação'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+aculta_forum.topic_moderation_close:
+  path: '/painel-administrativo/forum/{node}/fechar-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationCloseForm'
+    _title: 'Fechar ou reabrir tópico pela moderação'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'

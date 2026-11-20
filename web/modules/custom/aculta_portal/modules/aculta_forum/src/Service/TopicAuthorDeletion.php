@@ -19,6 +19,11 @@ final class TopicAuthorDeletion {
    */
   public const TOMBSTONES = 'aculta_forum_topic_tombstones';
 
+  /**
+   * Key-value collection of closed topics, keyed by node id (TRUE = closed by moderation).
+   */
+  public const CLOSED = 'aculta_forum_topic_closed';
+
   public function __construct(
     private readonly KeyValueFactoryInterface $keyValue,
     private readonly ReportService $reports,
@@ -33,10 +38,39 @@ final class TopicAuthorDeletion {
   }
 
   /**
+   * Marks the topic as removed by moderation: the block shows the automatic moderation message.
+   */
+  public function markRemovedByModeration(NodeInterface $topic): void {
+    $this->keyValue->get(self::TOMBSTONES)->set((string) $topic->id(), 'moderacao');
+  }
+
+  /**
+   * Returns 'autor', 'moderacao' or NULL for a topic.
+   */
+  public function tombstone(int $nodeId): ?string {
+    $value = $this->keyValue->get(self::TOMBSTONES)->get((string) $nodeId);
+    return is_string($value) ? $value : NULL;
+  }
+
+  /**
+   * Whether the topic is closed by moderation.
+   */
+  public function isClosed(int $nodeId): bool {
+    return (bool) $this->keyValue->get(self::CLOSED)->get((string) $nodeId, FALSE);
+  }
+
+  /**
+   * Opens or closes a topic (moderation). Closed topics stay visible for reading.
+   */
+  public function setClosed(NodeInterface $topic, bool $closed): void {
+    $this->keyValue->get(self::CLOSED)->set((string) $topic->id(), $closed);
+  }
+
+  /**
    * Whether the topic was deleted by its author.
    */
   public function isDeletedByAuthor(int $nodeId): bool {
-    return $this->keyValue->get(self::TOMBSTONES)->get((string) $nodeId) === 'autor';
+    return $this->tombstone($nodeId) === 'autor';
   }
 
 }
