@@ -79,6 +79,7 @@
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap/tests/src/Kernel</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_faq/tests/src/Kernel</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_forum_legacy/tests/src/Kernel</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_game/tests/src/Kernel</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_image/tests/src/Kernel</directory>
