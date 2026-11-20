@@ -2,6 +2,18 @@
 
 Data: 2026-11-19. Branch de trabalho: `docs/forum-clone-discourse-ui-cgu-integracoes-20261119`, PR: https://github.com/coletivo420/aculta/pull/377, destino: `dev`. **Manter commits nessa branch**, sem force-push ou bypass do PHPStan level 10. Esta é uma entrega de código inicial, **não é homologação do Runtime**.
 
+## Fechamento de gates — 2026-11-20
+
+Autorizado pelo responsável: Kernel no banco dedicado `aculta_simpletest`. Resultados nesta branch:
+
+- Kernel CGU e Fórum (`aculta_cgu` + `aculta_forum`): 181 testes, 3.668 asserções, exit 0. Dois testes de denúncia falhavam por fixture sem dono no tópico (`CURRENT` exige `uid`); o hook fail-closed está correto e a fixture foi corrigida.
+- Kernel LMS (`aculta_lms`): 74 testes, 2.966 asserções, exit 0.
+- Unit completo: 3.379 testes, exit OK. A branch quebrava 17 arquivos de teste pelo contrato Portal (`#theme => portal_component`, `#name`, `data-portal-ui`, `portal_button`); os testes e um fixture pré-refator foram atualizados ao contrato atual.
+- PHPStan nível 10: exit 0. Baseline reduzido legitimamente: 9 entradas removidas e 2 contagens reduzidas, sem aumento. `phpstan-debt-guard check` e `diff` PASS.
+- Lint dos PHP alterados, `phpunit-suites --check`, `validate-agent-skills`, `validate-agent-token-budget` e `validate-aculta-portal-drupal12`: PASS.
+
+Pendentes, sem execução nesta rodada: teste Runtime (exige decisão sobre checkout do servidor de desenvolvimento), PHPCS do escopo, Functional HTTP/HTMX autenticado e checagem do CI do SHA publicado. Plano P1/P2 (Index, Statistics, UI Suite, CGU além do P0, paridade Discourse) permanece aberto.
+
 ## Revalidação de continuidade — 2026-11-20
 
 Base: `origin/docs/forum-clone-discourse-ui-cgu-integracoes-20261119` em `506512bd8`. A cópia local de `docs/...` no checkout principal estava atrás do remoto em 141 commits sem commits próprios; o trabalho foi feito em worktree dedicado, sem tocar o worktree `aculta-pr377`, que tem alterações de outra frente.

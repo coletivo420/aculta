@@ -274,10 +274,13 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
    * Verifies Forum flags sync to UGC with notification and no duplicates.
    */
   public function testForumFlaggingBridgeAndNotification(): void {
+    $author = User::create(['name' => 'autor-ofensivo', 'status' => 1]);
+    $author->save();
     $topic = Node::create([
       'type' => 'aculta_forum_topic',
       'title' => 'Tópico Ofensivo',
       'status' => 1,
+      'uid' => $author->id(),
     ]);
     $topic->save();
 
@@ -515,10 +518,13 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
    * Valida que exclusão de flag não apaga denúncia em análise ou decidida.
    */
   public function testFlaggingDeletePreservesReviewedOrDecidedReport(): void {
+    $author = User::create(['name' => 'autor-em-analise', 'status' => 1]);
+    $author->save();
     $topic = Node::create([
       'type' => 'aculta_forum_topic',
       'title' => 'Tópico Em Análise',
       'status' => 1,
+      'uid' => $author->id(),
     ]);
     $topic->save();
 

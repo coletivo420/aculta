@@ -45092,12 +45092,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/GanjalabServiceWiringTest.php
 
 		-
-			rawMessage: Cannot access offset '#component' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/LearnerDashboardComposerTest.php
-
-		-
 			rawMessage: Cannot access offset 'courses' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -48074,12 +48068,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiControllerTest.php
 
 		-
-			rawMessage: Cannot access offset '#component' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiControllerTest.php
-
-		-
 			rawMessage: Cannot access offset '#items' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 3
@@ -48740,19 +48728,7 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
 
 		-
-			rawMessage: Cannot access offset '#component' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
-
-		-
 			rawMessage: Cannot access offset '#props' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
-
-		-
-			rawMessage: Cannot access offset '#slots' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
@@ -48782,12 +48758,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
 
 		-
-			rawMessage: Cannot access offset 'content' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
-
-		-
 			rawMessage: Cannot access offset 'contexts' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
@@ -48795,12 +48765,6 @@ parameters:
 
 		-
 			rawMessage: Cannot access offset 'hidden' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
-
-		-
-			rawMessage: Cannot access offset 'hint' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_wiki/tests/src/Unit/WikiSearchFormBuilderTest.php
@@ -52100,21 +52064,9 @@ parameters:
 			path: web/modules/custom/aculta_portal/tests/src/Unit/AppearanceHooksTest.php
 
 		-
-			rawMessage: Cannot access offset '#component' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 2
-			path: web/modules/custom/aculta_portal/tests/src/Unit/Cart/AddToCartAjaxHtmxResponseTest.php
-
-		-
 			rawMessage: Cannot access offset '#props' on mixed.
 			identifier: offsetAccess.nonOffsetAccessible
-			count: 4
-			path: web/modules/custom/aculta_portal/tests/src/Unit/Cart/AddToCartAjaxHtmxResponseTest.php
-
-		-
-			rawMessage: Cannot access offset '#type' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
+			count: 3
 			path: web/modules/custom/aculta_portal/tests/src/Unit/Cart/AddToCartAjaxHtmxResponseTest.php
 
 		-
@@ -52168,13 +52120,7 @@ parameters:
 		-
 			rawMessage: Offset 0 might not exist on array|null.
 			identifier: offsetAccess.notFound
-			count: 6
-			path: web/modules/custom/aculta_portal/tests/src/Unit/Cart/AddToCartAjaxHtmxResponseTest.php
-
-		-
-			rawMessage: Offset 1 might not exist on array|null.
-			identifier: offsetAccess.notFound
-			count: 1
+			count: 3
 			path: web/modules/custom/aculta_portal/tests/src/Unit/Cart/AddToCartAjaxHtmxResponseTest.php
 
 		-

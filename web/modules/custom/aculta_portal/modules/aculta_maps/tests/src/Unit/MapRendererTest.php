@@ -102,7 +102,7 @@ final class MapRendererTest extends UnitTestCase {
     $iconContext = $iconTemplate['#context'] ?? [];
     /** @var array<string, mixed> $iconContextIcon */
     $iconContextIcon = $iconContext['icon'] ?? [];
-    $this->assertSame('aculta420_v2:icon', $iconContextIcon['#component'] ?? NULL);
+    $this->assertSame('icon', $iconContextIcon['#name'] ?? NULL);
     /** @var array<string, mixed> $iconProps */
     $iconProps = $iconContextIcon['#props'] ?? [];
     $this->assertSame('map-pin', $iconProps['name'] ?? NULL);

@@ -102,8 +102,8 @@ final class LmsActivityDiscussionResolverTest extends UnitTestCase {
 
     $build = $resolver->build($activity, $course, $account);
 
-    self::assertSame('component', $build['#type']);
-    self::assertSame('aculta420_v2:layout-section', $build['#component']);
+    self::assertSame('portal_component', $build['#theme']);
+    self::assertSame('layout-section', $build['#name']);
     $slots = $this->assertArray($build['#slots'] ?? NULL);
     $content = $this->assertArray($slots['content'] ?? NULL);
     $items = $content['#items'] ?? NULL;

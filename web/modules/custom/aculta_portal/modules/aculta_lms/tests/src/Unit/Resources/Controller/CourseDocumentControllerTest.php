@@ -75,7 +75,7 @@ final class CourseDocumentControllerTest extends UnitTestCase {
     self::assertSame(['::submitForm', '::save'], $submit['#submit'] ?? NULL);
     $contextualReturn = $build['contextual_return'] ?? NULL;
     self::assertIsArray($contextualReturn);
-    self::assertSame('aculta_portal_button', $contextualReturn['#type'] ?? NULL);
+    self::assertSame('portal_button', $contextualReturn['#type'] ?? NULL);
     $props = $contextualReturn['#props'] ?? NULL;
     self::assertIsArray($props);
     self::assertSame('aculta_lms.course_materials_edit', $props['url'] ?? NULL);
@@ -153,7 +153,7 @@ final class CourseDocumentControllerTest extends UnitTestCase {
     self::assertSame(['#type' => 'container'], $build['media_form'] ?? NULL);
     $contextualReturn = $build['contextual_return'] ?? NULL;
     self::assertIsArray($contextualReturn);
-    self::assertSame('aculta_portal_button', $contextualReturn['#type'] ?? NULL);
+    self::assertSame('portal_button', $contextualReturn['#type'] ?? NULL);
     $props = $contextualReturn['#props'] ?? NULL;
     self::assertIsArray($props);
     self::assertSame('aculta_lms.course_materials_edit', $props['url'] ?? NULL);

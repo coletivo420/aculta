@@ -69,7 +69,7 @@ final class DonationReportControllerTest extends UnitTestCase {
       ['de' => '2026-10-01', 'ate' => '2026-10-16'],
     ));
 
-    $this->assertSame('aculta420_v2:sales-panel', $render['#component']);
+    $this->assertSame('sales-panel', $render['#name']);
     $this->assertSame([['2026-10', 2, '60,00 BRL', 'BRL']], $render['#slots']['content']['resumo']['conteudo']['#rows']);
     $this->assertArrayHasKey('#empty', $render['#slots']['content']['resumo']['conteudo']);
   }

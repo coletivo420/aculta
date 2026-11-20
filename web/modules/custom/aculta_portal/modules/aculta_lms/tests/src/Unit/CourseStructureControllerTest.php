@@ -100,8 +100,8 @@ final class CourseStructureControllerTest extends UnitTestCase {
     $formBuilder->method('getForm')->willReturn(['#type' => 'form']);
     $build = (new CourseStructureController($manager, $this->getStringTranslationStub(), $formBuilder))->structure($course);
 
-    self::assertSame('component', self::renderValue($build, '#type'));
-    self::assertSame('aculta420_v2:lms-course-curriculum', self::renderValue($build, '#component'));
+    self::assertSame('portal_component', self::renderValue($build, '#theme'));
+    self::assertSame('lms-course-curriculum', self::renderValue($build, '#name'));
     self::assertSame(['aculta_lms/course_structure'], self::renderValue($build, '#attached', 'library'));
     self::assertSame('user', self::renderValue($build, '#cache', 'contexts', 0));
     self::assertSame('Curso de exemplo', self::renderValue($build, '#slots', 'header', 'title', '#value'));

@@ -144,7 +144,7 @@ final class CourseMaterialsFormTest extends UnitTestCase {
 
     $build = $form->buildForm([], new FormState());
     $courseDocuments = $this->assertArray($build['course_documents'] ?? NULL);
-    self::assertSame('aculta420_v2:lms-course-materials', $courseDocuments['#component'] ?? NULL);
+    self::assertSame('lms-course-materials', $courseDocuments['#name'] ?? NULL);
     $slots = $this->assertArray($courseDocuments['#slots'] ?? NULL);
     $add = $this->assertArray($slots['add'] ?? NULL);
     $addUrl = $add['#url'] ?? NULL;

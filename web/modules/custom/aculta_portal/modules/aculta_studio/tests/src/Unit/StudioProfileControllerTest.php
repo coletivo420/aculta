@@ -78,11 +78,11 @@ final class StudioProfileControllerTest extends UnitTestCase {
   public function testOwnerOnlyPageWithoutOptionalUserModule(): void {
     $page = $this->controller(TRUE, TRUE, TRUE)->page();
 
-    self::assertSame('aculta_portal_component', $page['#theme']);
+    self::assertSame('portal_component', $page['#theme']);
     self::assertSame('profile-editor', $page['#name']);
     self::assertSame('studio-profile-editor', $page['#attributes']['data-portal-ui']);
     $identity = $page['#slots']['identity'];
-    self::assertSame('aculta_portal_component', $identity['#theme']);
+    self::assertSame('portal_component', $identity['#theme']);
     self::assertSame('profile-identity', $identity['#name']);
     self::assertSame('Apelido não informado', $identity['#props']['display_name']);
     self::assertStringNotContainsString('conta-privada', $identity['#props']['display_name']);
