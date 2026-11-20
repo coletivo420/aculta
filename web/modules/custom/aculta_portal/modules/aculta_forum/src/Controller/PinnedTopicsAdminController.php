@@ -70,7 +70,13 @@ final class PinnedTopicsAdminController extends ControllerBase {
 
     $table = [
       '#type' => 'table',
-      '#header' => [$this->t('Tópico'), $this->t('Categoria'), $this->t('Autor'), $this->t('Criado em'), $this->t('Ação')],
+      '#header' => [
+        $this->t('Tópico'),
+        $this->t('Categoria'),
+        $this->t('Autor'),
+        $this->t('Criado em'),
+        $this->t('Ação'),
+      ],
       '#rows' => $rows,
       '#empty' => $this->t('Nenhum tópico fixado.'),
     ];
