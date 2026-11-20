@@ -22,3 +22,9 @@ Card de postagem do tópico com faixa colorida no topo (stripe), cabeçalho com 
 - Sem entidade ou papel de usuário lidos no tema.
 - Responsivo de 320 px a 1440 px.
 - Story: `forum-post-card.default.story.yml`.
+
+## Somente leitura (acervo)
+
+A prop `read_only` (padrão `false`) é a variante do acervo histórico. Quando
+verdadeira, o cartão oculta o link de resposta, as reações e as ações. Ela não
+altera o conteúdo nem a identidade da autoria. Story: `forum-post-card.archive.story.yml`.

@@ -68,6 +68,13 @@ Pendências, sem execução:
 - **Verificação:** PHPStan nível 10 exit 0; guard PASS; Unit `aculta_forum` 278 testes sem falhas.
 - **DEFERRED:** Kernel de prova das contagens (mesma fixture de site pendente da fase anterior).
 
+## P1 FDC-07 (início) — variante somente leitura do cartão — 2026-11-20
+
+- `forum-post-card` ganhou a prop `read_only` (padrão falso). Com ela, o cartão do acervo não mostra resposta, reações nem ações. Story `forum-post-card.archive.story.yml`.
+- **Verificação:** schema SDC PASS (151 componentes, 2874 verificações); fundamentos de design PASS.
+- **DEFERRED:** `validate-aculta420-v2-sdc.php` (exige bootstrap Drupal com `DRUPAL_ROOT`, Drush e site instalado) e render do Twig na story. Sem Runtime nem banco de site, não há PASS dessas partes.
+- **Pendente:** aplicar `read_only` nas Views/templates do acervo quando o arquivo for exibido pelas entidades próprias; o cartão ainda não é usado por essas telas.
+
 ## Revalidação de continuidade — 2026-11-20
 
 Base: `origin/docs/forum-clone-discourse-ui-cgu-integracoes-20261119` em `506512bd8`. A cópia local de `docs/...` no checkout principal estava atrás do remoto em 141 commits sem commits próprios; o trabalho foi feito em worktree dedicado, sem tocar o worktree `aculta-pr377`, que tem alterações de outra frente.

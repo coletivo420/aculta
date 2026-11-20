@@ -32,7 +32,7 @@
           {{ badge }}
         </div>
       {% endif %}
-      {% if reply or reply_url %}
+      {% if (reply or reply_url) and not read_only %}
         <div class="forum-post-card__quick-reply">
           {% if reply %}
             {{ reply }}
@@ -48,7 +48,7 @@
 
     <div class="forum-post-card__body">
       {{ body }}
-      {% if reactions_received %}
+      {% if reactions_received and not read_only %}
         <div class="forum-post-card__reactions-received">
           {{ reactions_received }}
         </div>
@@ -56,6 +56,7 @@
     </div>
 
     <footer class="forum-post-card__footer">
+      {% if not read_only %}
       <div class="forum-post-card__reactions">
         {% if reactions_slot %}
           {{ reactions_slot }}
@@ -68,7 +69,8 @@
           {% endfor %}
         {% endif %}
       </div>
-      {% if actions %}
+      {% endif %}
+      {% if actions and not read_only %}
         <div class="forum-post-card__actions">
           {{ actions }}
         </div>
