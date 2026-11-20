@@ -2,6 +2,7 @@ name: "Marley - Fórum: exame de denúncia"
 description: "Inspetor em duas colunas, trilha de auditoria e separação entre decisão do caso e ação sobre o conteúdo."
 component: aculta420_v2:studio-marley-workspace
 props:
+  dom_id: marley-forum-caso
   area: forum
   title: "Fórum - análise do caso"
   description: "Revisão de um relato com contexto, histórico, decisão e ação editorial independente."

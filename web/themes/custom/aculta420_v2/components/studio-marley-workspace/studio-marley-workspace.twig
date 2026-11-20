@@ -8,11 +8,11 @@
  */
 #}
 {% set marley_content %}
-  <section class="studio studio-marley-workspace studio-marley-workspace--{{ area }}" aria-labelledby="marley-workspace-title">
+  <section class="studio studio-marley-workspace studio-marley-workspace--{{ area }}" aria-labelledby="{{ dom_id|default('studio-marley-workspace') }}-title">
     <header class="studio-marley-workspace__heading">
       <div class="studio-marley-workspace__heading-text">
         <p class="studio-marley-workspace__eyebrow">{{ eyebrow|default('ACULTA Studio Marley') }}</p>
-        <h1 id="marley-workspace-title">{{ title }}</h1>
+        <h1 id="{{ dom_id|default('studio-marley-workspace') }}-title">{{ title }}</h1>
         {% if description %}<p class="studio-marley-workspace__description">{{ description }}</p>{% endif %}
         {% if preview_note %}<p class="studio-marley-workspace__preview" role="note">{{ preview_note }}</p>{% endif %}
       </div>
@@ -28,7 +28,7 @@
     {% endif %}
     {% if filters %}<div class="studio-marley-workspace__filters">{{ filters }}</div>{% endif %}
     <div class="studio-marley-workspace__columns{% if not aside %} studio-marley-workspace__columns--single{% endif %}">
-      <main class="studio-marley-workspace__primary" id="marley-workspace-content" aria-label="{{ primary_label|default('Conteúdo de trabalho') }}">{{ primary }}</main>
+      <section class="studio-marley-workspace__primary" id="{{ dom_id|default('studio-marley-workspace') }}-content" aria-label="{{ primary_label|default('Conteúdo de trabalho') }}">{{ primary }}</section>
       {% if aside %}<aside class="studio-marley-workspace__aside" aria-label="{{ aside_label|default('Detalhes e ações') }}">{{ aside }}</aside>{% endif %}
     </div>
     {% if footer %}<footer class="studio-marley-workspace__footer">{{ footer }}</footer>{% endif %}

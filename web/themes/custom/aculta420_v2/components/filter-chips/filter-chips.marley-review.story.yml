@@ -1,0 +1,17 @@
+name: "Marley - filtros de fila de revisão"
+description: "Estados da Review Queue comunitária, reutilizando filter-chips."
+component: aculta420_v2:filter-chips
+props:
+  items:
+    - label: Pendentes
+      url: '#marley-review-pendentes'
+      is_active: true
+      count: 3
+    - label: Atribuídos
+      url: '#marley-review-atribuidos'
+      is_active: false
+      count: 2
+    - label: Resolvidos
+      url: '#marley-review-resolvidos'
+      is_active: false
+      count: 5

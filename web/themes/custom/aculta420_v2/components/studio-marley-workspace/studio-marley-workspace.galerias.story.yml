@@ -2,6 +2,7 @@ name: "Marley - Galerias: catálogo e revisão"
 description: "Listagem de galerias e mídias contextual com componentes do Studio e Phosphor, sem criar painéis paralelos."
 component: aculta420_v2:studio-marley-workspace
 props:
+  dom_id: marley-galerias
   area: galerias
   title: "Galerias - catálogo"
   description: "Organização de mídias e álbuns com acesso do módulo proprietário."

@@ -2,6 +2,7 @@ name: "Marley - Revista: fluxo editorial"
 description: "Visualiza autoria e revisão de Revista, usando listagem e superfície do Studio sem reaproveitar permissões de moderação comunitária."
 component: aculta420_v2:studio-marley-workspace
 props:
+  dom_id: marley-revista-fluxo
   area: revista
   title: "Revista - produção editorial"
   description: "Rascunhos, revisão, publicação e arquivamento a partir da suíte Marley."

@@ -8,6 +8,69 @@ props:
   additionalProperties: false
   required: [title, area]
   properties:
+    dom_id:
+      type: string
+      title: ID único da composição
+      pattern: '^[a-z][a-z0-9-]*
+      type: string
+      title: Título da seção frontend
+      minLength: 1
+    area:
+      type: string
+      title: Área ativa do Marley
+      enum: [forum, revista, galerias]
+    eyebrow:
+      type: string
+      title: Identificador do Studio
+      default: ACULTA Studio Marley
+    description:
+      type: string
+      title: Descrição da tarefa
+      default: ''
+    preview_note:
+      type: string
+      title: Nota de prévia, apenas nos Stories
+      default: ''
+    navigation_label:
+      type: string
+      title: Nome acessível das áreas
+      default: Áreas do Studio Marley
+    primary_label:
+      type: string
+      title: Nome acessível da área principal
+      default: Conteúdo de trabalho
+    aside_label:
+      type: string
+      title: Nome acessível da área de inspeção
+      default: Detalhes e ações
+slots:
+  navigation:
+    title: Navegação autorizada
+    description: Studio fornece áreas e links depois de aplicar permissões; stories usam conteúdo ilustrativo.
+  actions:
+    title: Ações contextuais autorizadas
+    description: Form API ou render arrays do owner; não criar comandos no tema.
+  summary:
+    title: Indicadores permitidos
+    description: SDCs existentes de métricas e superfícies com acesso e cache contextuais.
+  filters:
+    title: Filtros e buscas
+    description: Render arrays de filtros do owner ou aculta420_v2:filter-chips.
+  primary:
+    title: Lista, fila ou trabalho editorial
+    description: aculta420_v2:studio-listing-table, data-table e componentes de conteúdo já existentes.
+  aside:
+    title: Inspetor e contexto
+    description: Metadados, denúncia e opções de moderação sob autorização por alvo.
+  footer:
+    title: Paginação e informações
+    description: Navegação, mensagens e avisos da seção.
+assets:
+  css:
+    component:
+      studio-marley-workspace.css: {}
+
+      default: studio-marley-workspace
     title:
       type: string
       title: Título da seção frontend

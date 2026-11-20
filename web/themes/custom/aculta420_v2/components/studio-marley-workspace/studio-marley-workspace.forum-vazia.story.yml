@@ -2,6 +2,7 @@ name: "Marley - Fórum: fila vazia"
 description: "Estado sem itens para revisar, preservando acesso ao conteúdo aprovado e evitando ações administrativas."
 component: aculta420_v2:studio-marley-workspace
 props:
+  dom_id: marley-forum-vazia
   area: forum
   title: "Fórum - fila de revisão"
   description: "Nenhuma decisão pendente no contexto autorizado."

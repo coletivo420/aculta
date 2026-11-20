@@ -2,6 +2,7 @@ name: "Marley - Fórum: fila de revisão"
 description: "Review Queue inspirada no Discourse com denúncia, status, filtros e inspeção contextual sem links administrativos."
 component: aculta420_v2:studio-marley-workspace
 props:
+  dom_id: marley-forum-fila
   area: forum
   title: "Fórum - fila de revisão"
   description: "Triagem comunitária a partir de relatos e publicações sujeitas a moderação."

@@ -1,0 +1,37 @@
+name: "Marley - popup de moderação do tópico"
+description: "Paridade visual com ações contextuais Discourse: fixar, fechar, mover, dividir, mesclar, modo lento, resolver e arquivar."
+component: aculta420_v2:popup
+props:
+  id: marley-moderar-topico-demo
+  title: "Moderar tópico"
+  subtitle: "Prévia visual - ações de moderação desabilitadas; os módulos proprietários controlam permissões e POST."
+  trigger_label: "Marley - popup de moderação do tópico"
+  trigger_url: '#marley-moderar-topico-demo'
+  header_variant: neutral
+slots:
+  content:
+    type: inline_template
+    template: |
+      <section class="studio studio-marley-workspace">
+        <p>Controles de referência para tópicos CURRENT. As ações reais exigem ACL, Form API, CSRF e auditoria.</p>
+        <p>{{ include('aculta420_v2:badge', { label: 'Tópico publicado', icon_name: 'check-circle', variant: 'neutral' }, with_context = false) }} {{ include('aculta420_v2:badge', { label: 'Fluxo comunitário', icon_name: 'flag', variant: 'neutral' }, with_context = false) }}</p>
+        <h3>{{ include('aculta420_v2:icon', { name: 'push-pin-simple', variant: 'regular', size: 'sm' }, with_context = false) }} Estado e visibilidade</h3>
+        <div class="studio-marley-workspace__control-row">
+          {{ include('aculta420_v2:moderation-submit', { label: 'Fixar', icon: 'push-pin-simple', variant: 'regular', tone: 'primary', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+          {{ include('aculta420_v2:moderation-submit', { label: 'Fechar', icon: 'lock', variant: 'regular', tone: 'warning', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+          {{ include('aculta420_v2:moderation-submit', { label: 'Arquivar', icon: 'archive', variant: 'regular', tone: 'warning', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+        </div>
+        <h3>{{ include('aculta420_v2:icon', { name: 'clock-countdown', variant: 'regular', size: 'sm' }, with_context = false) }} Participação e solução</h3>
+        <div class="studio-marley-workspace__control-row">
+          {{ include('aculta420_v2:moderation-submit', { label: 'Modo lento', icon: 'clock-countdown', variant: 'regular', tone: 'neutral', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+          {{ include('aculta420_v2:moderation-submit', { label: 'Marcar solução', icon: 'check-circle', variant: 'regular', tone: 'success', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+          {{ include('aculta420_v2:moderation-submit', { label: 'Atribuir responsável', icon: 'users', variant: 'regular', tone: 'neutral', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+        </div>
+        <h3>{{ include('aculta420_v2:icon', { name: 'arrows-left-right', variant: 'regular', size: 'sm' }, with_context = false) }} Organização da conversa</h3>
+        <div class="studio-marley-workspace__control-row">
+          {{ include('aculta420_v2:moderation-submit', { label: 'Mover', icon: 'arrows-left-right', variant: 'regular', tone: 'neutral', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+          {{ include('aculta420_v2:moderation-submit', { label: 'Dividir', icon: 'arrows-split', variant: 'regular', tone: 'neutral', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+          {{ include('aculta420_v2:moderation-submit', { label: 'Mesclar', icon: 'git-merge', variant: 'regular', tone: 'neutral', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+        </div>
+        <p role="note">Dividir/mesclar devem operar no ForumPost revisionável, preservar permalinks e nunca tocar o arquivo Growroom.</p>
+      </section>

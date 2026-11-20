@@ -1,0 +1,19 @@
+name: "Marley - listagem de casos CGU"
+description: "Tabela responsiva do Studio para triagem comunitária, sem URLs administrativas."
+component: aculta420_v2:studio-listing-table
+slots:
+  content:
+    type: inline_template
+    template: |
+      <div class="studio__listing-wrap">
+        <table class="studio__listing">
+          <caption>Casos ilustrativos da fila do Fórum</caption>
+          <thead>
+            <tr><th scope="col">Caso</th><th scope="col">Origem</th><th scope="col">Estado</th><th scope="col">Próxima ação</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">#A01</th><td>Tópico</td><td>{{ include('aculta420_v2:badge',{label:'Pendente',icon_name:'flag',variant:'highlight'},with_context=false) }}</td><td>{{ include('aculta420_v2:button',{text:'Analisar',icon_before:'shield-check',disabled:true,variant:'secondary'},with_context=false) }}</td></tr>
+            <tr><th scope="row">#A02</th><td>Resposta</td><td>{{ include('aculta420_v2:badge',{label:'Atribuído',icon_name:'users',variant:'neutral'},with_context=false) }}</td><td>{{ include('aculta420_v2:button',{text:'Examinar',icon_before:'magnifying-glass',disabled:true,variant:'secondary'},with_context=false) }}</td></tr>
+          </tbody>
+        </table>
+      </div>

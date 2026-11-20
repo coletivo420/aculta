@@ -1,0 +1,25 @@
+name: "Marley - popup de moderação da resposta"
+description: "Paridade visual Discourse para aprovação, ocultação, restauração, sinalização e auditoria de uma resposta corrente."
+component: aculta420_v2:popup
+props:
+  id: marley-moderar-resposta-demo
+  title: "Moderar resposta"
+  subtitle: "Prévia visual - ações de moderação desabilitadas; os módulos proprietários controlam permissões e POST."
+  trigger_label: "Marley - popup de moderação da resposta"
+  trigger_url: '#marley-moderar-resposta-demo'
+  header_variant: neutral
+slots:
+  content:
+    type: inline_template
+    template: |
+      <section class="studio studio-marley-workspace">
+        <p>{{ include('aculta420_v2:badge', { label: 'Resposta sinalizada', icon_name: 'flag', variant: 'highlight' }, with_context = false) }} Publicação corrente, contexto autorizado.</p>
+        <p class="studio-marley-workspace__case-excerpt">Conteúdo ilustrativo da resposta em discussão, sem identidade real.</p>
+        <div class="studio-marley-workspace__control-row">
+          {{ include('aculta420_v2:moderation-submit', { label: 'Aprovar', icon: 'check-circle', variant: 'regular', tone: 'success', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+          {{ include('aculta420_v2:moderation-submit', { label: 'Ocultar', icon: 'eye-slash', variant: 'regular', tone: 'warning', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+          {{ include('aculta420_v2:moderation-submit', { label: 'Restaurar', icon: 'shield-check', variant: 'regular', tone: 'neutral', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+          {{ include('aculta420_v2:moderation-submit', { label: 'Examinar relato', icon: 'flag', variant: 'regular', tone: 'neutral', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+        </div>
+        <p role="note">O Moderador não recebe edição pedagógica LMS, grants editoriais da Revista nem acesso ao backend.</p>
+      </section>
