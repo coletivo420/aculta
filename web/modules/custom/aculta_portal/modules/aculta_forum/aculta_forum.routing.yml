@@ -307,3 +307,16 @@ aculta_forum.discussion_host_admin_popup:
     parameters:
       node:
         type: 'entity:node'
+
+aculta_forum.topic_moderation_pin:
+  path: '/painel-administrativo/forum/{node}/fixar-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationPinForm'
+    _title: 'Fixar ou desafixar tópico'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'

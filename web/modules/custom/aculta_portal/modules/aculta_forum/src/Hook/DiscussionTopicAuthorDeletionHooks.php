@@ -29,6 +29,12 @@ final class DiscussionTopicAuthorDeletionHooks {
     if ($entity->bundle() !== 'aculta_forum_topic') {
       return;
     }
+    if ($entity->isSticky()) {
+      $build['pinned_badge'] = [
+        '#markup' => Markup::create('<p class="forum-topic-pinned">' . t('Fixado') . '</p>'),
+        '#weight' => -60,
+      ];
+    }
     if ($this->deletion->isClosed((int) $entity->id())) {
       $build['closed_notice'] = [
         '#markup' => Markup::create('<p class="forum-topic-closed">' . t('Tópico fechado pela moderação.') . '</p>'),

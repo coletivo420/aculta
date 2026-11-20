@@ -125,6 +125,11 @@ final class TopicAdminPopupController extends ControllerBase {
     if ($this->currentUser()->hasPermission('administer comments')) {
       $actions[] = [
         '#type' => 'link',
+        '#title' => $node->isSticky() ? $this->t('Desafixar tópico') : $this->t('Fixar tópico'),
+        '#url' => Url::fromRoute('aculta_forum.topic_moderation_pin', ['node' => $nid]),
+      ];
+      $actions[] = [
+        '#type' => 'link',
         '#title' => $this->t('Fechar ou reabrir tópico'),
         '#url' => Url::fromRoute('aculta_forum.topic_moderation_close', ['node' => $nid]),
       ];
