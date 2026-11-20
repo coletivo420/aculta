@@ -36,6 +36,8 @@ O contrato **novo** prevalece sobre os estudos anteriores que tratavam apenas `b
 | `aculta_statistics::MetricCatalog` | `forum.reactions.dislikes_current` e `forum.reactions.net_current`, TYPE_SNAPSHOT |
 | Unit `ReactionScoreTest.php` + configuração/arquivo | Cenários de saldo e archive, sem execução nessa sessão |
 
+**Reforço de concorrência:** commit subsequente à primeira entrega introduz `LockBackendInterface` no service manager de produção, chave por `entity_type/id/uid`, leitura do voto sob lock e liberação após conclusão do objeto de transação Drupal. Lock ocupado responde conflito HTTP 409 (sem mutação). **Testes concorrentes e idempotência de retry continuam pendentes**, inclusive para o agente local. A unicidade no banco permanece obrigatória.
+
 **Não foi criada migração/tabela nova**. O ID da reação negativa não pertence a `allowed_reactions` e não deve ser adicionado à paleta da configuração.
 
 ## Auditoria pendente P0/P1 para o agente local
@@ -43,7 +45,7 @@ O contrato **novo** prevalece sobre os estudos anteriores que tratavam apenas `b
 ### P0 - segurança e funcionalidade
 
 1. Validar sintaxe PHP/Twig/schema SDC e fixtures. O PHPStan 10 pode exigir estreitar tipos `array` de `fetchAllKeyed()` na classe `ReactionScore`; ajustar sem suprimir erros indevidamente.
-2. **Concorrência:** `toggleReaction()` seleciona o voto antes de iniciar a transação. UNIQUE já impede dois registros iguais, mas submissões simultâneas podem causar erro de integridade ou perda de transição. Adicionar lock por `entity_type + id + uid` com transação e liberação **após commit**, re-read do voto sob lock e resposta amigável 409/retry; sem bloqueio global nem deadlock. Testar 2+ POSTs simultâneos.
+2. **Concorrência:** foi adicionado lock `entity_type + id + uid` com leitura sob lock, transação e resposta 409, mas **ainda faltam testes reais com duas ou mais requisições**, prova de liberação após commit, retries/HTMX e lock que expire em caso de worker morto; corrigir eventuais falhas sem bloquear globalmente.
 3. **Recalcular agregados em trocas de polaridade:** positivo -> negativo, negativo -> positivo, desfazer negativo, positivo -> positivo, negativo -> negativo, escopo público -> privado e vice-versa. Verificar que `aculta_discussion_reaction_user_stats` segue contando somente positivos e `getUserStats()` apresenta saldo líquido sem mostrar negativos indevidamente.
 4. **Origem/ACL:** negar ARCHIVE, UNKNOWN, tópico despublicado, autoria própria, visitante não autenticado, UID bloqueado, usuário sem email_confirmed conforme regras, revogação de Group e troca de Host entre GET e POST. Proteção ocorre em endpoint, não apenas ocultando botão. Não criar moderação pedagógica LMS no CGU.
 5. **Cache e performance:** invalidar item/autores/Views/Stats após troca ou remoção; evitar COUNT de descurtidas com query N+1 para cada autor em lista; índice adequado `(author_uid, is_public_context, reaction)` só após EXPLAIN, schema update + index idempotente autorizado.

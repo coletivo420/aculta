@@ -17,9 +17,11 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\node\NodeInterface;
 use Drupal\user\EntityOwnerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 
 /**
  * Manages discussion reactions, aggregations, and user reaction counters.
@@ -42,6 +44,7 @@ class DiscussionReactionManager {
     protected readonly TimeInterface $time,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     protected readonly DiscussionOriginResolverInterface $originResolver,
+    protected readonly ?LockBackendInterface $lock = NULL,
   ) {}
 
   /**
@@ -224,19 +227,31 @@ class DiscussionReactionManager {
     // Reações da Revista contam no total de recebidas, como no fórum público.
     $isPublic = $scope->isPublicForum() || $scope->scope === ForumAnalyticsScope::PUBLICATION;
 
-    $existing = $this->database->select(self::TABLE_REACTIONS, 'r')
-      ->fields('r', ['id', 'reaction', 'is_public_context'])
-      ->condition('entity_type', $entityType)
-      ->condition('entity_id', $entityId)
-      ->condition('uid', $uid)
-      ->range(0, 1)
-      ->execute()
-      ?->fetchAssoc();
-
-    $now = $this->time->getRequestTime();
-    $transaction = $this->database->startTransaction();
+    // Serialize the one-reaction-per-user decision BEFORE reading a prior
+    // vote. A unique database key is still the last line of defense.
+    $lockName = sprintf('aculta_forum:reaction:%s:%d:%d', $entityType, $entityId, $uid);
+    $locked = FALSE;
+    if ($this->lock !== NULL) {
+      $locked = $this->lock->acquire($lockName, 30.0);
+      if (!$locked) {
+        throw new ConflictHttpException('Reação em andamento. Tente novamente.');
+      }
+    }
 
     try {
+      $existing = $this->database->select(self::TABLE_REACTIONS, 'r')
+        ->fields('r', ['id', 'reaction', 'is_public_context'])
+        ->condition('entity_type', $entityType)
+        ->condition('entity_id', $entityId)
+        ->condition('uid', $uid)
+        ->range(0, 1)
+        ->execute()
+        ?->fetchAssoc();
+
+      $now = $this->time->getRequestTime();
+      $transaction = $this->database->startTransaction();
+
+      try {
       if (is_array($existing) && !empty($existing['id'])) {
         $existingId = is_numeric($existing['id']) ? (int) $existing['id'] : (is_scalar($existing['id']) ? (string) $existing['id'] : 0);
         $prevReaction = isset($existing['reaction']) && is_scalar($existing['reaction']) ? (string) $existing['reaction'] : '';
@@ -331,10 +346,20 @@ class DiscussionReactionManager {
         'previous_reaction' => NULL,
         'current_reaction' => $reactionId,
       ];
+      }
+      catch (\Exception $e) {
+        $transaction->rollBack();
+        throw $e;
+      }
+      finally {
+        // Finish the Drupal transaction before releasing the vote lock.
+        unset($transaction);
+      }
     }
-    catch (\Exception $e) {
-      $transaction->rollBack();
-      throw $e;
+    finally {
+      if ($locked && $this->lock !== NULL) {
+        $this->lock->release($lockName);
+      }
     }
   }
 

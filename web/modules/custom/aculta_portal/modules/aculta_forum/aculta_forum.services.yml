@@ -395,6 +395,7 @@ services:
       - '@datetime.time'
       - '@entity_type.manager'
       - '@aculta_forum.discussion_origin_resolver'
+      - '@lock'
 
   aculta_forum.discussion_reaction_endpoint_access:
     class: Drupal\aculta_forum\Access\DiscussionReactionEndpointAccess
