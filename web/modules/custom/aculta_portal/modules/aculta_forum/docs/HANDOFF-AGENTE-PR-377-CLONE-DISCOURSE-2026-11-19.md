@@ -14,6 +14,15 @@ Autorizado pelo responsável: Kernel no banco dedicado `aculta_simpletest`. Resu
 
 Pendentes, sem execução nesta rodada: teste Runtime (exige decisão sobre checkout do servidor de desenvolvimento), PHPCS do escopo, Functional HTTP/HTMX autenticado e checagem do CI do SHA publicado. Plano P1/P2 (Index, Statistics, UI Suite, CGU além do P0, paridade Discourse) permanece aberto.
 
+## Auditoria P0 — FDC-02 e CGU — 2026-11-20
+
+- **FDC-02 (respostas de tópico):** `DiscussionReplyFormBuilder::buildForumPostReplyForm` já cria `ForumPost` para tópicos `aculta_forum_topic`. Respostas `Comment` ficam restritas a hosts contextuais (Wiki, Revista, LMS), como o handoff manda. Verificado pelo Kernel `DiscussionReplyForumPostKernelTest` (3 testes, 42 asserções, exit OK).
+- **CGU — propósito por host:** `ReportService::resolvePurpose` resolve por host e recusa com erro explícito contextos sem adapter (fail-closed).
+- **CGU — julgada vs. aplicada, propostas:** `ContributionLifecycle::decide` grava o desfecho e aplica os campos na mesma transação. Conflito de origem vira `conflict` sem aplicar nada.
+- **CGU — julgada vs. aplicada, denúncias:** `ReportService::decideReport` grava apenas status, notas e autoria; não altera o conteúdo denunciado. O campo `batch_apply` em `CguReportDecisionForm` replica o mesmo julgamento a outras denúncias pendentes do mesmo alvo. O nome é enganoso, mas não há ação de moderação automática nesse caminho.
+
+Pendências: P1 (Index, Statistics, UI Suite) e P2 (paridade Discourse) não iniciados.
+
 ## Revalidação de continuidade — 2026-11-20
 
 Base: `origin/docs/forum-clone-discourse-ui-cgu-integracoes-20261119` em `506512bd8`. A cópia local de `docs/...` no checkout principal estava atrás do remoto em 141 commits sem commits próprios; o trabalho foi feito em worktree dedicado, sem tocar o worktree `aculta-pr377`, que tem alterações de outra frente.
