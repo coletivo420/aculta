@@ -231,6 +231,12 @@ Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve co
 - Validação: PHPStan exit 0; guard PASS; PHPCS sem erros no controlador.
 - DEFERRED: teste da rota e prova visual/HTMX do popup.
 
+## Tags de tópico (paridade Discourse) — 2026-11-20
+
+- Mudança estrutural autorizada pelo usuário: vocabulário `aculta_forum_tags`, storage `node.field_aculta_tags` (cardinalidade ilimitada, referência a termo) e campo do tópico `field_aculta_tags` (opcional, criação automática de termo).
+- Config em `config/install` e `config/sync` (mesmos UUIDs). Update `aculta_forum_update_9009` cria vocabulário, storage e campo em sites já instalados. NÃO aplicado no Runtime.
+- Pendente: exibir o campo no formulário de criação e na página do tópico (form/view display), e prova Kernel de importação da config.
+
 ## Dividir e juntar tópico (paridade Discourse) — 2026-11-20
 
 - Dividir: `aculta_forum.topic_moderation_split` (`/painel-administrativo/forum/{node}/dividir-topico`), `TopicSplitForm`. Move os comentários de nível principal escolhidos, com suas respostas, para outro tópico público, pelo serviço `aculta_forum.comment_mover`.

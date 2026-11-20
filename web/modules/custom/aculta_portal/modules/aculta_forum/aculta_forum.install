@@ -559,3 +559,46 @@ function aculta_forum_update_9008(): void {
     $schema->createTable('aculta_forum_analytics_ledger', $tables['aculta_forum_analytics_ledger']);
   }
 }
+
+/**
+ * Creates the public Forum tags vocabulary and the topic tags field (Discourse parity).
+ */
+function aculta_forum_update_9009(): void {
+  $vocabulary_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary');
+  if ($vocabulary_storage->load('aculta_forum_tags') === NULL) {
+    $vocabulary_storage->create([
+      'vid' => 'aculta_forum_tags',
+      'name' => 'Tags do ACULTA Forum',
+      'description' => 'Tags públicas de tópicos do Growroom420 (paridade Discourse).',
+    ])->save();
+  }
+  $field_storage = \Drupal::entityTypeManager()->getStorage('field_storage_config');
+  if ($field_storage->load('node.field_aculta_tags') === NULL) {
+    $field_storage->create([
+      'field_name' => 'field_aculta_tags',
+      'entity_type' => 'node',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'taxonomy_term'],
+      'cardinality' => -1,
+    ])->save();
+  }
+  $field = \Drupal::entityTypeManager()->getStorage('field_config');
+  if ($field->load('node.aculta_forum_topic.field_aculta_tags') === NULL) {
+    $field->create([
+      'field_name' => 'field_aculta_tags',
+      'entity_type' => 'node',
+      'bundle' => 'aculta_forum_topic',
+      'label' => 'Tags',
+      'description' => 'Tags públicas do tópico (opcional).',
+      'required' => FALSE,
+      'settings' => [
+        'handler' => 'default:taxonomy_term',
+        'handler_settings' => [
+          'target_bundles' => ['aculta_forum_tags' => 'aculta_forum_tags'],
+          'auto_create' => TRUE,
+          'auto_create_bundle' => 'aculta_forum_tags',
+        ],
+      ],
+    ])->save();
+  }
+}

@@ -1,0 +1,12 @@
+uuid: d0b81013-1b83-4c71-8f33-15d0ea29267d
+langcode: pt-br
+status: true
+dependencies:
+  enforced:
+    module:
+      - aculta_forum
+name: 'Tags do ACULTA Forum'
+vid: aculta_forum_tags
+description: 'Tags públicas de tópicos do Growroom420 (paridade Discourse).'
+weight: 0
+new_revision: false

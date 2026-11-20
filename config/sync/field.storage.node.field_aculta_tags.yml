@@ -1,0 +1,25 @@
+uuid: 67365006-cc60-41bb-bf3e-bf5ecc31f2d8
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+    - taxonomy
+  enforced:
+    module:
+      - aculta_forum
+_core:
+  default_config_hash: ''
+id: node.field_aculta_tags
+field_name: field_aculta_tags
+entity_type: node
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: -1
+translatable: true
+indexes: {}
+persist_with_no_fields: false
+custom_storage: false
