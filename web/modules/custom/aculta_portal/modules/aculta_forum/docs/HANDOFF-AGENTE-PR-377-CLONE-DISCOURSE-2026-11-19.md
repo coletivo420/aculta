@@ -75,6 +75,13 @@ Pendências, sem execução:
 - **DEFERRED:** `validate-aculta420-v2-sdc.php` (exige bootstrap Drupal com `DRUPAL_ROOT`, Drush e site instalado) e render do Twig na story. Sem Runtime nem banco de site, não há PASS dessas partes.
 - **Pendente:** aplicar `read_only` nas Views/templates do acervo quando o arquivo for exibido pelas entidades próprias; o cartão ainda não é usado por essas telas.
 
+## Achado aberto — anexos do acervo no índice público — 2026-11-20
+
+- **Lacuna:** `MediaContentIndexProvider::isIndexable` (provider de `forum_attachment`, registrado em `aculta_forum.attachment_content_index_provider`) aceita qualquer mídia do bundle. Anexos de tópicos do acervo entram no índice público pelo caminho de mídia, sem passar pelo filtro de origem aplicado a tópicos e comentários.
+- **Correção necessária:** provider de anexo do Fórum que exige referência de um tópico ou resposta `CURRENT` (via o `DiscussionOriginResolver`). Falha fechada se não houver referência corrente.
+- **Pré-requisito:** descobrir o campo reverso que liga o anexo ao tópico/resposta (uso por `entity_usage` ou campo de referência). Não alterado nesta rodada.
+- **Status:** aberto, sem prova automatizada.
+
 ## Revalidação de continuidade — 2026-11-20
 
 Base: `origin/docs/forum-clone-discourse-ui-cgu-integracoes-20261119` em `506512bd8`. A cópia local de `docs/...` no checkout principal estava atrás do remoto em 141 commits sem commits próprios; o trabalho foi feito em worktree dedicado, sem tocar o worktree `aculta-pr377`, que tem alterações de outra frente.
