@@ -173,7 +173,7 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
       dirname(__DIR__, 3) . '/config/install/core.entity_form_display.node.aculta_forum_topic.default.yml',
     );
 
-    self::assertSame(['body', 'field_aculta_categories', 'title'], array_keys(self::configArray($config, 'content')));
+    self::assertSame(['body', 'field_aculta_categories', 'field_aculta_tags', 'title'], array_keys(self::configArray($config, 'content')));
     self::assertArrayHasKey('field_aculta_discussion', self::configArray($config, 'hidden'));
     self::assertArrayNotHasKey('field_autor_legado', self::configArray($config, 'content'));
     self::assertArrayNotHasKey('field_autor_legado', self::configArray($config, 'hidden'));
