@@ -209,6 +209,12 @@ Implementado depois:
 
 Desfeito nesta rodada: o `forum-topic-admin-menu` criado antes, que não era necessário.
 
+## Estilo do popup nas telas do Fórum — 2026-11-20
+
+Decisão do responsável: todos os popups do Fórum usam o estilo do Stories `popup`, exceto os popovers nativos ancorados (`discussion-reaction-bar` e `discussion-reactions-received`). Os popups fora do Fórum não entram neste escopo.
+
+Verificado: nenhum componente do Fórum desenha `<dialog>` próprio; os modais usam o SDC `popup` (resposta, citação, Revista e administração do tópico).
+
 ## Recontagem de consumo por código (somente twig, php e yml) — 2026-11-20
 
 Recontagem excluindo docs, CHANGELOG e Stories. Antes, `forum-topic-card` e `forum-reply-mirror` pareciam consumidos por causa de docs.
