@@ -1,0 +1,8 @@
+/* Modal de controles do comentário: situação em lista, ações em linha e registro abaixo. */
+.topic-admin-controls { display: grid; gap: var(--spacing-md); }
+.topic-admin-controls__facts { display: grid; gap: var(--spacing-xs); margin: 0; }
+.topic-admin-controls__facts > div { display: flex; gap: var(--spacing-sm); }
+.topic-admin-controls__facts dt { font-weight: 700; min-inline-size: 9rem; }
+.topic-admin-controls__facts dd { margin: 0; }
+.topic-admin-controls__buttons { display: flex; flex-wrap: wrap; gap: var(--spacing-sm); align-items: center; }
+.topic-admin-controls__done { margin: 0; font-weight: 700; }

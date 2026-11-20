@@ -1,0 +1,15 @@
+name: Controles administrativos do tópico
+props:
+  author_name: Participante exemplo
+  state_label: Publicado
+  category_label: Categoria exemplo
+  created_label: 01/11/2026
+  reactions_total: 3
+  reply_count: 5
+slots:
+  actions:
+    type: inline_template
+    template: '<a href="#">Mover tópico de categoria</a>'
+  log:
+    type: inline_template
+    template: '<p>Nenhuma decisão registrada.</p>'

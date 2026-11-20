@@ -1,0 +1,44 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Controles administrativos do tópico (conteúdo)
+status: experimental
+description: Conteúdo do popup de moderação de um tópico do Fórum. Mostra a situação somente leitura, recebe as ações autorizadas e o registro de decisões do CGU sobre o tópico.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [author_name, state_label, category_label]
+  properties:
+    author_name:
+      type: string
+      title: Autor
+      description: Nome do autor do tópico.
+    state_label:
+      type: string
+      title: Situação
+      description: Estado atual do tópico, por exemplo publicado ou despublicado.
+    category_label:
+      type: string
+      title: Categoria
+      description: Categoria atual do tópico.
+    created_label:
+      type: [string, 'null']
+      title: Data
+      description: Data de publicação formatada.
+      default: null
+    reactions_total:
+      type: integer
+      title: Reações
+      minimum: 0
+      default: 0
+    reply_count:
+      type: integer
+      title: Respostas
+      minimum: 0
+      default: 0
+slots:
+  actions:
+    title: Ações autorizadas
+    description: "Links ou botões das ações permitidas ao moderador (ex.: mover de categoria)."
+  log:
+    title: Registro de decisões
+    description: Lista das decisões do CGU sobre o tópico (status, data e notas).

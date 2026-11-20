@@ -209,6 +209,15 @@ Implementado depois:
 
 Desfeito nesta rodada: o `forum-topic-admin-menu` criado antes, que não era necessário.
 
+## topic-admin-controls: moderação de tópicos com correspondência no CGU — 2026-11-20
+
+Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve corresponder aos controles de moderação dos comentários no `aculta_cgu`; criar `topic-admin-controls` com a mesma correspondência para tópicos.
+
+- Componente `topic-admin-controls` (`aculta420_v2`): mesma estrutura de `comment-admin-controls`, com categoria; slots `actions` (ações autorizadas) e `log` (registro de decisões). Schema SDC PASS (152 componentes).
+- Controlador `TopicAdminPopupController`: monta o componente com autor, situação, categoria, data, reações e respostas. O registro vem dos relatórios do `aculta_cgu` (`aculta_cgu_report`, tipo `node`, id do tópico), sem os pendentes.
+- Validação: PHPStan exit 0; guard PASS; PHPCS sem erros no controlador.
+- DEFERRED: teste da rota e prova visual/HTMX do popup.
+
 ## Migração do acervo: mapeamento de tópico (lote 1 de campos) — 2026-11-20
 
 - `LegacyArchiveTopicMapper::map()` converte uma linha de tópico (nid, título, corpo, autor legado, domínio, criação) nos valores de `aculta_forum_legacy_topics`. Função pura: não lê nem escreve no banco.
