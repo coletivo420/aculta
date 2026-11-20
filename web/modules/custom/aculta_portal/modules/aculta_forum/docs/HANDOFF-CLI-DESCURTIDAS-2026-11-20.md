@@ -1,3 +1,5 @@
+> **ATENÇÃO, ESCOPO AMPLIADO:** Este handoff é SOMENTE o subpacote de reações. Para concluir **todo o ACULTA Fórum / clone funcional Discourse**, use [HANDOFF-AGENTE-CLI-FORUM-COMPLETO-2026-11-20.md](HANDOFF-AGENTE-CLI-FORUM-COMPLETO-2026-11-20.md) como **prompt principal vigente**, que inclui R0-R13 e T01-57. Este documento continua como referência de DV01-19 e detalhes da descurtida, sem substituir a missão global. A curtida padrão fixa é `broccoli`, a mão parda é botão externo ao popin e o popin inclui só emojis positivos + Undo. O retorno fallback não-JS usa `ReactionReturnUrl` local + HTTP 303 (commit `2eb08c16`).
+
 # Handoff de continuidade - descurtidas e score geral
 
 **Data:** 2026-11-20. **Branch:** `feat/forum-paridade-discourse`. Origem: patch `d9f57922a4c81ccee0c515a4dbfff9c50330de11` e documentação subsequente.

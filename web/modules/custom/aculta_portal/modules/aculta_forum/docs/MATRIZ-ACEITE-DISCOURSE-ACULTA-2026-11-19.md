@@ -94,3 +94,12 @@ Todos iniciam em **PLANNED** e só viram PASS com comando/ambiente/commit/result
 Cada feature registra `planned | code | unit | kernel | functional | browser | runtime | production` com referência a commit, comando, duração, resultado e evidências; falha/BLOCKED/DEFERRED não se tornam PASS. Matriz de papéis: anônimo, autenticado, autor, editor Fórum, editor Revista, editor Wiki, Educador LMS, membro do curso, membro do Group restrito, não-membro, moderador CGU por purpose, global CGU, admin MAIN. Cobrir domínio incorreto, cache quente e revogação entre duas requisições.
 
 Release candidata: todos gates P0/P1, migração (se autorizada), integridade, UI Suite em consumers reais e testes de acessibilidade obrigatórios comprovados. Promoção de dev para RC só após validação Runtime real e autorizações exigidas em AGENTS.md.
+
+## Ampliação T-58 a T-61: segurança de reações e default (2026-11-20)
+
+| T-58 | Fallback sem JS de `DiscussionReactionController` | POST 303 para URL LOCAL somente, sem `destination`/`Referer` externos, cruzamento de Domain, scheme/port, `//`, backslash ou CRLF; HTMX conserva fragmento correto |
+| T-59 | Curtida padrão | Mesmo com Config Sync adulterado, quick-like é sempre `broccoli` e descurtida 👎🏽 é botão independente; interface admin não altera default |
+| T-60 | Comando Undo | Popin oferece positivos + Undo, nunca emoji negativo; Undo remove voto atual e no-op quando ausente, sem linha/award/contagem própria |
+| T-61 | Handoff integral Fórum | Agente executa FDC-R0..R13, T01..61 e DV01..19; worktree isolada, sem dev Runtime e com evidências reais de testes por componente |
+
+**Status T58..61:** código Unit/Kernel parcial e handoff documentado; integrações e QA/Runtime DEFERRED até execução, não PASS. [Prompt integral](HANDOFF-AGENTE-CLI-FORUM-COMPLETO-2026-11-20.md).
