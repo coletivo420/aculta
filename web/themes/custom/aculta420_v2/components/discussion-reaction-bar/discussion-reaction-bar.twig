@@ -36,7 +36,7 @@
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       <input type="hidden" name="reaction" value="dislike">
       <button type="submit" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--quick discussion-reaction-bar__btn--dislike{% if is_dislike_active %} is-active{% endif %}" title="{{ 'Descurtir'|t }}" aria-label="{{ 'Descurtir'|t }}" aria-pressed="{{ is_dislike_active ? 'true' : 'false' }}">
-        {{ include('aculta420_v2:reaction-emoji', { name: 'thumbs-down', variant: is_dislike_active ? 'color' : 'flat', size: 'sm' }, with_context = false) }}
+        {{ include('aculta420_v2:reaction-emoji', { name: 'thumbs-down-medium', variant: is_dislike_active ? 'color' : 'flat', size: 'sm' }, with_context = false) }}
       </button>
     </form>
 
@@ -49,7 +49,7 @@
       <div id="{{ palette_id }}" class="discussion-reaction-bar__popover discussion-reaction-bar__popover--palette" style="position-anchor: --{{ palette_id }}" popover="auto" role="dialog" aria-label="{{ 'Escolher reação'|t }}" data-reaction-popover>
         <div class="discussion-reaction-bar__popover-list">
           {% for key, reaction in allowed_reactions %}
-            {% if reaction.enabled|default(true) %}
+            {% if reaction.enabled|default(true) and key not in ['dislike', 'thumbs-down', 'thumbs-down-medium', 'thumbs_down', 'thumbs_down_medium'] and reaction.icon not in ['thumbs-down', 'thumbs-down-medium'] %}
               <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="reaction" value="{{ key }}">

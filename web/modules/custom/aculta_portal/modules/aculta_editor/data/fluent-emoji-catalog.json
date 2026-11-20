@@ -728,6 +728,24 @@
     "svg": "thumbs-down.svg"
   },
   {
+    "id": "thumbs-down-medium",
+    "name": "Joinha para baixo (Pardo)",
+    "glyph": "👎🏽",
+    "category": "direitos",
+    "keywords": [
+      "joinha pardo para baixo",
+      "não gostei",
+      "discordo",
+      "descurtir",
+      "descurtida",
+      "mão parda",
+      "thumbs down medium",
+      "dislike",
+      "negativo"
+    ],
+    "svg": "thumbs-down-medium.svg"
+  },
+  {
     "id": "clapping-hands",
     "name": "Palmas",
     "glyph": "👏",

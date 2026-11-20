@@ -109,7 +109,7 @@ aculta_brocolis:
 aculta_fluent_emoji:
   enabled: true
   label: "Fluent Emoji"
-  description: "Emojis vetoriais Fluent coloridos do catálogo editorial ACULTA, incluindo thumbs-down."
+  description: "Emojis vetoriais Fluent coloridos do catálogo editorial ACULTA, incluindo thumbs-down e thumbs-down-medium (mão parda)."
   version: "1.1.0"
   license:
     name: MIT
@@ -144,7 +144,7 @@ aculta_fluent_emoji:
 aculta_reacoes:
   enabled: true
   label: "Reações ACULTA"
-  description: "Emojis Microsoft Fluent (MIT) usados nas reações da comunidade, incluindo o voto negativo thumbs-down."
+  description: "Emojis Microsoft Fluent (MIT) usados nas reações da comunidade, incluindo o voto negativo Fluent thumbs-down-medium, mão parda."
   version: "1.4.0"
   license:
     name: MIT

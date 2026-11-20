@@ -86,6 +86,13 @@ final class UiIconsPackTest extends UnitTestCase {
     self::assertIsString($flatSvg);
     self::assertStringContainsString('viewBox="0 0 32 32"', $colorSvg);
     self::assertStringContainsString('viewBox="0 0 32 32"', $flatSvg);
+    $medium = $themeDir . '/assets/icons/reacoes/thumbs-down-medium.svg';
+    $mediumColor = $themeDir . '/assets/icons/fluent-emoji/color/thumbs-down-medium.svg';
+    $mediumFlat = $themeDir . '/assets/icons/fluent-emoji/flat/thumbs-down-medium.svg';
+    self::assertFileExists($medium);
+    self::assertFileExists($mediumColor);
+    self::assertFileExists($mediumFlat);
+    self::assertSame(hash_file('sha256', $mediumColor), hash_file('sha256', $medium));
     self::assertSame(['assets/icons/fluent-emoji/color/*.svg'], $data['aculta_fluent_emoji']['config']['sources']);
     self::assertSame(['assets/icons/reacoes/*.svg'], $data['aculta_reacoes']['config']['sources']);
   }

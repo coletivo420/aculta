@@ -59,7 +59,7 @@ class DiscussionReactionManager {
     $allowed = [];
     if (is_iterable($raw)) {
       foreach ($raw as $item) {
-        if (is_array($item) && !empty($item['enabled']) && isset($item['id'], $item['icon'], $item['label']) && $item['id'] !== self::DISLIKE_REACTION && is_string($item['id']) && is_string($item['icon']) && is_string($item['label'])) {
+        if (is_array($item) && !empty($item['enabled']) && isset($item['id'], $item['icon'], $item['label']) && is_string($item['id']) && is_string($item['icon']) && is_string($item['label']) && !in_array($item['id'], [self::DISLIKE_REACTION, 'thumbs-down', 'thumbs-down-medium', 'thumbs_down', 'thumbs_down_medium'], TRUE) && !in_array($item['icon'], ['thumbs-down', 'thumbs-down-medium'], TRUE)) {
           $allowed[$item['id']] = [
             'id' => $item['id'],
             'icon' => $item['icon'],
@@ -77,7 +77,7 @@ class DiscussionReactionManager {
    */
   public function getDefaultReaction(): string {
     $default = $this->configFactory->get('aculta_forum.settings')->get('default_reaction');
-    return is_string($default) && $default !== '' ? $default : 'broccoli';
+    return is_string($default) && isset($this->getAllowedReactions()[$default]) ? $default : 'broccoli';
   }
 
   /**

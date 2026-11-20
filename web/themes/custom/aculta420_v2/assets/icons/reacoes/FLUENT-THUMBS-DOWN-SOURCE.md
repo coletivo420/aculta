@@ -17,3 +17,15 @@ e `aculta_reacoes` (`reacoes`). O editor usa o ID
 `FluentEmojiCatalog`; o Fórum usa o mesmo recurso gráfico e persiste
 `reaction=dislike`. A licença MIT original já está em
 `assets/icons/fluent-emoji/LICENSE`.
+
+## Versão parda aplicada ao controle negativo
+
+O botão do Fórum usa exclusivamente `thumbs-down-medium.svg`, tom
+**Medium** (👎🏽) da coleção Microsoft Fluent Emoji:
+- Color: `assets/Thumbs down/Medium/Color/thumbs_down_color_medium.svg`
+- Flat: `assets/Thumbs down/Medium/Flat/thumbs_down_flat_medium.svg`
+- UI Icons: `aculta_fluent_emoji:thumbs-down-medium` e `aculta_reacoes:thumbs-down-medium`
+- ID de persistência do Fórum: `dislike` (não é opção do popin de positivas).
+
+O asset Default anterior permanece para a biblioteca editorial mas
+não é usado pelo controle negativo. Licença MIT já vendorizada no tema.

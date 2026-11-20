@@ -94,3 +94,9 @@ O contrato **novo** prevalece sobre os estudos anteriores que tratavam apenas `b
 ### Ajuste visual solicitado - 2026-11-20
 
 Foi substituído o ícone Phosphor negativo pelo SVG original Microsoft Fluent Emoji, na mesma biblioteca de reações já usada pelo ACULTA. Fonte: `microsoft/fluentui-emoji/assets/Thumbs down/Default/Color/thumbs_down_color_default.svg` (licença MIT). Botões positivos, negativos e paleta usam `aria-pressed` e enviam o ID atual ao `toggleReaction()`: segundo clique na seleção ativa **remove o voto**, sem outro botão. O emoji `thumbs-down` é um asset visual de reação; o ID de armazenamento negativo continua `dislike`, reservado fora de `allowed_reactions`.
+
+### Ajuste vinculante: mão parda, sem duplicação no popin (2026-11-20)
+
+O ícone do botão negativo é `thumbs-down-medium.svg`, **Microsoft Fluent Emoji Medium** 👎🏽, registrado nos packs existentes do tema (`aculta_reacoes` e `aculta_fluent_emoji`) e no catálogo `aculta_editor`. O ID persistido continua `dislike`. O botão negativo permanece **fora da paleta de emojis positivos**, e `DiscussionReactionManager::getAllowedReactions()` exclui `dislike`, `thumbs-down`, `thumbs-down-medium` e aliases, inclusive por ícone. O template da paleta também aplica guarda defensiva. Clicar novamente em qualquer reação ativa a remove, inclusive descurtir, sem ação Undo adicional. Este requisito prevalece sobre os anteriores que mencionavam mão genérica.
+
+Validar com teste de configuração deliberadamente malformada incluindo IDs/ícones negativos na paleta e com navegador/HTMX. Até então, apenas código publicado; aceite Runtime DEFERRED.

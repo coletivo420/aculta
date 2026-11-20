@@ -28,3 +28,10 @@ EXECUTE SEQUENCIALMENTE, SEM PARAR NA PRIMEIRA FALHA:
 9. COMMITS/PUSH: fazer commits atômicos diretamente em feat/forum-paridade-discourse, git push origin feat/forum-paridade-discourse, sem force. Verificar HEAD remoto e CI, refazer gates afetados. Trabalhar até concluir implementação, sem perguntas repetitivas. Entregar relatório final com commits, arquivos, testes PASS/FAIL/DEFERRED, diff, riscos residuais e o que requer Runtime/homologação. Não tocar produção.
 
 ```
+
+
+## Instrução adicional obrigatória (2026-11-20)
+
+- O botão negativo usa **mão parda** Microsoft Fluent Emoji Medium `thumbs-down-medium` (👎🏽), não a versão Default. Usar `aculta420_v2:reaction-emoji`, existente no tema.
+- O popin contém **somente reações positivas**, nunca `dislike`, `thumbs-down` ou `thumbs-down-medium`, nem como ID nem como `icon` de configuração. O catálogo `aculta_editor` pode oferecer 👎🏽 em texto, mas isso **não é uma reação votável** na paleta do fórum.
+- Verificar proteção dupla `DiscussionReactionManager::getAllowedReactions()` + `discussion-reaction-bar.twig`; clicar na reação ativa remove o voto, sem botão de desfazer adicional. Preservar `allowed_reactions` no banco/config só com emojis positivos. Acrescentar Unit/Kernel simulando configuração adversarial e Browser mobile/desktop com o popin aberto.

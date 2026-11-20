@@ -106,3 +106,14 @@ Microsoft Fluent Emoji (licença MIT já preservada na pasta `fluent-emoji`),
 não uma nova biblioteca de ícones, sprite ou dependência externa.
 Os nomes `thumbs-down` (ícone) e `dislike` (valor da reação no Fórum)
 são deliberadamente distintos; inserir o emoji 👎 num texto não registra descurtida.
+
+### Reação negativa - variante mão parda
+
+O controle fixo **Descurtir** do Fórum usa o recurso oficial
+`thumbs-down-medium.svg` (👎🏽, Microsoft Fluent Emoji, tom Medium),
+copiado para os packs existentes `aculta_fluent_emoji` (Color/Flat)
+e `aculta_reacoes` (Color). O ID armazenado no Fórum permanece
+`dislike`, nunca `thumbs-down-medium`.
+Este emoji não integra as opções de reação positiva de `allowed_reactions`,
+nem aparece na paleta de reações do Fórum. O catálogo editorial da
+`aculta_editor` disponibiliza o glifo 👎🏽 em textos, o que não é voto.
