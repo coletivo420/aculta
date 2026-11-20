@@ -43,6 +43,16 @@ final class ConsumerCommentHostTest extends UnitTestCase {
   }
 
   /**
+   * Compact design alternates by display order: reply, mirrored, reply, mirrored.
+   */
+  public function testCompactDesignAlternatesReplyAndMirrored(): void {
+    self::assertSame('start', DiscussionReactionEntityViewHooks::alternatingSide(0));
+    self::assertSame('end', DiscussionReactionEntityViewHooks::alternatingSide(1));
+    self::assertSame('start', DiscussionReactionEntityViewHooks::alternatingSide(2));
+    self::assertSame('end', DiscussionReactionEntityViewHooks::alternatingSide(3));
+  }
+
+  /**
    * Builds a node double with the given bundle.
    */
   private function node(string $bundle): NodeInterface {

@@ -91,7 +91,9 @@ final class DiscussionReactionEntityViewHooks {
       $thread = $threadComment->get('thread')->value;
       $variables['reply_depth'] = min(3, is_string($thread) ? substr_count($thread, '.') : 0);
       // Resposta em nível: lado oposto ao cartão ao qual responde (pai). A raiz segue a alternância da conversa.
-      $variables['accent_side'] = $this->discussionSide($threadComment);
+      $variables['accent_side'] = self::isConsumerHost($threadComment->getCommentedEntity())
+        ? $this->consumerSide($threadComment)
+        : $this->discussionSide($threadComment);
       // Comentários de publicação da Revista: sem tópico; a publicação é o próprio tópico.
       $host = $threadComment->getCommentedEntity();
       $variables['publication_comment'] = $host instanceof NodeInterface && $host->bundle() === 'revista';
@@ -306,6 +308,30 @@ final class DiscussionReactionEntityViewHooks {
    */
   public static function isConsumerHost(?EntityInterface $host): bool {
     return !($host instanceof NodeInterface && $host->bundle() === 'aculta_forum_topic');
+  }
+
+  /**
+   * Design compacto dos consumidores: alterna por posição na ordem de exibição (resposta, espelhada, resposta, espelhada).
+   */
+  public static function alternatingSide(int $position): string {
+    return $position % 2 === 0 ? 'start' : 'end';
+  }
+
+  /**
+   * Posição da resposta na ordem de exibição do host (thread ASC), para alternar o lado.
+   */
+  private function consumerSide(CommentInterface $comment): string {
+    $storage = $this->entityTypeManager->getStorage('comment');
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('entity_type', $comment->getCommentedEntityTypeId())
+      ->condition('entity_id', $comment->getCommentedEntityId())
+      ->condition('field_name', $comment->getFieldName())
+      ->condition('status', 1)
+      ->sort('thread', 'ASC')
+      ->execute();
+    $position = array_search((int) $comment->id(), array_map('intval', array_values($ids)), TRUE);
+    return self::alternatingSide($position === FALSE ? 0 : $position);
   }
 
   /**

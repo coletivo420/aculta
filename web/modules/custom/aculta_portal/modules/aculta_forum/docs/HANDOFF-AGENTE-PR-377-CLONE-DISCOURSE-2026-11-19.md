@@ -161,6 +161,17 @@ Validação: schema SDC PASS (151 componentes, 2891 verificações).
 
 DEFERRED: stylelint (binário ausente, exit 127) e prova visual de desktop e mobile nos consumidores.
 
+## Design compacto dos consumidores: alternância por posição — 2026-11-20
+
+Decisão do responsável: no design compacto, a alternância é resposta > espelhada > resposta > espelhada, pela ordem de exibição.
+
+- `DiscussionReactionEntityViewHooks::consumerSide` calcula a posição pela ordem `thread` ASC entre os comentários publicados do mesmo host e campo.
+- `alternatingSide(position)`: par = `start` (resposta), ímpar = `end` (espelhada).
+- Fórum (host `aculta_forum_topic`) mantém `discussionSide` por árvore.
+- Prova: `ConsumerCommentHostTest` com 4 testes, 10 asserções, OK. PHPStan exit 0; guard PASS.
+
+Pendente: prova de ordem real (Kernel de comentários em LMS, Wiki e Revista) e visual. DEFERRED.
+
 ## Recontagem de consumo por código (somente twig, php e yml) — 2026-11-20
 
 Recontagem excluindo docs, CHANGELOG e Stories. Antes, `forum-topic-card` e `forum-reply-mirror` pareciam consumidos por causa de docs.
