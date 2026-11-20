@@ -6,8 +6,8 @@
   padding-inline: .875rem;
   border: 1px solid currentColor;
   background: transparent;
-  font: inherit;
   cursor: pointer;
+  font: inherit;
   color: inherit;
   border-radius: .5rem;
 }
