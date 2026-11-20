@@ -192,7 +192,7 @@ final class DiscussionReactionEntityViewHooks {
       $barProps = [];
     }
     $reactions = $barProps['reactions'] ?? NULL;
-    if (is_array($reactions) && $reactions !== []) {
+    if (is_array($reactions)) {
       $allowedReactions = $barProps['allowed_reactions'] ?? [];
       if (!is_array($allowedReactions)) {
         $allowedReactions = [];
@@ -201,7 +201,10 @@ final class DiscussionReactionEntityViewHooks {
         '#theme' => 'portal_component',
         '#name' => 'discussion-reactions-received',
         '#props' => [
-          'target_id' => 'discussion-reactions-comment-' . $comment->id(),
+          'target_id' => 'discussion-reactions-comment-' . $comment->id() . '-header',
+          'entity_type' => 'comment',
+          'entity_id' => (string) $comment->id(),
+          'total_count' => (int) ($barProps['total_count'] ?? 0),
           'reactions' => $reactions,
           'allowed_reactions' => $allowedReactions,
         ],

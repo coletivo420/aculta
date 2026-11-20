@@ -77,6 +77,8 @@
   {# A soma geral inclui todas as reações positivas, menos as descurtidas. #}
   {{ include('aculta420_v2:discussion-reactions-received', {
     target_id: target_id,
+    entity_type: entity_type,
+    entity_id: entity_id,
     reactions: reactions,
     allowed_reactions: allowed_reactions,
     total_count: total_count|default(0),

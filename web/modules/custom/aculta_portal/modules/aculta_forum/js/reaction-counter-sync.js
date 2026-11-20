@@ -8,7 +8,7 @@
 ((Drupal) => {
   'use strict';
 
-  const isCount = (value) => /^\\d+$/.test(String(value));
+  const isCount = (value) => /^\d+$/.test(String(value));
 
   const updateText = (element, value) => {
     if (element && isCount(value)) {
@@ -50,6 +50,13 @@
     if (!entityType || !isCount(entityId) || !isCount(total)) {
       return;
     }
+
+    // Update independent read-only summaries in comment headers as well.
+    document.querySelectorAll('[data-discussion-reactions-received]').forEach((summary) => {
+      if (summary.dataset.entityType === entityType && summary.dataset.entityId === entityId) {
+        updateText(summary.querySelector('.discussion-reactions-received__net .discussion-reactions-received__count'), total);
+      }
+    });
 
     document.querySelectorAll('[data-discussion-reaction-bar]').forEach((bar) => {
       if (bar === source || bar.dataset.entityType !== entityType || bar.dataset.entityId !== entityId) {

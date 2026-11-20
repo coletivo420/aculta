@@ -8,7 +8,7 @@
 {% set uid = random(100000000) %}
 {% set more_id = 'received-more-' ~ uid %}
 
-<div id="{{ target_id }}-received" class="discussion-reactions-received" data-discussion-reactions-received>
+<div id="{{ target_id }}-received" class="discussion-reactions-received" data-discussion-reactions-received data-entity-type="{{ entity_type|default('') }}" data-entity-id="{{ entity_id|default('') }}">
   <span class="discussion-reactions-received__badge discussion-reactions-received__net" title="{{ 'Total de curtidas positivas menos descurtidas'|t }}" aria-live="polite">
     <span>{{ 'Curtidas'|t }}:</span>
     <strong class="discussion-reactions-received__count">{{ total_count|default(0) }}</strong>
