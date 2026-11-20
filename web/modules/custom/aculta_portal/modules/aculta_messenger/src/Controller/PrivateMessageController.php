@@ -122,7 +122,7 @@ class PrivateMessageController extends ControllerBase implements PrivateMessageC
         '#title' => $this->t('Delete all private message content'),
         '#url' => Url::fromRoute('private_message.admin_config.uninstall_confirm'),
         '#attributes' => [
-          'class' => ['button'],
+          'data-portal-ui' => 'button',
         ],
       ],
     ];

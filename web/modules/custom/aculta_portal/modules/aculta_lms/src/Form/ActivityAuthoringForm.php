@@ -54,10 +54,12 @@ final class ActivityAuthoringForm extends FormBase {
    * Builds the activity authoring form.
    *
    * @param array<array-key, mixed> $form
-   *   The form render array being built.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    *
    * @return array<array-key, mixed>
-   *   The completed form render array.
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     [$course, $lesson, $activity] = $this->routeEntities();
@@ -161,7 +163,7 @@ final class ActivityAuthoringForm extends FormBase {
         '#button_type' => 'primary',
       ],
       'cancel' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Voltar à estrutura do curso'),
           'url' => Url::fromRoute('aculta_lms.course_structure', ['course' => $course->id()])->toString(),
@@ -176,7 +178,9 @@ final class ActivityAuthoringForm extends FormBase {
    * Validates activity configuration before save.
    *
    * @param array<array-key, mixed> $form
-   *   The form render array being validated.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $type = self::stringValue($form_state->getValue('type'));
@@ -203,7 +207,9 @@ final class ActivityAuthoringForm extends FormBase {
    * Saves the activity and returns to course structure.
    *
    * @param array<array-key, mixed> $form
-   *   The submitted form render array.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     [$course, $lesson, $activity] = $this->routeEntities();

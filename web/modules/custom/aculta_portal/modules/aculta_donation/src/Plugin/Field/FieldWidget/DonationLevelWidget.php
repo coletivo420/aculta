@@ -7,7 +7,6 @@ namespace Drupal\aculta_donation\Plugin\Field\FieldWidget;
 use CommerceGuys\Intl\Formatter\CurrencyFormatterInterface;
 use Drupal\commerce_store\CurrentStoreInterface;
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Field\Attribute\FieldWidget;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
@@ -137,6 +136,7 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public static function defaultSettings(): array {
     // A moeda vazia significa "moeda padrão da loja atual", resolvida por
@@ -222,6 +222,7 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
    * {@inheritdoc}
    *
    * @return array<int, \Drupal\Core\StringTranslation\TranslatableMarkup|string>
+   *   Render array returned by the method.
    */
   public function settingsSummary(): array {
     $class = get_class($this);
@@ -232,8 +233,14 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
     $singleLevels = isset($levels['single']) && is_array($levels['single']) ? $levels['single'] : [];
     $monthlyLevels = isset($levels['monthly']) && is_array($levels['monthly']) ? $levels['monthly'] : [];
 
-    $singleFiltered = array_map(static fn(mixed $v): string => is_scalar($v) || $v instanceof \Stringable ? (string) $v : '', array_filter($singleLevels, [$class, 'filterEmptyAmount']));
-    $monthlyFiltered = array_map(static fn(mixed $v): string => is_scalar($v) || $v instanceof \Stringable ? (string) $v : '', array_filter($monthlyLevels, [$class, 'filterEmptyAmount']));
+    $singleFiltered = array_map(
+      static fn(mixed $v): string => is_scalar($v) || $v instanceof \Stringable ? (string) $v : '',
+      array_filter($singleLevels, [$class, 'filterEmptyAmount']),
+    );
+    $monthlyFiltered = array_map(
+      static fn(mixed $v): string => is_scalar($v) || $v instanceof \Stringable ? (string) $v : '',
+      array_filter($monthlyLevels, [$class, 'filterEmptyAmount']),
+    );
 
     $singleValues = implode(', ', $singleFiltered);
     $monthlyValues = implode(', ', $monthlyFiltered);
@@ -251,7 +258,7 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
    *   O delta do item.
    * @param array<string, mixed> $element
    *   O elemento do formulário.
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O formulário completo.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   O estado atual do formulário.
@@ -318,7 +325,7 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
    *
    * @param array<int|string, mixed> $values
    *   Os valores brutos enviados pelo formulário.
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O formulário completo.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   O estado atual do formulário.
@@ -362,7 +369,7 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
       }
       else {
         // Get amount from the selected option.
-        $optionLabel = isset($options[$selectedValue]) ? $options[$selectedValue] : '';
+        $optionLabel = $options[$selectedValue] ?? '';
         $number = preg_replace('/\D/', '', $optionLabel) ?? '';
         $value = [
           'number' => $number,
@@ -381,7 +388,7 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
    *   O elemento do formulário.
    * @param \Symfony\Component\Validator\ConstraintViolationInterface $error
    *   A violação de restrição.
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O formulário completo.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   O estado atual do formulário.
@@ -389,6 +396,7 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
    * @return array<string, mixed>|bool
    *   O elemento afetado pelo erro ou FALSE para ignorar.
    */
+
   /**
    * {@inheritdoc}
    *
@@ -396,7 +404,7 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
    *   O elemento do formulário.
    * @param \Symfony\Component\Validator\ConstraintViolationInterface $error
    *   A violação de restrição.
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O formulário completo.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   O estado atual do formulário.
@@ -432,7 +440,7 @@ class DonationLevelWidget extends WidgetBase implements ContainerFactoryPluginIn
    *   O delta do item.
    * @param array<string, mixed> $element
    *   O elemento do formulário.
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O formulário completo.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   O estado atual do formulário.

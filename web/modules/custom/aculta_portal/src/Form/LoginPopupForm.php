@@ -10,6 +10,8 @@ use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Form\FormBase;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Htmx\Htmx;
 use Drupal\Core\Render\Markup;
@@ -23,7 +25,6 @@ use Drupal\user\UserAuthenticationInterface;
 use Drupal\user\UserAuthInterface;
 use Drupal\user\UserFloodControlInterface;
 use Drupal\user\UserInterface;
-use Drupal\user\UserStorageInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,25 +38,23 @@ use Symfony\Component\HttpFoundation\Response;
  * o fragmento; V1 mantém o fallback Drupal AJAX e sem JavaScript o fluxo é
  * um formulário nativo com retorno local validado.
  */
-final class LoginPopupForm extends UserLoginForm {
+final class LoginPopupForm extends FormBase {
 
   public const FORM_ID = 'aculta_login_popup_form';
 
   public const WRAPPER_ID = 'aculta-login-popup';
 
   public function __construct(
-    UserFloodControlInterface $user_flood_control,
-    UserStorageInterface $user_storage,
-    UserAuthInterface|UserAuthenticationInterface $user_auth,
-    RendererInterface $renderer,
-    BareHtmlPageRendererInterface $bare_html_renderer,
-    LoginFinalizer $login_finalizer,
+    protected UserFloodControlInterface $userFloodControl,
+    protected EntityTypeManagerInterface $entityTypeManager,
+    protected UserAuthInterface|UserAuthenticationInterface $userAuth,
+    protected RendererInterface $renderer,
+    protected BareHtmlPageRendererInterface $bareHtmlRenderer,
+    protected LoginFinalizer $loginFinalizer,
     protected readonly DomainSiteManagerInterface $domainSiteManager,
     protected readonly AuthIntegrationManager $authIntegration,
     protected readonly ModuleHandlerInterface $moduleHandler,
-  ) {
-    parent::__construct($user_flood_control, $user_storage, $user_auth, $renderer, $bare_html_renderer, $login_finalizer);
-  }
+  ) {}
 
   /**
    * {@inheritdoc}
@@ -63,7 +62,7 @@ final class LoginPopupForm extends UserLoginForm {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('user.flood_control'),
-      $container->get('entity_type.manager')->getStorage('user'),
+      $container->get('entity_type.manager'),
       $container->get('user.auth'),
       $container->get('renderer'),
       $container->get('bare_html_page_renderer'),
@@ -83,6 +82,9 @@ final class LoginPopupForm extends UserLoginForm {
 
   /**
    * Returns a local same-host destination outside authentication routes.
+   *
+   * @param mixed $value
+   *   Value used for $value.
    */
   public static function safeDestination(mixed $value): string {
     $path = is_string($value) ? $value : '';
@@ -95,10 +97,15 @@ final class LoginPopupForm extends UserLoginForm {
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
-    $form = parent::buildForm($form, $form_state);
+    $form = $this->coreLoginForm()->buildForm($form, $form_state);
     $validators = isset($form['#validate']) && is_array($form['#validate']) ? $form['#validate'] : [];
     $authentication_wrapper = 'aculta_portal.form_callbacks:validateLoginAuthentication';
     $authentication_validators = array_values(array_filter(
@@ -223,7 +230,11 @@ final class LoginPopupForm extends UserLoginForm {
   /**
    * Returns the popup's Google sign-in link when its route exists.
    *
+   * @param string $destination
+   *   Value used for $destination.
+   *
    * @return array<string, mixed>|null
+   *   Render array returned by the method.
    */
   private function googleButton(string $destination): ?array {
     $url = $this->domainSiteManager->routeUrl(SiteKey::Account, 'social_auth.network.redirect', ['network' => 'google']);
@@ -237,14 +248,14 @@ final class LoginPopupForm extends UserLoginForm {
     }
     $url->setOption('query', $query);
     $markup = sprintf(
-      '<a class="aculta-login-dialog__google-btn" href="%s"><span>%s <strong>Google</strong></span></a>',
+      '<a data-portal-ui="login-dialog-google-button" href="%s"><span>%s <strong>Google</strong></span></a>',
       Html::escape($url->toString()),
       Html::escape((string) $this->t('Continuar com')),
     );
     return [
       '#type' => 'container',
       '#weight' => -20,
-      '#attributes' => ['class' => ['aculta-auth-provider']],
+      '#attributes' => ['data-portal-ui' => 'auth-provider'],
       'google' => ['#markup' => Markup::create($markup)],
     ];
   }
@@ -253,10 +264,13 @@ final class LoginPopupForm extends UserLoginForm {
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function validateFinal(array &$form, FormStateInterface $form_state): void {
     if ($form_state->get('uid')) {
-      parent::validateFinal($form, $form_state);
+      $this->coreLoginForm()->validateFinal($form, $form_state);
       return;
     }
     $flood_config = $this->config('user.flood');
@@ -294,18 +308,47 @@ final class LoginPopupForm extends UserLoginForm {
   }
 
   /**
+   * Delegates credential checks to Drupal's standard login form.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   */
+  public function validateAuthentication(array &$form, FormStateInterface $form_state): void {
+    $this->coreLoginForm()->validateAuthentication($form, $form_state);
+  }
+
+  /**
+   * Creates Drupal's core login form with this form's injected dependencies.
+   */
+  private function coreLoginForm(): UserLoginForm {
+    return new UserLoginForm(
+      $this->userFloodControl,
+      $this->entityTypeManager->getStorage('user'),
+      $this->userAuth,
+      $this->renderer,
+      $this->bareHtmlRenderer,
+      $this->loginFinalizer,
+    );
+  }
+
+  /**
    * {@inheritdoc}
    *
    * Preserves the safe return path for native and HTMX submissions.
    *
    * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = $form_state->get('uid');
     if (empty($uid) || (!is_int($uid) && !is_string($uid))) {
       return;
     }
-    $account = $this->userStorage->load($uid);
+    $account = $this->entityTypeManager->getStorage('user')->load($uid);
     if ($account instanceof UserInterface) {
       $this->loginFinalizer->finalizeLogin($account);
     }
@@ -322,7 +365,12 @@ final class LoginPopupForm extends UserLoginForm {
    * Keeps the legacy non-HTMX popup response for ACULTA420 V1.
    *
    * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   *
    * @return array<string, mixed>|AjaxResponse
+   *   Render array returned by the method.
    */
   public function ajaxSubmit(array &$form, FormStateInterface $form_state): array|AjaxResponse {
     if ($form_state->hasAnyErrors()) {

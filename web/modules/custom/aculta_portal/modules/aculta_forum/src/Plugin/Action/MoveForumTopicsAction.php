@@ -54,7 +54,7 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
    */
   public function __construct(
     array $configuration,
-    $plugin_id,
+    string $plugin_id,
     $plugin_definition,
     protected readonly ForumTopicMover $mover,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
@@ -66,9 +66,22 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
   /**
    * {@inheritdoc}
    *
+   * @param ContainerInterface $container
+   *   Value used for $container.
    * @param array<string, mixed> $configuration
+   *   Value used for $configuration.
+   * @param mixed $plugin_id
+   *   Value used for $plugin_id.
+   * @param mixed $plugin_definition
+   *   Value used for $plugin_definition.
+   *
+   * @return static
+   *   Value returned by the method.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    if (!is_string($plugin_id)) {
+      throw new \InvalidArgumentException('Plugin ID must be a string.');
+    }
     return new static(
       $configuration,
       $plugin_id,
@@ -112,7 +125,12 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state): array {
     $selected_count = $this->getSelectedCount();
@@ -137,7 +155,13 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function validateConfigurationForm(array &$form, FormStateInterface $form_state): void {
     // ConfigureAction restores the selection to FormState for validation but
@@ -164,7 +188,13 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state): void {
     $destVal = $form_state->getValue('destination_category');
@@ -174,7 +204,11 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
   /**
    * {@inheritdoc}
    *
+   * @param ?object $object
+   *   Value used for $object.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function execute(?object $object = NULL): array {
     if ($this->getSelectedCount() > self::MAX_SELECTION
@@ -204,7 +238,10 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
    * {@inheritdoc}
    *
    * @param array<int, mixed> $objects
+   *   Value used for $objects.
+   *
    * @return array<int, mixed>
+   *   Render array returned by the method.
    */
   public function executeMultiple(array $objects): array {
     if ($this->getSelectedCount() > self::MAX_SELECTION) {
@@ -249,6 +286,10 @@ final class MoveForumTopicsAction extends ViewsBulkOperationsActionBase implemen
    * Counts the persisted VBO selection without trusting display labels.
    *
    * @param array<array-key, mixed>|null $context
+   *   Value used for $context.
+   *
+   * @return int
+   *   Value returned by the method.
    */
   private function getSelectedCount(?array $context = NULL): int {
     $context ??= $this->context;

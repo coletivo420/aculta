@@ -201,6 +201,7 @@ final class PortalRequirementsController extends ControllerBase {
    * Administrative landing page for the ACULTA Portal section.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function overview(): array {
     $rows = [];
@@ -272,6 +273,7 @@ final class PortalRequirementsController extends ControllerBase {
    * Builds the report without exposing configuration or credential values.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function report(): array {
     $rows = [];
@@ -308,8 +310,14 @@ final class PortalRequirementsController extends ControllerBase {
       ],
       'php_extensions' => $this->buildPhpExtensionSection(),
       'note' => [
-        '#component' => 'aculta420_v2:status-messages',
-        '#props' => ['type' => 'warning', 'messages' => [$this->t('Os avisos sobre Google e Turnstile refletem o estado pré-deploy intencional. Até a versão 1.0, o gateway Mercado Pago fica habilitado com chaves de teste. A compatibilidade de versão não significa que um serviço externo foi homologado.')]],
+        '#theme' => 'portal_component',
+        '#name' => 'status-messages',
+        '#props' => [
+          'type' => 'warning',
+          'messages' => [
+            $this->t('Os avisos sobre Google e Turnstile refletem o estado pré-deploy intencional. Até a versão 1.0, o gateway Mercado Pago fica habilitado com chaves de teste. A compatibilidade de versão não significa que um serviço externo foi homologado.'),
+          ],
+        ],
       ],
       'indexing' => $this->buildIndexingSection(),
       'cep' => $this->buildCepSection(),
@@ -330,8 +338,8 @@ final class PortalRequirementsController extends ControllerBase {
     }
     $libraries[] = 'system/admin';
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:portal-requirements',
+      '#theme' => 'portal_component',
+      '#name' => 'portal-requirements',
       '#props' => [],
       '#slots' => ['content' => $build],
     ];
@@ -341,6 +349,7 @@ final class PortalRequirementsController extends ControllerBase {
    * Reports the runtime PHP extensions required by the integrated modules.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function buildPhpExtensionSection(): array {
     $lockFile = dirname($this->appRoot) . '/composer.lock';
@@ -429,12 +438,10 @@ final class PortalRequirementsController extends ControllerBase {
   }
 
   /**
-   * Lists enabled Portal submodules from Drupal's extension registry.
-   *
-   * Names and summaries come from each module's own .info.yml; this avoids a
-   * second manually maintained inventory that could drift from runtime state.
+   * Lists enabled Portal submodules from Drupal's extension registry. Names and summaries come from each module's own .info.yml; this avoids a second manually maintained inventory that could drift from runtime state.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function buildActivePortalFunctions(): array {
     $rows = [];
@@ -477,6 +484,7 @@ final class PortalRequirementsController extends ControllerBase {
    * Lists active, explicitly registered Portal implementation services.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function buildPortalImplementations(): array {
     return [
@@ -508,13 +516,10 @@ final class PortalRequirementsController extends ControllerBase {
   }
 
   /**
-   * Monta a seção de indexação do relatório.
-   *
-   * Usa a regra do ambiente declarado e o último resultado do deployer. O
-   * Portal não executa a verificação; ela é feita pela verificação de robots
-   * do ACULTA Deployer, que grava var/deployer/status.json.
+   * Monta a seção de indexação do relatório. Usa a regra do ambiente declarado e o último resultado do deployer. O Portal não executa a verificação; ela é feita pela verificação de robots do ACULTA Deployer, que grava var/deployer/status.json.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function buildIndexingSection(): array {
     $environment = DeployerEnvironment::current(dirname($this->appRoot));
@@ -577,13 +582,10 @@ final class PortalRequirementsController extends ControllerBase {
   }
 
   /**
-   * Monta a seção de consultas de CEP do relatório.
-   *
-   * Mostra o último resultado das APIs (cron) e a versão da base local, pela
-   * data de hoje. Usa a mesma legenda e as mesmas classes de status das demais
-   * linhas do relatório.
+   * Monta a seção de consultas de CEP do relatório. Mostra o último resultado das APIs (cron) e a versão da base local, pela data de hoje. Usa a mesma legenda e as mesmas classes de status das demais linhas do relatório.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function buildCepSection(): array {
     $rows = [];
@@ -613,7 +615,11 @@ final class PortalRequirementsController extends ControllerBase {
   }
 
   /**
-   * Texto do status, junto do símbolo (OK, Atenção ou Erro). */
+   * Provides the statusText operation.
+   *
+   * @param string $status
+   *   Value used for $status.
+   */
   private function statusText(string $status): string {
     return match ($status) {
       'ok' => (string) $this->t('OK'),
@@ -625,9 +631,11 @@ final class PortalRequirementsController extends ControllerBase {
   /**
    * Builds one module requirement row.
    *
-   * @param array{name: string, modules: list<string>, package: string, minimum: string, purpose: string, related_package?: string, related_minimum?: string, warning?: string} $requirement
+   * @param array{name: string, modules: list<string>, package: string, minimum: string, purpose: string, warning?: string, related_package?: string, related_minimum?: string} $requirement
+   *   Value used for $requirement.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function buildModuleRow(array $requirement): array {
     $missing = [];
@@ -680,6 +688,7 @@ final class PortalRequirementsController extends ControllerBase {
    * Builds the enabled public theme row.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function buildBaseThemeRow(): array {
     // Tema base do ACULTA420 (base theme: bootstrap). O pacote é drupal/bootstrap (Bootstrap 5), não drupal/bootstrap5.
@@ -704,6 +713,7 @@ final class PortalRequirementsController extends ControllerBase {
    * Builds the enabled public theme row.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function buildThemeRow(): array {
     $theme_exists = $this->themes->themeExists('aculta420_v2');

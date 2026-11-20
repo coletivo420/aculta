@@ -38,6 +38,9 @@ final class EventDateDeleteForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -57,6 +60,18 @@ final class EventDateDeleteForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param ?Event $aculta_event
+   *   Value used for $aculta_event.
+   * @param ?EventDate $aculta_event_date
+   *   Value used for $aculta_event_date.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?Event $aculta_event = NULL, ?EventDate $aculta_event_date = NULL): array {
     $event = $aculta_event ?? $this->entityFromState($form_state, 'event_id', 'aculta_event');
@@ -100,7 +115,7 @@ final class EventDateDeleteForm extends FormBase {
       ->onlyMainContent()
       ->applyTo($form['actions']['submit']);
     $form['actions']['cancel'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) $this->t('Cancelar'),
         'url' => Url::fromRoute($this->eventRouteContext->route('aculta_events.event_edit', 'aculta_events.organizer_event_edit'), ['aculta_event' => $event->id()])->toString(),

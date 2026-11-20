@@ -74,6 +74,14 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
 
   /**
    * Builds only the course's existing material reference widgets.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $course = $this->course();
@@ -187,8 +195,8 @@ final class CourseMaterialsForm extends FormBase implements ContainerInjectionIn
    */
   private function buildCourseDocuments(GroupInterface $course): array {
     $build = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:lms-course-materials',
+      '#theme' => 'portal_component',
+      '#name' => 'lms-course-materials',
       '#props' => [],
       '#slots' => [
         'title' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Documentos PDF privados do curso')],

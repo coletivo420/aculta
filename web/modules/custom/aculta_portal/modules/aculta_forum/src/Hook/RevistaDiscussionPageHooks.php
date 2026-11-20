@@ -18,10 +18,14 @@ use Drupal\node\NodeInterface;
  */
 final class RevistaDiscussionPageHooks {
 
-  /** Bundles com Layout Builder que ainda não recebem o popup de resposta do fórum. */
+  /**
+   * Bundles com Layout Builder que ainda não recebem o popup de resposta.
+   */
   private const LAYOUT_BUNDLES = ['revista', 'wiki_entry'];
 
-  /** Todos os bundles que hospedam o campo de discussão. */
+  /**
+   * Bundles that host the contextual discussion field.
+   */
   private const DISCUSSION_BUNDLES = ['revista', 'wiki_entry', 'aculta_forum_topic', 'aculta_lms_topic'];
 
   public function __construct(
@@ -32,11 +36,13 @@ final class RevistaDiscussionPageHooks {
   /**
    * Anexa as bibliotecas da discussão nas páginas com o campo.
    */
+
   /**
-   * Implements hook_page_attachments().
-   *
-   * @param array<string, mixed> $attachments
-   */
+ * Implements hook_page_attachments().
+ *
+ * @param array<array-key, mixed> $attachments
+ *   Value used for $attachments.
+ */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     $node = $this->discussionNode();
@@ -59,10 +65,11 @@ final class RevistaDiscussionPageHooks {
   }
 
   /**
-   * Renderiza os popups da discussão uma vez por página.
-   *
-   * @param array<string, mixed> $page
-   */
+ * Renderiza os popups da discussão uma vez por página.
+ *
+ * @param array<array-key, mixed> $page
+ *   Value used for $page.
+ */
   #[Hook('page_bottom')]
   public function pageBottom(array &$page): void {
     $node = $this->discussionNode();
@@ -71,8 +78,8 @@ final class RevistaDiscussionPageHooks {
     }
     if (in_array($node->bundle(), self::LAYOUT_BUNDLES, TRUE)) {
       $page['aculta_reply_popup'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:popup',
+        '#theme' => 'portal_component',
+        '#name' => 'popup',
         '#props' => [
           'id' => 'aculta-reply-dialog',
           'title' => (string) t('Responder à discussão'),
@@ -80,7 +87,14 @@ final class RevistaDiscussionPageHooks {
         ],
         '#slots' => [
           'content' => [
-            ['#type' => 'component', '#component' => 'aculta420_v2:posting-overlay', '#props' => ['title' => (string) t('Aguarde'), 'text' => (string) t('Postando seu comentário…')]],
+            [
+              '#theme' => 'portal_component',
+              '#name' => 'posting-overlay',
+              '#props' => [
+                'title' => (string) t('Aguarde'),
+                'text' => (string) t('Postando seu comentário…'),
+              ],
+            ],
             ['#markup' => '<div id="aculta-reply-dialog-body" class="aculta-reply-dialog__body"></div>'],
           ],
         ],
@@ -88,8 +102,8 @@ final class RevistaDiscussionPageHooks {
     }
     if ($this->canModerate()) {
       $page['aculta_admin_popup'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:popup',
+        '#theme' => 'portal_component',
+        '#name' => 'popup',
         '#props' => [
           'id' => 'aculta-admin-dialog',
           'title' => (string) t('Controles do comentário'),
@@ -113,6 +127,9 @@ final class RevistaDiscussionPageHooks {
     return $node;
   }
 
+  /**
+   * Provides the canModerate operation.
+   */
   private function canModerate(): bool {
     return $this->currentUser->hasPermission('administer comments');
   }

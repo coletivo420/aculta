@@ -30,6 +30,9 @@ final class EventOrganizationRecoveryForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -47,6 +50,16 @@ final class EventOrganizationRecoveryForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param ?EventOrganization $aculta_event_organization
+   *   Value used for $aculta_event_organization.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?EventOrganization $aculta_event_organization = NULL): array {
     if (!$aculta_event_organization instanceof EventOrganization) {
@@ -67,7 +80,8 @@ final class EventOrganizationRecoveryForm extends FormBase {
     }
 
     $form['intro'] = [
-      '#component' => 'aculta420_v2:status-messages',
+      '#theme' => 'portal_component',
+      '#name' => 'status-messages',
       '#props' => ['type' => 'warning'],
       '#slots' => ['content' => [
         'info' => ['#markup' => '<p>' . $this->t('A <strong>recuperação administrativa de titularidade</strong> é uma operação excepcional que transfere a titularidade direta da organização <em>%label</em> para um novo titular selecionado, atribuindo os poderes de administração e revogando a gestão anterior.', [
@@ -120,7 +134,7 @@ final class EventOrganizationRecoveryForm extends FormBase {
         '#button_type' => 'primary',
       ],
       'cancel' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Cancelar'),
           'url' => Url::fromRoute('aculta_events.admin_organizations')->toString(),

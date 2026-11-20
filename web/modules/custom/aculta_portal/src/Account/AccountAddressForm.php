@@ -127,7 +127,6 @@ final class AccountAddressForm {
         if (!isset($tree['#attached']['library']) || !is_array($tree['#attached']['library'])) {
           $tree['#attached']['library'] = [];
         }
-        $tree['#attached']['library'][] = 'aculta420_v2/address-fields';
       }
       else {
         // External address adapters (such as OSM tag review) have their own
@@ -192,7 +191,7 @@ final class AccountAddressForm {
    *   Tipo da entidade salva.
    * @param \Drupal\Core\Entity\EntityInterface $entity
    *   Entidade que recebe o endereço.
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Formulário submetido.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   Estado do formulário submetido.

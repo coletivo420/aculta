@@ -34,8 +34,11 @@ final class AppearanceHooks {
   ) {}
 
   /**
-   * Contrato neutro de visual: modo e skin resolvidos pelo Portal.
-   */
+ * Contrato neutro de visual: modo e skin resolvidos pelo Portal.
+ *
+ * @param array<array-key, mixed> $variables
+ *   Template variables.
+ */
   #[Hook('preprocess_html')]
   public function preprocessHtml(array &$variables): void {
     $variables['aculta_color_mode'] = $this->preference->resolve((int) $this->currentUser->id());
@@ -55,10 +58,11 @@ final class AppearanceHooks {
   }
 
   /**
-   * O HTML depende do usuário e do padrão do site.
-   *
-   * Sem estes metadados, o cache de página serviria um modo antigo.
-   */
+ * O HTML depende do usuário e do padrão do site. Sem estes metadados, o cache de página serviria um modo antigo.
+ *
+ * @param array<array-key, mixed> $attachments
+ *   Value used for $attachments.
+ */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     $cache = is_array($attachments['#cache'] ?? NULL) ? $attachments['#cache'] : [];
@@ -77,15 +81,15 @@ final class AppearanceHooks {
     $attachments['#cache'] = $cache;
     $attached = is_array($attachments['#attached'] ?? NULL) ? $attachments['#attached'] : [];
     $drupalSettings = is_array($attached['drupalSettings'] ?? NULL) ? $attached['drupalSettings'] : [];
-    $acultaPortal = is_array($drupalSettings['acultaPortal'] ?? NULL) ? $drupalSettings['acultaPortal'] : [];
-    $acultaPortal['colorMode'] = [
+    $portalUi = is_array($drupalSettings['portalUi'] ?? NULL) ? $drupalSettings['portalUi'] : [];
+    $portalUi['colorMode'] = [
       'authenticated' => $uid > 0,
     ];
     if ($uid > 0) {
-      $acultaPortal['colorMode']['updateUrl'] =
+      $portalUi['colorMode']['updateUrl'] =
         $this->urlGenerator->generateFromRoute('aculta_portal.color_mode_preference.update');
     }
-    $drupalSettings['acultaPortal'] = $acultaPortal;
+    $drupalSettings['portalUi'] = $portalUi;
     $attached['drupalSettings'] = $drupalSettings;
     $attachments['#attached'] = $attached;
   }

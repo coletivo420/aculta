@@ -190,7 +190,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O array do formulário.
    * @param FormStateInterface $form_state
    *   O estado atual do formulário.
@@ -282,7 +282,7 @@ class PrivateMessageThreadMemberFormatter extends FormatterBase implements Conta
   /**
    * Ajax callback for settings form.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O array do formulário.
    * @param FormStateInterface $form_state
    *   O estado atual do formulário.

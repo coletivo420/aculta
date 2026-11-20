@@ -25,7 +25,7 @@ final class ActivityFormCallbacks {
   /**
    * Validates the conditional Activity fields.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Formulário em validação.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   Estado do formulário.

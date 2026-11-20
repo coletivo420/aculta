@@ -42,6 +42,11 @@ final class AccountShellBuilder {
 
   /**
    * Link de uma seção. A visão geral original fica em /conta-legada (rota oficial); a raiz da Conta é o hub do Studio.
+   *
+   * @param string $route
+   *   Value used for $route.
+   * @param string $sectionRoute
+   *   Value used for $sectionRoute.
    */
   private function sectionUrl(string $route, string $sectionRoute): string {
     if ($sectionRoute === 'aculta_portal.dashboard') {
@@ -52,6 +57,9 @@ final class AccountShellBuilder {
 
   /**
    * Wraps an existing route's render array in the shared account shell.
+   *
+   * @param array<array-key, mixed> $variables
+   *   Template variables.
    */
   public function build(array &$variables): void {
     $route = $this->routeMatch->getRouteName();
@@ -154,7 +162,7 @@ final class AccountShellBuilder {
     $logout = ['href' => $logoutUrl, 'label' => (string) $this->translation->translate('Sair')];
 
     $variables['page']['content'] = [
-      '#theme' => 'aculta_portal_shell',
+      '#theme' => 'portal_shell',
       // @todo shell da conta carrega o comportamento (navegação AJAX, sanfona do celular), inclusive pedidos.
       '#attached' => ['library' => ['aculta_portal/account-navigation']],
       '#section_title' => $sections[$route]['title'],
@@ -169,7 +177,7 @@ final class AccountShellBuilder {
     ];
     // The shell owns the only H1. Keep account actions in its sidebar.
     $variables['aculta_page_title'] = [];
-    $variables['aculta_portal_menu'] = [];
+    $variables['portal_account_menu'] = [];
   }
 
   /**

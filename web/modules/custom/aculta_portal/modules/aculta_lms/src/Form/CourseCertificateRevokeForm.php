@@ -56,12 +56,12 @@ final class CourseCertificateRevokeForm extends FormBase {
   /**
    * Monta o formulário de revogação do certificado.
    *
-   * @param array $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
    *
-   * @return array
+   * @return array<array-key, mixed>
    *   Estrutura do formulário.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
@@ -90,7 +90,7 @@ final class CourseCertificateRevokeForm extends FormBase {
       '#value' => $this->t('Revogar certificado'),
     ];
     $form['cancel'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) $this->t('Cancelar'),
         'url' => Url::fromRoute('aculta_lms.certificate_issue', ['group' => $this->certificateRouteMatch->getParameter('group')->id()])->toString(),

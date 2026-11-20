@@ -51,8 +51,8 @@ class DiscussionReactionBuilder {
     $targetId = "discussion-reactions-{$entityType}-{$entityId}";
 
     $build = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:discussion-reaction-bar',
+      '#theme' => 'portal_component',
+      '#name' => 'discussion-reaction-bar',
       '#props' => [
         'target_id' => $targetId,
         'entity_type' => $entityType,

@@ -57,6 +57,9 @@ final class WeSativaExperienceProvider implements StudioExperienceProviderInterf
 
   /**
    * Delegates access to the Wiki workspace service.
+   *
+   * @param AccountInterface $account
+   *   Account to evaluate.
    */
   public function access(AccountInterface $account): AccessResultInterface {
     return $this->workspace?->access($account)
@@ -65,6 +68,13 @@ final class WeSativaExperienceProvider implements StudioExperienceProviderInterf
 
   /**
    * Builds the authorized contributor workspace.
+   */
+
+  /**
+   * Builds the render array.
+   *
+   * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function build(): array {
     if ($this->workspace === NULL) {

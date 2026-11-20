@@ -23,7 +23,7 @@ trait HtmxDateListResponseTrait {
    *   Rota do host principal.
    * @param string $organizerRoute
    *   Rota do host de eventos.
-   * @param array $parameters
+   * @param array<array-key, mixed> $parameters
    *   Parâmetros da rota.
    */
   protected function htmxRouteUrl(string $mainRoute, string $organizerRoute, array $parameters): Url {
@@ -40,7 +40,12 @@ trait HtmxDateListResponseTrait {
     $list = [
       'messages' => ['#type' => 'status_messages', '#weight' => -100],
     ] + $list;
-    $list['#attributes']['hx-swap-oob'] = 'outerHTML';
+    $attributes = $list['#attributes'] ?? [];
+    if (!is_array($attributes)) {
+      $attributes = [];
+    }
+    $attributes['hx-swap-oob'] = 'outerHTML';
+    $list['#attributes'] = $attributes;
     return new Response(
       (string) $this->renderer->renderInIsolation($list),
       Response::HTTP_OK,
@@ -53,6 +58,15 @@ trait HtmxDateListResponseTrait {
 
   /**
    * Redireciona pelo HTMX quando o evento não pode ser carregado.
+   */
+
+  /**
+   * Provides the htmxRedirectResponse operation.
+   *
+   * @param string $route
+   *   Value used for $route.
+   * @param array<array-key, mixed> $parameters
+   *   Route parameters.
    */
   protected function htmxRedirectResponse(string $route, array $parameters = []): Response {
     return new Response('', Response::HTTP_OK, [

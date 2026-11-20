@@ -270,3 +270,30 @@ variante compacta também aceita `data-card-variation="compact"` no SDC card.
 Os gates de fronteira e de documentação de tokens passam no worktree após a
 mudança; a validação Runtime e os testes Kernel ainda precisam ser executados.
 
+
+### Refatoração da fronteira Portal–ACULTA420 V2 (2026-11-20)
+
+Os módulos agora compõem componentes do tema por nomes neutros: `#theme =>
+portal_component` e `#name => <id>`. O tema resolve apenas IDs presentes em
+`PagePresentationHooks::PORTAL_COMPONENTS`; nomes fora da lista mantêm o fallback
+renderizável sem descoberta arbitrária. Botão, shell, menu da conta e editor de
+foto usam hooks neutros (`portal_button`, `portal_shell`, `portal_account_menu`
+e `portal_photo_editor`). O contrato de rota `_portal_presentation` comunica
+variantes visuais sem o tema depender dos nomes de rota dos módulos.
+
+Atributos de apresentação emitidos pelos módulos usam tokens semânticos
+`data-portal-ui`. `PortalUiHooks::TOKENS` do V2 converte tokens que precisam de
+estilo em classes; valores com lista vazia são âncoras semânticas ou pertencem a
+um SDC que já oferece o estilo. `visually-hidden` permanece como utilitário do
+Drupal Core e sua exceção sem folha CSS local está documentada em
+`aculta420_v2/docs/classes-sem-css-excecoes.md`. CSS de loja, checkout e campos
+de endereço foi movido para bibliotecas do tema; o módulo mantém dados,
+validação, acesso, cache e comportamento.
+
+Validação executada nesta fase: `validate-module-theme-boundary` PASS (7.306
+verificações), `validate-aculta420-mapped-classes` PASS (384 classes, sem
+Bootstrap), UI Styles PASS (54), fundações PASS (85 pares), UI Skins PASS
+(134), PHP lint PASS nos arquivos alterados e suíte Unit focal PASS (31 testes,
+169 assertions). A captura visual no Runtime não foi executada; permanece
+DEFERRED. PHPStan nível 10 e a redução da dívida tocada seguem em validação e
+não são declarados PASS neste registro.

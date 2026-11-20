@@ -69,6 +69,16 @@ final class EventOrganizationMembersForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param ?EventOrganization $aculta_event_organization
+   *   Value used for $aculta_event_organization.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?EventOrganization $aculta_event_organization = NULL): array {
     if ($aculta_event_organization === NULL) {
@@ -90,7 +100,8 @@ final class EventOrganizationMembersForm extends FormBase {
       $form['transfer_invite'] = [
         '#type' => 'container',
         'notice' => [
-          '#component' => 'aculta420_v2:status-messages',
+          '#theme' => 'portal_component',
+          '#name' => 'status-messages',
           '#props' => ['type' => 'warning'],
           '#slots' => ['content' => [
             '#markup' => '<p>' . $this->t('<strong>Convite de titularidade:</strong> Você foi convidado a assumir a titularidade desta organização.') . '</p>',
@@ -286,7 +297,7 @@ final class EventOrganizationMembersForm extends FormBase {
     $backRoute = $isAdmin ? 'aculta_events.admin_organizations' : 'aculta_events.organizer_dashboard';
     $backTitle = $isAdmin ? $this->t('Voltar às organizações') : $this->t('Voltar ao Studio Culturas');
     $form['back'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) $backTitle,
         'url' => Url::fromRoute($backRoute)->toString(),

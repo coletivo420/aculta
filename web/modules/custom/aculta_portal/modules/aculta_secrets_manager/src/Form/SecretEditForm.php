@@ -28,6 +28,9 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
 
   /**
    * Creates the form from the service container.
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -46,10 +49,14 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
    * Builds the credential edit form.
    *
    * @param array<mixed> $form
+   *   Form render array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
    * @param string $name
+   *   Value used for $name.
    *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, string $name = ''): array {
     if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
@@ -75,8 +82,14 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
     $form['actions'] = ['#type' => 'actions'];
     if (!$this->secrets->canSaveHere()) {
       $form['storage_notice'] = [
-        '#component' => 'aculta420_v2:status-messages',
-        '#props' => ['type' => 'warning', 'messages' => [(string) $this->t('⚠ Neste ambiente as credenciais são armazenadas no banco de dados. O formulário não grava aqui.')]],
+        '#theme' => 'portal_component',
+        '#name' => 'status-messages',
+        '#props' => [
+          'type' => 'warning',
+          'messages' => [
+            (string) $this->t('⚠ Neste ambiente as credenciais são armazenadas no banco de dados. O formulário não grava aqui.'),
+          ],
+        ],
       ];
       $form['actions']['submit'] = ['#type' => 'submit', '#value' => $this->t('Salvar'), '#disabled' => TRUE];
     }
@@ -102,7 +115,9 @@ final class SecretEditForm extends FormBase implements ContainerInjectionInterfa
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Form render array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $rawName = $form_state->get('name');

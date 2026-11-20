@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_portal\Search;
 
 use Drupal\aculta_portal\Domain\DomainSiteManager;
-use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\Form\FormBuilderInterface;
@@ -81,8 +80,8 @@ final class SearchPageController implements ContainerInjectionInterface {
     ];
     if ($term === '') {
       $build['hint'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:hint',
+        '#theme' => 'portal_component',
+        '#name' => 'hint',
         '#props' => ['tone' => 'muted'],
         '#slots' => ['content' => ['#plain_text' => $this->t('Digite um termo para buscar no site.')]],
       ];

@@ -197,8 +197,8 @@ final class DiscussionReactionEntityViewHooks {
         $allowedReactions = [];
       }
       $variables['reactions_received'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:discussion-reactions-received',
+        '#theme' => 'portal_component',
+        '#name' => 'discussion-reactions-received',
         '#props' => [
           'target_id' => 'discussion-reactions-comment-' . $comment->id(),
           'reactions' => $reactions,

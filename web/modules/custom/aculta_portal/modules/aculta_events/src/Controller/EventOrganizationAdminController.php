@@ -24,6 +24,12 @@ final class EventOrganizationAdminController extends ControllerBase {
 
   /**
    * Visão geral de organizações no painel administrativo.
+   *
+   * @param Request $request
+   *   Current HTTP request.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function overview(Request $request): array {
     $storage = $this->entities->getStorage('aculta_event_organization');
@@ -244,7 +250,7 @@ final class EventOrganizationAdminController extends ControllerBase {
       'header_actions' => [
         '#type' => 'actions',
         'add' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => (string) $this->t('+ Cadastrar organização'),
             'url' => Url::fromRoute('aculta_events.admin_organization_add')->toString(),
@@ -307,7 +313,7 @@ final class EventOrganizationAdminController extends ControllerBase {
               '#attributes' => ['data-portal-ui' => 'button'],
             ],
             'reset' => [
-              '#type' => 'aculta_portal_button',
+              '#type' => 'portal_button',
               '#props' => [
                 'text' => (string) $this->t('Limpar'),
                 'url' => Url::fromRoute('aculta_events.admin_organizations')->toString(),

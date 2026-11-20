@@ -7,7 +7,6 @@ namespace Drupal\aculta_donation\Plugin\Commerce\CheckoutPane;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowInterface;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutPane\CheckoutPaneBase;
 use Drupal\aculta_donation\Exception\MissingDonationItemException;
-use Drupal\commerce_order\Entity\OrderInterface;
 use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
@@ -221,6 +220,7 @@ class DonationItemPaneBase extends CheckoutPaneBase {
    * @throws \Drupal\Core\TypedData\Exception\MissingDataException
    * @throws \Drupal\Core\TypedData\Exception\ReadOnlyException
    */
+
   /**
    * Builds an updated OrderItem object based upon the submitted form values.
    *
@@ -299,8 +299,8 @@ class DonationItemPaneBase extends CheckoutPaneBase {
     $renderArray = $viewBuilder->view($donationItem, $viewMode, $donationItem->language()->getId());
     return [
       'summary' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:donation-presentation',
+        '#theme' => 'portal_component',
+        '#name' => 'donation-presentation',
         '#props' => [
           'variant' => 'summary',
           'attributes' => new Attribute(['data-donation-pane' => $this->getId()]),

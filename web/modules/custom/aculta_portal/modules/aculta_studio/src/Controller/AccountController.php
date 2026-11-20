@@ -44,7 +44,7 @@ final class AccountController {
     ));
     $cache = CacheableMetadata::createFromRenderArray($build);
     foreach ($build['#experiences'] as $card) {
-      $cache->addCacheableDependency($card);
+      $cache->addCacheableDependency(CacheableMetadata::createFromRenderArray($card));
     }
     foreach ($this->experiences->all() as $candidate) {
       if (!in_array($candidate->id(), ['conta', 'perfil', 'salvos', 'mercado_pago_plans'], TRUE)) {
@@ -96,8 +96,8 @@ final class AccountController {
       if (isset(self::STRIP_META[$id])) {
         $meta = self::STRIP_META[$id];
         $cards[] = [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:account-experience-card',
+          '#theme' => 'portal_component',
+          '#name' => 'account-experience-card',
           '#props' => [
             'id' => $id,
             'kind' => 'strip',
@@ -112,8 +112,8 @@ final class AccountController {
       }
       $meta = self::CARD_META[$id] ?? ['icon' => 'user', 'description' => ''];
       $cards[] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:account-experience-card',
+        '#theme' => 'portal_component',
+        '#name' => 'account-experience-card',
         '#props' => [
           'id' => $id,
           'kind' => 'card',

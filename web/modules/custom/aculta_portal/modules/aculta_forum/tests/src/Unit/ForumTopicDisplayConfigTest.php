@@ -168,14 +168,15 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   /**
    * The field display does not expose comment settings or legacy author data.
    */
-  public function testFormDoesNotExposeCommentStatusOrCoAuthorWidget(): void {
+  public function testFormDoesNotExposeLegacyAuthorFieldOrCoAuthorWidget(): void {
     $config = self::parseConfigFile(
       dirname(__DIR__, 3) . '/config/install/core.entity_form_display.node.aculta_forum_topic.default.yml',
     );
 
     self::assertSame(['body', 'field_aculta_categories', 'title'], array_keys(self::configArray($config, 'content')));
     self::assertArrayHasKey('field_aculta_discussion', self::configArray($config, 'hidden'));
-    self::assertArrayHasKey('field_autor_legado', self::configArray($config, 'hidden'));
+    self::assertArrayNotHasKey('field_autor_legado', self::configArray($config, 'content'));
+    self::assertArrayNotHasKey('field_autor_legado', self::configArray($config, 'hidden'));
     self::assertArrayNotHasKey('co_authors', self::configArray($config, 'hidden'));
     self::assertTrue(self::configValue($config, 'hidden', 'aculta_coauthors'));
     foreach (['moderation_state', 'path', 'simple_sitemap', 'url_redirects'] as $field) {
@@ -194,7 +195,8 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('comment_default', self::configValue($full, 'content', 'field_aculta_discussion', 'type'));
     self::assertContains('comment', self::configArray($full, 'dependencies', 'module'));
     self::assertArrayHasKey('field_aculta_discussion', self::configArray($teaser, 'hidden'));
-    self::assertArrayHasKey('field_autor_legado', self::configArray($teaser, 'hidden'));
+    self::assertArrayNotHasKey('field_autor_legado', self::configArray($teaser, 'content'));
+    self::assertArrayNotHasKey('field_autor_legado', self::configArray($teaser, 'hidden'));
   }
 
   /**

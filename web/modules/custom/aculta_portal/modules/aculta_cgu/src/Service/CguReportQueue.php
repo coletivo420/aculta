@@ -92,7 +92,17 @@ final class CguReportQueue {
           ->execute()
           ->fetchAll();
         foreach ($decidedRows as $dRow) {
-          $decidedTargets[$dRow->target_type . ':' . $dRow->target_id] = TRUE;
+          if (!is_object($dRow)) {
+            continue;
+          }
+          $row = get_object_vars($dRow);
+          $targetType = $row['target_type'] ?? NULL;
+          $targetId = $row['target_id'] ?? NULL;
+          if ((!is_string($targetType) && !is_int($targetType))
+            || (!is_string($targetId) && !is_int($targetId))) {
+            continue;
+          }
+          $decidedTargets[(string) $targetType . ':' . (string) $targetId] = TRUE;
         }
       }
 

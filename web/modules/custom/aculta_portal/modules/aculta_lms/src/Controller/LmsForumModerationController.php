@@ -49,6 +49,9 @@ final class LmsForumModerationController {
 
   /**
    * Builds the Educator's authorized course/class list.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function overview(): array {
     [$groups, $cacheability] = $this->moderationManager->getModerationGroups($this->currentUser);
@@ -86,14 +89,14 @@ final class LmsForumModerationController {
     }
 
     $build = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:layout-section',
+      '#theme' => 'portal_component',
+      '#name' => 'layout-section',
       '#slots' => [
         'header' => ['#plain_text' => $this->t('Fóruns por curso')],
         'content' => [
-        '#theme' => 'item_list',
-        '#items' => $items,
-        '#empty' => $this->t('Você não tem cursos ou turmas com moderação de discussões.'),
+          '#theme' => 'item_list',
+          '#items' => $items,
+          '#empty' => $this->t('Você não tem cursos ou turmas com moderação de discussões.'),
         ],
       ],
     ];
@@ -103,6 +106,16 @@ final class LmsForumModerationController {
 
   /**
    * Builds one fixed-status View, restricted to the route's Group ID.
+   *
+   * @param GroupInterface $group
+   *   Value used for $group.
+   * @param GroupInterface $course
+   *   Value used for $course.
+   * @param string $queue
+   *   Value used for $queue.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function comments(GroupInterface $group, GroupInterface $course, string $queue): array {
     $display = self::DISPLAYS[$queue] ?? NULL;
@@ -123,14 +136,14 @@ final class LmsForumModerationController {
     }
 
     $build = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:layout-section',
+      '#theme' => 'portal_component',
+      '#name' => 'layout-section',
       '#slots' => [
         'content' => [
-        '#type' => 'view',
-        '#name' => self::VIEW_ID,
-        '#display_id' => $display,
-        '#arguments' => [(string) $group->id()],
+          '#type' => 'view',
+          '#name' => self::VIEW_ID,
+          '#display_id' => $display,
+          '#arguments' => [(string) $group->id()],
         ],
       ],
     ];

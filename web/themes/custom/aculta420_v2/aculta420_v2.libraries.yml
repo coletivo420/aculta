@@ -50,14 +50,6 @@ secrets-admin:
   dependencies:
     - aculta420_v2/global-styling
 
-address-fields:
-  version: 0.1.0
-  css:
-    theme:
-      src/styles/address-fields.css: {}
-  dependencies:
-    - aculta420_v2/global-styling
-
 account-dialogs:
   version: 0.1.0
   css:
@@ -112,6 +104,9 @@ global-styling:
       src/styles/base.css: {}
       src/styles/layout.css: {}
       src/styles/mobile-frame.css: {}
+      src/styles/address-fields.css: {}
+      src/styles/shop-presentation.css: {}
+      src/styles/checkout-presentation.css: {}
       components/avatar/avatar.css: {}
       src/styles/buttons.css: {}
       components/button/button.css: {}

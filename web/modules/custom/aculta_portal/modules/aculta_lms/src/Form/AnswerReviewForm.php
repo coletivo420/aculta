@@ -31,13 +31,18 @@ final class AnswerReviewForm extends FormBase {
   ) {}
 
   /**
-   * Creates the answer review form with its required services. */
+   * Creates an instance from the service container.
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
+   */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('entity_type.manager'), $container->get('current_user'), $container->get('database'));
   }
 
   /**
-   * {@inheritdoc} */
+   * Provides the getFormId operation.
+   */
   public function getFormId(): string {
     return 'aculta_lms_answer_review';
   }
@@ -46,10 +51,18 @@ final class AnswerReviewForm extends FormBase {
    * Builds the educator's answer grading form.
    *
    * @param array<array-key, mixed> $form
-   *   The form render array being built.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param ?GroupInterface $course
+   *   Value used for $course.
+   * @param ?GroupInterface $group
+   *   Value used for $group.
+   * @param ?AnswerEntity $answer
+   *   Value used for $answer.
    *
    * @return array<array-key, mixed>
-   *   The completed grading form render array.
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?GroupInterface $course = NULL, ?GroupInterface $group = NULL, ?AnswerEntity $answer = NULL): array {
     if (!$course instanceof GroupInterface || !$group instanceof GroupInterface || !$answer instanceof AnswerEntity) {
@@ -141,7 +154,7 @@ final class AnswerReviewForm extends FormBase {
         '#button_type' => 'primary',
       ],
       'cancel' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Voltar às respostas'),
           'url' => Url::fromRoute('aculta_lms.answer_reviews', ['course' => $courseId, 'group' => $groupId])->toString(),
@@ -157,7 +170,9 @@ final class AnswerReviewForm extends FormBase {
    * Validates the submitted score.
    *
    * @param array<array-key, mixed> $form
-   *   The form render array being validated.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $score = $form_state->getValue('score');
@@ -170,7 +185,9 @@ final class AnswerReviewForm extends FormBase {
    * Saves the grade and educator feedback.
    *
    * @param array<array-key, mixed> $form
-   *   The submitted form render array.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $answerId = self::positiveInteger($form_state->get('aculta_lms_answer_id'));

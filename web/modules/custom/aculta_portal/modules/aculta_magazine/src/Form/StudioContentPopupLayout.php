@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_magazine\Form;
 
+use Drupal\Core\Template\Attribute;
+
 /**
  * Layout do popup de criação de conteúdo (Compositor de Criação de Conteúdo, Revista).
  *
@@ -21,6 +23,9 @@ final class StudioContentPopupLayout {
 
   /**
    * Aplica o layout do popup ao formulário de revista.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
    */
   public static function apply(array &$form): void {
     foreach (self::REMOVE as $key) {
@@ -29,12 +34,12 @@ final class StudioContentPopupLayout {
     // Sem pré-visualização. "Cancelar" (secundário) fecha o popup.
     unset($form['actions']['preview']);
     $form['actions']['cancel'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#theme' => 'portal_component',
+      '#name' => 'button',
       '#props' => [
         'text' => (string) t('Cancelar'),
         'variant' => 'secondary',
-        'attributes' => new \Drupal\Core\Template\Attribute(['data-aculta-dialog-close' => '']),
+        'attributes' => new Attribute(['data-aculta-dialog-close' => '']),
       ],
       '#weight' => 50,
     ];

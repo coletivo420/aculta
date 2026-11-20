@@ -80,7 +80,14 @@ final class CguReportDecisionForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param ?CguReport $aculta_cgu_report
+   *   Value used for $aculta_cgu_report.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?CguReport $aculta_cgu_report = NULL): array {
     if ($aculta_cgu_report === NULL) {
@@ -158,7 +165,7 @@ final class CguReportDecisionForm extends FormBase {
       $form['actions'] = [
         '#type' => 'actions',
         'back' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => $this->t('Voltar para a fila'),
             'url' => Url::fromRoute('aculta_cgu.admin_reports')->toString(),
@@ -220,7 +227,7 @@ final class CguReportDecisionForm extends FormBase {
         '#button_type' => 'primary',
       ],
       'cancel' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => $this->t('Cancelar'),
           'url' => Url::fromRoute('aculta_cgu.admin_reports')->toString(),
@@ -236,6 +243,9 @@ final class CguReportDecisionForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     if ($this->report === NULL) {

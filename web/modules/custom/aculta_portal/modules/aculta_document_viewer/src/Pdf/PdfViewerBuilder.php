@@ -61,6 +61,16 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
 
   /**
    * {@inheritdoc}
+   *
+   * @param MediaInterface $media
+   *   Value used for $media.
+   * @param string $field_name
+   *   Value used for $field_name.
+   * @param array<array-key, mixed> $settings
+   *   Widget settings.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function build(MediaInterface $media, string $field_name = 'field_media_document', array $settings = []): array {
     $cacheability = CacheableMetadata::createFromObject($media);
@@ -245,7 +255,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
       '#type' => 'container',
       '#attributes' => ['data-aculta-pdf-control' => 'toolbar'],
       'previous' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Página anterior'),
           'variant' => 'ghost',
@@ -263,7 +273,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         ],
       ],
       'next' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Próxima página'),
           'variant' => 'ghost',
@@ -285,7 +295,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#type' => 'container',
         '#attributes' => ['data-aculta-pdf-control' => 'zoom-controls'],
         'zoom_out' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => new TranslatableMarkup('Reduzir zoom'),
             'variant' => 'ghost',
@@ -299,7 +309,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
           '#attributes' => ['data-aculta-pdf-control' => 'zoom-status', 'aria-live' => 'polite'],
         ],
         'zoom_in' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => new TranslatableMarkup('Aumentar zoom'),
             'variant' => 'ghost',
@@ -307,7 +317,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
           '#attributes' => ['data-aculta-pdf-control' => 'zoom-in'],
         ],
         'zoom_reset' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => new TranslatableMarkup('Restaurar zoom'),
             'variant' => 'ghost',
@@ -316,7 +326,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         ],
       ],
       'rotate' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Girar página 90 graus'),
           'variant' => 'ghost',
@@ -324,7 +334,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#attributes' => ['data-aculta-pdf-control' => 'rotate'],
       ],
       'fullscreen' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Tela cheia'),
           'aria_label' => new TranslatableMarkup('Abrir leitor em tela cheia'),
@@ -355,7 +365,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         ],
       ],
       'submit' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Buscar'),
           'variant' => 'secondary',
@@ -363,7 +373,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#attributes' => ['data-aculta-pdf-control' => 'search-submit'],
       ],
       'previous' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Resultado anterior'),
           'variant' => 'ghost',
@@ -372,7 +382,7 @@ final class PdfViewerBuilder implements PdfViewerBuilderInterface {
         '#attributes' => ['data-aculta-pdf-control' => 'search-previous'],
       ],
       'next' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => new TranslatableMarkup('Próximo resultado'),
           'variant' => 'ghost',

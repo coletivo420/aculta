@@ -57,11 +57,13 @@ final class EmailConfirmationNotice {
     }
     // Título e texto vêm do aviso persistente (aculta_messenger); a página não guarda cópia do texto.
     $context = ['title' => '', 'detail' => ''];
-    $this->moduleHandler->alter('aculta_portal_email_notice', $context, $this->currentUser);
+    $currentUser = $this->currentUser;
+    $this->moduleHandler->alter('aculta_portal_email_notice', $context, $currentUser);
 
     $url = Url::fromRoute('aculta_portal.email_resend')->toString();
     return [
-      '#component' => 'aculta420_v2:status-messages',
+      '#theme' => 'portal_component',
+      '#name' => 'status-messages',
       '#weight' => -100,
       '#props' => ['type' => 'warning'],
       '#slots' => ['content' => [

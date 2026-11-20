@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Form;
 
+use Drupal\address\Plugin\Field\FieldType\AddressItem;
 use Drupal\aculta_portal\Email\EmailConfirmationRequestResult;
 use Drupal\aculta_portal\Account\AccountAddressForm;
 use Drupal\aculta_portal\Account\RegistrationMailPolicy;
@@ -58,11 +59,16 @@ final class PortalFormCallbacks {
   }
 
   /**
-   * Combines street and number before saving the profile, as in checkout.
+   * Combines street and number before saving the profile, as in checkout. This entity builder runs before the profile is saved.
    *
-   * This entity builder runs before the profile is saved.
-   *
-   * @param array<string, mixed> $form
+   * @param string $entityTypeId
+   *   Value used for $entityTypeId.
+   * @param ProfileInterface $profile
+   *   Value used for $profile.
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function buildStreetNumber(string $entityTypeId, ProfileInterface $profile, array &$form, FormStateInterface $formState): void {
     if ($profile->get('field_address')->isEmpty()) {
@@ -74,7 +80,10 @@ final class PortalFormCallbacks {
   /**
    * Keeps account saves on the same page.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function disableAccountRedirect(array &$form, FormStateInterface $formState): void {
     $formState->disableRedirect();
@@ -83,7 +92,10 @@ final class PortalFormCallbacks {
   /**
    * Records acceptance of the required registration terms.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function recordAcultaUserAgreementAcceptance(array &$form, FormStateInterface $formState): void {
     if ($this->registrationAlreadyUsed($formState)) {
@@ -98,7 +110,10 @@ final class PortalFormCallbacks {
   /**
    * Sends the confirmation email for a newly created account.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function requestRegistrationConfirmation(array &$form, FormStateInterface $formState): void {
     if ($this->registrationAlreadyUsed($formState)) {
@@ -116,20 +131,16 @@ final class PortalFormCallbacks {
   }
 
   /**
-   * Authenticates the login form without disclosing blocked accounts.
-   *
-   * Core reports a blocked or unactivated account with its own message before
-   * any password check. Here a blocked account is recognized first and leaves
-   * the authentication step, so validateFinal() gives the generic message used
-   * for unknown accounts. The IP flood check matches Core's condition and
-   * outcome, so its response cannot reveal whether an account exists.
-   * Every other account goes through Core's validateAuthentication().
+   * Authenticates the login form without disclosing blocked accounts. Core reports a blocked or unactivated account with its own message before any password check. Here a blocked account is recognized first and leaves the authentication step, so validateFinal() gives the generic message used for unknown accounts. The IP flood check matches Core's condition and outcome, so its response cannot reveal whether an account exists. Every other account goes through Core's validateAuthentication().
    *
    * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function validateLoginAuthentication(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();
-    if (!$formObject instanceof UserLoginForm) {
+    if (!$formObject instanceof UserLoginForm && !$formObject instanceof LoginPopupForm) {
       // Never authenticate through an unexpected form object.
       return;
     }
@@ -159,7 +170,10 @@ final class PortalFormCallbacks {
   /**
    * Validates the registration password and stores it for the save handler.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function validateRegistrationPassword(array &$form, FormStateInterface $formState): void {
     $rawPass = $formState->getValue('pass');
@@ -172,12 +186,12 @@ final class PortalFormCallbacks {
   }
 
   /**
-   * Keeps registration responses the same when an email is already used.
+   * Keeps registration responses the same when an email is already used. The existing account receives a notice; no account is created again. Other form errors are preserved.
    *
-   * The existing account receives a notice; no account is created again.
-   * Other form errors are preserved.
-   *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function validateRegistrationMail(array &$form, FormStateInterface $formState): void {
     $rawMail = $formState->getValue('mail');
@@ -200,12 +214,12 @@ final class PortalFormCallbacks {
   }
 
   /**
-   * Saves a registration, replacing Core's submit handler.
+   * Saves a registration, replacing Core's submit handler. Existing accounts are not created again; both paths return the same message and destination.
    *
-   * Existing accounts are not created again; both paths return the same
-   * message and destination.
-   *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function saveRegistration(array $form, FormStateInterface $formState): void {
     $existingId = $formState->get('aculta_registration_existing');
@@ -229,6 +243,9 @@ final class PortalFormCallbacks {
 
   /**
    * Checks whether this request matches an existing email account.
+   *
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   private function registrationAlreadyUsed(FormStateInterface $formState): bool {
     return $formState->get('aculta_registration_existing') !== NULL;
@@ -237,7 +254,10 @@ final class PortalFormCallbacks {
   /**
    * Saves the chosen password on the account created by registration.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function storeRegistrationPassword(array &$form, FormStateInterface $formState): void {
     if ($this->registrationAlreadyUsed($formState)) {
@@ -255,7 +275,10 @@ final class PortalFormCallbacks {
   /**
    * Returns the password form to Portal and records a local password.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function securityPasswordRedirect(array &$form, FormStateInterface $formState): void {
     $uid = (int) $this->currentUser->id();
@@ -268,9 +291,13 @@ final class PortalFormCallbacks {
   /**
    * Applies accessible labels/autocomplete to Core's password widget.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    *
    * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function securityPasswordAfterBuild(array $form, FormStateInterface $formState): array {
     $account = &$form['account'];
@@ -301,7 +328,10 @@ final class PortalFormCallbacks {
   /**
    * Redireciona para o painel após a recuperação da senha.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function recoveryPasswordRedirect(array &$form, FormStateInterface $formState): void {
     // O domínio da conta é o que mostra a Visão geral; no domínio principal a página fica vazia.
@@ -316,19 +346,22 @@ final class PortalFormCallbacks {
   /**
    * Returns the profile-photo form to the account overview.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function accountPhotoRedirect(array &$form, FormStateInterface $formState): void {
     $formState->setRedirect('aculta_portal.dashboard');
   }
 
   /**
-   * Returns an Address submission to its original editing context.
+   * Returns an Address submission to its original editing context. The saved Commerce Profile is identical in Portal and Studio; only the post-submit destination differs. The existing Portal flow is unchanged.
    *
-   * The saved Commerce Profile is identical in Portal and Studio; only the
-   * post-submit destination differs. The existing Portal flow is unchanged.
-   *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function addressRedirect(array &$form, FormStateInterface $formState): void {
     $route = $this->routeMatch?->getRouteName() === 'aculta_studio.account_address'
@@ -340,7 +373,10 @@ final class PortalFormCallbacks {
   /**
    * Returns private data submissions to Studio without changing legacy flow.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function accountDataRedirect(array &$form, FormStateInterface $formState): void {
     if ($this->routeMatch?->getRouteName() === 'aculta_studio.account_data') {
@@ -351,7 +387,10 @@ final class PortalFormCallbacks {
   /**
    * Synchronizes Commerce address names with the participant profile.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function syncCustomerAddressNames(array &$form, FormStateInterface $formState): void {
     $participant = $this->formEntity($formState);
@@ -371,7 +410,7 @@ final class PortalFormCallbacks {
 
     $addressField = $customer->get('field_address');
     $address = $addressField->first();
-    if (!$address instanceof \Drupal\address\Plugin\Field\FieldType\AddressItem) {
+    if (!$address instanceof AddressItem) {
       return;
     }
     $addressValues = $address->getValue();
@@ -399,7 +438,10 @@ final class PortalFormCallbacks {
   /**
    * Rejects empty/non-positive custom donation amounts.
    *
-   * @param array<array-key, mixed> $form
+   * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function validateDonationAmount(array &$form, FormStateInterface $formState): void {
     $giftType = $formState->getValue(['commerce_donation_pane', 'field_gift_type']);

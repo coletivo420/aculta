@@ -75,7 +75,7 @@ final class TopicDeletionDecisionForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Form structure being built.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current state of the form.
@@ -109,7 +109,7 @@ final class TopicDeletionDecisionForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Submitted form structure.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Current state of the form.

@@ -92,6 +92,7 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
    * {@inheritdoc}
    *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function defaultConfiguration(): array {
     $config = parent::defaultConfiguration();
@@ -124,6 +125,7 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
    *   O estado do formulário.
    *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function buildConfigurationForm(
     array $form,
@@ -183,6 +185,7 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
    *   O formulário completo.
    *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function buildPaneForm(
     array $pane_form,
@@ -261,67 +264,68 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
       ->onlyMainContent()
       ->applyTo($dialog);
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:donation-presentation',
+      '#theme' => 'portal_component',
+      '#name' => 'donation-presentation',
       '#props' => ['variant' => 'invite'],
       '#cache' => ['contexts' => ['user.roles:anonymous']],
       '#slots' => ['content' => [
-      'texto' => [
-        '#component' => 'aculta420_v2:status-messages',
-        '#props' => ['type' => 'info'],
-        '#slots' => ['content' => [
-          'text' => ['#markup' => '<p>' . $this->t('Crie uma conta para acompanhar suas doações.') . '</p>'],
-          'link' => [
-            '#type' => 'link',
-            '#title' => $this->t('Criar conta'),
-            '#url' => $link,
-            '#attributes' => [
-              'data-portal-ui' => 'donation-account-invite-link',
-              'data-aculta-dialog-trigger' => '',
-              'aria-controls' => 'aculta-register-dialog',
-              'aria-haspopup' => 'dialog',
-              'aria-expanded' => 'false',
+        'texto' => [
+          '#theme' => 'portal_component',
+          '#name' => 'status-messages',
+          '#props' => ['type' => 'info'],
+          '#slots' => ['content' => [
+            'text' => ['#markup' => '<p>' . $this->t('Crie uma conta para acompanhar suas doações.') . '</p>'],
+            'link' => [
+              '#type' => 'link',
+              '#title' => $this->t('Criar conta'),
+              '#url' => $link,
+              '#attributes' => [
+                'data-portal-ui' => 'donation-account-invite-link',
+                'data-aculta-dialog-trigger' => '',
+                'aria-controls' => 'aculta-register-dialog',
+                'aria-haspopup' => 'dialog',
+                'aria-expanded' => 'false',
+              ],
             ],
           ],
+          ],
         ],
-        ],
-      ],
-      'dialog' => $dialog + [
-        'header' => [
-          '#type' => 'html_tag',
-          '#tag' => 'header',
-          '#attributes' => ['data-portal-ui' => 'donation-register-dialog-header'],
-          'title' => [
+        'dialog' => $dialog + [
+          'header' => [
             '#type' => 'html_tag',
-            '#tag' => 'h2',
-            '#attributes' => ['data-portal-ui' => 'donation-register-dialog-title'],
-            '#value' => $this->t('Criar conta'),
-          ],
-          'close' => [
-            '#type' => 'aculta_portal_button',
-            '#props' => [
-              'text' => '×',
-              'aria_label' => (string) $this->t('Fechar'),
-              'variant' => 'ghost',
+            '#tag' => 'header',
+            '#attributes' => ['data-portal-ui' => 'donation-register-dialog-header'],
+            'title' => [
+              '#type' => 'html_tag',
+              '#tag' => 'h2',
+              '#attributes' => ['data-portal-ui' => 'donation-register-dialog-title'],
+              '#value' => $this->t('Criar conta'),
             ],
+            'close' => [
+              '#type' => 'portal_button',
+              '#props' => [
+                'text' => '×',
+                'aria_label' => (string) $this->t('Fechar'),
+                'variant' => 'ghost',
+              ],
+              '#attributes' => [
+                'data-portal-ui' => 'donation-register-dialog-close',
+                'data-aculta-dialog-close' => '',
+              ],
+            ],
+          ],
+          'content' => [
+            '#type' => 'html_tag',
+            '#tag' => 'div',
             '#attributes' => [
-              'data-portal-ui' => 'donation-register-dialog-close',
-              'data-aculta-dialog-close' => '',
+              'data-portal-ui' => 'donation-register-dialog-body',
+              'data-aculta-register-content' => '',
+              'aria-live' => 'polite',
+              'aria-busy' => 'false',
             ],
+            '#value' => $this->t('Carregando…'),
           ],
         ],
-        'content' => [
-          '#type' => 'html_tag',
-          '#tag' => 'div',
-          '#attributes' => [
-            'data-portal-ui' => 'donation-register-dialog-body',
-            'data-aculta-register-content' => '',
-            'aria-live' => 'polite',
-            'aria-busy' => 'false',
-          ],
-          '#value' => $this->t('Carregando…'),
-        ],
-      ],
       ]],
     ];
   }
@@ -329,7 +333,7 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
   /**
    * An ajax responder for gift type change.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   The form render array.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   The current form state.
@@ -362,6 +366,7 @@ class DonationCheckoutPane extends DonationItemPaneBase implements CheckoutPaneI
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildPaneSummary(): array {
     if (!$this->isVisible()) {

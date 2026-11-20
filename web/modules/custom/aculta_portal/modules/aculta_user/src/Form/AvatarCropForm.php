@@ -123,7 +123,7 @@ final class AvatarCropForm extends FormBase {
    *   Estado atual do formulário.
    *
    * @return array<string, mixed>
-   *   Estrutura do formulário.
+   *   Estrutura do formulário.   *   *   *
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $attributes = is_array($form['#attributes'] ?? NULL) ? $form['#attributes'] : [];
@@ -134,9 +134,9 @@ final class AvatarCropForm extends FormBase {
       $form['vazio'] = ['#markup' => $this->t('Envie uma foto própria para recortar.')];
       return $form;
     }
-    // Envio sem AJAX para a própria rota, com o arquivo a recortar: o modal não pode usar a URL com formato de modal.
+    // Envio sem AJAX para a própria rota; o modal não pode usar a URL de formato modal.
     $form['#action'] = Url::fromRoute('aculta_user.avatar_crop', [], ['query' => ['fid' => (int) $file->id()]])->toString();
-    // Sem abas nem seções: o recorte mostra direto a caixa de recorte (ver flattenCropWrappers).
+    // Sem abas nem seções: mostra diretamente a caixa de recorte.
     $afterBuild = is_array($form['#after_build'] ?? NULL) ? $form['#after_build'] : [];
     $afterBuild[] = [self::class, 'flattenCropWrappers'];
     $form['#after_build'] = $afterBuild;
@@ -157,7 +157,7 @@ final class AvatarCropForm extends FormBase {
       '#value' => $this->t('Aplicar recorte'),
     ];
     $form['actions']['cancelar'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) $this->t('Cancelar'),
         'url' => Url::fromRoute('aculta_portal.dashboard')->toString(),
@@ -248,7 +248,7 @@ final class AvatarCropForm extends FormBase {
   /**
    * Aplica o recorte, torna o arquivo permanente e troca a foto da conta.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.

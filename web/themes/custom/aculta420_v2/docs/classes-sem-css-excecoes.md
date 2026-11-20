@@ -9,3 +9,4 @@ motivo após um travessão. O gate só aceita linhas nesse formato.
 Use exceção apenas para classe que existe como gancho de comportamento, nunca
 para esconder falta de estilo.
 
+- `visually-hidden` — utilitário semântico fornecido pelo Drupal Core para ocultar visualmente rótulos sem removê-los da árvore de acessibilidade.

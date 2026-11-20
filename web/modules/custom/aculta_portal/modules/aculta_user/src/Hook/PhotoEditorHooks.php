@@ -17,7 +17,7 @@ use Drupal\aculta_user\Form\UserPictureForm;
 use Drupal\user\UserInterface;
 
 /**
- * Editor de foto do painel (ponto de extensão aculta_portal_photo_editor e formulário do painel).
+ * Editor de foto do painel (ponto de extensão portal_photo_editor e formulário do painel).
  *
  * - Sorteio de avatar por link AJAX com token CSRF.
  * - Foto do acervo: sem remover e sem recorte (PhotoEditorGuard).
@@ -50,7 +50,7 @@ final class PhotoEditorHooks {
    * @param \Drupal\user\UserInterface $account
    *   Conta cuja foto está sendo editada.
    */
-  #[Hook('aculta_portal_photo_editor_alter')]
+  #[Hook('portal_photo_editor_alter')]
   public function photoEditorAlter(array &$photoForm, UserInterface $account): void {
     // A rota segue disponível como fallback. Na conta, o formulário é renderizado dentro do popup SDC e
     // mantém seu #action apontado para a rota própria para os envios e reconstruções do formulário.
@@ -61,11 +61,15 @@ final class PhotoEditorHooks {
   }
 
   /**
-   * Implements hook_form_BASE_FORM_ID_alter() for user forms: formulário de foto do painel.
-   *
-   * @param array<array-key, mixed> $form
-   *   Estrutura do formulário, alterada no lugar.
-   */
+ * Implements hook_form_BASE_FORM_ID_alter() for user forms: formulário de foto do painel.
+ *
+ * @param array<array-key, mixed> $form
+ *   Form render array.
+ * @param FormStateInterface $form_state
+ *   Current form state.
+ * @param string $form_id
+ *   Value used for $form_id.
+ */
   #[Hook('form_user_form_alter')]
   public function formUserFormAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
     if ($this->routeMatch->getRouteName() !== 'aculta_portal.dashboard' || !isset($form['user_picture'])) {

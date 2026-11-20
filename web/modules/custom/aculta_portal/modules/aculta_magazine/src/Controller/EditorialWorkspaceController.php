@@ -11,6 +11,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\aculta_magazine\Access\EditorialCapability;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
@@ -47,7 +48,7 @@ final class EditorialWorkspaceController {
   /**
    * Requires the configured authoring role and Drupal create access.
    */
-  public function accessCreate(): AccessResult {
+  public function accessCreate(): AccessResultInterface {
     return $this->capabilities->access(EditorialCapability::AUTHORING, $this->account)
       ->andIf(AccessResult::allowedIfHasPermission($this->account, 'create revista content'));
   }
@@ -111,6 +112,12 @@ final class EditorialWorkspaceController {
 
   /**
    * Renders the owner-managed Comment field for participation in Marley.
+   *
+   * @param NodeInterface $node
+   *   Node being rendered.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function discussion(NodeInterface $node): array {
     if (!$this->accessDiscussion($node)->isAllowed()) {
@@ -153,14 +160,17 @@ final class EditorialWorkspaceController {
 
   /**
    * Builds the native Node creation form in the Marley purpose.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function createPopup(): array {
     $node = $this->entityTypeManager->getStorage('node')->create(['type' => 'revista']);
     $form = $this->entityFormBuilder->getForm($node, 'default');
     // Popup Nova publicação: renderizado pelo SDC Compositor de Criação de Conteúdo (UI Library).
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:discussion-content-composer',
+      '#theme' => 'portal_component',
+      '#name' => 'discussion-content-composer',
       '#props' => [
         'target_id' => 'aculta-studio-create-body',
         'status' => 'editando',

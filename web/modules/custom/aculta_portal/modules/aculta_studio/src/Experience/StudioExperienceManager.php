@@ -24,6 +24,16 @@ final class StudioExperienceManager {
 
   /**
    * Builds authorized cross-purpose entry links for available providers.
+   *
+   * @param AccountInterface $account
+   *   Account to evaluate.
+   * @param DomainSiteManager $domains
+   *   Value used for $domains.
+   * @param list<string> $exclude
+   *   Experience IDs that the consumer is composing separately.
+   *
+   * @return array<int, array<string, mixed>>
+   *   Render array returned by the method.
    */
   public function buildEntries(AccountInterface $account, DomainSiteManager $domains, array $exclude = []): array {
     $items = [];

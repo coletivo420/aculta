@@ -44,6 +44,13 @@ class AddToCartAjax {
 
   /**
    * Aplica HTMX ao botão de adicionar e cria o contêiner de status acima do formulário.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param string $formId
+   *   Value used for $formId.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function alter(array &$form, string $formId, FormStateInterface $formState): void {
     if (!str_starts_with($formId, self::FORM_ID_PREFIX) || !isset($form['actions']['submit'])) {
@@ -83,6 +90,11 @@ class AddToCartAjax {
 
   /**
    * Resposta HTMX do botão: caixa de status, painel do carrinho e contador.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
    */
   public function htmxResponse(array &$form, FormStateInterface $formState): void {
     $request = $this->requestStack->getCurrentRequest();
@@ -99,8 +111,8 @@ class AddToCartAjax {
 
     $box = $this->statusBox($formState, (string) $cart['url']);
     $painel = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:cart-offcanvas-body',
+      '#theme' => 'portal_component',
+      '#name' => 'cart-offcanvas-body',
       '#props' => [
         'sites' => $cart['sites'],
         'total' => $cart['total'],
@@ -134,8 +146,8 @@ class AddToCartAjax {
   private function statusBox(FormStateInterface $formState, string $url): array {
     $errors = array_map(static fn($error): string => strip_tags((string) $error), array_values($formState->getErrors()));
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:cart-feedback',
+      '#theme' => 'portal_component',
+      '#name' => 'cart-feedback',
       '#props' => [
         'status_type' => $errors === [] ? 'success' : 'error',
         'status_role' => $errors === [] ? 'status' : 'alert',

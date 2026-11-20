@@ -23,19 +23,22 @@ final class ForumSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    *
    * @return list<string>
+   *   Value returned by the method.
    */
   protected function getEditableConfigNames(): array {
     return ['aculta_forum.settings'];
   }
 
   /**
-   * {@inheritdoc}
+   * Builds the form.
    *
    * @param array<string, mixed> $form
-   *   The form structure.
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
    *
    * @return array<string, mixed>
-   *   The completed form structure.
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['introduction'] = [
@@ -172,10 +175,15 @@ final class ForumSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Submits the form.
    *
-   * @param array<string, mixed> $form
-   *   The form structure.
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $config = $this->config('aculta_forum.settings');
@@ -370,6 +378,5 @@ final class ForumSettingsForm extends ConfigFormBase {
   private function stringValue(mixed $value, string $default): string {
     return is_string($value) ? $value : $default;
   }
-
 
 }

@@ -62,6 +62,14 @@ final class EventLocationDeleteForm extends ContentEntityConfirmFormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $entity = $this->entity;
@@ -83,7 +91,7 @@ final class EventLocationDeleteForm extends ContentEntityConfirmFormBase {
         'actions' => [
           '#type' => 'actions',
           'cancel' => [
-            '#type' => 'aculta_portal_button',
+            '#type' => 'portal_button',
             '#props' => [
               'text' => (string) $this->t('Voltar'),
               'url' => $this->getCancelUrl()->toString(),

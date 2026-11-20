@@ -129,7 +129,6 @@ services:
       - '@?aculta_calendar.agenda'
       - '@aculta_calendar.month_grid'
       - '@current_user'
-      - '@?url_generator'
   Drupal\aculta_studio\Calendar\StudioDashboardCalendarComposer: '@aculta_studio.calendar_composer'
   aculta_studio.calendar_controller:
     class: Drupal\aculta_studio\Controller\StudioCalendarController

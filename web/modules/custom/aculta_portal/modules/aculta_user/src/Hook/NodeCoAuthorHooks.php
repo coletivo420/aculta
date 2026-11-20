@@ -171,7 +171,7 @@ final class NodeCoAuthorHooks {
   /**
    * Implements hook_form_BASE_FORM_ID_alter() for node_form.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   The form array.
    */
   #[Hook('form_node_form_alter')]

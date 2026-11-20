@@ -17,6 +17,7 @@ use Drupal\node\NodeInterface;
 /**
  * Resolves forum topics linked directly to an H5P item in a course.
  */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the established class identifier referenced by the H5P service and tests.
 final class Lmsaculta_H5PDiscussionResolver {
 
   private const TOPIC_BUNDLE = 'aculta_lms_topic';
@@ -30,6 +31,16 @@ final class Lmsaculta_H5PDiscussionResolver {
 
   /**
    * Builds an access-checked discussion list for a course H5P item.
+   *
+   * @param int $contentId
+   *   Value used for $contentId.
+   * @param GroupInterface $course
+   *   Value used for $course.
+   * @param AccountInterface $account
+   *   Account to evaluate.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function build(int $contentId, GroupInterface $course, AccountInterface $account): array {
     $cache = (new CacheableMetadata())
@@ -88,8 +99,8 @@ final class Lmsaculta_H5PDiscussionResolver {
       return $this->emptyBuild($cache);
     }
     $build = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:layout-section',
+      '#theme' => 'portal_component',
+      '#name' => 'layout-section',
       '#slots' => [
         'header' => [
           '#type' => 'html_tag',
@@ -99,7 +110,7 @@ final class Lmsaculta_H5PDiscussionResolver {
         'content' => [
           '#theme' => 'item_list',
           '#items' => $links,
-          '#attributes' => ['class' => ['aculta-lms-discussion-list']],
+          '#attributes' => ['data-portal-ui' => 'lms-discussion-list'],
         ],
       ],
     ];
@@ -135,6 +146,12 @@ final class Lmsaculta_H5PDiscussionResolver {
 
   /**
    * Creates an empty render array with its access cache metadata.
+   *
+   * @param CacheableMetadata $cache
+   *   Value used for $cache.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   private function emptyBuild(CacheableMetadata $cache): array {
     $build = ['#markup' => ''];

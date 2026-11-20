@@ -81,7 +81,7 @@ abstract class PrivateMessageConfigFormBase extends PluginBase implements Privat
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O array do formulário.
    * @param FormStateInterface $formState
    *   O estado atual do formulário.

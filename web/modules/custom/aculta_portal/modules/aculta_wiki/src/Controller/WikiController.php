@@ -50,6 +50,9 @@ final class WikiController extends ControllerBase {
 
   /**
    * Builds the Wiki home from the editorial Views.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function home(): array {
     $collaborationAccess = $this->entities
@@ -116,6 +119,12 @@ final class WikiController extends ControllerBase {
 
   /**
    * Searches only published Wiki entries by title, summary, and body.
+   *
+   * @param Request $request
+   *   Current HTTP request.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function search(Request $request): array {
     // InputBag::get() throws on non-scalar values; a malformed `q[]` is treated
@@ -167,7 +176,7 @@ final class WikiController extends ControllerBase {
     }
     else {
       $build['empty'] = [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'empty-state',
         '#slots' => [
           'message' => [
@@ -194,7 +203,7 @@ final class WikiController extends ControllerBase {
       $links[] = Link::fromTextAndUrl($label, Url::fromRoute($route, [], ['attributes' => $attributes]))->toRenderable();
     }
     return [
-      '#theme' => 'aculta_portal_component',
+      '#theme' => 'portal_component',
       '#name' => 'context-tabs',
       '#props' => ['label' => (string) $this->t('Navegação da Wiki420')],
       '#slots' => ['items' => ['#theme' => 'item_list', '#items' => $links]],
@@ -213,8 +222,8 @@ final class WikiController extends ControllerBase {
     $build = ['#cache' => ['max-age' => 0]];
     if (mb_strlen($term) < SearchPageController::MIN_CHARS) {
       $build['hint'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:hint',
+        '#theme' => 'portal_component',
+        '#name' => 'hint',
         '#slots' => ['content' => ['#plain_text' => $this->t(
           'Digite pelo menos @n caracteres para ver resultados.',
           ['@n' => SearchPageController::MIN_CHARS],

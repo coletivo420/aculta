@@ -38,6 +38,14 @@ final class WikiProposalStatusController extends ControllerBase {
 
   /**
    * Displays one proposal after route and entity access have been checked.
+   *
+   * @param WikiProposal|Contribution $proposal
+   *   Value used for $proposal.
+   * @param Request $request
+   *   Current HTTP request.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function view(WikiProposal|Contribution $proposal, Request $request): array {
     $account = $this->currentUser;
@@ -55,7 +63,7 @@ final class WikiProposalStatusController extends ControllerBase {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'wiki-proposal-status'],
       'header' => [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'context-header',
         '#props' => [
           'eyebrow' => (string) $this->t('WE SATIVA · Wiki420'),
@@ -102,7 +110,7 @@ final class WikiProposalStatusController extends ControllerBase {
     if ((int) $proposal->getOwnerId() === (int) $account->id()
       && in_array($state, ['submitted', 'needs_changes'], TRUE)) {
       $build['header']['#slots']['actions'] = [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Retirar proposta'),
           'url' => Url::fromRoute('aculta_wiki.proposal_withdraw', ['proposal' => $proposal->id()])->toString(),
@@ -149,9 +157,21 @@ final class WikiProposalStatusController extends ControllerBase {
    * @return array<string, mixed>
    *   SDC render array.
    */
+
+  /**
+   * Provides the section operation.
+   *
+   * @param \Stringable|string $title
+   *   Component title.
+   * @param array<array-key, mixed> $body
+   *   Component body render array.
+   *
+   * @return array<string, mixed>
+   *   Render array returned by the method.
+   */
   private function section(\Stringable|string $title, array $body): array {
     return [
-      '#theme' => 'aculta_portal_component',
+      '#theme' => 'portal_component',
       '#name' => 'content-section',
       '#props' => ['title' => (string) $title],
       '#slots' => ['body' => $body],
@@ -168,7 +188,7 @@ final class WikiProposalStatusController extends ControllerBase {
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   Current request containing the history cursor.
    *
-   * @return array
+   * @return array<array-key, mixed>
    *   A table of revisions visible to this account and an optional pager.
    */
   private function proposalHistory(WikiProposal|Contribution $proposal, AccountInterface $account, Request $request): array {

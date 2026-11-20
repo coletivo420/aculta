@@ -31,6 +31,9 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static($container->get('aculta_portal.domain_site'));
@@ -47,9 +50,12 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Form render array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $onMain = $this->siteManager->getCurrentSiteKey()?->value === 'main';
@@ -96,8 +102,8 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
       $form['#attached'] = $attached;
     }
     $form['preview'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:search-preview',
+      '#theme' => 'portal_component',
+      '#name' => 'search-preview',
       '#props' => ['attributes' => new Attribute([
         'id' => 'aculta-search-preview',
         'role' => 'region',
@@ -105,11 +111,11 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
         'aria-live' => 'polite',
       ])],
       '#slots' => ['content' => ['hint' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:hint',
+        '#theme' => 'portal_component',
+        '#name' => 'hint',
         '#slots' => ['content' => ['#plain_text' => $this->t(
-          'Digite pelo menos @n caracteres para ver resultados.',
-          ['@n' => SearchPageController::MIN_CHARS],
+            'Digite pelo menos @n caracteres para ver resultados.',
+            ['@n' => SearchPageController::MIN_CHARS],
         )]],
       ]]],
     ];
@@ -121,7 +127,9 @@ final class SearchPopupForm extends FormBase implements ContainerInjectionInterf
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Form render array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // GET: o navegador envia direto para a busca central; nada a processar no servidor.

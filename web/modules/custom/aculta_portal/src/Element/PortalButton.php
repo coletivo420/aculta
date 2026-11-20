@@ -13,7 +13,7 @@ use Drupal\Core\Render\Element\RenderElementBase;
  * O módulo entrega props sem conhecer o tema. O fallback do módulo mantém o
  * elemento acessível; o ACULTA420 sobrescreve o template e apresenta o SDC.
  */
-#[RenderElement('aculta_portal_button')]
+#[RenderElement('portal_button')]
 final class PortalButton extends RenderElementBase {
 
   /**
@@ -24,7 +24,7 @@ final class PortalButton extends RenderElementBase {
    */
   public function getInfo(): array {
     return [
-      '#theme' => 'aculta_portal_button',
+      '#theme' => 'portal_button',
       '#props' => [],
       '#attributes' => [],
     ];

@@ -41,10 +41,23 @@ final class UpcomingEventsBlock extends BlockBase implements ContainerFactoryPlu
 
   /**
    * Construtor.
+   *
+   * @param array<array-key, mixed> $configuration
+   *   Plugin configuration.
+   * @param string $plugin_id
+   *   Plugin ID.
+   * @param mixed $plugin_definition
+   *   Plugin definition.
+   * @param EventCatalogue $catalogue
+   *   Value used for $catalogue.
+   * @param DomainSiteManager $purposes
+   *   Value used for $purposes.
+   * @param TimeInterface $time
+   *   Value used for $time.
    */
   public function __construct(
     array $configuration,
-    $plugin_id,
+    string $plugin_id,
     $plugin_definition,
     protected readonly EventCatalogue $catalogue,
     protected readonly DomainSiteManager $purposes,
@@ -55,8 +68,20 @@ final class UpcomingEventsBlock extends BlockBase implements ContainerFactoryPlu
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
+   * @param array<array-key, mixed> $configuration
+   *   Plugin configuration.
+   * @param mixed $plugin_id
+   *   Plugin ID.
+   * @param mixed $plugin_definition
+   *   Plugin definition.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    if (!is_string($plugin_id)) {
+      throw new \InvalidArgumentException('Plugin ID must be a string.');
+    }
     return new static(
       $configuration,
       $plugin_id,
@@ -94,8 +119,8 @@ final class UpcomingEventsBlock extends BlockBase implements ContainerFactoryPlu
     }
 
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:events-upcoming-block',
+      '#theme' => 'portal_component',
+      '#name' => 'events-upcoming-block',
       '#props' => [
         // O block label visível fornece o heading para esta instância.
         'title' => '',
@@ -103,7 +128,7 @@ final class UpcomingEventsBlock extends BlockBase implements ContainerFactoryPlu
         'empty_text' => (string) $this->t('Nenhum evento publicado no momento.'),
       ],
       '#cache' => [
-        // A visibilidade de eventos de turma do LMS depende da conta.
+            // A visibilidade de eventos de turma do LMS depende da conta.
         'contexts' => ['user', 'url.site'],
         'tags' => ['aculta_event_list', 'aculta_event_date_list'],
         'max-age' => self::MAX_AGE,

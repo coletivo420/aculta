@@ -54,10 +54,14 @@ final class SocialLinkForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<array-key, mixed> $form
-   *   Estrutura do formulário.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param string $rede
+   *   Value used for $rede.
    *
    * @return array<array-key, mixed>
-   *   Estrutura do formulário.
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, string $rede = ''): array {
     if (!isset(SocialNetworks::NETWORKS[$rede])) {
@@ -108,7 +112,7 @@ final class SocialLinkForm extends FormBase {
     if (!$studio) {
       // SDC com is_submit: o envio é capturado pelo JS (data-aculta-clear).
       $form['actions']['clear'] = [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Limpar'),
           'variant' => 'secondary',
@@ -126,7 +130,9 @@ final class SocialLinkForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<array-key, mixed> $form
-   *   Estrutura do formulário.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $rede = $this->textValue($form_state->getValue('rede'));

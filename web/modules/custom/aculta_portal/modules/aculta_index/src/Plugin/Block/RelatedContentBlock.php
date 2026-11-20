@@ -41,7 +41,7 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
   /**
    * Constructs a RelatedContentBlock.
    *
-   * @param array<string, mixed> $configuration
+   * @param array<mixed> $configuration
    *   Plugin configuration.
    * @param string $plugin_id
    *   Plugin ID.
@@ -56,7 +56,7 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
    */
   public function __construct(
     array $configuration,
-    $plugin_id,
+    string $plugin_id,
     $plugin_definition,
     protected readonly ContentIndexRelationQuery $relationQuery,
     protected readonly AccountInterface $currentUser,
@@ -67,6 +67,15 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
+   * @param array<mixed> $configuration
+   *   Plugin configuration.
+   * @param mixed $plugin_id
+   *   Plugin ID.
+   * @param mixed $plugin_definition
+   *   Plugin definition.
    */
   public static function create(
     ContainerInterface $container,
@@ -74,6 +83,9 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
     $plugin_id,
     $plugin_definition,
   ): static {
+    if (!is_string($plugin_id)) {
+      throw new \InvalidArgumentException('Plugin ID must be a string.');
+    }
     return new static(
       $configuration,
       $plugin_id,
@@ -86,6 +98,9 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function defaultConfiguration(): array {
     return [
@@ -227,8 +242,8 @@ final class RelatedContentBlock extends BlockBase implements ContainerFactoryPlu
     $heading = $title !== '' ? $title : (string) $this->t('Conteúdo relacionado');
 
     $build = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:related-content',
+      '#theme' => 'portal_component',
+      '#name' => 'related-content',
       '#slots' => [
         'content' => [
           '#theme' => 'item_list',

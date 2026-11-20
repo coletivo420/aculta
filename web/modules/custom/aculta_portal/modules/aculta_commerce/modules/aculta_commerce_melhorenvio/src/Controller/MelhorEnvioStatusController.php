@@ -60,7 +60,7 @@ final class MelhorEnvioStatusController {
     $scopes = $this->config->scopes() !== '' ? $this->config->scopes() : $this->t('Nenhuma');
 
     $connect = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) ($hasToken ? $this->t('Reconectar ao Melhor Envio') : $this->t('Conectar ao Melhor Envio')),
         'url' => Url::fromRoute('aculta_commerce_melhorenvio.oauth_authorize')->toString(),
@@ -68,7 +68,7 @@ final class MelhorEnvioStatusController {
       ],
       '#attributes' => ['data-aculta-popup' => 'melhorenvio_autorizacao'],
     ];
-    $connect['#attached']['library'][] = 'aculta_portal/integration-popup';
+    $connect['#attached'] = ['library' => ['aculta_portal/integration-popup']];
 
     return [
       'status' => [

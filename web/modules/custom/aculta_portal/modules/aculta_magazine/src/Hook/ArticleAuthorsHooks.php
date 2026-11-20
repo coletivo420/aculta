@@ -71,10 +71,8 @@ final class ArticleAuthorsHooks {
     $cache = (new CacheableMetadata())->addCacheableDependency($entity);
     $authors = [];
     $owner = $entity->getOwner();
-    if ($owner instanceof UserInterface) {
-      $authors[(int) $owner->id()] = ['user' => $owner, 'role' => 'author'];
-      $cache->addCacheableDependency($owner);
-    }
+    $authors[(int) $owner->id()] = ['user' => $owner, 'role' => 'author'];
+    $cache->addCacheableDependency($owner);
     if ($entity->hasField('aculta_coauthors')) {
       /** @var array<int, \Drupal\Core\Entity\EntityInterface> $coAuthorEntities */
       $coAuthorEntities = (array) $entity->get('aculta_coauthors')->referencedEntities();
@@ -85,10 +83,6 @@ final class ArticleAuthorsHooks {
         }
       }
     }
-    if ($authors === []) {
-      return;
-    }
-
     $items = [];
     foreach ($authors as $entry) {
       $item = $this->authorItem($entry['user'], $entry['role']);
@@ -100,8 +94,8 @@ final class ArticleAuthorsHooks {
       return;
     }
     $build['article_authors'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:article-authors',
+      '#theme' => 'portal_component',
+      '#name' => 'article-authors',
       '#weight' => 100,
       '#slots' => [
         'title' => [

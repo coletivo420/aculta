@@ -39,8 +39,8 @@ class StudioDashboardConnectionsComposer {
     }
 
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:studio-connections-block',
+      '#theme' => 'portal_component',
+      '#name' => 'studio-connections-block',
       '#props' => [
         'title' => 'CONEXÕES',
         'connections' => $connections,

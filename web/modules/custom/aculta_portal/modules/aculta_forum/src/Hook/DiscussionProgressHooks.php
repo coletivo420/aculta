@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Url;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
@@ -29,13 +30,11 @@ final class DiscussionProgressHooks {
   ) {}
 
   /**
-   * Remove o formulário de comentário do fim do tópico (substituído pelo botão Comentar).
-   *
-   * O formulário do core é um #lazy_builder, reconstruído na renderização; por isso a
-   * remoção é feita no template (variável comment_form), na última etapa do pré-processamento.
-   *
-   * @param array<string, mixed> $variables
-   */
+ * Remove o formulário de comentário do fim do tópico (substituído pelo botão Comentar). O formulário do core é um #lazy_builder, reconstruído na renderização; por isso a remoção é feita no template (variável comment_form), na última etapa do pré-processamento.
+ *
+ * @param array<array-key, mixed> $variables
+ *   Template variables.
+ */
   #[Hook('preprocess_field', order: Order::Last)]
   public function preprocessDiscussionField(array &$variables): void {
     if (($variables['field_name'] ?? '') === 'field_aculta_discussion') {
@@ -44,10 +43,15 @@ final class DiscussionProgressHooks {
   }
 
   /**
-   * Marks the shared discussion field for its client-side reading controls.
-   *
-   * @param array<string, mixed> $build
-   */
+ * Marks the shared discussion field for its client-side reading controls.
+ *
+ * @param array<array-key, mixed> $build
+ *   Render array to modify.
+ * @param EntityInterface $entity
+ *   Value used for $entity.
+ * @param EntityViewDisplayInterface $display
+ *   Value used for $display.
+ */
   #[Hook('entity_view_alter')]
   public function entityViewAlter(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
     if (!$entity instanceof NodeInterface
@@ -77,8 +81,8 @@ final class DiscussionProgressHooks {
     // Janela única da página (SDC popup) para Responder, Citar, Editar e login do visitante.
     // O conteúdo chega por HTMX ao corpo #aculta-reply-dialog-body; o JS só a abre.
     $build['aculta_reply_popup'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:popup',
+      '#theme' => 'portal_component',
+      '#name' => 'popup',
       '#props' => [
         'id' => 'aculta-reply-dialog',
         'title' => (string) t('Responder à discussão'),
@@ -91,7 +95,14 @@ final class DiscussionProgressHooks {
       ],
       '#slots' => [
         'content' => [
-          ['#type' => 'component', '#component' => 'aculta420_v2:posting-overlay', '#props' => ['title' => (string) t('Aguarde'), 'text' => (string) t('Postando seu comentário…')]],
+          [
+            '#theme' => 'portal_component',
+            '#name' => 'posting-overlay',
+            '#props' => [
+              'title' => (string) t('Aguarde'),
+              'text' => (string) t('Postando seu comentário…'),
+            ],
+          ],
           ['#markup' => '<div id="aculta-reply-dialog-body" class="aculta-reply-dialog__body"></div>'],
         ],
       ],
@@ -110,7 +121,7 @@ final class DiscussionProgressHooks {
       $this->renderer->renderInIsolation($form);
       $attached = $build['field_aculta_discussion']['#attached'];
       $form_attached = is_array($form['#attached'] ?? NULL) ? $form['#attached'] : [];
-      $build['field_aculta_discussion']['#attached'] = \Drupal\Component\Utility\NestedArray::mergeDeep(
+      $build['field_aculta_discussion']['#attached'] = NestedArray::mergeDeep(
         $attached,
         $form_attached,
       );

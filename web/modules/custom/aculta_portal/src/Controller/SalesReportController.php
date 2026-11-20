@@ -59,7 +59,11 @@ final class SalesReportController implements ContainerInjectionInterface {
   /**
    * Página do relatório de vendas.
    *
+   * @param Request $request
+   *   Current HTTP request.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function report(Request $request): array {
     $timezoneConfig = $this->configFactory->get('system.date')->get('timezone.default');
@@ -72,12 +76,12 @@ final class SalesReportController implements ContainerInjectionInterface {
     }
 
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:sales-panel',
+      '#theme' => 'portal_component',
+      '#name' => 'sales-panel',
       '#slots' => ['content' => [
-      'por_variacao' => $this->secao($this->t('Vendas por variação'), $this->tabelaPorVariacao($filtros)),
-      'por_periodo' => $this->secao($this->t('Vendas por período'), $this->tabelaPorPeriodo($filtros)),
-      'pedidos' => $this->secao($this->t('Pedidos e pagamentos'), $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_PRODUTO, $this->paginaAtual($request), 'aculta_portal.relatorio_vendas', $this->filtrosDaUrl($request))),
+        'por_variacao' => $this->secao($this->t('Vendas por variação'), $this->tabelaPorVariacao($filtros)),
+        'por_periodo' => $this->secao($this->t('Vendas por período'), $this->tabelaPorPeriodo($filtros)),
+        'pedidos' => $this->secao($this->t('Pedidos e pagamentos'), $this->pedidosTabela->construir($filtros, SalesReportQuery::ESCOPO_PRODUTO, $this->paginaAtual($request), 'aculta_portal.relatorio_vendas', $this->filtrosDaUrl($request))),
       ]],
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];
@@ -87,10 +91,12 @@ final class SalesReportController implements ContainerInjectionInterface {
    * Seção do painel: título semântico e conteúdo. Aparência decidida pelo tema (tokens sales-*).
    *
    * @param mixed $titulo
-   * @param array<string, mixed> $conteudo
+   *   Value used for $titulo.
+   * @param array<array-key, mixed> $conteudo
+   *   Value used for $conteudo.
    *
    * @return array<string, mixed>
-   *   Render array da seção.
+   *   Render array returned by the method.
    */
   private function secao(mixed $titulo, array $conteudo): array {
     return [
@@ -137,7 +143,11 @@ final class SalesReportController implements ContainerInjectionInterface {
   /**
    * Tabela de vendas por variação, com total por moeda no rodapé.
    *
+   * @param SalesReportFilters $filtros
+   *   Value used for $filtros.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function tabelaPorVariacao(SalesReportFilters $filtros): array {
     $linhas = [];
@@ -171,7 +181,11 @@ final class SalesReportController implements ContainerInjectionInterface {
   /**
    * Tabela de vendas por período e moeda.
    *
+   * @param SalesReportFilters $filtros
+   *   Value used for $filtros.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function tabelaPorPeriodo(SalesReportFilters $filtros): array {
     $linhas = [];

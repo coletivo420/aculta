@@ -13,7 +13,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Barra institucional do ACULTA (SDC aculta420_v2:multidomain-bar) como bloco.
+ * Barra institucional do ACULTA (barra institucional do tema) como bloco.
  *
  * Os dados dinâmicos (conta, carrinho, mensagens, alertas, busca e apresentação do domínio)
  * vêm dos mesmos hooks de pré-processamento que alimentavam a barra fixa da página.
@@ -36,20 +36,49 @@ final class InstitutionBarBlock extends BlockBase implements ContainerFactoryPlu
     'Drupal\aculta420_v2\Hook\PagePresentationHooks',
   ];
 
+  /**
+   * Constructs this service or plugin.
+   *
+   * @param array<mixed> $configuration
+   *   Plugin configuration.
+   * @param string $plugin_id
+   *   Plugin ID.
+   * @param mixed $plugin_definition
+   *   Plugin definition.
+   * @param ThemeExtensionList $themes
+   *   Theme extension list service.
+   * @param ClassResolverInterface $classResolver
+   *   Class resolver service.
+   */
   public function __construct(
     array $configuration,
-    $plugin_id,
+    string $plugin_id,
     $plugin_definition,
-    private readonly ThemeExtensionList $themes,
-    private readonly ClassResolverInterface $classResolver,
+    protected readonly ThemeExtensionList $themes,
+    protected readonly ClassResolverInterface $classResolver,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
   }
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
+   * @param array<mixed> $configuration
+   *   Plugin configuration.
+   * @param mixed $plugin_id
+   *   Plugin ID.
+   * @param mixed $plugin_definition
+   *   Plugin definition.
+   *
+   * @return static
+   *   Value returned by the method.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
+    if (!is_string($plugin_id)) {
+      throw new \InvalidArgumentException('Plugin ID must be a string.');
+    }
     return new static(
       $configuration,
       $plugin_id,
@@ -61,6 +90,9 @@ final class InstitutionBarBlock extends BlockBase implements ContainerFactoryPlu
 
   /**
    * {@inheritdoc}
+   *
+   * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function build(): array {
     $variables = [];
@@ -73,14 +105,18 @@ final class InstitutionBarBlock extends BlockBase implements ContainerFactoryPlu
 
     $library = $this->get($variables, 'aculta_component_library_page', FALSE) === TRUE;
     $directory = $this->themes->getPath('aculta420_v2');
+    $basePath = base_path();
+    if (!is_string($basePath)) {
+      $basePath = '';
+    }
 
     $props = [
       'brand_home_url' => $this->get($variables, 'aculta_brand_home', '/'),
-      'logo_base_url' => base_path() . $directory . '/assets/logos',
+      'logo_base_url' => $basePath . $directory . '/assets/logos',
       'logo_alt' => (string) new TranslatableMarkup('ACULTA - Associação Cultural Antiproibicionista'),
       'is_account_domain' => (bool) $this->get($variables, 'domain_presentation.layout.institution_bar_account', FALSE),
       'show_utility_bar' => (bool) $this->get($variables, 'domain_presentation.layout.show_utility_bar', TRUE) && !$library,
-      'portal_menu' => $library ? NULL : $this->get($variables, 'aculta_portal_menu', NULL),
+      'portal_menu' => $library ? NULL : $this->get($variables, 'portal_account_menu', NULL),
       'cart_url' => $this->get($variables, 'aculta_cart.url', NULL),
       'cart_count' => $this->get($variables, 'aculta_cart.count', 0),
       'cart_empty' => $this->get($variables, 'aculta_cart.empty', TRUE),
@@ -100,8 +136,8 @@ final class InstitutionBarBlock extends BlockBase implements ContainerFactoryPlu
     return [
       '#prefix' => '<div class="page__institution">',
       '#suffix' => '</div>',
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:multidomain-bar',
+      '#theme' => 'portal_component',
+      '#name' => 'multidomain-bar',
       '#props' => $props,
       '#attached' => $variables['#attached'] ?? [],
       '#cache' => ['contexts' => ['user', 'url.path', 'url.query_args', 'route'], 'max-age' => 0],
@@ -110,6 +146,17 @@ final class InstitutionBarBlock extends BlockBase implements ContainerFactoryPlu
 
   /**
    * Lê um caminho pontilhado (ex.: "cart.url") das variáveis, com valor padrão.
+   */
+
+  /**
+   * Reads a value from the supplied variables.
+   *
+   * @param array<array-key, mixed> $variables
+   *   Template variables.
+   * @param string $path
+   *   Dotted key path to read.
+   * @param mixed $default
+   *   Default value when the path is absent.
    */
   private function get(array $variables, string $path, mixed $default): mixed {
     $value = $variables;

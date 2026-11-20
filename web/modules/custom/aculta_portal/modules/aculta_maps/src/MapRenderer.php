@@ -100,8 +100,8 @@ final class MapRenderer {
           '#context' => [
             'template_id' => $iconTemplateId,
             'icon' => [
-              '#type' => 'component',
-              '#component' => 'aculta420_v2:icon',
+              '#theme' => 'portal_component',
+              '#name' => 'icon',
               '#props' => [
                 'name' => $iconName,
                 'variant' => 'duotone',
@@ -157,7 +157,8 @@ final class MapRenderer {
     }
     if ($engine === 'google' && !$googleKey) {
       $build['provider_notice'] = [
-        '#component' => 'aculta420_v2:status-messages',
+        '#theme' => 'portal_component',
+        '#name' => 'status-messages',
         '#props' => [
           'type' => 'warning',
           'messages' => ['Google Maps não está configurado; usando OpenStreetMap.'],

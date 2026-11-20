@@ -23,7 +23,7 @@ final class ComponentFallbackHooks {
    * @param array<mixed> $variables
    *   Dados de entrada (variables).
    */
-  #[Hook('preprocess_aculta_portal_component')]
+  #[Hook('preprocess_portal_component')]
   public function preprocessPortalComponent(array &$variables): void {
     if (!empty($variables['component'])) {
       return;

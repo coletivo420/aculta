@@ -26,8 +26,8 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
  * keeping identity, links, cache, and authorization decisions in their owners.
  *
  * @phpstan-type StudioMenuBuild array{
- *   '#type': 'component',
- *   '#component': 'aculta420_v2:studio-menu',
+ *   '#theme': 'portal_component',
+ *   '#name': 'studio-menu',
  *   '#props': array{title: string},
  *   '#slots': array{
  *     sidebar_items: array<int, array<string, mixed>>,
@@ -94,8 +94,8 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
    * {@inheritdoc}
    *
    * @return array{
-   *   '#type': 'component',
-   *   '#component': 'aculta420_v2:account-experience-dashboard',
+   *   '#theme': 'portal_component',
+   *   '#name': 'account-experience-dashboard',
    *   '#props': array{
    *     show_identity: bool,
    *     identity_name: string,
@@ -125,26 +125,28 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
     $menuItems = $this->studioMenuItems();
     $sidebarMenuItems = array_map(
       static fn (array $item): array => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:studio-menu-item',
+        '#theme' => 'portal_component',
+        '#name' => 'studio-menu-item',
         '#props' => $item + ['show_icon' => TRUE],
       ],
       $menuItems,
     );
     $dialogMenuItems = array_map(
       static fn (array $item): array => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:studio-menu-item',
+        '#theme' => 'portal_component',
+        '#name' => 'studio-menu-item',
         '#props' => $item + ['show_icon' => FALSE],
       ],
       $menuItems,
     );
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:account-experience-dashboard',
+      '#theme' => 'portal_component',
+      '#name' => 'account-experience-dashboard',
       '#props' => [
         'show_identity' => $identity !== [],
-        'identity_name' => (string) ($identity['name'] ?? ''),
+        'identity_name' => is_string($identity['name'] ?? NULL) || ($identity['name'] ?? NULL) instanceof \Stringable
+          ? (string) $identity['name']
+          : '',
         'identity_email' => $identity['email'] ?? NULL,
         'profile_url' => $identity['profile_url'] ?? NULL,
         'experiences_title' => $this->presentationValue('experiences_title', (string) new TranslatableMarkup('Suas experiências')),
@@ -156,8 +158,8 @@ final class AccountExperienceProvider implements StudioExperienceProviderInterfa
       ],
       '#slots' => [
         'menu' => [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:studio-menu',
+          '#theme' => 'portal_component',
+          '#name' => 'studio-menu',
           '#props' => [
             'title' => (string) new TranslatableMarkup('Studio Dashboard'),
           ],

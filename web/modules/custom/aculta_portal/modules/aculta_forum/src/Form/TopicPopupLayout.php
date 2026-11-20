@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Form;
 
+use Drupal\Core\Template\Attribute;
+
 /**
  * Layout do popup de criação de tópico (Compositor de Criação de Tópico).
  *
@@ -21,6 +23,7 @@ final class TopicPopupLayout {
    * Aplica o layout do popup ao formulário do nó aculta_forum_topic.
    *
    * @param array<mixed> $form
+   *   Form render array.
    */
   public static function apply(array &$form): void {
     foreach (array_keys($form) as $key) {
@@ -49,12 +52,12 @@ final class TopicPopupLayout {
       // Sem pré-visualização. "Cancelar" (secundário) fecha o popup.
       unset($form['actions']['preview']);
       $form['actions']['cancel'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#theme' => 'portal_component',
+        '#name' => 'button',
         '#props' => [
           'text' => (string) t('Cancelar'),
           'variant' => 'secondary',
-          'attributes' => new \Drupal\Core\Template\Attribute(['data-aculta-dialog-close' => '']),
+          'attributes' => new Attribute(['data-aculta-dialog-close' => '']),
         ],
         '#weight' => 50,
       ];

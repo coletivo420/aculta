@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Form;
 
-use Drupal\aculta_forum\Controller\DiscussionCommentDeleteController;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -33,6 +32,12 @@ final class DiscussionCommentModerationForm extends FormBase {
     protected readonly DiscussionReactionManager $modReactions,
   ) {}
 
+  /**
+   * Creates an instance from the service container.
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('current_route_match'),
@@ -45,6 +50,9 @@ final class DiscussionCommentModerationForm extends FormBase {
     );
   }
 
+  /**
+   * Provides the getFormId operation.
+   */
   public function getFormId(): string {
     return 'aculta_forum_comment_moderation_form';
   }
@@ -53,7 +61,12 @@ final class DiscussionCommentModerationForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $comment = $this->modRoute->getParameter('comment');
@@ -81,8 +94,8 @@ final class DiscussionCommentModerationForm extends FormBase {
     };
 
     $form['info'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:comment-admin-controls',
+      '#theme' => 'portal_component',
+      '#name' => 'comment-admin-controls',
       '#props' => [
         'author_name' => (string) $comment->getAuthorName(),
         'state_label' => $state,
@@ -92,17 +105,25 @@ final class DiscussionCommentModerationForm extends FormBase {
       ],
     ];
 
-    $form['acoes'] = ['#type' => 'container', '#attributes' => ['class' => ['comment-admin-controls__buttons']]];
+    $form['acoes'] = ['#type' => 'container', '#attributes' => ['data-portal-ui' => 'comment-admin-controls-buttons']];
     $form['acoes']['despublicar_ou_republicar'] = [
       '#type' => 'submit',
       '#value' => $comment->isPublished() ? $this->t('Despublicar') : $this->t('Republicar'),
       '#acao' => $comment->isPublished() ? 'despublicar' : 'republicar',
     ];
     if ($tombstone === 'moderacao') {
-      $form['acoes']['restaurar'] = ['#type' => 'submit', '#value' => $this->t('Restaurar comentário'), '#acao' => 'restaurar'];
+      $form['acoes']['restaurar'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Restaurar comentário'),
+        '#acao' => 'restaurar',
+      ];
     }
     elseif (!$tombstone) {
-      $form['acoes']['remover'] = ['#type' => 'submit', '#value' => $this->t('Remover pela moderação'), '#acao' => 'remover'];
+      $form['acoes']['remover'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Remover pela moderação'),
+        '#acao' => 'remover',
+      ];
     }
     // Exclusão física só depois de marcar que é definitiva.
     $form['acoes']['confirmar_exclusao'] = [
@@ -126,6 +147,9 @@ final class DiscussionCommentModerationForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     if ($this->acaoDoBotao($form_state) === 'excluir' && !$form_state->getValue('confirmar_exclusao')) {
@@ -137,6 +161,9 @@ final class DiscussionCommentModerationForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $comment = $this->modRoute->getParameter('comment');

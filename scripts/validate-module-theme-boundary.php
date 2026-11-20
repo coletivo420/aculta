@@ -58,6 +58,12 @@ $allowedThemeReferences = [
   // continues to own View data, access, filtering, sorting and cache config.
   'modules/aculta_forum/config/install/views.view.aculta_forum_categories.yml',
   'modules/aculta_forum/config/install/views.view.aculta_forum_public_topics.yml',
+  // UI Patterns Views configs select SDCs from the active theme while module
+  // views continue to own data, access, filtering, sorting and cache metadata.
+  'modules/aculta_lms/config/install/views.view.courses.yml',
+  'modules/aculta_lms/config/install/views.view.courses_catalog.yml',
+  'modules/aculta_forum/config/install/views.view.aculta_forum_search.yml',
+  'modules/aculta_events/config/install/views.view.eventos_publicos.yml',
   // Config contract test checks that the editorial format uses the theme's
   // UI Styles class catalog; production module code remains theme independent.
   'modules/aculta_editor/tests/src/Kernel/AcultaEditorFormatsKernelTest.php',
@@ -81,6 +87,9 @@ $files = static function (string $dir, array $exts): array {
   }
   $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS));
   foreach ($it as $file) {
+    if (!$file instanceof SplFileInfo) {
+      continue;
+    }
     if ($file->isFile() && in_array($file->getExtension(), $exts, TRUE)) {
       $out[] = $file->getPathname();
     }
@@ -93,7 +102,7 @@ $files = static function (string $dir, array $exts): array {
 $moduleCode = $files($module, ['php', 'yml', 'twig', 'js', 'inc', 'module']);
 foreach ($moduleCode as $path) {
   $rel = substr($path, strlen($module) + 1);
-  if (str_starts_with($rel, 'tests/') || str_starts_with($rel, 'modules/aculta_deployer/')) {
+  if (preg_match('~(^|/)tests/~', $rel) || str_starts_with($rel, 'modules/aculta_deployer/')) {
     continue;
   }
   $text = (string) file_get_contents($path);

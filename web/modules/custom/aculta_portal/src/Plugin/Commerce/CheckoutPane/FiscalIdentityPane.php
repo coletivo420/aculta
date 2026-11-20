@@ -47,8 +47,22 @@ final class FiscalIdentityPane extends CheckoutPaneBase implements CheckoutPaneI
 
   /**
    * Cria o pane com a política de identidade fiscal.
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
+   * @param array<array-key, mixed> $configuration
+   *   Plugin configuration.
+   * @param mixed $plugin_id
+   *   Plugin ID.
+   * @param mixed $plugin_definition
+   *   Plugin definition.
+   * @param ?CheckoutFlowInterface $checkout_flow
+   *   Value used for $checkout_flow.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL) {
+    if (!is_string($plugin_id)) {
+      throw new \InvalidArgumentException('Plugin ID must be a string.');
+    }
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition, $checkout_flow);
     $instance->policy = $container->get('aculta_portal.fiscal_identity_policy');
     return $instance;
@@ -63,6 +77,16 @@ final class FiscalIdentityPane extends CheckoutPaneBase implements CheckoutPaneI
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $pane_form
+   *   Value used for $pane_form.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param array<array-key, mixed> $complete_form
+   *   Value used for $complete_form.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form) {
     $check = $this->check();
@@ -87,7 +111,6 @@ final class FiscalIdentityPane extends CheckoutPaneBase implements CheckoutPaneI
           // Alternativa ao cadastro na própria compra: Outros Dados, com
           // retorno ao checkout deste pedido.
           $pane_form['other_data'] = [
-            '#attached' => ['library' => ['aculta_portal/checkout-presentation']],
             '#type' => 'link',
             '#title' => $this->t('Prefiro cadastrar em Outros Dados'),
             '#url' => Url::fromUri('internal:/dados/outros-dados', [

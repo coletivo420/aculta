@@ -110,7 +110,7 @@ abstract class OrderTypeMappingFormBase extends ConfigFormBase {
   /**
    * Monta o formulário de mapeamento do tipo de pedido.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
@@ -144,7 +144,7 @@ abstract class OrderTypeMappingFormBase extends ConfigFormBase {
   /**
    * Valida o tipo de pedido e o checkout flow escolhidos.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
@@ -169,7 +169,7 @@ abstract class OrderTypeMappingFormBase extends ConfigFormBase {
   /**
    * Salva o tipo de pedido e grava o checkout flow no tipo de pedido.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.

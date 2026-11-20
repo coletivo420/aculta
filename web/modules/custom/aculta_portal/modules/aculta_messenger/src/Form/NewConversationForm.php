@@ -82,7 +82,12 @@ final class NewConversationForm extends FormBase {
     $limit = $this->policy->maxRecipients(ConversationPolicy::KIND_GROUP, $this->currentUser);
     $form['#attributes'] = ['data-aculta-new-conversation-form' => ''];
     if (!$fixed) {
-      $form['#attached']['library'][] = 'aculta_messenger/new-conversation-presentation';
+      $attached = $form['#attached'] ?? [];
+      $attached = is_array($attached) ? $attached : [];
+      $libraries = $attached['library'] ?? [];
+      $attached['library'] = is_array($libraries) ? $libraries : [];
+      $attached['library'][] = 'aculta_messenger/new-conversation-presentation';
+      $form['#attached'] = $attached;
       // The drawer reads search/chips and posts to the group route.
       $form['#action'] = Url::fromRoute('aculta_messenger.new_conversation_group')->toString();
       $form['#attributes'] += [
@@ -120,8 +125,8 @@ final class NewConversationForm extends FormBase {
         ],
       ];
       $form['preview'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:search-preview',
+        '#theme' => 'portal_component',
+        '#name' => 'search-preview',
         '#weight' => -9,
         '#props' => ['attributes' => new Attribute([
           'id' => 'aculta-new-conversation-preview',

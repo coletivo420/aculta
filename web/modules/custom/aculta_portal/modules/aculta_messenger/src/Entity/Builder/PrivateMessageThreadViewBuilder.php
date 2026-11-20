@@ -88,7 +88,7 @@ class PrivateMessageThreadViewBuilder extends EntityViewBuilder {
         '#url' => $url,
         '#title' => '',
         '#weight' => 9999,
-        '#attributes' => ['data-thread-id' => $entity->id(), 'class' => ['private-message-inbox-thread-link']],
+        '#attributes' => ['data-thread-id' => $entity->id(), 'data-portal-ui' => 'private-message-inbox-thread-link'],
       ];
     }
 

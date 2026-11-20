@@ -52,9 +52,16 @@ final class AcultaCheckoutLogin extends Login {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $configuration
+   * @param ContainerInterface $container
+   *   Dependency injection container.
+   * @param array<array-key, mixed> $configuration
+   *   Plugin configuration.
    * @param string $plugin_id
+   *   Plugin ID.
    * @param mixed $plugin_definition
+   *   Plugin definition.
+   * @param ?CheckoutFlowInterface $checkout_flow
+   *   Value used for $checkout_flow.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition, ?CheckoutFlowInterface $checkout_flow = NULL): static {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition, $checkout_flow);
@@ -77,9 +84,14 @@ final class AcultaCheckoutLogin extends Login {
    * {@inheritdoc}
    *
    * @param array<mixed> $pane_form
+   *   Value used for $pane_form.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    * @param array<mixed> $complete_form
+   *   Value used for $complete_form.
    *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function buildPaneForm(array $pane_form, FormStateInterface $form_state, array &$complete_form): array {
     $built = parent::buildPaneForm($pane_form, $form_state, $complete_form);
@@ -159,13 +171,12 @@ final class AcultaCheckoutLogin extends Login {
     }
 
     $pane_form['new_customer'] = [
-      '#attached' => ['library' => ['aculta_portal/checkout-presentation']],
       '#type' => 'fieldset',
       '#title' => $this->t('Cadastro de novo cliente'),
       '#attributes' => [
         'id' => 'aculta-checkout-new-customer',
         'hidden' => $known_account,
-        'class' => ['aculta-checkout__guest'],
+        'data-portal-ui' => 'checkout-guest',
       ],
       'email' => ['#plain_text' => $mail],
       'description' => ['#markup' => $this->t('Ao concluir o pedido, uma conta será criada em segundo plano e enviaremos um link para você definir sua senha.')],
@@ -188,6 +199,9 @@ final class AcultaCheckoutLogin extends Login {
    * Refreshes the checkout email stage after the email field loses focus.
    *
    * @param array<mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function emailLookupAjax(array &$form, FormStateInterface $form_state): AjaxResponse {
     $trigger = $form_state->getTriggeringElement();
@@ -287,7 +301,11 @@ final class AcultaCheckoutLogin extends Login {
    * {@inheritdoc}
    *
    * @param array<mixed> $pane_form
+   *   Value used for $pane_form.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    * @param array<mixed> $complete_form
+   *   Value used for $complete_form.
    */
   public function validatePaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form): void {
     parent::validatePaneForm($pane_form, $form_state, $complete_form);
@@ -329,7 +347,11 @@ final class AcultaCheckoutLogin extends Login {
    * {@inheritdoc}
    *
    * @param array<mixed> $pane_form
+   *   Value used for $pane_form.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    * @param array<mixed> $complete_form
+   *   Value used for $complete_form.
    */
   public function submitPaneForm(array &$pane_form, FormStateInterface $form_state, array &$complete_form): void {
     $triggeringElement = $form_state->getTriggeringElement();
@@ -362,6 +384,7 @@ final class AcultaCheckoutLogin extends Login {
    * Builds the existing Portal Google sign-in entry above the email field.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function googleButton(): array {
     if (!$this->portalModuleHandler?->moduleExists('social_auth') || !$this->authIntegration?->isGoogleConfigured()) {
@@ -384,7 +407,6 @@ final class AcultaCheckoutLogin extends Login {
     $url->setOption('query', $query);
     $link = sprintf('<a class="aculta-checkout__google-link" href="%s">%s <strong>Google</strong></a>', Html::escape($url->toString()), Html::escape((string) $this->t('Continuar com')));
     return [
-      '#attached' => ['library' => ['aculta_portal/checkout-presentation']],
       '#type' => 'container',
       '#weight' => -30,
       '#attributes' => ['data-portal-ui' => 'checkout-google'],

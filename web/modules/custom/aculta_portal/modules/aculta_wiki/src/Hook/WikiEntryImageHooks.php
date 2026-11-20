@@ -58,10 +58,13 @@ final class WikiEntryImageHooks {
   }
 
   /**
-   * Adds the "Imagem de destaque" tab to the wiki_entry node form.
-   *
-   * @param array<mixed> $form
-   */
+ * Adds the "Imagem de destaque" tab to the wiki_entry node form.
+ *
+ * @param array<mixed> $form
+ *   Form render array.
+ * @param FormStateInterface $form_state
+ *   Current form state.
+ */
   #[Hook('form_node_wiki_entry_form_alter')]
   #[Hook('form_node_wiki_entry_edit_form_alter')]
   public function formAlter(array &$form, FormStateInterface $form_state): void {
@@ -244,12 +247,15 @@ final class WikiEntryImageHooks {
   }
 
   /**
-   * Monta a prévia da imagem atual com a URL de query do core para arquivos privados.
+   * Monta a prévia da imagem atual com a URL de query do core para arquivos privados. A forma de caminho /system/files/{arquivo} responde 404 neste core (o processador de caminho reescreve para /system/files sem rota exata). A forma ?file= é a usada pelo projeto.
    *
-   * A forma de caminho /system/files/{arquivo} responde 404 neste core (o processador de
-   * caminho reescreve para /system/files sem rota exata). A forma ?file= é a usada pelo projeto.
+   * @param MediaInterface $media
+   *   Value used for $media.
+   * @param string $alt
+   *   Value used for $alt.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function previewMarkup(MediaInterface $media, string $alt): array {
     $fieldMedia = $media->get('field_media_image');
@@ -320,12 +326,15 @@ final class WikiEntryImageHooks {
    * Adds a separate review action only when Core exposes that transition.
    *
    * @param array<mixed> $form
+   *   Form render array.
+   * @param NodeInterface $node
+   *   Node being rendered.
    */
   private function addReviewAction(array &$form, NodeInterface $node): void {
     if (!isset($form['actions']) || !is_array($form['actions']) || !isset($form['actions']['submit']) || !is_array($form['actions']['submit'])) {
       return;
     }
-    $widget = null;
+    $widget = NULL;
     if (isset($form['moderation_state']) && is_array($form['moderation_state'])) {
       $modState = &$form['moderation_state'];
       if (isset($modState['widget']) && is_array($modState['widget']) && isset($modState['widget'][0]) && is_array($modState['widget'][0])) {
@@ -391,8 +400,11 @@ final class WikiEntryImageHooks {
   }
 
   /**
-   * Reconciles image publication after a Wiki Node is deleted.
-   */
+ * Reconciles image publication after a Wiki Node is deleted.
+ *
+ * @param EntityInterface $entity
+ *   Value used for $entity.
+ */
   #[Hook('entity_delete')]
   public function entityDelete(EntityInterface $entity): void {
     if ($entity instanceof NodeInterface) {
@@ -403,7 +415,11 @@ final class WikiEntryImageHooks {
   /**
    * Returns the label and alt text of the image currently referenced.
    *
+   * @param NodeInterface $node
+   *   Node being rendered.
+   *
    * @return array{name: string, alt: string, fid: int, media: \Drupal\media\MediaInterface}|null
+   *   Render array returned by the method.
    */
   private function currentImage(NodeInterface $node): ?array {
     if (!$node->hasField(WikiLeadImageUploader::FIELD) || $node->get(WikiLeadImageUploader::FIELD)->isEmpty()) {
@@ -426,6 +442,9 @@ final class WikiEntryImageHooks {
 
   /**
    * Returns the current field's Media ID, if available.
+   *
+   * @param NodeInterface $node
+   *   Node being rendered.
    */
   private function leadImageId(NodeInterface $node): ?int {
     if (!$node->hasField(WikiLeadImageUploader::FIELD)
@@ -440,6 +459,7 @@ final class WikiEntryImageHooks {
    * Adds a return link when the optional Studio destination is available.
    *
    * @param array<mixed> $form
+   *   Form render array.
    */
   private function addWorkspaceReturnLink(array &$form): void {
     try {
@@ -456,7 +476,7 @@ final class WikiEntryImageHooks {
     }
 
     $form['wiki_workspace_return'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar para Meu Trabalho WE SATIVA'),
         'url' => $url->toString(),

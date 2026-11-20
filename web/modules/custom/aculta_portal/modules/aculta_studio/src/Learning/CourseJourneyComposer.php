@@ -34,7 +34,7 @@ final class CourseJourneyComposer {
    * @param \Drupal\aculta_lms\Learning\CourseJourney $journey
    *   Authorized journey data from the ACULTA course journey contract.
    *
-   * @return array<string, mixed>
+   * @return array<array-key, mixed>
    *   Render array.
    */
   public function build(CourseJourney $journey): array {
@@ -108,7 +108,7 @@ final class CourseJourneyComposer {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'aculta-learning-room'],
       'header' => [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'context-header',
         '#props' => [
           'eyebrow' => (string) $this->t('ACULTA Studio Ganjalab'),
@@ -205,7 +205,7 @@ final class CourseJourneyComposer {
     ];
     if ($journey->lessons === []) {
       $outline['empty'] = [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'empty-state',
         '#props' => ['compact' => TRUE],
         '#slots' => [

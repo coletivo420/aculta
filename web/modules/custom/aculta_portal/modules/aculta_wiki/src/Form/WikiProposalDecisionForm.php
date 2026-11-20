@@ -56,6 +56,16 @@ final class WikiProposalDecisionForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param WikiProposal|Contribution|null $proposal
+   *   Value used for $proposal.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, WikiProposal|Contribution|null $proposal = NULL): array {
     if ((!$proposal instanceof WikiProposal && !$proposal instanceof Contribution) || !$proposal->access('update')) {
@@ -72,7 +82,7 @@ final class WikiProposalDecisionForm extends FormBase {
 
     $form['#attributes']['data-portal-ui'] = 'wiki-proposal-decision';
     $form['proposal_header'] = [
-      '#theme' => 'aculta_portal_component',
+      '#theme' => 'portal_component',
       '#name' => 'context-header',
       '#props' => [
         'eyebrow' => (string) $this->t('ACULTA Studio Marley · Moderação Wiki'),
@@ -204,7 +214,7 @@ final class WikiProposalDecisionForm extends FormBase {
       '#items' => $sourceLinks,
     ];
     $form['contribution'] = [
-      '#theme' => 'aculta_portal_component',
+      '#theme' => 'portal_component',
       '#name' => 'content-section',
       '#props' => ['title' => (string) $this->t('Contribuição recebida')],
       '#slots' => ['body' => $contributionBody],

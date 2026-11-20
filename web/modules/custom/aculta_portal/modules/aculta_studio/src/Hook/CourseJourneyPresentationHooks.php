@@ -29,8 +29,15 @@ final class CourseJourneyPresentationHooks {
   ) {}
 
   /**
-   * Adds the learner journey to the canonical course page.
-   */
+ * Adds the learner journey to the canonical course page.
+ *
+ * @param array<array-key, mixed> $build
+ *   Render array to modify.
+ * @param EntityInterface $entity
+ *   Value used for $entity.
+ * @param EntityViewDisplayInterface $display
+ *   Value used for $display.
+ */
   #[Hook('entity_view_alter')]
   public function addCourseJourney(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display): void {
     if ($this->journeys === NULL
@@ -51,7 +58,7 @@ final class CourseJourneyPresentationHooks {
     }
 
     $build['aculta_learning_journey'] = [
-      '#theme' => 'aculta_portal_component',
+      '#theme' => 'portal_component',
       '#name' => 'lms-learning-journey',
       '#props' => [],
       '#slots' => ['content' => $this->composer->build($journey)],
@@ -60,8 +67,11 @@ final class CourseJourneyPresentationHooks {
   }
 
   /**
-   * Wraps the ACULTA answer form in the Studio learning-room shell.
-   */
+ * Wraps the ACULTA answer form in the Studio learning-room shell.
+ *
+ * @param array<array-key, mixed> $variables
+ *   Template variables.
+ */
   #[Hook('preprocess_page')]
   public function preprocessLearningRoom(array &$variables): void {
     if ($this->journeys === NULL

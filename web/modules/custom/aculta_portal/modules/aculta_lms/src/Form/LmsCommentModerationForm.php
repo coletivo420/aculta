@@ -49,6 +49,22 @@ final class LmsCommentModerationForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param ?GroupInterface $course
+   *   Value used for $course.
+   * @param ?GroupInterface $group
+   *   Value used for $group.
+   * @param ?CommentInterface $comment
+   *   Value used for $comment.
+   * @param string $decision
+   *   Value used for $decision.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?GroupInterface $course = NULL, ?GroupInterface $group = NULL, ?CommentInterface $comment = NULL, string $decision = ''): array {
     if (!$course instanceof GroupInterface || !$group instanceof GroupInterface || (string) $this->moderationManager->courseIdForGroup($group) !== (string) $course->id()) {
@@ -93,10 +109,13 @@ final class LmsCommentModerationForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) $this->t('Cancelar'),
-        'url' => Url::fromRoute('aculta_forum_lms.comments_pending', ['course' => $course->id(), 'group' => $group->id()])->toString(),
+        'url' => Url::fromRoute(
+          'aculta_forum_lms.comments_pending',
+          ['course' => $course->id(), 'group' => $group->id()],
+        )->toString(),
         'variant' => 'secondary',
       ],
     ];

@@ -48,7 +48,7 @@ interface PrivateMessageConfigFormPluginInterface extends PluginInspectionInterf
   /**
    * Validate this section of the form.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   The form render array.
    * @param \Drupal\Core\Form\FormStateInterface $formState
    *   The Drupal form state.
