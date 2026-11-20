@@ -1,3 +1,5 @@
+> **DECISÃO POSTERIOR 2026-11-20:** para **saldo geral de curtidas** de cada item, todos os emojis positivos atuais/antigos equivalem +1 e `dislike` equivale -1, sem necessidade de `like_reaction_ids` para essa finalidade. A proposta anterior de subset de emojis continua somente histórico de pesquisa. Discourse badges Nice/Good/Great usarão o **score líquido do mesmo item** com critérios Game próprios. [Implementação e DV-01..15](IMPLEMENTACAO-DESCURTIDAS-2026-11-20.md).
+
 # Auditoria complementar - Discourse, Game, estatísticas e integrações ACULTA
 
 **Data:** 2026-11-20. **Base:** `feat/forum-paridade-discourse` PR #394, commit `52e20d6b5a4f50ba8915625cbd7f6d269b11e05d` (snapshot de planejamento). **Status:** análise estática do código mais fontes oficiais do Discourse. Nenhum teste de integração, Runtime, benchmark ou implementação dessas novas funções foi executado nesta rodada.

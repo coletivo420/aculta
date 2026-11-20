@@ -85,6 +85,10 @@ Todos iniciam em **PLANNED** e só viram PASS com comando/ambiente/commit/result
 | T-56 | Admin e Studio | Moderador sem backend e sem cargo por conquista, educador isolado |
 | T-57 | Escala e reconcile | 1k/10k/100k posts e reações sem N+1, dry-run Stats/Game e evidência |
 
+## Descurtidas, saldo e antifraude - DV-01 a DV-15 (2026-11-20)
+
+[Contrato funcional e matriz completa DV-01..DV-15](IMPLEMENTACAO-DESCURTIDAS-2026-11-20.md). Patch inicial em código, **todos os aceites de integração ainda PLANNED**. Reações positivas antigas contam no mesmo saldo; negativo é botão separado, sem arquivo, duplicação, auto-like, vazamento entre Group/Domain ou concessão automática de Game.
+
 ## Política de status
 
 Cada feature registra `planned | code | unit | kernel | functional | browser | runtime | production` com referência a commit, comando, duração, resultado e evidências; falha/BLOCKED/DEFERRED não se tornam PASS. Matriz de papéis: anônimo, autenticado, autor, editor Fórum, editor Revista, editor Wiki, Educador LMS, membro do curso, membro do Group restrito, não-membro, moderador CGU por purpose, global CGU, admin MAIN. Cobrir domínio incorreto, cache quente e revogação entre duas requisições.
