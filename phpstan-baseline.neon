@@ -7432,12 +7432,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Service/CguReportQueue.php
 
 		-
-			rawMessage: 'Argument of an invalid type Drupal\Core\Database\StatementInterface|null supplied for foreach, only iterables are supported.'
-			identifier: foreach.nonIterable
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Statistics/ForumModerationMetricsProvider.php
-
-		-
 			rawMessage: Cannot access property $created on mixed.
 			identifier: property.nonObject
 			count: 1
@@ -7446,18 +7440,6 @@ parameters:
 		-
 			rawMessage: Cannot access property $decided_at on mixed.
 			identifier: property.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Statistics/ForumModerationMetricsProvider.php
-
-		-
-			rawMessage: 'Cannot call method fetchAll() on Drupal\Core\Database\StatementInterface|null.'
-			identifier: method.nonObject
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Statistics/ForumModerationMetricsProvider.php
-
-		-
-			rawMessage: 'Cannot call method fetchField() on Drupal\Core\Database\StatementInterface|null.'
-			identifier: method.nonObject
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_cgu/src/Statistics/ForumModerationMetricsProvider.php
 
@@ -19480,24 +19462,6 @@ parameters:
 			path: web/modules/custom/aculta_portal/modules/aculta_game/src/Form/AchievementDefinitionForm.php
 
 		-
-			rawMessage: Cannot access offset 'enabled' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_game/src/Form/AchievementGrantForm.php
-
-		-
-			rawMessage: Cannot access offset 'label' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_game/src/Form/AchievementGrantForm.php
-
-		-
-			rawMessage: Cannot access offset 'triggers' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_game/src/Form/AchievementGrantForm.php
-
-		-
 			rawMessage: Cannot cast mixed to int.
 			identifier: cast.int
 			count: 2
@@ -19777,12 +19741,6 @@ parameters:
 			rawMessage: 'Call to an undefined method Drupal\Core\Entity\EntityInterface::get().'
 			identifier: method.notFound
 			count: 3
-			path: web/modules/custom/aculta_portal/modules/aculta_game/src/Plugin/QueueWorker/AchievementEmailWorker.php
-
-		-
-			rawMessage: Cannot access offset 'label' on mixed.
-			identifier: offsetAccess.nonOffsetAccessible
-			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_game/src/Plugin/QueueWorker/AchievementEmailWorker.php
 
 		-
@@ -46830,12 +46788,6 @@ parameters:
 			identifier: offsetAccess.nonOffsetAccessible
 			count: 1
 			path: web/modules/custom/aculta_portal/modules/aculta_studio/tests/src/Unit/StudioUploadEmbedControllerTest.php
-
-		-
-			rawMessage: 'Method Drupal\aculta_user\Badge\BadgeService::definitions() return type has no value type specified in iterable type array.'
-			identifier: missingType.iterableValue
-			count: 1
-			path: web/modules/custom/aculta_portal/modules/aculta_user/src/Badge/BadgeService.php
 
 		-
 			rawMessage: 'Function aculta_wiki_schema() return type has no value type specified in iterable type array.'

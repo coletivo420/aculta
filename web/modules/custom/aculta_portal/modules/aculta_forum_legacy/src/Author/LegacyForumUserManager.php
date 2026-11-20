@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_user\Legacy;
+namespace Drupal\aculta_forum_legacy\Author;
 
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * Cria ou atualiza uma autoria histórica do Fórum (ACULTA Fórum, F2).
+ * Cria ou atualiza uma autoria histórica do fórum legado.
  *
- * Idempotente pela origem: a mesma origem nunca gera duas autorias, e reexecutar a importação só atualiza o nome.
- * Não cria conta de usuário, não envia mensagem e não concede conquista. A autoria fica na entidade própria
- * aculta_legado_autor, separada da identidade User (decisão de 2026-10-16).
+ * Idempotente pela origem: reexecutar a importação só atualiza o nome.
+ * Não cria conta, envia mensagem nem concede conquista. A autoria fica em
+ * aculta_forum_legacy_user, separada da identidade User (F-D44).
  */
-final class LegacyAuthorManager {
+final class LegacyForumUserManager {
 
   /**
    * Limite do nome histórico. */
@@ -25,31 +25,32 @@ final class LegacyAuthorManager {
   ) {}
 
   /**
-   * Indica se a origem tem formato aceito: identificador estável, ASCII, sem espaços.
+   * Indica se a origem tem formato estável, ASCII e sem espaços.
    */
   public static function isValidSourceId(string $sourceId): bool {
     return (bool) preg_match('/^[A-Za-z0-9._-]{1,64}$/', $sourceId);
   }
 
   /**
-   * Cria ou atualiza a autoria. Retorna o id da entidade e se foi criada agora.
+   * Cria ou atualiza uma autoria histórica.
+   *
+   * @return array{ id: int, created: bool }
+   *   ID da entidade e indicação de criação nesta chamada.
    *
    * @throws \InvalidArgumentException
-   *   Origem fora do formato ou nome vazio, longo demais ou com caracteres de controle.
-   */
-  /**
-   * @return array<array-key, mixed>
+   *   Origem inválida ou nome vazio, longo ou com caracteres de controle.
    */
   public function upsert(string $sourceId, string $displayName): array {
     if (!self::isValidSourceId($sourceId)) {
       throw new \InvalidArgumentException('Origem fora do formato aceito.');
     }
     $nome = trim($displayName);
-    if ($nome === '' || mb_strlen($nome) > self::NAME_MAX || preg_match('/[\x00-\x1F\x7F]/', $nome)) {
+    if ($nome === '' || mb_strlen($nome) > self::NAME_MAX
+      || preg_match('/[\x00-\x1F\x7F]/', $nome)) {
       throw new \InvalidArgumentException('Nome histórico vazio, longo demais ou com caracteres de controle.');
     }
 
-    $storage = $this->entityTypeManager->getStorage('aculta_legado_autor');
+    $storage = $this->entityTypeManager->getStorage('aculta_forum_legacy_user');
     $ids = $storage->getQuery()->accessCheck(FALSE)->condition('origem_id', $sourceId)->range(0, 1)->execute();
     if ($ids) {
       $autoria = $storage->load(reset($ids));

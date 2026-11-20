@@ -74,13 +74,23 @@ final class BadgeService {
   }
 
   /**
-   * Critérios configurados, com defaults estáveis para conquistas existentes. */
+   * Retorna as definições indexadas pelo identificador da conquista.
+   *
+   * @return array<string, array<array-key, mixed>>
+   *   Definições de conquistas.
+   */
   public function definitions(): array {
     return $this->definitions->all();
   }
 
   /**
-   * Cada evento já validado pelo dono da fonte chama a mesma API idempotente. */
+   * Cada evento validado pelo dono da fonte usa esta API idempotente.
+   *
+   * @param int $uid
+   *   ID da conta elegível.
+   * @param string $trigger
+   *   Identificador do evento que pode conceder a conquista.
+   */
   public function awardForTrigger(int $uid, string $trigger): void {
     if ($trigger === 'manual' || !isset(AchievementDefinitions::TRIGGERS[$trigger])) {
       return;
@@ -106,6 +116,10 @@ final class BadgeService {
    * permitiria outra requisição consultar antes do commit do comentário/perfil.
    * Escritas diretas no storage não fazem parte deste contrato.
    *
+   * @param int $uid
+   *   ID da conta que está recebendo ou revogando a conquista.
+   * @param string $badge
+   *   Identificador da conquista.
    * @param callable(): bool $operation
    *   Operação que devolve se alterou algo.
    */

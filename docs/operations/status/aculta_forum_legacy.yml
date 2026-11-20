@@ -1,8 +1,10 @@
 # Fonte do índice de status do README raiz.
-version: 0.1.0-dev.3
+version: 0.1.0-dev.4
 state: Dev
 progress_note: >-
-  Dev.3: addon opcional classifica ARCHIVE e mantém o arquivo fora da fila
+  Dev.4: entidade aculta_forum_legacy_user, manager, handler e fields foram
+  transferidos para o addon; defaults do motor deixam de instalar os fields.
+  Sem operações estruturais no Runtime. Dev.3: addon opcional classifica ARCHIVE e mantém o arquivo fora da fila
   ordinária de moderação; denúncias genéricas usam o resolver central, sem
   leitura direta de autoria legada no motor. Game e Messenger consultam o
   resolver. Respostas a tópicos correntes usam ForumPost;

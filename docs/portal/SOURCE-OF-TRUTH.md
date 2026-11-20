@@ -64,7 +64,7 @@ O [ACULTA Forum/Growroom420](../../web/modules/custom/aculta_portal/modules/acul
 usa o motor Drupal próprio de discussões e comentários; o manifesto atual não
 depende de Drupal Forum contrib. [`MIGRATION-REMOVAL.md`](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/MIGRATION-REMOVAL.md)
 é o registro histórico da retirada controlada do contrib. O purpose `forum`
-permanece. A autoria histórica usa a entidade `aculta_legado_autor`, sem User
+permanece. A autoria histórica usa a entidade `aculta_forum_legacy_user`, sem User
 ativo, com memorial coletivo `/u/lendashistoricas`; no código atual, entidade,
 rota, campos e apresentação ainda pertencem a `aculta_user`/`aculta_forum`.
 F-D48 determina que esses componentes históricos sejam transferidos ao addon

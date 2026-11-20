@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Drupal\aculta_user\Entity;
+namespace Drupal\aculta_forum_legacy\Entity;
 
 use Drupal\Core\Entity\Attribute\ContentEntityType;
 use Drupal\Core\Entity\ContentEntityBase;
@@ -12,21 +12,21 @@ use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
 /**
- * Autoria histórica do Fórum (ACULTA Fórum, F2).
+ * Autoria histórica do fórum legado; não representa uma conta Drupal.
  *
- * Não é usuário do Drupal: não tem conta, não tem login, não aparece em /admin/people nem em listas de usuários.
- * Fica em tabela própria, separada da identidade User. Conteúdo histórico (tópicos e comentários) aponta para
- * esta entidade pelo campo field_autor_legado e tem uid 0.
+ * Não tem login nem aparece em /admin/people ou listas de usuários. Tópicos e
+ * Comments importados podem apontar para esta entidade por field_autor_legado;
+ * a importação ainda não foi executada no Runtime alvo.
  *
- * Motivo: a decisão do responsável (2026-10-16) é que autores legados não se misturem aos usuários do site.
+ * F-D44 impede que autoria histórica se misture à identidade User.
  */
 #[ContentEntityType(
-  id: 'aculta_legado_autor',
+  id: 'aculta_forum_legacy_user',
   label: new TranslatableMarkup('Autoria histórica do Fórum'),
   handlers: [
-    'access' => LegacyAuthorAccessControlHandler::class,
+    'access' => LegacyForumUserAccessControlHandler::class,
   ],
-  base_table: 'aculta_legado_autor',
+  base_table: 'aculta_forum_legacy_user',
   entity_keys: [
     'id' => 'id',
     'uuid' => 'uuid',
@@ -35,7 +35,7 @@ use Drupal\Core\StringTranslation\TranslatableMarkup;
   admin_permission: 'administer aculta legado',
   internal: TRUE,
 )]
-final class LegacyAuthor extends ContentEntityBase {
+final class LegacyForumUser extends ContentEntityBase {
 
   use EntityChangedTrait;
 
@@ -51,7 +51,7 @@ final class LegacyAuthor extends ContentEntityBase {
   public static function baseFieldDefinitions(EntityTypeInterface $entity_type): array {
     $fields = parent::baseFieldDefinitions($entity_type);
 
-    // Identificador estável da autoria no acervo. Chave da importação: reexecutar não cria duplicata.
+    // Identificador estável da autoria no acervo. Reexecuções não duplicam.
     $fields['origem_id'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Identificador de origem'))
       ->setSetting('max_length', 64)

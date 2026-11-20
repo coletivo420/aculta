@@ -1,0 +1,3 @@
+administer aculta legado:
+  title: 'Administrar autorias históricas do Fórum'
+  restrict access: true

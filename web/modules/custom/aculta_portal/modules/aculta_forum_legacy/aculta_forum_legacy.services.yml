@@ -1,4 +1,8 @@
 services:
+  aculta_forum_legacy.user_manager:
+    class: Drupal\aculta_forum_legacy\Author\LegacyForumUserManager
+    arguments: ['@entity_type.manager']
+
   Drupal\aculta_forum_legacy\Hook\ForumHistoricModerationQueueHooks:
     class: Drupal\aculta_forum_legacy\Hook\ForumHistoricModerationQueueHooks
     arguments: ['@database']

@@ -138,7 +138,7 @@ Não envia nenhum e-mail. Cada confirmação é registrada no log do canal `acul
 ## 8. Autores históricos do Fórum (acervo do Growroom)
 
 Autores legados **não são usuários do Drupal**. Não têm conta, login, perfil nem aparecem na lista de usuários do
-administrador. A autoria fica na entidade própria `aculta_legado_autor`, acessível só pela permissão
+administrador. A autoria fica na entidade própria `aculta_forum_legacy_user`, acessível só pela permissão
 **administer aculta legado**. Tópicos e comentários históricos têm uid 0 e apontam para a autoria pelo campo
 `field_autor_legado` na implementação atual. O registro de F-D33/dev.50 sobre ausência de Nodes `forum`, Comments
 `comment_forum`, termos `forums` e referências editoriais antigas descreve o Runtime de desenvolvimento naquele

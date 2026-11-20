@@ -42,7 +42,6 @@ hidden:
   aculta_coauthors: true
   created: true
   field_aculta_discussion: true
-  field_autor_legado: true
   field_domain_source: true
   langcode: true
   moderation_state: true

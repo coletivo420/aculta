@@ -89,7 +89,7 @@ Estes caminhos ficam fora do Git (`estados/` e armazenamento privado). Pasta de 
 ## Regra histórica de usuários — substituída por F-D17/F-D44
 
 O texto de 2026-10-16 abaixo foi superado. Autores do acervo não são contas User nem Profile: cada autoria importada
-usa `aculta_legado_autor`, não ganha rota individual e aponta ao memorial coletivo `/u/lendashistoricas`. O nome
+usa `aculta_forum_legacy_user`, não ganha rota individual e aponta ao memorial coletivo `/u/lendashistoricas`. O nome
 individual é mantido como autoria do conteúdo; `-gr` aparece apenas nos cartões de autoria do Fórum. IDs IPS4/THW
 servem como origem estável; na ausência deles, aplica-se a chave determinística de nome aprovada em F-D45. Perfis
 capturados não são necessários para criar identidades ou rotas individuais de autor legado. Associações de URLs de
@@ -181,9 +181,9 @@ A verificação completa relê os 8 GB e confere o SHA-256 de cada arquivo.
    uma ação policial. A escolha explícita prevalece, e a regra comercial tem esse falso positivo registrado.
    Os demais tópicos de "outros termos" não marcados continuam excluídos.
 3. **Tópicos `revisar` (17 no levantamento atual) e vida interna (616):** exclusão padrão decidida; inclusão somente por seleção manual explícita (F-D46).
-4. **Autoria:** não são importados Users/Profiles. Autores dos itens aprovados viram entidades `aculta_legado_autor` com IDs estáveis (F-D17/F-D44/F-D45); nenhuma URL de perfil individual é criada.
+4. **Autoria:** não são importados Users/Profiles. Autores dos itens aprovados viram entidades `aculta_forum_legacy_user` com IDs estáveis (F-D17/F-D44/F-D45); nenhuma URL de perfil individual é criada.
 5. **Capturas de perfis:** não são necessárias para a autoria legada. Lacunas e ambiguidades são históricas e não impedem
-   a criação de `aculta_legado_autor`; não criam contas ou perfis públicos.
+   a criação de `aculta_forum_legacy_user`; não criam contas ou perfis públicos.
 6. **228 fotos truncadas:** entram com a imagem padrão, no lugar do
    arquivo cortado. Também se aplica aos 298 links de download dessas fotos.
 7. **Modal de conteúdo legado**: depende de autorização para alterar o tema ACULTA420 e da aprovação do texto da história.
@@ -200,13 +200,13 @@ vigente; a preparação para o Runtime de testes continua sujeita aos pré-requi
 
 A F3 (migração piloto) e a F6 (reconstrução em lotes) pertenciam ao ciclo anterior. Os estados e a sequência descritos
 naquela decisão foram substituídos por F-D43–F-D46 e pelo preparo atual abaixo. A importação deve criar autoria em
-`aculta_legado_autor`, nunca contas ou Profiles; o pipeline precisa ser idempotente e reversível em ambiente isolado.
+`aculta_forum_legacy_user`, nunca contas ou Profiles; o pipeline precisa ser idempotente e reversível em ambiente isolado.
 
 ## Decisão atual e preparo de importação em testes — 2026-10-26
 
 Este adendo substitui os bloqueios históricos que apontavam a remodelagem da PR #297 como pré-requisito e a decisão de manter o Runtime de testes vazio como estado final. A remodelagem foi integrada. O destino desejado é o ambiente de testes ACULTA com o acervo curado importado; manter esse Runtime vazio não é o objetivo final. A tarefa atual é deixar o pipeline e a instalação de teste prontos para essa importação. Produção permanece excluída. Esta decisão não significa que o conteúdo já foi importado: esta execução não alterou entidade, arquivo, configuração ou dado persistente do Runtime.
 
-A política de seleção registrada acima continua sendo a fonte de escopo: fóruns excluídos, exceções temáticas, seleção manual, conteúdo comercial e lacunas devem continuar identificados. A decisão mais recente também resolve a identidade histórica: autores são entidades `aculta_legado_autor`, sem User/Profile ou rota individual. O memorial coletivo `/u/lendashistoricas` mantém os nomes sem sufixo; somente os cartões de autoria do conteúdo do Fórum exibem `-gr` (F-D44).
+A política de seleção registrada acima continua sendo a fonte de escopo: fóruns excluídos, exceções temáticas, seleção manual, conteúdo comercial e lacunas devem continuar identificados. A decisão mais recente também resolve a identidade histórica: autores são entidades `aculta_forum_legacy_user`, sem User/Profile ou rota individual. O memorial coletivo `/u/lendashistoricas` mantém os nomes sem sufixo; somente os cartões de autoria do conteúdo do Fórum exibem `-gr` (F-D44).
 
 ### Estado técnico e próximo preparo
 

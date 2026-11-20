@@ -120,7 +120,7 @@ A decisão F-D41 e o contrato detalhado estão em [`DECISOES.md`](DECISOES.md),
 
 ## Legado histórico
 
-Autoria legada permanece na entidade própria existente `aculta_legado_autor`,
+Autoria legada permanece na entidade própria existente `aculta_forum_legacy_user`,
 sem User ativo, login, amizade ou mensagem. O vínculo fica em `field_autor_legado`
 e a identificação pública aponta ao memorial coletivo `/u/lendashistoricas`.
 Reutilizar `LegacyAuthor`, `LegacyAuthorManager` e `LegacyMemorialController` de

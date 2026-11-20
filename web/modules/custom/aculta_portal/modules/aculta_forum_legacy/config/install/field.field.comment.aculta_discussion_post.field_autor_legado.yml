@@ -6,7 +6,7 @@ dependencies:
     - comment.type.aculta_discussion_post
     - field.storage.comment.field_autor_legado
   module:
-    - aculta_user
+    - aculta_forum_legacy
 id: comment.aculta_discussion_post.field_autor_legado
 field_name: field_autor_legado
 entity_type: comment

@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Drupal\Tests\aculta_user\Unit;
+namespace Drupal\Tests\aculta_forum_legacy\Unit;
 
-use Drupal\aculta_user\Legacy\LegacyAuthorManager;
+use Drupal\aculta_forum_legacy\Author\LegacyForumUserManager;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
@@ -12,8 +12,8 @@ use PHPUnit\Framework\Attributes\Group;
 /**
  * Formato da origem das autorias históricas do Fórum (ACULTA Fórum, F2).
  */
-#[Group('aculta_user')]
-class LegacyAuthorManagerTest extends UnitTestCase {
+#[Group('aculta_forum_legacy')]
+class LegacyForumUserManagerTest extends UnitTestCase {
 
   /**
    * Fornece identificadores de origem válidos.
@@ -43,7 +43,7 @@ class LegacyAuthorManagerTest extends UnitTestCase {
    */
   #[DataProvider('origensValidas')]
   public function testOrigemValida(string $origem): void {
-    $this->assertTrue(LegacyAuthorManager::isValidSourceId($origem));
+    $this->assertTrue(LegacyForumUserManager::isValidSourceId($origem));
   }
 
   /**
@@ -54,7 +54,7 @@ class LegacyAuthorManagerTest extends UnitTestCase {
    */
   #[DataProvider('origensInvalidas')]
   public function testOrigemInvalida(string $origem): void {
-    $this->assertFalse(LegacyAuthorManager::isValidSourceId($origem));
+    $this->assertFalse(LegacyForumUserManager::isValidSourceId($origem));
   }
 
 }

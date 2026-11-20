@@ -60,6 +60,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     'migrate',
     'aculta_cgu',
     'aculta_forum',
+    'aculta_forum_legacy',
     'aculta_forum_post_test',
   ];
 
@@ -212,7 +213,7 @@ final class ForumCguIntegrationKernelTest extends KernelTestBase {
     $this->installEntitySchema('comment');
     $this->installEntitySchema('flagging');
     $this->installEntitySchema('aculta_cgu_report');
-    $this->installEntitySchema('aculta_legado_autor');
+    $this->installEntitySchema('aculta_forum_legacy_user');
     $this->installEntitySchema('aculta_forum_post');
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);

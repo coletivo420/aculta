@@ -55,13 +55,20 @@ final class LegacyMemorialController extends ControllerBase {
 
   /**
    * Renderiza o memorial com busca, lista paginada e estado vazio.
+   *
    * @return array<array-key, mixed>
    *   Render array do memorial.
    */
   public function view(Request $request): array {
     $termo = mb_substr(trim((string) $request->query->get('q', '')), 0, self::QUERY_MAX);
 
-    $storage = $this->entityTypeManagerService->getStorage('aculta_legado_autor');
+    if (!$this->entityTypeManagerService->hasDefinition('aculta_forum_legacy_user')) {
+      return [
+        '#markup' => $this->t('O memorial histórico não está instalado neste projeto.'),
+        '#cache' => ['contexts' => ['user.permissions'], 'max-age' => 3600],
+      ];
+    }
+    $storage = $this->entityTypeManagerService->getStorage('aculta_forum_legacy_user');
     $query = $storage->getQuery()
       ->accessCheck(FALSE)
       ->sort('nome', 'ASC')
@@ -82,7 +89,7 @@ final class LegacyMemorialController extends ControllerBase {
     $build = [
       '#cache' => [
         'contexts' => ['url.query_args', 'user.permissions'],
-        'tags' => ['aculta_legado_autor_list'],
+        'tags' => ['aculta_forum_legacy_user_list'],
         'max-age' => 3600,
       ],
       'perfil' => $this->profileBox(),
@@ -113,6 +120,7 @@ final class LegacyMemorialController extends ControllerBase {
    *
    * Usa a estrutura pública e o avatar do acervo fornecido pelo resolver
    * central. A aparência vem do tema; o módulo só entrega marcação semântica.
+   *
    * @return array<array-key, mixed>
    *   Render array da caixa de perfil.
    */
@@ -159,6 +167,7 @@ final class LegacyMemorialController extends ControllerBase {
 
   /**
    * Uses the same institutional avatar source as the rest of the Portal.
+   *
    * @return array<array-key, mixed>
    *   Render array do avatar.
    */

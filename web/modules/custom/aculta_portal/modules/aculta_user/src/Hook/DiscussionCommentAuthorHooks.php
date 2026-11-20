@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Hook;
 
-use Drupal\aculta_user\Entity\LegacyAuthor;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\aculta_user\Identity\AuthorCardVariantResolver;
 use Drupal\comment\CommentInterface;
@@ -77,7 +76,7 @@ final class DiscussionCommentAuthorHooks {
       && $entity->hasField('field_autor_legado')
       && !$entity->get('field_autor_legado')->isEmpty()) {
       $legacyAuthor = $entity->get('field_autor_legado')->entity;
-      if ($legacyAuthor instanceof LegacyAuthor) {
+      if ($legacyAuthor instanceof ContentEntityInterface && $legacyAuthor->getEntityTypeId() === 'aculta_forum_legacy_user') {
         $build['author_card'] = $this->authorCardBuilder->buildLegacyForum($legacyAuthor)
           + ['#weight' => -20];
       }

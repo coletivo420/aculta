@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_user\Hook;
 
-use Drupal\aculta_user\Entity\LegacyAuthor;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\node\NodeInterface;
-use Drupal\user\UserInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
@@ -23,11 +22,16 @@ final class PublicForumTopicAuthorHooks {
   ) {}
 
   /**
-   * Adds either the public User card or the immutable historical attribution.
-   */
-  /**
+   * Adds the current author card or historical attribution to forum topics.
+   *
    * @param array<array-key, mixed> $build
    *   Dados recebidos.
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   Entidade renderizada.
+   * @param \Drupal\Core\Entity\Display\EntityViewDisplayInterface $display
+   *   Configuração de exibição aplicada.
+   * @param string $view_mode
+   *   Modo de visualização.
    */
   #[Hook('entity_view')]
   public function entityView(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, string $view_mode): void {
@@ -38,7 +42,7 @@ final class PublicForumTopicAuthorHooks {
 
     if ($entity->hasField('field_autor_legado') && !$entity->get('field_autor_legado')->isEmpty()) {
       $legacyAuthor = $entity->get('field_autor_legado')->entity;
-      if ($legacyAuthor instanceof LegacyAuthor) {
+      if ($legacyAuthor instanceof ContentEntityInterface && $legacyAuthor->getEntityTypeId() === 'aculta_forum_legacy_user') {
         $build['author_card'] = $this->authorCardBuilder->buildLegacyForum($legacyAuthor) + ['#weight' => -20];
       }
       return;
