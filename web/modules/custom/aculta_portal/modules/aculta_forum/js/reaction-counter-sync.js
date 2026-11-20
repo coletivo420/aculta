@@ -43,6 +43,26 @@
     });
   };
 
+  // Popover IDs must be unique when a message appears in more than one card.
+  let receivedPopoverSequence = 0;
+  const copyReactionBreakdown = (sourceList, targetSummary) => {
+    const oldList = targetSummary.querySelector('.discussion-reactions-received__list');
+    if (!oldList || !sourceList) {
+      return;
+    }
+    const copy = sourceList.cloneNode(true);
+    const trigger = copy.querySelector('[popovertarget]');
+    const popover = copy.querySelector('[data-reaction-popover]');
+    if (trigger && popover) {
+      const id = 'received-sync-' + ++receivedPopoverSequence;
+      trigger.setAttribute('popovertarget', id);
+      trigger.style.setProperty('anchor-name', '--' + id);
+      popover.id = id;
+      popover.style.setProperty('position-anchor', '--' + id);
+    }
+    oldList.replaceWith(copy);
+  };
+
   const syncMessageCopies = (source) => {
     const entityType = source.dataset.entityType;
     const entityId = source.dataset.entityId;
@@ -51,10 +71,16 @@
       return;
     }
 
-    // Update independent read-only summaries in comment headers as well.
+    // Also refresh per-emoji breakdowns without another network request.
+    const sourceSummary = source.querySelector('[data-discussion-reactions-received]');
+    const sourceList = sourceSummary?.querySelector('.discussion-reactions-received__list');
     document.querySelectorAll('[data-discussion-reactions-received]').forEach((summary) => {
-      if (summary.dataset.entityType === entityType && summary.dataset.entityId === entityId) {
-        updateText(summary.querySelector('.discussion-reactions-received__net .discussion-reactions-received__count'), total);
+      if (summary.dataset.entityType !== entityType || summary.dataset.entityId !== entityId) {
+        return;
+      }
+      updateText(summary.querySelector('.discussion-reactions-received__net .discussion-reactions-received__count'), total);
+      if (summary !== sourceSummary) {
+        copyReactionBreakdown(sourceList, summary);
       }
     });
 
@@ -64,6 +90,8 @@
       }
       bar.dataset.reactionTotal = total;
       bar.dataset.userReaction = source.dataset.userReaction || '';
+      bar.dataset.authorReactionsReceived = source.dataset.authorReactionsReceived || '';
+      bar.dataset.viewerReactionsGiven = source.dataset.viewerReactionsGiven || '';
       updateText(bar.querySelector('.discussion-reactions-received__net .discussion-reactions-received__count'), total);
 
       // Keep active vote/Undo button state consistent for duplicate cards.
