@@ -1,0 +1,62 @@
+name: "Marley - Fórum: fila de revisão"
+description: "Review Queue inspirada no Discourse com denúncia, status, filtros e inspeção contextual sem links administrativos."
+component: aculta420_v2:studio-marley-workspace
+props:
+  area: forum
+  title: "Fórum - fila de revisão"
+  description: "Triagem comunitária a partir de relatos e publicações sujeitas a moderação."
+  preview_note: "Prévia ilustrativa - ações desativadas, sem casos ou permissões reais."
+slots:
+  navigation:
+    type: inline_template
+    template: |
+      <a href="#marley-story-forum" aria-current="page">{{ include('aculta420_v2:icon', { name: 'flag', variant: 'regular', size: 'sm' }, with_context = false) }} Fórum</a>
+      <span class="studio-marley-workspace__item-meta" aria-label="Outras áreas ilustrativas">Revista · Galerias · </span>
+  actions:
+    type: inline_template
+    template: |
+      {{ include('aculta420_v2:button', { text: 'Atualizar fila', icon_before: 'arrows-clockwise', variant: 'secondary', disabled: true }, with_context = false) }}
+  summary:
+    type: inline_template
+    template: |
+      {{ include('aculta420_v2:statistics-moderation-summary', { title: 'Resumo da moderação', note: 'Exemplo de dados agregados, não conectados ao Runtime.', rows: [{label: 'Em revisão', value: '3', description: 'Itens sem decisão'}, {label: 'Aguardando análise', value: '2', description: 'Novos relatos'}, {label: 'Decididos hoje', value: '5', description: 'Ações registradas'}] }, with_context = false) }}
+  filters:
+    type: inline_template
+    template: |
+      {{ include('aculta420_v2:filter-chips', { items: [{label: 'Pendentes', url: '#marley-story-forum', count: 3, is_active: true}, {label: 'Atribuídos', url: '#marley-story-forum', count: 2, is_active: false}, {label: 'Decididos', url: '#marley-story-forum', count: 5, is_active: false}] }, with_context = false) }}
+  primary:
+    type: inline_template
+    template: |
+      <section aria-label="Casos de moderação">
+        <h2>Casos para análise</h2>
+        <ol class="studio-marley-workspace__case-list">
+          <li class="studio-marley-workspace__case" aria-current="true">
+            <h3 class="studio-marley-workspace__case-title">{{ include('aculta420_v2:icon', { name: 'flag', variant: 'regular', size: 'sm' }, with_context = false) }} Caso demonstrativo #A01</h3>
+            <div class="studio-marley-workspace__item-meta"><span>Tópico</span><span>1 relato</span><span>Aguardando análise</span></div>
+            <p>Relato de linguagem inadequada em uma discussão pública.</p>
+            {{ include('aculta420_v2:badge', { label: 'Pendente', icon_name: 'clock-countdown', variant: 'highlight' }, with_context = false) }}
+          </li>
+          <li class="studio-marley-workspace__case">
+            <h3 class="studio-marley-workspace__case-title">{{ include('aculta420_v2:icon', { name: 'chat-circle-text', variant: 'regular', size: 'sm' }, with_context = false) }} Caso demonstrativo #A02</h3>
+            <div class="studio-marley-workspace__item-meta"><span>Resposta</span><span>2 relatos</span><span>Atribuído</span></div>
+            <p>Sinalização de possível spam numa resposta.</p>
+            {{ include('aculta420_v2:badge', { label: 'Em revisão', icon_name: 'shield-check', variant: 'neutral' }, with_context = false) }}
+          </li>
+          <li class="studio-marley-workspace__case">
+            <h3 class="studio-marley-workspace__case-title">{{ include('aculta420_v2:icon', { name: 'article', variant: 'regular', size: 'sm' }, with_context = false) }} Caso demonstrativo #A03</h3>
+            <div class="studio-marley-workspace__item-meta"><span>Publicação</span><span>1 relato</span><span>Não atribuído</span></div>
+            <p>Solicitação de revisão de conteúdo por contexto.</p>
+            {{ include('aculta420_v2:badge', { label: 'Pendente', icon_name: 'clock-countdown', variant: 'highlight' }, with_context = false) }}
+          </li>
+        </ol>
+      </section>
+  aside:
+    type: inline_template
+    template: |
+      {% set marley_panel_header %}<h2>Inspeção contextual</h2>{% endset %}
+      {% set marley_panel_content %}<p><strong>Caso #A01</strong></p><p>Motivo informado: linguagem inadequada.</p><p class="studio-marley-workspace__case-excerpt">Trecho ilustrativo do conteúdo relatado. Nenhum dado pessoal real é exibido na prévia.</p><p>Decisão da denúncia e ação editorial são comandos diferentes.</p><div class="studio-marley-workspace__control-row">{{ include('aculta420_v2:button', { text: 'Aprovar conteúdo', icon_before: 'check-circle', variant: 'secondary', disabled: true }, with_context = false) }}{{ include('aculta420_v2:button', { text: 'Ocultar conteúdo', icon_before: 'eye-slash', variant: 'danger', disabled: true }, with_context = false) }}{{ include('aculta420_v2:button', { text: 'Atribuir caso', icon_before: 'users', variant: 'secondary', disabled: true }, with_context = false) }}</div>{% endset %}
+      {{ include('aculta420_v2:surface-panel', { tone: 'raised', radius: 'md', spacing: 'normal', elevation: 'subtle', header_variant: 'subtle', header: marley_panel_header, content: marley_panel_content }, with_context = false) }}
+  footer:
+    type: inline_template
+    template: |
+      <p>Fonte futura: fila CGU autorizada, via Studio Marley. Navegação e ações dependem de ACL no módulo proprietário.</p>

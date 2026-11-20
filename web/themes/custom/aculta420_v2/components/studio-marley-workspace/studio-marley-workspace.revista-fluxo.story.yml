@@ -1,0 +1,53 @@
+name: "Marley - Revista: fluxo editorial"
+description: "Visualiza autoria e revisão de Revista, usando listagem e superfície do Studio sem reaproveitar permissões de moderação comunitária."
+component: aculta420_v2:studio-marley-workspace
+props:
+  area: revista
+  title: "Revista - produção editorial"
+  description: "Rascunhos, revisão, publicação e arquivamento a partir da suíte Marley."
+  preview_note: "Prévia ilustrativa - ações desativadas, sem casos ou permissões reais."
+slots:
+  navigation:
+    type: inline_template
+    template: |
+      <a href="#marley-story-revista" aria-current="page">{{ include('aculta420_v2:icon', { name: 'article', variant: 'regular', size: 'sm' }, with_context = false) }} Revista</a>
+      <span class="studio-marley-workspace__item-meta" aria-label="Outras áreas ilustrativas">Galerias · Fórum</span>
+  actions:
+    type: inline_template
+    template: |
+      {{ include('aculta420_v2:button', { text: 'Nova publicação', icon_before: 'pencil-simple', variant: 'primary', disabled: true }, with_context = false) }}
+  filters:
+    type: inline_template
+    template: |
+      {{ include('aculta420_v2:filter-chips', { items: [
+      {label:'Todas',url:'#marley-story-revista',is_active:true,count:4},
+      {label:'Rascunhos',url:'#marley-story-revista',count:2},
+      {label:'Em revisão',url:'#marley-story-revista',count:1},
+      {label:'Publicadas',url:'#marley-story-revista',count:1}
+      ] },with_context=false) }}
+  primary:
+    type: inline_template
+    template: |
+      {% set marley_panel_header %}<h2>Publicações acessíveis</h2>{% endset %}
+      {% set marley_panel_content %}{% set marley_table %}
+      <div class="studio__listing-wrap"><table class="studio__listing">
+      <caption>Dados ilustrativos para revisão visual da listagem</caption>
+      <thead><tr><th scope="col">Publicação</th><th scope="col">Fluxo</th><th scope="col">Atualização</th><th scope="col">Ação de prévia</th></tr></thead>
+      <tbody>
+      <tr><th scope='row'>História cultural</th><td>Rascunho</td><td>Esta semana</td><td>{{ include('aculta420_v2:button', { text: 'Continuar', icon_before: 'pencil-simple', variant: 'secondary', disabled: true }, with_context = false) }}</td></tr>
+      <tr><th scope='row'>Panorama da comunidade</th><td>Em revisão</td><td>Ontem</td><td>{{ include('aculta420_v2:button', { text: 'Revisar', icon_before: 'shield-check', variant: 'secondary', disabled: true }, with_context = false) }}</td></tr>
+      <tr><th scope='row'>Entrevista coletiva</th><td>Publicado</td><td>Esta semana</td><td>{{ include('aculta420_v2:button', { text: 'Visualizar', icon_before: 'article', variant: 'secondary', disabled: true }, with_context = false) }}</td></tr>
+      </tbody></table></div>
+      {% endset %}
+      {{ include('aculta420_v2:studio-listing-table', { content: marley_table }, with_context = false) }}{% endset %}
+      {{ include('aculta420_v2:surface-panel', { tone: 'raised', radius: 'md', spacing: 'normal', elevation: 'subtle', header_variant: 'subtle', header: marley_panel_header, content: marley_panel_content }, with_context = false) }}
+  aside:
+    type: inline_template
+    template: |
+      {% set marley_panel_header %}<h2>Etapas do fluxo</h2>{% endset %}
+      {% set marley_panel_content %}<ol class="studio-marley-workspace__timeline"><li>Rascunho - autoria e edição</li><li>Em revisão - controle editorial do owner</li><li>Publicado - disponibilização por domínio</li><li>Arquivado - preservação e acesso</li></ol><p>{{ include('aculta420_v2:badge', { label: 'Área editorial', icon_name: 'article', variant: 'neutral' }, with_context = false) }}</p>{% endset %}
+      {{ include('aculta420_v2:surface-panel', { tone: 'raised', radius: 'md', spacing: 'normal', elevation: 'subtle', header_variant: 'subtle', header: marley_panel_header, content: marley_panel_content }, with_context = false) }}
+  footer:
+    type: inline_template
+    template: |
+      <p>ACL e formulários editoriais pertencem ao aculta_magazine. A prévia não concede permissões do Fórum.</p>

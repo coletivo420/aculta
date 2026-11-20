@@ -1,0 +1,24 @@
+name: "Marley - Fórum: fila vazia"
+description: "Estado sem itens para revisar, preservando acesso ao conteúdo aprovado e evitando ações administrativas."
+component: aculta420_v2:studio-marley-workspace
+props:
+  area: forum
+  title: "Fórum - fila de revisão"
+  description: "Nenhuma decisão pendente no contexto autorizado."
+  preview_note: "Prévia ilustrativa - ações desativadas, sem casos ou permissões reais."
+slots:
+  navigation:
+    type: inline_template
+    template: |
+      <a href="#marley-story-forum" aria-current="page">{{ include('aculta420_v2:icon', { name: 'flag', variant: 'regular', size: 'sm' }, with_context = false) }} Fórum</a>
+      <span class="studio-marley-workspace__item-meta" aria-label="Outras áreas ilustrativas">Revista · Galerias · </span>
+  primary:
+    type: inline_template
+    template: |
+      {% set marley_panel_header %}<h2>Fila sem pendências</h2>{% endset %}
+      {% set marley_panel_content %}{{ include('aculta420_v2:badge', {label:'Nenhuma pendência',icon_name:'check-circle',variant:'neutral'}, with_context=false) }}<p>Nenhum relato aguarda avaliação. Quando chegarem novos casos, a lista será montada pelo CGU com ACL por alvo.</p>{% endset %}
+      {{ include('aculta420_v2:surface-panel', { tone: 'raised', radius: 'md', spacing: 'normal', elevation: 'subtle', header_variant: 'subtle', header: marley_panel_header, content: marley_panel_content }, with_context = false) }}
+  footer:
+    type: inline_template
+    template: |
+      <p>Prévia para estados vazios, inclusive sem comentários, sem denúncias e sem permissões de moderação.</p>

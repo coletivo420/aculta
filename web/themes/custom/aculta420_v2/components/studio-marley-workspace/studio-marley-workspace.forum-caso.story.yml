@@ -1,0 +1,38 @@
+name: "Marley - Fórum: exame de denúncia"
+description: "Inspetor em duas colunas, trilha de auditoria e separação entre decisão do caso e ação sobre o conteúdo."
+component: aculta420_v2:studio-marley-workspace
+props:
+  area: forum
+  title: "Fórum - análise do caso"
+  description: "Revisão de um relato com contexto, histórico, decisão e ação editorial independente."
+  preview_note: "Prévia ilustrativa - ações desativadas, sem casos ou permissões reais."
+slots:
+  navigation:
+    type: inline_template
+    template: |
+      <a href="#marley-story-forum" aria-current="page">{{ include('aculta420_v2:icon', { name: 'flag', variant: 'regular', size: 'sm' }, with_context = false) }} Fórum</a>
+      <span class="studio-marley-workspace__item-meta" aria-label="Outras áreas ilustrativas">Revista · Galerias · </span>
+  actions:
+    type: inline_template
+    template: |
+      {{ include('aculta420_v2:button', { text: 'Voltar à fila', icon_before: 'arrow-u-up-left', variant: 'secondary', disabled: true }, with_context = false) }}
+  summary:
+    type: inline_template
+    template: |
+      {{ include('aculta420_v2:statistics-moderation-summary', { title: 'Contexto do caso', note: 'Exemplo de dados agregados, não conectados ao Runtime.', rows: [{label: 'Relatos no caso', value: '2', description: 'Consolidados'}, {label: 'Estado', value: 'Em análise', description: 'Não decidido'}] }, with_context = false) }}
+  primary:
+    type: inline_template
+    template: |
+      {% set marley_panel_header %}<h2>Conteúdo analisado</h2>{% endset %}
+      {% set marley_panel_content %}<div class="studio-marley-workspace__item-meta"><span>{{ include('aculta420_v2:icon', { name: 'chat-circle-text', variant: 'regular', size: 'sm' }, with_context = false) }} Resposta atual</span><span>Publicado</span><span>Revisão contextual</span></div><blockquote class="studio-marley-workspace__case-excerpt">Texto demonstrativo de uma resposta enviada ao fórum. A análise considera o contexto da conversa e as políticas aplicáveis.</blockquote><p>{{ include('aculta420_v2:badge', { label: 'Publicado', icon_name: 'check-circle', variant: 'neutral' }, with_context = false) }} {{ include('aculta420_v2:badge', { label: 'Sinalizado', icon_name: 'flag', variant: 'highlight' }, with_context = false) }}</p><h3>Histórico da moderação</h3><ol class="studio-marley-workspace__timeline"><li>Relato recebido - evento ilustrativo</li><li>Relato consolidado com o caso existente</li><li>Aguardando decisão por moderador autorizado</li></ol>{% endset %}
+      {{ include('aculta420_v2:surface-panel', { tone: 'raised', radius: 'md', spacing: 'normal', elevation: 'subtle', header_variant: 'subtle', header: marley_panel_header, content: marley_panel_content }, with_context = false) }}
+  aside:
+    type: inline_template
+    template: |
+      {% set marley_panel_header %}<h2>Decidir caso</h2>{% endset %}
+      {% set marley_panel_content %}<h3>1. Julgamento da denúncia</h3><p>Resolver, rejeitar ou manter para análise. Isto não despublica o conteúdo automaticamente.</p><div class="studio-marley-workspace__control-row">{{ include('aculta420_v2:button', { text: 'Resolver denúncia', icon_before: 'check-circle', variant: 'secondary', disabled: true }, with_context = false) }}{{ include('aculta420_v2:button', { text: 'Rejeitar relato', icon_before: 'prohibit', variant: 'secondary', disabled: true }, with_context = false) }}</div><h3>2. Ação editorial</h3><p>Separadamente, aplicar uma medida autorizada ao alvo e auditar UID, motivo e estado.</p><div class="studio-marley-workspace__control-row">{{ include('aculta420_v2:button', { text: 'Ocultar', icon_before: 'eye-slash', variant: 'danger', disabled: true }, with_context = false) }}{{ include('aculta420_v2:button', { text: 'Restaurar', icon_before: 'shield-check', variant: 'secondary', disabled: true }, with_context = false) }}{{ include('aculta420_v2:button', { text: 'Atribuir', icon_before: 'users', variant: 'secondary', disabled: true }, with_context = false) }}</div>{% endset %}
+      {{ include('aculta420_v2:surface-panel', { tone: 'raised', radius: 'md', spacing: 'normal', elevation: 'subtle', header_variant: 'subtle', header: marley_panel_header, content: marley_panel_content }, with_context = false) }}
+  footer:
+    type: inline_template
+    template: |
+      <p>Prévia sem efeitos de escrita. O motor real deve usar Form API, POST/CSRF e auditoria CGU + Fórum.</p>
