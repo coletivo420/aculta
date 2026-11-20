@@ -147,6 +147,14 @@ final class ForumAdminOverviewController extends ControllerBase implements Conta
         ->applyTo($build);
     }
 
+    if ($this->currentUser()->hasPermission('administer comments')) {
+      $build['pinned_link'] = [
+        '#type' => 'link',
+        '#title' => $this->t('Tópicos fixados'),
+        '#url' => Url::fromRoute('aculta_forum.pinned_topics'),
+      ];
+    }
+
     return $build;
   }
 

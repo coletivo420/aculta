@@ -231,6 +231,13 @@ Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve co
 - Validação: PHPStan exit 0; guard PASS; PHPCS sem erros no controlador.
 - DEFERRED: teste da rota e prova visual/HTMX do popup.
 
+## Controles administrativos de tópicos fixados — 2026-11-20
+
+- Página `aculta_forum.pinned_topics` (`/painel-administrativo/forum/fixados`): lista os tópicos fixados com título, categoria, autor e data, e ação "Desafixar". Renderiza o SDC `data-table` (slot `table`) com cartões no mobile.
+- Link "Tópicos fixados" no painel administrativo, para quem pode administrar comentários.
+- Validação: Unit do Fórum OK; PHPStan e guard PASS. DEFERRED: Kernel e prova visual da página.
+- Pendente (paridade): arquivar, tags, dividir/juntar e despublicar.
+
 ## Fixar tópico (paridade Discourse, parcial) — 2026-11-20
 
 - Ação "Fixar tópico"/"Desafixar tópico" nos controles administrativos, com formulário de confirmação `TopicModerationPinForm` (rota `aculta_forum.topic_moderation_pin`) que usa o campo sticky do nó.

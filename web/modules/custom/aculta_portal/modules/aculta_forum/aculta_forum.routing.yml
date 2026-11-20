@@ -320,3 +320,13 @@ aculta_forum.topic_moderation_pin:
     parameters:
       node:
         type: 'entity:node'
+
+aculta_forum.pinned_topics:
+  path: '/painel-administrativo/forum/fixados'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\PinnedTopicsAdminController::list'
+    _title: 'Tópicos fixados'
+  requirements:
+    _permission: 'administer comments'
+  options:
+    _admin_route: TRUE
