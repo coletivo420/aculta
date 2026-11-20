@@ -105,15 +105,14 @@ final class DiscussionReactionEntityViewHooks {
         : NULL;
       // Estado de exclusão vale para todo comentário da discussão, não só para a Revista.
       $cid = (int) $threadComment->id();
-      $isOwner = (int) $threadComment->getOwnerId() === (int) $this->currentUser->id();
       $isAdmin = $this->currentUser->hasPermission('administer comments');
       // Estado: resposta excluída pelo autor fica como "Comentário excluído", sem edição, resposta nem citação.
       // Valor do tombstone: TRUE = excluído pelo autor; 'moderacao' = removido pela moderação.
       $tombstone = $this->keyValueFactory->get('aculta_forum_comment_tombstones')->get((string) $cid);
       $deleted = (bool) $tombstone;
       $variables['comment_deleted'] = $deleted;
-      // Excluir pela barra é só do autor; a moderação exclui pelos controles administrativos.
-      $variables['delete_allowed'] = $isOwner && !$deleted;
+      // A barra nunca exclui: o autor não apaga resposta pela barra, e a moderação exclui pelos controles administrativos.
+      $variables['delete_allowed'] = FALSE;
       $variables['comment_removed_by_moderation'] = $tombstone === 'moderacao';
       // Controles administrativos: só para quem pode moderar (ver DiscussionCommentModerationForm).
       $variables['delete_token'] = $this->csrfGenerator->get('aculta_forum.comment.delete.' . $cid);

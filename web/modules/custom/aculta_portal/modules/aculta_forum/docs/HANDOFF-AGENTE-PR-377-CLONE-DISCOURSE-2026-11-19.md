@@ -231,6 +231,13 @@ Decisão do responsável: o Stories UI Patterns `comment-admin-controls` deve co
 - Validação: PHPStan exit 0; guard PASS; PHPCS sem erros no controlador.
 - DEFERRED: teste da rota e prova visual/HTMX do popup.
 
+## Correção: o autor nunca exclui pela barra — 2026-11-20
+
+Decisão do responsável: o autor jamais exclui pela barra de resposta; só a moderação exclui, pelos controles administrativos.
+
+- Implementado: `delete_allowed` é sempre falso na barra (`DiscussionReactionEntityViewHooks`).
+- Pendente (não implementado): ao o autor excluir um tópico, o tópico permanece aberto com a mensagem própria "Tópico excluído pelo autor", e a moderação é avisada pelo CGU (relatório pendente). Hoje `TopicDeleteConfirmForm` chama `processDeletion`, que exclui ou envia para a fila; o fluxo novo exige marca de tombstone do tópico, a mensagem na página e o relatório no CGU. DEFERRED.
+
 ## Edição e exclusão pelo autor; marca e log da moderação — 2026-11-20
 
 Decisões do responsável:
