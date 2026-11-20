@@ -75,6 +75,20 @@ Pendências, sem execução:
 - **DEFERRED:** `validate-aculta420-v2-sdc.php` (exige bootstrap Drupal com `DRUPAL_ROOT`, Drush e site instalado) e render do Twig na story. Sem Runtime nem banco de site, não há PASS dessas partes.
 - **Pendente:** aplicar `read_only` nas Views/templates do acervo quando o arquivo for exibido pelas entidades próprias; o cartão ainda não é usado por essas telas.
 
+## Decisão — anexos só no Fórum; consumidores apenas mídia embutida — 2026-11-20
+
+Decisão do responsável:
+
+- **Somente o próprio Fórum** (`aculta_forum`) aceita o sistema amplo de anexos (`forum_attachment` e `ForumAttachmentPublication`).
+- **Consumidores do Fórum** (LMS, Wiki, Revista e comentários gerais) **não aceitam anexos**. Neles só é permitida **mídia embutida** (embedded media, referência inline ao conteúdo), sem campo de anexo.
+- Entidades do acervo (`aculta_forum_legacy_attachments`) continuam somente leitura, e o anexo histórico não ganha canal de envio.
+
+Plano ajustado:
+
+1. Auditar os consumidores para confirmar que não expõem campo de anexo nem upload além da mídia embutida. Pendente.
+2. Impedir anexo nos consumidores pelo mesmo mecanismo de origem/contexto, com teste que prove a recusa. Pendente.
+3. A lacuna de anexos do acervo no índice (abaixo) fica restrita ao Fórum: anexo só é indexável por referência de tópico ou resposta `CURRENT` do próprio Fórum.
+
 ## Achado aberto — anexos do acervo no índice público — 2026-11-20
 
 - **Lacuna:** `MediaContentIndexProvider::isIndexable` (provider de `forum_attachment`, registrado em `aculta_forum.attachment_content_index_provider`) aceita qualquer mídia do bundle. Anexos de tópicos do acervo entram no índice público pelo caminho de mídia, sem passar pelo filtro de origem aplicado a tópicos e comentários.
