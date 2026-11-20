@@ -9,7 +9,7 @@
 {% set comment_card %}
 <article{{ attributes.addClass('comment', 'comment--discussion', 'js-comment', status ? 'comment--' ~ status) }}>
   {{ context }}
-  {% if accent_side|default('start') == 'end' %}
+  {% if (reply_depth|default(0)) > 0 and accent_side|default('start') == 'end' %}
   {{ include('aculta420_v2:forum-reply-mirror', {
     author_name: author_name|default('Participante'|t),
     author_posts: author_posts,

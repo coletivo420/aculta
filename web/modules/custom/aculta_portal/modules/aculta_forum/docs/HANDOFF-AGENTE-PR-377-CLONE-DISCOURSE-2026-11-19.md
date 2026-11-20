@@ -153,7 +153,7 @@ Decisão do responsável: no Fórum, o desktop espelhado usa `forum-reply-mirror
 
 Implementado:
 
-- `forum-comment.twig`: quando `accent_side` é `end`, renderiza `forum-reply-mirror` com as mesmas slots (avatar, corpo, ações, reações). Lado normal segue com `forum-post-card`.
+- `forum-comment.twig`: `forum-reply-mirror` é usado para **resposta da resposta** (`reply_depth` > 0) com lado `end`. Respostas raiz seguem em `forum-post-card`. Decisão do responsável (2026-11-20): o mirror é para resposta da resposta. Antes, a regra usava só o lado e pegava respostas raiz. com as mesmas slots (avatar, corpo, ações, reações). Lado normal segue com `forum-post-card`.
 - `forum-reply-mirror.twig`: passa `author_position: 'side'` (autoria em coluna à direita, como o contrato).
 - `forum-reply-mirror.css`: no desktop (48rem), o rodapé vira linha com reações à direita e ações à esquerda (`row-reverse`).
 
