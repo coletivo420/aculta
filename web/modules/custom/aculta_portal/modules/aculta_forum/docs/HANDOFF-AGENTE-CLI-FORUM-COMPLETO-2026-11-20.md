@@ -1,3 +1,5 @@
+> **FDC-R14 incluído (2026-11-20):** [Sincronização automática de curtidas por mensagem e por usuário](PLANO-REACOES-SINCRONIZADAS-BLOCOS-2026-11-20.md) com testes T-62..70. Um clique no brócolis/descurtida/troca/Undo atualiza a mensagem e os cartões/perfil do usuário visíveis **na mesma página**, via HTML autoritativo do POST HTMX, sem segundo GET. Inclui cabeçalhos, emojis e cartões normal/espelhado; respetar cache tags, ACL, perfis e histórico. Implementação inicial remota, aceites Runtime/Browser DEFERRED. **Não restringir o agente a curtidas: concluir todo o Fórum FDC-R0..R14.**
+
 # Handoff do agente CLI - conclusão de TODO o ACULTA Fórum / clone Discourse
 
 **Data:** 2026-11-20.

@@ -103,3 +103,7 @@ Release candidata: todos gates P0/P1, migração (se autorizada), integridade, U
 | T-61 | Handoff integral Fórum | Agente executa FDC-R0..R13, T01..61 e DV01..19; worktree isolada, sem dev Runtime e com evidências reais de testes por componente |
 
 **Status T58..61:** código Unit/Kernel parcial e handoff documentado; integrações e QA/Runtime DEFERRED até execução, não PASS. [Prompt integral](HANDOFF-AGENTE-CLI-FORUM-COMPLETO-2026-11-20.md).
+
+## T-62..T-70 - sincronização dos contadores (2026-11-20)
+
+Regras e evidências pendentes: [FDC-R14](PLANO-REACOES-SINCRONIZADAS-BLOCOS-2026-11-20.md). T-62 abertura, T-63 replies, T-64 descurtir/Undo, T-65 troca, T-66 barras repetidas, T-67 perfil, T-68 consumidores/histórico, T-69 erros/no-JS, T-70 performance/a11y. Status: **DEFERRED**, código inicial publicado, testes ainda a executar. Nunca encerrar a missão ao concluir só a frente de reações.
