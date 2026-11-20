@@ -114,8 +114,8 @@
 }
 
 .studio-marley-workspace__item-meta > span + span::before {
-  content: "·";
   margin-inline-end: var(--spacing-xs);
+  content: "·";
 }
 
 .studio-marley-workspace__case-list {
