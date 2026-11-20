@@ -53,6 +53,14 @@ Pendências, sem execução:
 - Migração das linhas marcadas com `field_autor_legado` em `node` e `comment` para as entidades novas: não iniciada. Antes, precisa de contagem somente leitura no Runtime.
 - Denúncias do acervo continuam no CGU, referenciadas pelo alvo; não são entidade do legado.
 
+## P1 FDC-05 — índice público só com discussões correntes — 2026-11-20
+
+- **Antes:** `ForumContentIndexProvider::isIndexable` aceitava qualquer tópico `aculta_forum_topic` e qualquer `Comment` de tópico, inclusive os do acervo histórico.
+- **Agora:** o provider recebe `DiscussionOriginResolver` e indexa tópico e Comment só quando a origem é `CURRENT`. Origem `ARCHIVE` ou `UNKNOWN` falha fechada e não entra no índice público. `ForumPost` continua pela regra de revisão padrão.
+- **Verificação:** Unit `aculta_forum` 278 testes sem falhas; Unit `aculta_index` `ContentIndexAccessFilterTest` 10 testes OK; PHPStan nível 10 exit 0; guard PASS; PHPCS sem erros no provider.
+- **Custo conhecido:** tópicos correntes sem dono (`uid` vazio) passam a ficar fora do índice por falha fechada. Precisa de revisão de dados antes de qualquer reindexação.
+- **DEFERRED:** reindexação do Runtime e teste Kernel de busca. Não executados.
+
 ## Revalidação de continuidade — 2026-11-20
 
 Base: `origin/docs/forum-clone-discourse-ui-cgu-integracoes-20261119` em `506512bd8`. A cópia local de `docs/...` no checkout principal estava atrás do remoto em 141 commits sem commits próprios; o trabalho foi feito em worktree dedicado, sem tocar o worktree `aculta-pr377`, que tem alterações de outra frente.

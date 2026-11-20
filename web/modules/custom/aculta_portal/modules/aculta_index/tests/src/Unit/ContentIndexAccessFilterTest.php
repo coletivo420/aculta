@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_index\Unit;
 
 use Drupal\aculta_index\Query\ContentIndexAccessFilter;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolver;
 use Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider;
 use Drupal\aculta_wiki\ContentIndex\WikiContentIndexProvider;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessPolicyProviderInterface;
@@ -199,7 +200,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
-    $provider = new ForumContentIndexProvider();
+    $provider = new ForumContentIndexProvider(new DiscussionOriginResolver([]));
     $registry = new ContentIndexProviderRegistry([$provider]);
 
     $result = (new ContentIndexAccessFilter($manager, $registry, $siteManager))->filter([
@@ -266,7 +267,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
     );
     $registry = new ContentIndexProviderRegistry([
       new WikiContentIndexProvider(),
-      new ForumContentIndexProvider(),
+      new ForumContentIndexProvider(new DiscussionOriginResolver([])),
     ]);
 
     $result = (new ContentIndexAccessFilter($manager, $registry, $siteManager))->filter([
@@ -404,7 +405,7 @@ final class ContentIndexAccessFilterTest extends UnitTestCase {
       $this->createMock(ConfigFactoryInterface::class),
       new RequestStack(),
     );
-    $provider = new ForumContentIndexProvider();
+    $provider = new ForumContentIndexProvider(new DiscussionOriginResolver([]));
 
     $result = (new ContentIndexAccessFilter(
       $manager,

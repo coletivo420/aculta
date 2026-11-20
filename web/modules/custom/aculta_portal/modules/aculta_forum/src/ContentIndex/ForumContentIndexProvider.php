@@ -11,9 +11,10 @@ use Drupal\aculta_portal\ContentIndex\ContentIndexOwnerResolver;
 use Drupal\aculta_portal\ContentIndex\ContentIndexProviderInterface;
 use Drupal\aculta_portal\ContentIndex\ContentIndexRelation;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\node\NodeInterface;
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\comment\CommentInterface;
 
 /**
@@ -26,6 +27,13 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
 
   /**
    * {@inheritdoc} */
+  public function __construct(
+    private readonly DiscussionOriginResolverInterface $originResolver,
+  ) {}
+
+  /**
+   * {@inheritdoc}
+   */
   public function getProviderId(): string {
     return 'forum';
   }
@@ -63,7 +71,7 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
    */
   public function isIndexable(ContentEntityInterface $entity): bool {
     if ($entity instanceof NodeInterface && $entity->bundle() === 'aculta_forum_topic') {
-      return $entity->isDefaultRevision();
+      return $entity->isDefaultRevision() && $this->isCurrentDiscussion($entity);
     }
     if ($entity instanceof ForumPost) {
       return $entity->isDefaultRevision();
@@ -77,7 +85,16 @@ final class ForumContentIndexProvider implements ContentIndexProviderInterface, 
       return FALSE;
     }
     $topic = $entity->getCommentedEntity();
-    return $topic instanceof NodeInterface && $topic->bundle() === 'aculta_forum_topic';
+    return $topic instanceof NodeInterface
+      && $topic->bundle() === 'aculta_forum_topic'
+      && $this->isCurrentDiscussion($topic);
+  }
+
+  /**
+   * Only current discussions enter the public index; archive and unknown origin fail closed.
+   */
+  private function isCurrentDiscussion(ContentEntityInterface $entity): bool {
+    return $this->originResolver->classify($entity)->origin === DiscussionOrigin::CURRENT;
   }
 
   /**

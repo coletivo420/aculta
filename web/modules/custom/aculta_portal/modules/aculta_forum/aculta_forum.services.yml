@@ -1,6 +1,7 @@
 services:
   aculta_forum.content_index_provider:
     class: Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider
+    arguments: ['@aculta_forum.discussion_origin_resolver']
     tags:
       - { name: aculta_index.provider }
   aculta_forum.attachment_content_index_provider:
