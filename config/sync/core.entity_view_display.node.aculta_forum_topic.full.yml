@@ -45,6 +45,11 @@ content:
     region: content
     settings: { }
     third_party_settings: { }
+  flag_silenciar_topico:
+    weight: 22
+    region: content
+    settings: {}
+    third_party_settings: {}
   field_aculta_tags:
     type: entity_reference_label
     label: above
