@@ -10,11 +10,15 @@
 4. O `lms_teacher`/Educador exerce moderação **pedagógica própria do LMS**, por Group, matrícula, turma, curso e papel contextual; `moderador` e `content_editor` não herdam esses poderes. O backend do LMS permanece exclusivamente para administradores. O frontend operacional pedagógico pertence ao GanjaLab.
 5. `aculta_cgu` mantém ownership de denúncias e decisões comunitárias; suas filas frontend respeitam purpose/ACL e nunca misturam casos pedagógicos privados do LMS. A revisão editorial de Wiki/Revista mantém decisões próprias. Serviços de motor de comentário podem ser compartilhados, autoridade não.
 
+## Ownership do frontend - regra Studio
+
+As interfaces operacionais pertencem ao **`aculta_studio`**, nas suítes e purposes próprios. O Studio é framework/registry/shell/navegação e orquestra os Form APIs dos owners, sem duplicar regras de entidades, CGU ou Statistics. **Fila comunitária: Marley > Fórum**; popups de ações nos tópicos e enquetes continuam nas páginas do conteúdo. O plugin `ForumTab` hoje liga a uma rota administrativa antiga e necessita migração. [Roadmap Studio](../../web/modules/custom/aculta_portal/modules/aculta_studio/docs/PLANO-FRONTEND-OPERACIONAL-2026-11-20.md).
+
 ## Matriz de superfícies operacionais a implementar
 
 | Contexto | Operações de não administradores | Local frontend | Autorização |
 | --- | --- | --- | --- |
-| Growroom420 / Fórum | Moderação de tópicos/ForumPosts/Comments atuais, fila comunitária, enquetes, ações por popup | No Fórum público, com workspace de moderação protegido | `moderador` + capacidade fina de propósito Fórum; conteúdo CURRENT |
+| Growroom420 / Fórum | Moderação de tópicos/ForumPosts/Comments atuais, fila comunitária, enquetes, ações por popup | Popups no Fórum público; fila e workspace no Studio Marley, aba Fórum | `moderador` + capacidade fina de propósito Fórum; conteúdo CURRENT |
 | Wiki / WE Sativa | Criar/revisar verbetes, propostas, editar conteúdo e moderar comentários contextuais | Wiki/WE Sativa, formulários e popups da própria suite | Contrato editorial Wiki, sem elevação pela permissão global Fórum |
 | Revista / Marley | Autoria, edição, revisão, publicação, galerias e moderação de comentários contextuais | Marley, popups e telas editoriais frontend | EditorialCapability da Revista; acesso ao host |
 | LMS / GanjaLab | Cursos/turmas, material didático, tutoria, discussões e feedback pedagógico | GanjaLab frontend Educador; nunca fila comunitária do Fórum | Group/matrícula/capacidade do Educador, revalidada em cada POST |

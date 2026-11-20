@@ -1,3 +1,5 @@
+> **DECISÃO VIGENTE 2026-11-20:** `aculta_studio` centraliza a composição das interfaces operacionais frontend de todas as suítes, mantendo owners próprios. Moderador atua na aba Fórum do Marley (depois de corrigir a rota atual que aponta ao backend); Educador mantém GanjaLab independente; backend exclusivo `administrator`. [Plano de execução](docs/PLANO-FRONTEND-OPERACIONAL-2026-11-20.md).
+
 # ACULTA Studio (`aculta_studio`)
 
 ## ADR-038 — estado atual

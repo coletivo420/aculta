@@ -46,10 +46,10 @@ Todos iniciam em **PLANNED** e só viram PASS com comando/ambiente/commit/result
 | ID | Cenário | Aceite mínimo |
 | --- | --- | --- |
 | T-29 | Papéis não-admin nas rotas backend | Moderador, content_editor, Educador e gerente, isolados/combinados, recebem 403/404 em rotas administrativas GET/POST/HTMX/JSON; administrator mantém acesso |
-| T-30 | Moderação comunitária frontend | Moderador opera CGU/ForumPost/Node/Comment por popups no site público, sem nenhuma permissão genérica de admin |
+| T-30 | Moderação via ACULTA Studio | Moderador opera fila CGU na aba Fórum do Marley e popups nos tópicos; sem backend nem privilégios globais |
 | T-31 | Frontend editorial | Content_editor conclui tarefas autorizadas de Wiki/Marley sem redirecionamento ao backend |
 | T-32 | LMS pedagógico independente | Educador só pode moderar turma/curso/Group autorizado em GanjaLab; moderador global/editor não recebe acesso |
-| T-33 | Frontend operacional transversal | Todas as suítes com operadores não-admin proveem UI própria e negam fallbacks administrativos |
+| T-33 | Studio transversal | Todas as suítes usam registry/shell/navigation do Studio e Form API/ACL dos owners, sem painéis paralelos ou fallback admin |
 | T-34 | Popup ponta a ponta | Form API/CSRF/validação/feedback/fragmento/foco/aria/fallback sem JS, sem mutação GET |
 | T-35 | Split/merge do storage real | Transação e locks com ForumPost atual; integridade de revisão, thread, flags, permalink, cache e dados históricos |
 | T-36 | Poll Builder | Criar tópico com/sem enquete, única/múltipla, 2..20 opções, fechamento opcional, resultado e atomicidade |
@@ -58,6 +58,10 @@ Todos iniciam em **PLANNED** e só viram PASS com comando/ambiente/commit/result
 | T-39 | Integração FST | Eventos de enquete deduplicados, snapshots reconciliados, analytics público não contém UID, conteúdo nem votos individuais |
 | T-40 | Privilégio cumulativo | Somar moderador + content_editor ou demais papéis não contorna backend/admin-only nem o contexto LMS |
 
+
+**T-41 - Marley Fórum:** o `ForumTab` deve deixar de apontar à rota admin `aculta_user.denuncias_forum`; o papel `moderador` acessa somente a fila CGU frontend autorizada, não abas Revista/Galerias ou GanjaLab por herança.
+
+**T-42 - Ownership Studio:** todos os fluxos operacionais de não administradores usam os componentes de suíte `aculta_studio` sem duplicar regras de módulos owners; popups diretamente nas páginas permanecem válidos.
 
 ## Política de status
 

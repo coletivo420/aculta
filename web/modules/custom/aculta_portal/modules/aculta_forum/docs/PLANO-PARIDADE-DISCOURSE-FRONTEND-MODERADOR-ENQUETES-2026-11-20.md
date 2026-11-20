@@ -1,3 +1,5 @@
+> **COMPLEMENTO 2026-11-20:** a camada de interfaces operacionais frontend pertence ao **`aculta_studio`**. A fila de moderação comunitária será na **aba Fórum do Marley**, e não em um workspace independente no Growroom. Popups de tópico/enquete permanecem contextuais na página pública. Hoje `ForumTab` redireciona a `aculta_user.denuncias_forum` administrativo, pendente de substituição. [Plano Studio](../../aculta_studio/docs/PLANO-FRONTEND-OPERACIONAL-2026-11-20.md).
+
 # Plano executivo - Paridade Discourse com moderação frontend, novo papel Moderador e enquetes
 
 **Data:** 2026-11-20. **Branch:** `feat/forum-paridade-discourse` (PR #394). **Snapshot da inspeção:** `0c3cad8112173c26753c37cac057860758c48fd9`. **Natureza:** plano prospectivo baseado em código e pesquisa Discourse, não execução de Runtime. Atualizar HEAD e baseline antes de implementar.
@@ -54,7 +56,7 @@ A existência de classe/rota/story não é homologação. Status: **código parc
 
 Drupal não herda permissões entre roles por peso. `moderador` fica abaixo de `content_editor` em escopo e peso de exibição -3 (content_editor -4 no snapshot), **sem se tornar editor**. Compatibilizar os serviços existentes com novas permissões `moderate aculta forum topics`, `moderate aculta forum posts`, `moderate aculta forum comments`, `review aculta forum reports`, `reorganize aculta forum topics` e `close aculta forum polls`; nomes propostos até conferir colisões. Não usar `administer comments` para viabilizar o moderador. Exclusão física, políticas de conta e alterações de configuração permanecem admin-only.
 
-**CGU:** mantém casos/denúncias/decisão e trilha; workspace de moderação comunitária no frontend do Fórum, separado da moderação de publicação da Revista/Wiki e do trabalho pedagógico do LMS. O motor de comentário shared fornece ações/popup/formatter, não autoridade universal.
+**CGU:** mantém casos/denúncias/decisão e trilha; workspace de moderação comunitária no Studio Marley, aba Fórum, separado da moderação de publicação da Revista/Wiki e do trabalho pedagógico do LMS. O motor de comentário shared fornece ações/popup/formatter, não autoridade universal.
 
 **Backend:** proteger *todas* as rotas administrativas efetivas de Core/contrib/custom e seus endpoints auxiliares, e não apenas prefixos ou menus. Auditar `user.role.*`, `_admin_route`, `access administration pages`, `access content overview`, `view the administration theme`, edição/entidade, VBO, revision e API. Testar bypass uid 1 explicitamente. Proteger por policy de route access/permits e revisar exceções deliberadas. Migração de `content_editor`/`lms_teacher`/`gerente_loja` para UI operacional frontend **antes** de retirar grants amplos. Uma página admin não deve ser reutilizada como fallback de popup.
 
@@ -106,7 +108,7 @@ Pipeline: **popup frontend / workspace comunitário / painel admin** -> access p
 ## 9. Testes adicionais vinculantes
 
 - T-29: cada usuário não administrador (`moderador`, `content_editor`, Educador, gerente e combinados) recebe 403/404 em qualquer rota backend real, GET/POST/HTMX/JSON; administrador continua acessando; testagem de session, cache e acesso de entidade.
-- T-30: Moderador isolado vê workspace frontend do Growroom e finaliza decisão de ForumPost sem abrir backend; sem `administer comments` e sem editoria global.
+- T-30: Moderador isolado vê workspace da aba Fórum do Studio Marley e finaliza decisão de ForumPost sem abrir backend; sem `administer comments` e sem editoria global.
 - T-31: Content_editor mantém tarefas editoriais Wiki/Revista **no frontend** e não entra no backend; autorizações permanecem distintas de moderação comunitária.
 - T-32: Educador LMS modera somente grupo/turma autorizada em GanjaLab; moderador comunidade e editor não alcançam pedagogia; revogação de matrícula bloqueia até POST já aberto.
 - T-33: todos os consumidores com operação autenticada possuem interface frontend sem link/redirect para admin; admin e usuário da área não recebem widgets indevidos de outras suites.

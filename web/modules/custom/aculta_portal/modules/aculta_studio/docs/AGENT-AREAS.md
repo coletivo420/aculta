@@ -1,3 +1,5 @@
+> **ORIENTAÇÃO VIGENTE (2026-11-20):** `aculta_studio` é dono da composição frontend operacional das suítes; dados/ACL/Form API ficam com os modules owners. Backend é exclusivo `administrator`. Ver [roadmap operacional](PLANO-FRONTEND-OPERACIONAL-2026-11-20.md). A antiga rota da moderação do Marley é administrativa, não apropriada ao novo `moderador`.
+
 # Studio — áreas, rotas e abas (regra de agente)
 
 Leia só quando a tarefa tocar abas, rotas ou áreas do Studio. Regras gerais: `../AGENTS.md`.
@@ -20,7 +22,7 @@ Leia só quando a tarefa tocar abas, rotas ou áreas do Studio. Regras gerais: `
 
 ## Marley, Ganjalab e Culturas
 
-- Marley (`account:/marley`): Revista, moderação do Fórum e Galerias. Não exponha criação de tópicos nem navegação geral de discussões. A aba de moderação exige `moderar denuncias do forum` e delega à rota owner.
+- Marley (`account:/marley`): Revista, moderação do Fórum e Galerias. Não expor criação geral de tópicos. **Estado atual:** aba Fórum exige `moderar denuncias do forum` e liga a `aculta_user.denuncias_forum`, rota `/painel-administrativo/forum/denuncias` com `_admin_route: true`. **Destino:** manter aba Fórum no Studio, implementar fila CGU frontend e permissão fina para `moderador`, sem redirect administrativo; popup de tópico continua in-context. Mudança ainda não executada.
 - Revista no Marley: a experiência editorial está em `/marley/revista/*`. Não encaminhe usuários editoriais para `/admin/content/revista` nem para `/painel-administrativo/revista`. `aculta_magazine` é dono do Node `revista`, dos fields, da Form API e do workflow. Revalide Entity/Revision Access e a capability ACULTA no acesso direto e no submit. Transições vêm de `StateTransitionValidation`.
 - Discussão da Revista: é o Comment `aculta_discussion_post` em `field_aculta_discussion`. Use `aculta_forum.discussion_context_resolver` e `PublicationContextProvider`. Não crie ForumPost, tópico nem fila paralela.
 - Ganjalab Estudante (`courses:/ganjalab`): dashboard, jornada e sala. Dados e progresso vêm do LMS.
