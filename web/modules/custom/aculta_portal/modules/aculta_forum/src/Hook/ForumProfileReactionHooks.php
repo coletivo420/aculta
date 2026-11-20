@@ -38,6 +38,8 @@ final class ForumProfileReactionHooks {
     }
 
     $stats = $this->reactionManager->getUserStats($uid);
+    // This data changes independently of Profile entity cache tags.
+    $build['#cache']['tags'][] = 'aculta_user_reactions:' . $uid;
 
     $build['forum_reactions'] = [
       '#type' => 'container',
@@ -55,13 +57,13 @@ final class ForumProfileReactionHooks {
           '#theme' => 'aculta_portal_element',
           '#tag' => 'span',
           '#value' => $this->t('Recebidas: @count', ['@count' => $stats['reactions_received']]),
-          '#element_attributes' => ['data-portal-ui' => 'public-profile-reactions-received'],
+          '#element_attributes' => ['data-portal-ui' => 'public-profile-reactions-received', 'data-forum-user-reactions-received' => '', 'data-user-uid' => (string) $uid, 'data-stat-label' => (string) $this->t('Recebidas:')],
         ],
         'given' => [
           '#theme' => 'aculta_portal_element',
           '#tag' => 'span',
           '#value' => $this->t('Dadas: @count', ['@count' => $stats['reactions_given']]),
-          '#element_attributes' => ['data-portal-ui' => 'public-profile-reactions-given'],
+          '#element_attributes' => ['data-portal-ui' => 'public-profile-reactions-given', 'data-forum-user-reactions-given' => '', 'data-user-uid' => (string) $uid, 'data-stat-label' => (string) $this->t('Dadas:')],
         ],
       ],
     ];

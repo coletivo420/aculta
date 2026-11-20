@@ -14,7 +14,7 @@
 {% set more_id = 'reaction-more-' ~ uid %}
 {% set palette_id = 'reaction-palette-' ~ uid %}
 
-<div id="{{ target_id }}" class="discussion-reaction-bar" data-discussion-reaction-bar data-entity-type="{{ entity_type }}" data-entity-id="{{ entity_id }}">
+<div id="{{ target_id }}" class="discussion-reaction-bar" data-discussion-reaction-bar data-entity-type="{{ entity_type }}" data-entity-id="{{ entity_id }}" data-author-uid="{{ author_uid|default(0) }}" data-author-reactions-received="{{ author_reactions_received|default(0) }}" data-viewer-uid="{{ viewer_uid|default(0) }}" data-viewer-reactions-given="{{ viewer_reactions_given|default(0) }}" data-reaction-total="{{ total_count|default(0) }}" data-user-reaction="{{ user_reaction|default('') }}">
 {% if can_react %}
   <div class="discussion-reaction-bar__actions">
     {# Reação rápida (padrão) #}

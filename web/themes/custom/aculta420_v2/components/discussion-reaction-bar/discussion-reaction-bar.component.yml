@@ -39,6 +39,23 @@ props:
       type: integer
       title: Número de descurtidas
       default: 0
+    author_uid:
+      type: integer
+      title: ID do autor da mensagem
+      default: 0
+      description: UID usado apenas para identificar contadores renderizados do mesmo autor.
+    author_reactions_received:
+      type: integer
+      title: Saldo agregado de reações recebidas pelo autor
+      default: 0
+    viewer_uid:
+      type: integer
+      title: ID do usuário autenticado que visualiza a barra
+      default: 0
+    viewer_reactions_given:
+      type: integer
+      title: Contagem de reações positivas dadas pelo visualizador
+      default: 0
     user_reaction:
       type: [string, 'null']
       title: Emoji reagido pelo usuário atual

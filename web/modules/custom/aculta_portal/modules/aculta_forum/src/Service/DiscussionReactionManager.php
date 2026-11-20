@@ -485,6 +485,13 @@ class DiscussionReactionManager {
   }
 
   /**
+   * Request-local memoization for user aggregate stats (many cards per page).
+   *
+   * @var array<int, array{reactions_received: int, reactions_given: int}>
+   */
+  private array $userStatsCache = [];
+
+  /**
    * Retrieves aggregated reaction statistics for a user.
    *
    * @param int $uid
@@ -496,6 +503,9 @@ class DiscussionReactionManager {
   public function getUserStats(int $uid): array {
     if ($uid <= 0) {
       return ['reactions_received' => 0, 'reactions_given' => 0];
+    }
+    if (isset($this->userStatsCache[$uid])) {
+      return $this->userStatsCache[$uid];
     }
 
     $record = $this->database->select(self::TABLE_STATS, 's')
@@ -518,13 +528,13 @@ class DiscussionReactionManager {
       $dislikes = is_numeric($dislikeRaw) ? max(0, (int) $dislikeRaw) : 0;
       $positiveReceived = isset($record['reactions_received']) && is_numeric($record['reactions_received'])
         ? max(0, (int) $record['reactions_received']) : 0;
-      return [
+      return $this->userStatsCache[$uid] = [
         'reactions_received' => max(0, $positiveReceived - $dislikes),
-        'reactions_given' => isset($record['reactions_given']) && is_numeric($record['reactions_given']) ? (int) $record['reactions_given'] : 0,
+        'reactions_given' => isset($record['reactions_given']) && is_numeric($record['reactions_given']) ? max(0, (int) $record['reactions_given']) : 0,
       ];
     }
 
-    return ['reactions_received' => 0, 'reactions_given' => 0];
+    return $this->userStatsCache[$uid] = ['reactions_received' => 0, 'reactions_given' => 0];
   }
 
   /**
@@ -585,6 +595,8 @@ class DiscussionReactionManager {
    * Invalidates render cache for the reacted entity.
    */
   protected function invalidateEntityCache(EntityInterface $entity, int $giverUid = 0, int $authorUid = 0): void {
+    // Reactions may have been read earlier in the very same POST request.
+    unset($this->userStatsCache[$giverUid], $this->userStatsCache[$authorUid]);
     $tags = $entity->getCacheTags();
     $tags[] = 'aculta_discussion_reactions:' . $entity->getEntityTypeId() . ':' . $entity->id();
     if ($giverUid > 0) {

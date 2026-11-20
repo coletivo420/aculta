@@ -122,11 +122,7 @@ final class DiscussionReactionEntityViewHooks {
         : (string) new TranslatableMarkup('A resposta ficará como "Comentário excluído" e não poderá mais ser editada.');
       if ($variables['publication_comment']) {
         $reactions = $this->reactionManager->loadReactions('comment', (int) $threadComment->id(), NULL);
-        $total = 0;
-        foreach ($reactions['reactions'] as $reaction) {
-          $total += (int) $reaction['count'];
-        }
-        $variables['sort_total'] = $total;
+        $variables['sort_total'] = $reactions['total_count'];
         $variables['sort_created'] = (int) $threadComment->getCreatedTime();
         // Ações da resposta: responder, citar e editar abrem o Compositor de Resposta da Discussão;
         // a rota valida o acesso. Excluir só aparece quando a conta pode.
@@ -439,11 +435,7 @@ final class DiscussionReactionEntityViewHooks {
     $totals = [];
     foreach ($comments as $cid => $comment) {
       $reactions = $this->reactionManager->loadReactions('comment', $cid, NULL);
-      $sum = 0;
-      foreach ($reactions['reactions'] as $reaction) {
-        $sum += (int) $reaction['count'];
-      }
-      $totals[$cid] = $sum;
+      $totals[$cid] = $reactions['total_count'];
     }
     $children = [];
     $roots = [];

@@ -9,6 +9,7 @@ use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\user\EntityOwnerInterface;
 use Drupal\Core\Url;
 
 /**
@@ -48,6 +49,13 @@ class DiscussionReactionBuilder {
     $allowedReactions = $this->reactionManager->getAllowedReactions();
     $defaultReaction = $this->reactionManager->getDefaultReaction();
 
+    $authorUid = $entity instanceof EntityOwnerInterface ? (int) $entity->getOwnerId() : 0;
+    $viewerUid = $uid ?? 0;
+    $authorStats = $this->reactionManager->getUserStats($authorUid);
+    $viewerStats = $authorUid === $viewerUid
+      ? $authorStats
+      : $this->reactionManager->getUserStats($viewerUid);
+
     $targetId = "discussion-reactions-{$entityType}-{$entityId}";
 
     $build = [
@@ -61,6 +69,10 @@ class DiscussionReactionBuilder {
         'total_count' => $reactionsData['total_count'],
         'positive_count' => $reactionsData['positive_count'],
         'dislike_count' => $reactionsData['dislike_count'],
+        'author_uid' => $authorUid,
+        'author_reactions_received' => $authorStats['reactions_received'],
+        'viewer_uid' => $viewerUid,
+        'viewer_reactions_given' => $viewerStats['reactions_given'],
         'user_reaction' => $reactionsData['user_reaction'],
         'allowed_reactions' => $allowedReactions,
         'default_reaction' => $defaultReaction,
@@ -71,6 +83,7 @@ class DiscussionReactionBuilder {
       '#attached' => [
         'library' => [
           'core/drupal.htmx',
+          'aculta_forum/reaction-counter-sync',
         ],
       ],
       '#cache' => [
@@ -78,6 +91,8 @@ class DiscussionReactionBuilder {
         'tags' => array_merge($entity->getCacheTags(), [
           "aculta_discussion_reactions:{$entityType}:{$entityId}",
           'config:aculta_forum.settings',
+          "aculta_user_reactions:{$authorUid}",
+          "aculta_user_reactions:{$viewerUid}",
         ]),
       ],
     ];

@@ -24,6 +24,13 @@
             {% if timestamp %}
               <span class="forum-post-card__time">· {{ timestamp }}</span>
             {% endif %}
+            {% if reactions_slot and not read_only %}
+              <span class="forum-post-card__reaction-stat" title="{{ 'Curtidas recebidas pelo autor'|t }}">
+                {{ include('aculta420_v2:reaction-emoji', { name: 'broccoli', variant: 'color', size: 'sm' }, with_context = false) }}
+                <span class="visually-hidden">{{ 'Curtidas do autor:'|t }}</span>
+                <span data-forum-author-reactions-received>{{ reactions_slot['#props']['author_reactions_received']|default(author_reactions_received|default(0)) }}</span>
+              </span>
+            {% endif %}
           </div>
         </div>
       </div>
