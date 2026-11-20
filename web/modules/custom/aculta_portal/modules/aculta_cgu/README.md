@@ -1,3 +1,5 @@
+> **Nova integração frontend Marley 2026-11-20:** [Fila real CGU, escopo Fórum e decisão com Form API](docs/MARLEY-CGU-FILA-FRONTEND-2026-11-20.md). `/marley/forum/moderacao/denuncias` compõe SDCs existentes com dados do owner; `.../{report}/decidir` reutiliza `CguReportDecisionForm -> ReportService`. Código em PR #394, validação Runtime DEFERRED; operações de conteúdo `aculta_forum` ainda não migradas para comandos frontend.
+
 # ACULTA CGU (Conteúdo Gerado por Usuários)
 
 > **Contrato de integração com Fórum (2026-11-19):** [Fórum / CGU / Discourse](docs/CONTRATO-INTEGRACAO-FORUM-CGU-2026-11-19.md). O CGU centraliza denúncias e casos de moderação do motor universal aculta_forum, respeitando acesso contextual de LMS, Wiki e Revista. Planejado, sem alterações funcionais nesta entrega.

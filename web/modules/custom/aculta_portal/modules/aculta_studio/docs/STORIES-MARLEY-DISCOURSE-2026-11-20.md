@@ -1,3 +1,5 @@
+> **Integração real CGU em PR #394 (2026-11-20):** A aba Fórum agora usa `aculta_cgu.forum_marley_queue` no frontend e o CGU entrega dados reais + formulário de decisão. [Contrato e matriz MCGU-01..09](../../aculta_cgu/docs/MARLEY-CGU-FILA-FRONTEND-2026-11-20.md). Isto substitui o link antigo `aculta_user.denuncias_forum` e não concede backend a moderadores. Os comandos de mutação de conteúdo Fórum ainda exigem adapter frontend próprio; não apresentar Stories como ações executadas.
+
 # Studio Marley - Stories SDC/UI Patterns do frontend e paridade Discourse
 
 **Data:** 2026-11-20. **Branch:** feat/forum-paridade-discourse (PR #394).
