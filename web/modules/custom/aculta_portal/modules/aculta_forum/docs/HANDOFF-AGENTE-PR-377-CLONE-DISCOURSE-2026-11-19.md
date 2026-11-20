@@ -92,11 +92,16 @@ Pedidos do responsável, com situação:
 - Abas (`forum-tabs`): 2 referências.
 - Diretrizes do compositor (`forum-composer-guidelines`): 0 referências antes desta rodada. **Implementado**: `TopicPopupLayout::apply` monta o SDC recolhido com três dicas. Prova: `TopicPopupLayoutTest` (1 teste, 10 asserções, OK). Render do Twig não provado.
 
-Demais itens do grupo Comunidade sem consumidor (lacunas confirmadas):
+Correção (2026-11-20): a contagem anterior não varria `components/`, e por isso marcou falsos zeros. Recontagem com `components/` incluído, excluindo stories:
 
-- `forum-author-line`: 0 referências.
-- `forum-topic-card`: 0 referências.
-- `comment-admin-trigger`: 0 referências.
+- `forum-author-line`: 4 referências (`forum-reply-compact`, `forum-post-card`). Consumido.
+- `comment-admin-trigger`: 1 referência (`content-reply-bar`, controle de moderação na resposta). Consumido.
+- `forum-reply-mirror`: 1 referência, só na página de visão geral da UI Patterns. Fora do Fórum; o espelhamento real usa `forum-post-card` com `author_position: side`.
+- `discussion-topic-composer`: consumido pelo enquadramento do formulário de tópico.
+
+Lacuna real restante (confirmada com a recontagem):
+
+- `forum-topic-card`: 0 referências. Falta decidir onde o cartão de tópico com miniatura aparece (listagem alternativa ou destaque de categoria). Decisão pendente do responsável.
 
 Demais itens do grupo Comunidade com referência: `comment-admin-controls`, `content-reply-bar`, `delete-confirm`, `discussion-content-composer`, `discussion-reaction-bar`, `discussion-reactions-received`, `forum-category`, `forum-category-header`, `forum-category-page`, `forum-comment`, `forum-list-page`, `forum-reply-compact`, `forum-search-page`, `forum-sidebar-panels`, `forum-topic`, `forum-topic-meta`, `forum-topic-page`, `forum-topic-row`, `reaction-emoji`.
 
