@@ -63,6 +63,28 @@ Todos iniciam em **PLANNED** e só viram PASS com comando/ambiente/commit/result
 
 **T-42 - Ownership Studio:** todos os fluxos operacionais de não administradores usam os componentes de suíte `aculta_studio` sem duplicar regras de módulos owners; popups diretamente nas páginas permanecem válidos.
 
+## Ampliação 2026-11-20 - Game/Stats e recursos Discourse (PLANNED)
+
+[Roteiro e regras de domínio, métricas e privacidade](ESTUDO-DISCOURSE-GAME-METRICAS-INTEGRACOES-2026-11-20.md). **Todos os cenários abaixo iniciam em PLANNED**, mesmo que a fonte operacional exista em partes.
+
+| ID | Cenário | Aceite mínimo |
+| --- | --- | --- |
+| T-43 | Separação tópicos/respostas | 3 tópicos + 2 respostas = 3 e 2, não 5 tópicos; excluir Wiki/LMS/Revista/arquivo |
+| T-44 | Like versus emoji | Canonical like separado de reações, trocas e remoções idempotentes |
+| T-45 | Estados e moderação | Archive/sync/despublicado/republicação não duplicam métricas nem troféus |
+| T-46 | Nice/Good/Great Topic e Reply | 10/25/50 likes por mesmo alvo elegível, não soma de múltiplos posts |
+| T-47 | Appreciated | 20 posts distintos, cada um com pelo menos 1 like |
+| T-48 | Perfil e privacidade | Somente números e awards permitidos, sem vazamento por User/Studio/Index |
+| T-49 | Visualização vs leitura | History e marcar tudo lido não fabricam tópicos realmente abertos |
+| T-50 | Game opcional | Desligar Game preserva Forum, Stats e concessões no User |
+| T-51 | Solved | Resposta aceita/revogada com ACL, revisão e acesso ao permalink |
+| T-52 | Topic Voting distinto de Polls | Voto no tópico não altera enquete nem permite voto em contexto restrito |
+| T-53 | Assign via Marley | Atribuir caso não confere permissão e LMS permanece independente |
+| T-54 | Index/related/backlinks | Wiki/Revista/Eventos somente com acesso revalidado |
+| T-55 | Messenger | Menção, recompensa, like/solved não geram avisos duplicados |
+| T-56 | Admin e Studio | Moderador sem backend e sem cargo por conquista, educador isolado |
+| T-57 | Escala e reconcile | 1k/10k/100k posts e reações sem N+1, dry-run Stats/Game e evidência |
+
 ## Política de status
 
 Cada feature registra `planned | code | unit | kernel | functional | browser | runtime | production` com referência a commit, comando, duração, resultado e evidências; falha/BLOCKED/DEFERRED não se tornam PASS. Matriz de papéis: anônimo, autenticado, autor, editor Fórum, editor Revista, editor Wiki, Educador LMS, membro do curso, membro do Group restrito, não-membro, moderador CGU por purpose, global CGU, admin MAIN. Cobrir domínio incorreto, cache quente e revogação entre duas requisições.

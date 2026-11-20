@@ -1,3 +1,5 @@
+> **NOVO ROADMAP 2026-11-20 (G8-G11):** [integração do Fórum com dados de likes, tópicos, comentários e troféus Discourse](docs/ROADMAP.md) e [auditoria transversal](../aculta_forum/docs/ESTUDO-DISCOURSE-GAME-METRICAS-INTEGRACOES-2026-11-20.md). São propostas; a implementação atual só demonstra primeira resposta publicada como conquista Growroom. Preservar privacidade, sem XP/rank/poderes de moderação por badge.
+
 # ACULTA Game — conquistas e missões
 
 Versão atual: `0.1.0-dev.20` — primeira publicação de Comment ACULTA vigente ou

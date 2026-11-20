@@ -1,3 +1,5 @@
+> **AMPLIAÇÃO FDC-R9 a R13 (2026-11-20):** [auditoria de Game, curtidas, tópicos, comentários, troféus e integrações ACULTA](ESTUDO-DISCOURSE-GAME-METRICAS-INTEGRACOES-2026-11-20.md). Usar o `aculta_game` + `aculta_user` existentes para troféus 10/25/50 do Discourse e o `aculta_statistics` para métricas, sem rank/XP/papéis por popularidade. Distinguir tópicos criados de abertos/visualizados e like de outras reações. **Status: planejado; não há homologação.** FDC-R0..R8 e ST-OP continuam precedência de segurança.
+
 > **COMPLEMENTO 2026-11-20:** a camada de interfaces operacionais frontend pertence ao **`aculta_studio`**. A fila de moderação comunitária será na **aba Fórum do Marley**, e não em um workspace independente no Growroom. Popups de tópico/enquete permanecem contextuais na página pública. Hoje `ForumTab` redireciona a `aculta_user.denuncias_forum` administrativo, pendente de substituição. [Plano Studio](../../aculta_studio/docs/PLANO-FRONTEND-OPERACIONAL-2026-11-20.md).
 
 # Plano executivo - Paridade Discourse com moderação frontend, novo papel Moderador e enquetes

@@ -1,3 +1,5 @@
+> **AMPLIAÇÃO 2026-11-20 - perfil e Game:** o Studio é compositor de indicadores e conquistas de `aculta_game`/`aculta_statistics`/User, não dono de persistência; adicionar no dashboard pessoal e apresentação autorizada, e no Marley estatísticas de moderação sem dados privados de denunciante. [Estudo/FDC-R9..R13](../../aculta_forum/docs/ESTUDO-DISCOURSE-GAME-METRICAS-INTEGRACOES-2026-11-20.md). Não criar leaderboard ou painel redundante.
+
 # ACULTA Studio - implementação das interfaces operacionais frontend
 
 **Decisão vigente em 2026-11-20:** o `aculta_studio` é o framework compartilhado de **todas** as interfaces operacionais frontend. O backend de todo o portal é exclusivo de `administrator`. Moderação comunitária é distinta de moderação pedagógica. Este documento é planejamento (não comprova implementação no Runtime). Base de código auditada: branch `feat/forum-paridade-discourse` em 2026-11-20.
