@@ -312,11 +312,19 @@ final class WikiModerationController extends ControllerBase {
         '#url' => Url::fromRoute('aculta_wiki.moderation_reports', [], ['query' => ['status' => $status, 'page' => $page + 1]]),
       ];
     }
+    $filters = [
+      '#theme' => 'portal_component',
+      '#name' => 'wiki-moderation-filters',
+      '#props' => [
+        'title' => (string) $this->t('Filtrar denúncias por situação'),
+      ],
+      '#slots' => ['options' => $filterLinks],
+    ];
     $result = $this->workspace(
       (string) $this->t('Denúncias da Wiki'),
       (string) $this->t('Pareceres do CGU não substituem o workflow de publicação editorial.'),
       'reports',
-      ['filters' => $filterLinks, 'cases' => $content],
+      ['filters' => $filters, 'cases' => $content],
     );
     return $result;
   }

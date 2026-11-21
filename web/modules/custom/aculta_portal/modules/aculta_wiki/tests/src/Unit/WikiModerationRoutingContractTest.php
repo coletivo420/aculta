@@ -84,6 +84,7 @@ final class WikiModerationRoutingContractTest extends UnitTestCase {
       'wiki-moderation-workspace' => 'wiki-moderation-workspace.default.story.yml',
       'wiki-moderation-case' => 'wiki-moderation-case.proposal.story.yml',
       'wiki-moderation-decision' => 'wiki-moderation-decision.default.story.yml',
+      'wiki-moderation-filters' => 'wiki-moderation-filters.default.story.yml',
     ] as $component => $story) {
       $directory = $themes . '/' . $component;
       $meta = Yaml::parseFile($directory . '/' . $component . '.component.yml');

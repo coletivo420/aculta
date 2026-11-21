@@ -1,0 +1,6 @@
+name: Filtros de denúncias Wiki
+description: Prévia fictícia da navegação por situação, sem casos privados.
+props:
+  title: Filtrar denúncias por situação
+slots:
+  options: '<a href="#" aria-current="page">Pendente</a> <a href="#">Em análise</a> <a href="#">Procedente</a> <a href="#">Improcedente</a>'

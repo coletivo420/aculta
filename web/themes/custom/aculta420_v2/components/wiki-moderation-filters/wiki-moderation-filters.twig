@@ -1,0 +1,6 @@
+{# Os links são construídos e verificados no aculta_wiki; sem decisões no Twig. #}
+<nav{{ attributes.addClass('wiki-moderation-filters') }} aria-label="{{ title|default('Filtrar denúncias por situação') }}">
+  <div class="wiki-moderation-filters__options">
+    {{ options }}
+  </div>
+</nav>

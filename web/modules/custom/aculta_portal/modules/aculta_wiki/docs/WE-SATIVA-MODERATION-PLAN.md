@@ -38,6 +38,21 @@ o WE Sativa **consome os providers existentes do aculta_wiki**.
   `Url::access` cacheável e permite entrar na experiência ao usuário que só
   tenha grants de moderação Wiki. Não conceder `update` de Node a moderador CGU.
 
+### Incremento independente - filtros de denúncias (21/11/2026)
+
+A fila de denúncias utiliza o novo SDC `wiki-moderation-filters`, no
+WE Sativa. Ele recebe por slot apenas os links já construídos pelo
+`WikiModerationController`, com status validado em allowlist, GET sem
+mutação e `aria-current=page` definido pelo backend. Não faz queries,
+não expõe contagens de casos e não cria permissões. A navegação é
+horizontal responsiva, possui foco visível e funciona sem JavaScript.
+A story é estática e não contém nomes ou denúncias reais.
+
+O contrato Unit de SDC verifica a presença do metadata, do Twig, do CSS
+e da story. **Gates Unit/Kernel/Browser, PHPStan e revisão visual
+permanecem DEFERRED** até execução isolada na worktree do agente; não
+declarar homologação a partir deste commit.
+
 ### Matriz de aceite WES-MOD 0.2
 
 | Conta / alvo | Comportamento obrigatório |
