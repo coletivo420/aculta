@@ -23,6 +23,25 @@ Props e eventos estão documentados em
 > comprova renderização ativa. Consulte o relatório do corte para os nomes e
 > estado atual.
 
+## Fórum - SDCs recentes e paridade visual Discourse (21/11/2026)
+
+As superfícies de enquetes, timeline e histórico compartilham a geometria de
+`surface`; ícones e badges vêm de `icon` e `badge`, sem duplicar estilos
+de UI Suite. A barra de respostas recebeu alvo de 44 px e integra o SDC
+independente `cgu-report-button`.
+
+- `forum-solution-state`: indicador visual pendente/resolvido, slots
+  `excerpt` e `actions`. Duas stories; **ainda sem motor Solved**.
+- `forum-tracking-level`: quatro estados de acompanhamento e slot `actions`.
+  Quatro stories; **ainda sem serviço de preferências/notificação**.
+- Stories extras cobrem estados vazios, encerrados, salvando/salvo,
+  leitura completa e modal de denúncia em falha/carregamento.
+- UI Patterns Library oferece comutação global claro/escuro; não se criam
+  wrappers especiais de dark mode nas stories.
+
+Aceite visual Runtime/Browser, zoom, contraste e teclado permanece pendente.
+Consulte `aculta_forum/docs/SDC-PARIDADE-VISUAL-DISCOURSE-2026-11-21.md`.
+
 ## UI Patterns Library e Biblioteca de Layouts
 
 A UI Patterns Library descobre os componentes diretamente dos arquivos

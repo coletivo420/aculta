@@ -1,0 +1,30 @@
+{# Solved is only a display contract; the forum must supply verified data. #}
+{% set solution_body %}
+  <div class="forum-solution-state__header">
+    {{ include('aculta420_v2:badge', {
+      label: status_label,
+      icon_name: solved ? 'check-circle' : 'question',
+      variant: solved ? 'primary' : 'neutral',
+    }, with_context = false) }}
+    <span class="forum-solution-state__heading">{{ title }}</span>
+  </div>
+  {% if description %}
+    <p class="forum-solution-state__description">{{ description }}</p>
+  {% endif %}
+  {% if solved and excerpt %}
+    <div class="forum-solution-state__excerpt">{{ excerpt }}</div>
+  {% endif %}
+  {% if actions %}
+    <div class="forum-solution-state__actions">{{ actions }}</div>
+  {% endif %}
+{% endset %}
+<section{{ attributes.addClass('forum-solution-state', solved ? 'forum-solution-state--solved' : 'forum-solution-state--open') }} aria-label="{{ title }}">
+  {{ include('aculta420_v2:surface', {
+    tone: solved ? 'green-soft' : 'raised',
+    radius: 'lg',
+    spacing: 'normal',
+    border: 'subtle',
+    elevation: 'subtle',
+    content: solution_body,
+  }, with_context = false) }}
+</section>

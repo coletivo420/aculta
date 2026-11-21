@@ -24,6 +24,8 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
       'forum-revision-history' => ['revisions'],
       'forum-reading-timeline' => ['navigation'],
       'forum-draft-status' => ['actions'],
+      'forum-solution-state' => ['excerpt', 'actions'],
+      'forum-tracking-level' => ['actions'],
     ];
     foreach ($components as $name => $requiredSlots) {
       $path = $directory . '/' . $name;
@@ -117,6 +119,37 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     self::assertStringContainsString('{{ report_action }}', $bar);
     self::assertStringContainsString('report_action: report_action', $comment);
     self::assertStringContainsString("'cgu-report-button',", $presentation);
+  }
+
+  public function testDiscourseVisualPatternsReuseBaseSdcWithoutFakeActions(): void {
+    $theme = dirname(__DIR__, 8) . '/themes/custom/aculta420_v2/components';
+    foreach ([
+      'forum-poll-builder',
+      'forum-poll-card',
+      'forum-reading-timeline',
+      'forum-revision-history',
+      'forum-solution-state',
+      'forum-tracking-level',
+    ] as $name) {
+      $twig = (string) file_get_contents($theme . '/' . $name . '/' . $name . '.twig');
+      self::assertStringContainsString("include('aculta420_v2:surface'", $twig, $name);
+    }
+    foreach ([
+      'forum-tracking-level' => 4,
+      'forum-solution-state' => 2,
+      'forum-draft-status' => 4,
+      'forum-poll-card' => 3,
+    ] as $name => $minimum) {
+      $stories = glob($theme . '/' . $name . '/' . $name . '.*.story.yml');
+      self::assertIsArray($stories);
+      self::assertGreaterThanOrEqual($minimum, count($stories), $name);
+    }
+    $tracking = (string) file_get_contents($theme . '/forum-tracking-level/forum-tracking-level.twig');
+    $solved = (string) file_get_contents($theme . '/forum-solution-state/forum-solution-state.twig');
+    self::assertStringNotContainsString('data-hx-post', $tracking);
+    self::assertStringNotContainsString('data-hx-post', $solved);
+    self::assertStringContainsString("include('aculta420_v2:badge'", $tracking);
+    self::assertStringContainsString("include('aculta420_v2:badge'", $solved);
   }
 
   public function testTimelineIsHistoryBackedAndClamped(): void {

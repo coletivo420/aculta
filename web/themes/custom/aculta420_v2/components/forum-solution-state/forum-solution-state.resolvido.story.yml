@@ -1,0 +1,12 @@
+name: Solução aceita - tópico
+description: Story ilustrativa. O status Solved depende de serviços, regras e auditoria ainda não implementados.
+component: aculta420_v2:forum-solution-state
+props:
+  title: Solução do tópico
+  solved: true
+  status_label: Solução aceita
+  description: A resposta abaixo representa uma solução confirmada em cenário fictício.
+slots:
+  excerpt:
+    type: inline_template
+    template: '<p>Exemplo de resposta: confira a documentação do curso e retorne ao tópico caso precise de ajuda.</p>'

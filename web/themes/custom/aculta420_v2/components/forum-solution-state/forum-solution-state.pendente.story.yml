@@ -1,0 +1,8 @@
+name: Sem solução marcada - tópico
+description: Estado visual somente leitura, sem criar controle ou persistência Solved.
+component: aculta420_v2:forum-solution-state
+props:
+  title: Solução do tópico
+  solved: false
+  status_label: Ainda sem solução
+  description: Nenhuma resposta foi marcada como solução neste exemplo.

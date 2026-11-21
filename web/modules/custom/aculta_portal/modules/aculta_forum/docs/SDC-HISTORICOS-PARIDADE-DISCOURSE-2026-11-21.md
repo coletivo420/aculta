@@ -53,6 +53,23 @@ Marley/Fórum apenas após contrato de audit trail e ACL.
 - Contratos de regressão verificam slotting pós-Form API e o cálculo
   percentual com limites; Browser/Kernel e a prévia Library são DEFERRED.
 
+## Rodada de paridade visual - 21/11/2026
+
+- Reuso explícito de `surface` em `forum-poll-builder`, `forum-poll-card`,
+  `forum-reading-timeline` e `forum-revision-history`.
+- `icon` e `badge` nos resultados, na timeline e nos quatro estados do rascunho.
+- Botão CGU compacto com Phosphor e 44 px junto das demais ações da barra.
+- 13 stories novas para enquetes encerradas/indisponíveis, ausência de votos,
+  novas publicações/leitura completa, salvamento/salvo, tabelas vazias/extensas
+  e estados de carregamento/erro do popup.
+- Novos padrões **visuais somente leitura** `forum-solution-state`
+  (pendente/resolvido) e `forum-tracking-level` (normal/acompanhando/
+  observando/silenciado). Sem motor Solved, preferências ou POST neste pacote.
+- Os estados claros/escuros são visualizados pelo controle global de aparência
+  da UI Patterns Library; as stories não simulam uma troca de tema paralela.
+
+**Registro detalhado:** [SDC-PARIDADE-VISUAL-DISCOURSE-2026-11-21.md](SDC-PARIDADE-VISUAL-DISCOURSE-2026-11-21.md).
+
 ## Lacunas de paridade ainda abertas
 
 | Frente | Estado e condição de integração |

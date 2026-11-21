@@ -1,0 +1,28 @@
+{# Presentation only: no subscription changes, follower counts or privacy decisions. #}
+{% set level_icon = level == 'watching' ? 'bell-ringing' : (level == 'tracking' ? 'eye' : (level == 'muted' ? 'bell-slash' : 'bell')) %}
+{% set tracking_content %}
+  <div class="forum-tracking-level__header">
+    <div class="forum-tracking-level__identity">
+      <h3 class="forum-tracking-level__title">{{ title }}</h3>
+      <p class="forum-tracking-level__description">{{ description }}</p>
+    </div>
+    {{ include('aculta420_v2:badge', {
+      label: level_label,
+      icon_name: level_icon,
+      variant: level == 'watching' ? 'highlight' : (level == 'tracking' ? 'primary' : 'neutral'),
+    }, with_context = false) }}
+  </div>
+  {% if actions %}
+    <div class="forum-tracking-level__actions">{{ actions }}</div>
+  {% endif %}
+{% endset %}
+<section{{ attributes.addClass('forum-tracking-level', 'forum-tracking-level--' ~ level) }} aria-label="{{ title }}">
+  {{ include('aculta420_v2:surface', {
+    tone: 'raised',
+    radius: 'lg',
+    spacing: 'normal',
+    border: 'subtle',
+    elevation: 'subtle',
+    content: tracking_content,
+  }, with_context = false) }}
+</section>
