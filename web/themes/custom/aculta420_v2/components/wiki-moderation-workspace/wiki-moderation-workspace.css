@@ -15,8 +15,8 @@
   display: inline-flex;
   align-items: center;
   gap: .5rem;
-  color: var(--color-text-secondary, currentColor);
   letter-spacing: .06em;
+  color: var(--color-text-secondary, currentColor);
   font-size: .8rem;
   font-weight: 700;
 }
@@ -50,8 +50,8 @@
   min-block-size: 2.75rem;
   padding: .6rem .9rem;
   text-decoration: none;
-  border: 1px solid var(--color-border, currentColor);
   color: var(--color-text-primary, currentColor);
+  border: 1px solid var(--color-border, currentColor);
   border-radius: var(--radius-md, .75rem);
 }
 
