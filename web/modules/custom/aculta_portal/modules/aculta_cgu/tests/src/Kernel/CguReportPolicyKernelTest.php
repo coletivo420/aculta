@@ -424,9 +424,18 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
     $access = new \Drupal\aculta_cgu\Access\CguReportCreateAccess($resolver, $this->service);
     self::assertNull($resolver->load('user', (string) $this->reporter->id()));
     self::assertNull($resolver->load('node', '0'));
+    self::assertTrue($resolver->canViewContext($node, $this->reporter));
+    self::assertFalse($resolver->canViewContext($node, User::getAnonymousUser()));
     self::assertTrue($access->access('node', (string) $node->id(), $this->reporter)->isAllowed());
     self::assertFalse($access->access('node', (string) $node->id(), User::getAnonymousUser())->isAllowed());
     self::assertFalse($access->access('user', (string) $this->reporter->id(), $this->reporter)->isAllowed());
+    $restricted = $this->makeNode('article', FALSE);
+    self::assertFalse($resolver->canViewContext($restricted, $this->reporter));
+    self::assertFalse($access->access('node', (string) $restricted->id(), $this->reporter)->isAllowed());
+    $forumTopic = $this->makeNode('aculta_forum_topic');
+    // The isolated CGU Kernel has no Forum origin service: fail closed.
+    self::assertNull($resolver->load('node', (string) $forumTopic->id()));
+    self::assertFalse($access->access('node', (string) $forumTopic->id(), $this->reporter)->isAllowed());
 
     $form = \Drupal\aculta_cgu\Form\CguReportCreateForm::create($this->container);
     $state = new \Drupal\Core\Form\FormState();
@@ -444,6 +453,11 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
     $description = 'Mensagem com detalhes suficientes para a moderação avaliar o caso.';
     $report = $this->service->createReport($node, $this->reporter, 'spam', NULL, $description);
     self::assertSame($description, $this->valueOf($report, 'description'));
+    $dispatched = $this->container->get('aculta_cgu.moderation_notifier')->getDispatchedNotifications();
+    foreach ($dispatched as $notice) {
+      self::assertArrayNotHasKey('description', $notice);
+      self::assertArrayNotHasKey('uid', $notice);
+    }
     self::assertFalse($access->access('node', (string) $node->id(), $this->reporter)->isAllowed());
     // Another account cannot see the reporter's private case.
     self::assertFalse($report->access('view', $this->outsider));

@@ -10,7 +10,6 @@ use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
@@ -40,14 +39,14 @@ final class CguReportActionHooks {
     if (!$entity instanceof ContentEntityInterface
       || $this->currentUser->isAnonymous()
       || $entity->isNew()
-      || ($entity instanceof EntityPublishedInterface && !$entity->isPublished())
       || !in_array((string) ($build['#view_mode'] ?? ''), ['full', 'default'], TRUE)) {
       return;
     }
 
     // Exclude own CGU entities and unrelated configuration/commerce entities.
     // This whitelist is deliberately extensible for future CGU owners.
-    if (!$this->targets->allowsEntity($entity) || !$this->reports->canReport($entity, $this->currentUser)) {
+    if (!$this->targets->canViewContext($entity, $this->currentUser)
+      || !$this->reports->canReport($entity, $this->currentUser)) {
       return;
     }
 

@@ -9,7 +9,6 @@ use Drupal\aculta_cgu\Service\ReportService;
 use Drupal\aculta_cgu\Service\ReportTargetResolver;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -158,7 +157,7 @@ final class CguReportCreateForm extends FormBase {
   private function target(string $type, string $id): ContentEntityInterface {
     $target = $this->targets->load($type, $id);
     if ($target === NULL
-      || ($target instanceof EntityPublishedInterface && !$target->isPublished())
+      || !$this->targets->canViewContext($target, $this->currentUser())
       || !$this->reports->canReport($target, $this->currentUser())) {
       throw new AccessDeniedHttpException();
     }

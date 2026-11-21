@@ -39,10 +39,14 @@ mesmo da página acessível sem JavaScript, com token do Drupal Form API.
 
 1. Somente conteúdo com tipo permitido, existente, publicado e leitura autorizada
    recebe o botão. A rota revalida `canReport` contra o CGU.
-2. O resolver transversal também respeita, quando o Fórum está habilitado,
-   `aculta_forum.discussion_origin_resolver`: tópicos, ForumPosts e comentários
-   históricos/UNKNOWN não podem entrar pelo novo botão nem pela nova rota.
+2. O resolver transversal também respeita `aculta_forum.discussion_origin_resolver`:
+   tópicos, ForumPosts e comentários históricos/UNKNOWN não podem entrar
+   pelo novo botão nem pela nova rota. **Sem o classificador, alvos do Fórum
+   são negados** no fluxo público (fail closed).
    Conteúdo contextual da Wiki/Revista/LMS não é classificado como Fórum.
+   Comentários e ForumPosts só oferecem a ação quando o alvo **e seu host**
+   são publicados e legíveis pela conta. A rota e o formulário revalidam
+   ambos, não apenas o cartão renderizado.
 3. `ReportService::resolvePurpose` calcula a origem a partir da entidade e
    do host; o usuário não submete um purpose.
 4. Descrição de 10 a 2000 caracteres no formulário; o serviço limita 2000 para

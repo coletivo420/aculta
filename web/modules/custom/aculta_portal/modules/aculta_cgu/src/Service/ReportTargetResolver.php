@@ -8,6 +8,8 @@ use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
+use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\aculta_forum\Origin\DiscussionOrigin;
@@ -42,10 +44,42 @@ final class ReportTargetResolver {
       || !in_array($entity->getEntityTypeId(), self::SUPPORTED_TYPES, TRUE)) {
       return FALSE;
     }
-    if ($this->forumOrigin === NULL || !$this->isForumTarget($entity)) {
+    if (!$this->isForumTarget($entity)) {
       return TRUE;
     }
-    return $this->forumOrigin->classify($entity)->origin === DiscussionOrigin::CURRENT;
+    // An archive cannot be reported just because the optional classifier
+    // is unavailable. Unknown origin fails closed on the new CGU route.
+    return $this->forumOrigin !== NULL
+      && $this->forumOrigin->classify($entity)->origin === DiscussionOrigin::CURRENT;
+  }
+
+  /**
+   * Validates access to both the target and its host before exposing an action.
+   *
+   * Core Comment view grants do not stand in for an independent host check.
+   * ForumPosts must also be readable through their parent topic.
+   */
+  public function canViewContext(ContentEntityInterface $entity, AccountInterface $account): bool {
+    if (!$this->allowsEntity($entity)
+      || ($entity instanceof EntityPublishedInterface && !$entity->isPublished())
+      || !$entity->access('view', $account)) {
+      return FALSE;
+    }
+    if ($entity instanceof CommentInterface) {
+      $host = $entity->getCommentedEntity();
+      return $host instanceof EntityInterface
+        && (!$host instanceof EntityPublishedInterface || $host->isPublished())
+        && $host->access('view', $account);
+    }
+    if ($entity->getEntityTypeId() === 'aculta_forum_post') {
+      if (!$entity->hasField('topic') || $entity->get('topic')->isEmpty()) {
+        return FALSE;
+      }
+      $topic = $entity->get('topic')->entity;
+      return $topic instanceof NodeInterface && $topic->bundle() === 'aculta_forum_topic'
+        && $topic->isPublished() && $topic->access('view', $account);
+    }
+    return TRUE;
   }
 
   private function isForumTarget(EntityInterface $entity): bool {
