@@ -57,6 +57,20 @@ aculta_forum.comment_move:
         type: 'entity:comment'
   methods: [GET, HEAD, POST]
 
+# Post split/move: the form re-checks ForumPostMover::access() (domain, entity and view ACL).
+aculta_forum.post_move:
+  path: '/painel-administrativo/forum/publicacao/{aculta_forum_post}/mover'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumPostMoveForm'
+    _title: 'Mover publicação do fórum'
+  requirements:
+    _permission: 'administer aculta forum posts,moderate aculta forum posts,reorganize aculta forum topics'
+  options:
+    parameters:
+      aculta_forum_post:
+        type: 'entity:aculta_forum_post'
+  methods: [GET, HEAD, POST]
+
 aculta_forum.settings:
   path: '/painel-administrativo/forum/configuracoes'
   defaults:
