@@ -35,11 +35,17 @@ final class WikiModerationRoutingContractTest extends UnitTestCase {
       self::assertSame('aculta_wiki.moderation_access:' . $method, $requirements['_custom_access']);
       self::assertSame('wiki', $options['_aculta_site_key']);
       self::assertTrue($options['no_cache']);
-      self::assertStringStartsWith('/we-sativa/moderacao', $definition['path']);
+      $path = $definition['path'] ?? NULL;
+      self::assertIsString($path);
+      self::assertStringStartsWith('/we-sativa/moderacao', $path);
       self::assertArrayNotHasKey('_admin_route', $options);
-      self::assertStringNotContainsString('/marley', $definition['path']);
+      self::assertStringNotContainsString('/marley', $path);
     }
-    self::assertSame(['GET', 'HEAD', 'POST'], $raw['aculta_wiki.moderation_report_decide']['methods']);
+    $decisionRoute = $raw['aculta_wiki.moderation_report_decide'] ?? NULL;
+    self::assertIsArray($decisionRoute);
+    $methods = $decisionRoute['methods'] ?? NULL;
+    self::assertIsArray($methods);
+    self::assertSame(['GET', 'HEAD', 'POST'], $methods);
 
     $parsed = Yaml::parseFile($root . '/aculta_wiki.services.yml', Yaml::PARSE_CUSTOM_TAGS);
     self::assertIsArray($parsed);

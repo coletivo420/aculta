@@ -13,9 +13,7 @@ use Drupal\aculta_wiki\Access\WikiModerationAccess;
 use Drupal\aculta_wiki\Entity\WikiProposal;
 use Drupal\aculta_wiki\Service\WikiEditorialQueue;
 use Drupal\Core\Access\AccessResultInterface;
-use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Core\Link;
@@ -44,7 +42,6 @@ final class WikiModerationController extends ControllerBase {
     private readonly AccountProxyInterface $moderator,
     private readonly WikiModerationAccess $access,
     private readonly FormBuilderInterface $forms,
-    private readonly DateFormatterInterface $dates,
   ) {}
 
   public static function create(ContainerInterface $container): self {
@@ -55,7 +52,6 @@ final class WikiModerationController extends ControllerBase {
       $container->get('current_user'),
       $container->get('aculta_wiki.moderation_access'),
       $container->get('form_builder'),
-      $container->get('date.formatter'),
     );
   }
 
@@ -164,15 +160,12 @@ final class WikiModerationController extends ControllerBase {
         '#url' => Url::fromRoute('aculta_wiki.moderation_proposals', [], ['query' => ['wiki_proposal_cursor' => $page->getNextCursor()]]),
       ];
     }
-    $result = $this->workspace(
+    return $this->workspace(
       (string) $this->t('Propostas para a Wiki'),
       (string) $this->t('A decisão usa o formulário Wiki e verifica novamente direitos, estado e revisão-base.'),
       'proposals',
       $content,
     );
-    CacheableMetadata::createFromObject($page)->applyTo($result);
-    $result['#cache']['max-age'] = 0;
-    return $result;
   }
 
   /**
@@ -223,15 +216,12 @@ final class WikiModerationController extends ControllerBase {
         '#url' => Url::fromRoute('aculta_wiki.moderation_revisions', [], ['query' => ['wiki_revision_cursor' => $page->getNextCursor()]]),
       ];
     }
-    $result = $this->workspace(
+    return $this->workspace(
       (string) $this->t('Verbetes em revisão'),
       (string) $this->t('Somente as revisões vigentes autorizadas pela Wiki e pelo workflow.'),
       'revisions',
       $content,
     );
-    CacheableMetadata::createFromObject($page)->applyTo($result);
-    $result['#cache']['max-age'] = 0;
-    return $result;
   }
 
   /**
@@ -301,7 +291,10 @@ final class WikiModerationController extends ControllerBase {
     foreach ($statuses as $key => $label) {
       $link = Link::fromTextAndUrl($label, Url::fromRoute('aculta_wiki.moderation_reports', [], ['query' => ['status' => $key]]))->toRenderable();
       if ($status === $key) {
-        $link['#attributes']['aria-current'] = 'page';
+        $attributes = $link['#attributes'] ?? NULL;
+        $attributes = is_array($attributes) ? $attributes : [];
+        $attributes['aria-current'] = 'page';
+        $link['#attributes'] = $attributes;
       }
       $filterLinks[$key] = $link;
     }
@@ -325,8 +318,6 @@ final class WikiModerationController extends ControllerBase {
       'reports',
       ['filters' => $filterLinks, 'cases' => $content],
     );
-    $result['#cache']['contexts'][] = 'url.query_args:status';
-    $result['#cache']['contexts'][] = 'url.query_args:page';
     return $result;
   }
 
@@ -387,7 +378,7 @@ final class WikiModerationController extends ControllerBase {
   /**
    * Builds a Wiki-specific, accessible case card.
    *
-   * @param array<string, mixed> $action
+   * @param array<mixed> $action
    *   Authorized Link render array.
    *
    * @return array<string, mixed>
@@ -454,7 +445,10 @@ final class WikiModerationController extends ControllerBase {
       }
       $link = Link::fromTextAndUrl($label, Url::fromRoute($route))->toRenderable();
       if ($active === $key) {
-        $link['#attributes']['aria-current'] = 'page';
+        $attributes = $link['#attributes'] ?? NULL;
+        $attributes = is_array($attributes) ? $attributes : [];
+        $attributes['aria-current'] = 'page';
+        $link['#attributes'] = $attributes;
       }
       $tabs[$key] = $link;
     }
@@ -473,7 +467,7 @@ final class WikiModerationController extends ControllerBase {
       ],
       '#cache' => [
         'max-age' => 0,
-        'contexts' => ['user', 'user.permissions', 'domain'],
+        'contexts' => ['user', 'user.permissions', 'domain', 'url.query_args:page', 'url.query_args:status', 'url.query_args:wiki_proposal_cursor', 'url.query_args:wiki_revision_cursor'],
         'tags' => ['node_list:wiki_entry', 'aculta_wiki_proposal_list', 'aculta_contribution_list', 'aculta_cgu_report_list'],
       ],
     ];

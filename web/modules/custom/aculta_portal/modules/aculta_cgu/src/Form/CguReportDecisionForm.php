@@ -36,7 +36,7 @@ final class CguReportDecisionForm extends FormBase {
     protected readonly ReportService $reportService,
     protected readonly EntityTypeManagerInterface $entityTypeMgr,
     protected readonly DateFormatterInterface $dateFormatter,
-    protected readonly ?RouteMatchInterface $routeMatch = NULL,
+    private readonly ?RouteMatchInterface $cguDecisionRouteMatch = NULL,
   ) {}
 
   /**
@@ -246,7 +246,7 @@ final class CguReportDecisionForm extends FormBase {
    * Returns the own CGU queue matching the current administrative/frontend UI.
    */
   private function queueRoute(): string {
-    $route = $this->routeMatch?->getRouteName();
+    $route = $this->cguDecisionRouteMatch?->getRouteName();
     // Keep report decisions in the owner experience. The CGU remains the
     // single decision engine for Wiki and Forum, with distinct frontend ACLs.
     return match ($route) {

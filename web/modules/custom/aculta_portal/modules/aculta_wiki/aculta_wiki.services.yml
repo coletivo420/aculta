@@ -117,4 +117,4 @@ services:
 
   aculta_wiki.moderation_controller:
     class: Drupal\aculta_wiki\Controller\WikiModerationController
-    arguments: ['@aculta_wiki.editorial_queue', '@aculta_cgu.report_queue', '@entity_type.manager', '@current_user', '@aculta_wiki.moderation_access', '@form_builder', '@date.formatter']
+    arguments: ['@aculta_wiki.editorial_queue', '@aculta_cgu.report_queue', '@entity_type.manager', '@current_user', '@aculta_wiki.moderation_access', '@form_builder']

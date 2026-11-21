@@ -110,6 +110,10 @@ final class WikiModerationAccessTest extends UnitTestCase {
     self::assertFalse($this->policy(SiteKey::Wiki, 'forum')->isWikiHost($this->node('wiki_entry')));
   }
 
+  /**
+   * @param list<string> $permissions
+   *   Grants assigned to the mock account.
+   */
   private function account(array $permissions, bool $authenticated = TRUE): AccountInterface {
     $account = $this->createMock(AccountInterface::class);
     $account->method('isAuthenticated')->willReturn($authenticated);
