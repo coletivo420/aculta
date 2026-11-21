@@ -87,7 +87,7 @@ final class ForumPollVoteForm extends FormBase {
       ];
     }
 
-    if ($this->canClose($pollId)) {
+    if ($this->canManage($pollId) && $results->status === 'open') {
       $form['poll']['close'] = [
         '#type' => 'submit',
         '#value' => $this->t('Encerrar enquete'),
@@ -95,6 +95,17 @@ final class ForumPollVoteForm extends FormBase {
         // Encerrar não escolhe opção: pula a validação da seleção.
         '#limit_validation_errors' => [],
         '#submit' => [[$this, 'closePoll']],
+        '#weight' => 10,
+      ];
+    }
+    if ($this->canManage($pollId) && $results->status === 'closed') {
+      $form['poll']['reopen'] = [
+        '#type' => 'submit',
+        '#value' => $this->t('Reabrir enquete'),
+        '#name' => 'reopen_poll',
+        // Reabrir não escolhe opção: pula a validação da seleção.
+        '#limit_validation_errors' => [],
+        '#submit' => [[$this, 'reopenPoll']],
         '#weight' => 10,
       ];
     }
@@ -158,9 +169,9 @@ final class ForumPollVoteForm extends FormBase {
   /**
    * Informa se a conta pode encerrar a enquete: autor do tópico ou com permissão, enquete aberta.
    */
-  private function canClose(int $pollId): bool {
+  private function canManage(int $pollId): bool {
     $poll = $this->pollManager->getPoll($pollId);
-    if ($poll === NULL || $poll['status'] !== 'open' || (int) $this->account->id() <= 0) {
+    if ($poll === NULL || (int) $this->account->id() <= 0) {
       return FALSE;
     }
     if ($this->account->hasPermission('close aculta forum polls')) {
@@ -226,7 +237,7 @@ final class ForumPollVoteForm extends FormBase {
    */
   public function closePoll(array &$form, FormStateInterface $form_state): void {
     $pollId = $form_state->get('poll_id');
-    if (!is_int($pollId) || !$this->canClose($pollId)) {
+    if (!is_int($pollId) || !$this->canManage($pollId)) {
       $this->messenger()->addError($this->t('Você não pode encerrar esta enquete.'));
       return;
     }
@@ -235,9 +246,34 @@ final class ForumPollVoteForm extends FormBase {
   }
 
   /**
+   * Reabre a enquete encerrada manualmente, com a mesma autorização de quem encerra.
+   *
+   * @param array<string, mixed> $form
+   *   Render array do formulário.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Estado do formulário.
+   */
+  public function reopenPoll(array &$form, FormStateInterface $form_state): void {
+    $pollId = $form_state->get('poll_id');
+    if (!is_int($pollId) || !$this->canManage($pollId)) {
+      $this->messenger()->addError($this->t('Você não pode reabrir esta enquete.'));
+      return;
+    }
+    try {
+      $this->pollManager->reopenPoll($pollId, $this->account);
+      $this->messenger()->addStatus($this->t('Enquete reaberta.'));
+    }
+    catch (\LogicException) {
+      // Enquete vencida pela data não reabre: o motivo técnico fica no log do gerenciador.
+      $this->messenger()->addError($this->t('Esta enquete não pode ser reaberta: a data de encerramento já passou.'));
+    }
+  }
+
+  /**
    * Converte a seleção do formulário (radios ou checkboxes) em IDs de opção válidos.
    *
    * @return list<int>
+   *   IDs de opção válidos escolhidos no formulário.
    */
   private function selectedOptionIds(FormStateInterface $form_state): array {
     $selection = $form_state->getValue('selection');

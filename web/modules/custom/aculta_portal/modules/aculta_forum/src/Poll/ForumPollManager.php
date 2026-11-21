@@ -337,6 +337,41 @@ final class ForumPollManager {
   }
 
   /**
+   * Reabre uma enquete encerrada manualmente. Não reabre enquete vencida pela data.
+   *
+   * @throws \LogicException
+   *   Quando a enquete não está encerrada ou já venceu pela data de encerramento.
+   */
+  public function reopenPoll(int $pollId, AccountInterface $reopenedBy): void {
+    $poll = $this->getPoll($pollId);
+    if ($poll === NULL) {
+      throw new \InvalidArgumentException("Poll {$pollId} not found.");
+    }
+    $status = is_string($poll['status'] ?? NULL) ? $poll['status'] : '';
+    if ($status !== 'closed') {
+      throw new \LogicException('Only a closed poll can be reopened.');
+    }
+    $closeAt = $poll['close_at'] ?? NULL;
+    if (is_numeric($closeAt) && (int) $closeAt <= $this->time->getRequestTime()) {
+      throw new \LogicException('A poll whose closing date has passed cannot be reopened.');
+    }
+
+    $this->database->update(self::TABLE_POLL)
+      ->fields([
+        'status' => 'open',
+        'closed_by' => NULL,
+        'closed_at' => NULL,
+      ])
+      ->condition('id', $pollId)
+      ->execute();
+
+    $this->logger->info('Poll #@id reopened by uid @uid', [
+      '@id' => (string) $pollId,
+      '@uid' => (string) $reopenedBy->id(),
+    ]);
+  }
+
+  /**
    * Computes poll results respecting user access and visibility policy.
    */
   public function getResults(int $pollId, AccountInterface $viewer): ?PollResults {
