@@ -15,12 +15,19 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
  */
 final class ReportTargetResolver {
 
+  /**
+   * Publicly reportable entity types (extend only with an audited CGU owner).
+   */
+  public const SUPPORTED_TYPES = ['node', 'comment', 'aculta_forum_post', 'aculta_event'];
+
+
   public function __construct(private readonly EntityTypeManagerInterface $entities) {}
 
   public function load(string $type, string|int $id): ?ContentEntityInterface {
     if (!preg_match('/^[a-z][a-z0-9_]*$/D', $type)
       || !ctype_digit((string) $id)
       || (int) $id <= 0
+      || !in_array($type, self::SUPPORTED_TYPES, TRUE)
       || !$this->entities->hasDefinition($type)) {
       return NULL;
     }

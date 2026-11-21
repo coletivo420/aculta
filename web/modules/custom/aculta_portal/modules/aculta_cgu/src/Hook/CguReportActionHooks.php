@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\aculta_cgu\Hook;
 
 use Drupal\aculta_cgu\Service\ReportService;
+use Drupal\aculta_cgu\Service\ReportTargetResolver;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
@@ -45,9 +46,7 @@ final class CguReportActionHooks {
 
     // Exclude own CGU entities and unrelated configuration/commerce entities.
     // This whitelist is deliberately extensible for future CGU owners.
-    if (!in_array($entity->getEntityTypeId(), [
-      'node', 'comment', 'aculta_forum_post', 'aculta_event',
-    ], TRUE) || !$this->reports->canReport($entity, $this->currentUser)) {
+    if (!in_array($entity->getEntityTypeId(), ReportTargetResolver::SUPPORTED_TYPES, TRUE) || !$this->reports->canReport($entity, $this->currentUser)) {
       return;
     }
 

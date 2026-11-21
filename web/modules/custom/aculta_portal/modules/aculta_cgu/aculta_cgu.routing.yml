@@ -61,5 +61,5 @@ aculta_cgu.report_create:
     entity_id: '\d+'
   options:
     no_cache: true
-    _aculta_site_keys: [main, forum, magazine, wiki, courses, events, account]
+    _aculta_site_keys: [main, forum, magazine, wiki, courses, eventos, account, support]
   methods: [GET, POST]

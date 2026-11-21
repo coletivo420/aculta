@@ -1,8 +1,10 @@
 {# Ícone independente do Forum: o CGU controla URL, visibilidade e POST. #}
+{% set show_dialog = with_dialog is defined ? with_dialog : true %}
+{% set load_form = load_on_open is defined ? load_on_open : true %}
 <a href="{{ url }}" class="cgu-report-button content-reply-bar__action content-reply-bar__action--report"
    aria-label="{{ label|default('Denunciar'|t) }}" title="{{ label|default('Denunciar'|t) }}"
-   {% if with_dialog|default(true) %}aria-controls="{{ dialog_id }}" aria-haspopup="dialog" aria-expanded="false" data-aculta-dialog-trigger{% endif %}
-   {% if with_dialog|default(true) and load_on_open|default(true) %}
+   {% if show_dialog %}aria-controls="{{ dialog_id }}" aria-haspopup="dialog" aria-expanded="false" data-aculta-dialog-trigger{% endif %}
+   {% if show_dialog and load_form %}
      data-hx-get="{{ url }}"
      data-hx-trigger="click"
      data-hx-target="#{{ dialog_id }}-body"
@@ -13,7 +15,7 @@
   {{ include('aculta420_v2:icon', { name: 'flag', variant: 'regular', size: 'md' }, with_context = false) }}
   <span class="cgu-report-button__label">{{ label|default('Denunciar'|t) }}</span>
 </a>
-{% if with_dialog|default(true) %}
+{% if show_dialog %}
   {% set report_dialog_body %}
     <div class="cgu-report-button__dialog-body" id="{{ dialog_id }}-body">
       {% if dialog_content %}{{ dialog_content }}
