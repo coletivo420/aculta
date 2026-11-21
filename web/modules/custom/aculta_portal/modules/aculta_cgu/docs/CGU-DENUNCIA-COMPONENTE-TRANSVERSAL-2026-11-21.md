@@ -39,7 +39,11 @@ mesmo da página acessível sem JavaScript, com token do Drupal Form API.
 
 1. Somente conteúdo com tipo permitido, existente, publicado e leitura autorizada
    recebe o botão. A rota revalida `canReport` contra o CGU.
-2. `ReportService::resolvePurpose` calcula a origem a partir da entidade e
+2. O resolver transversal também respeita, quando o Fórum está habilitado,
+   `aculta_forum.discussion_origin_resolver`: tópicos, ForumPosts e comentários
+   históricos/UNKNOWN não podem entrar pelo novo botão nem pela nova rota.
+   Conteúdo contextual da Wiki/Revista/LMS não é classificado como Fórum.
+3. `ReportService::resolvePurpose` calcula a origem a partir da entidade e
    do host; o usuário não submete um purpose.
 3. Descrição de 10 a 2000 caracteres no formulário; o serviço limita 2000 para
    chamadas legadas e grava em `description`. Notificação não inclui o texto

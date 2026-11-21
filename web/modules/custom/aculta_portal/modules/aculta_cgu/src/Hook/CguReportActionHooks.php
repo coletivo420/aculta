@@ -26,6 +26,7 @@ final class CguReportActionHooks {
   public function __construct(
     private readonly ReportService $reports,
     private readonly AccountProxyInterface $currentUser,
+    private readonly ReportTargetResolver $targets,
   ) {}
 
   /**
@@ -46,7 +47,7 @@ final class CguReportActionHooks {
 
     // Exclude own CGU entities and unrelated configuration/commerce entities.
     // This whitelist is deliberately extensible for future CGU owners.
-    if (!in_array($entity->getEntityTypeId(), ReportTargetResolver::SUPPORTED_TYPES, TRUE) || !$this->reports->canReport($entity, $this->currentUser)) {
+    if (!$this->targets->allowsEntity($entity) || !$this->reports->canReport($entity, $this->currentUser)) {
       return;
     }
 

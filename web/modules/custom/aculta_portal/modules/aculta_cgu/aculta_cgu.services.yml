@@ -90,10 +90,10 @@ services:
   # Public report action/route: CGU remains the sole writer and access owner.
   aculta_cgu.report_target_resolver:
     class: Drupal\aculta_cgu\Service\ReportTargetResolver
-    arguments: ['@entity_type.manager']
+    arguments: ['@entity_type.manager', '@?aculta_forum.discussion_origin_resolver']
   aculta_cgu.report_create_access:
     class: Drupal\aculta_cgu\Access\CguReportCreateAccess
     arguments: ['@aculta_cgu.report_target_resolver', '@aculta_cgu.report_service']
   Drupal\aculta_cgu\Hook\CguReportActionHooks:
     class: Drupal\aculta_cgu\Hook\CguReportActionHooks
-    arguments: ['@aculta_cgu.report_service', '@current_user']
+    arguments: ['@aculta_cgu.report_service', '@current_user', '@aculta_cgu.report_target_resolver']
