@@ -3,8 +3,10 @@
 **Data:** 21/11/2026.
 **Alvo:** `coletivo420/aculta`, PR #394, `feat/forum-paridade-discourse`.
 **Snapshot de referência:** `1b21742144f3b92bfba09ec8489d39b35d9b3f13`, com revisão das alterações seguintes até `101397144293fbbac6f2c165bf85e2223db380c8`.
-**Branch independente de auditoria:** `test/forum-marley-boundaries-20261121`.
+**Branch de auditoria:** `test/forum-marley-boundaries-20261121`, já mesclada em `feat/forum-paridade-discourse` e excluída.
 **Método:** inspeção estática de rotas, permission grants, Form API, handlers, acesso a entidade, hooks de Domain/Group, persistência CGU, filas, flags, ForumPost/Comment movers, reação, upload e enquetes. **Nenhum ataque foi executado e nenhum Runtime foi inspecionado**. Todas as severidades são prioridades de triagem, não CVSS ou prova de exploração.
+
+**Atualização de consolidação (21/11/2026):** SFC-01 e SFC-02 receberam correções na PR #395, posteriormente integrada à PR #394. A comprovação por PHPUnit/Kernel/Browser no Homelab segue pendente. A suíte RED inicial foi substituída por testes dedicados; SFC-03 a SFC-09 permanecem em triagem.
 
 ## Resumo executivo
 
@@ -111,7 +113,7 @@ Foram identificadas lacunas concretas nas fronteiras de autorização de coment�
 
 ## Testes de regressão e plano de aceite
 
-**RED tests adicionados somente à branch de QA:** `web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/Security/ForumCguAuthorizationRedTest.php` com vetores para SFC-01, SFC-02 e SFC-04. Eles exigem uma política mais restrita que a implementação consultada, logo são **falhas esperadas**, não evidência de PHPUnit executado. Não copiar para a PR compartilhada sem correção correspondente.
+**Histórico dos testes RED:** `ForumCguAuthorizationRedTest.php` foi retirado da execução normal após a integração, porque o construtor de `CommentModerationAccess` mudou. A cobertura atual de SFC-01 e SFC-02 está nos arquivos `CommentModerationBoundaryTest.php`, `TopicAdminPopupBoundaryTest.php` e `CommentModerationFormBoundaryTest.php`. SFC-04 segue pendente e **não** deve ser contado como corrigido.
 
 **Kernel/Browser obrigatórios após remediação** (sem usar Runtime compartilhado):
 - SECURITY-K01: moderador Forum + Wiki/Revista, dois grupos, revogação ativa e comentários de hosts distintos; `view`/moderação separados.
@@ -126,11 +128,11 @@ Foram identificadas lacunas concretas nas fronteiras de autorização de coment�
 
 ## Plano de correção sem conflito com o agente
 
-- **P0:** SFC-01 e SFC-02. Criar checker de acesso e integrações de UI em uma PR de segurança própria, após coordenação com o agente local. Não publicar mudanças de rota/Form sem Kernel/Browser.
+- **P0 implementado, homologação pendente:** SFC-01 e SFC-02. Checkers e Form API foram integrados à branch do Fórum; executar `scripts/tests/verify-forum-cgu-sfc01-sfc02.sh` na worktree existente com PHPUnit, Kernel e Browser isolados.
 - **P1:** SFC-03/04/07. Centralizar checagens dentro dos serviços de movimento e exclusão; aplicar validações de Group e Domain sob locks, com limite de subárvore.
 - **P2:** SFC-05/06/08/09. Endurecer allowlists, operações de entidade CGU, mensagens e paginação.
 - **Aceite:** nenhum bypass de Domain/Group em GET/POST direto, nenhum efeito colateral de decisão CGU em publicação, nenhum vazamento de identidades e nenhum endpoint de moderação no backend para papéis operacionais.
-- **Execução:** tests RED -> patches em worktree/PR de correção própria -> PHPUnit Unit/Kernel -> Browser com fixture descartável -> revisão do diff -> merge após PR #394 estabilizar. Não misturar trabalho com a CLI.
+- **Execução atual:** matriz Unit -> Kernel com banco `simpletest` -> Browser com fixture descartável -> revisão e registro de PASS/FAIL/SKIP. Trabalhar diretamente em `feat/forum-paridade-discourse`, sem novas branches e sem alterar checkout servido.
 
 ## Limitações da auditoria
 

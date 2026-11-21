@@ -1,14 +1,14 @@
-# Correção independente de segurança SFC-01/SFC-02
+# Correção de segurança SFC-01/SFC-02 - integrada à feature
 
 **Data:** 21/11/2026
 **Repo:** `coletivo420/aculta`
-**Branch exclusiva:** `fix/forum-cgu-sfc01-sfc02-20261121`
+**Branch atual:** `feat/forum-paridade-discourse` (PR #394)
 **Base original:** `8275368f2c251916e50e32d4fdb8e5e2babfb821`, da `feat/forum-paridade-discourse` (PR #394)
-**Auditoria de origem:** `test/forum-marley-boundaries-20261121`, arquivo `aculta_cgu/docs/AUDITORIA-SEGURANCA-FORUM-CGU-2026-11-21.md`
+**Auditoria de origem:** antiga branch `test/forum-marley-boundaries-20261121` (já integrada e excluída), arquivo `aculta_cgu/docs/AUDITORIA-SEGURANCA-FORUM-CGU-2026-11-21.md`
 
-## Escopo isolado
+## Escopo integrado
 
-Somente SFC-01 e SFC-02. Nenhum patch é aplicado na PR #394 ou `dev`, nenhum Runtime é sincronizado e não se alteram regras de `ForumPostMover`, enquetes ou outros serviços em construção pelo agente local.
+Somente SFC-01 e SFC-02. As correções e testes foram incorporados à `feat/forum-paridade-discourse` em 21/11/2026, após merge da PR #395. A branch `dev` e o Runtime não foram sincronizados por esta entrega. Não se alteram `ForumPostMover`, enquetes ou serviços do agente local.
 
 ## SFC-01 - Comments
 
@@ -41,22 +41,23 @@ A rota `aculta_forum.topic_admin_popup` agora combina a permissão de movimenta�
 - `CommentModerationFormBoundaryTest`: contrato de injeção de serviço, reload e validação de POST.
 - `tests/browser/qa-security-forum-cgu/`: especificação read-only para verificação HTTP dos mesmos cenários, com cookies e IDs somente em manifesto privado e ambiente descartável.
 
-### Rodar no worktree isolado (não na branch do agente)
+### Rodar na worktree existente da feature
+
+Não criar outra branch ou worktree. Entrar na worktree já designada para `feat/forum-paridade-discourse` e executar:
 
 ```bash
-git fetch origin
-git worktree add ../aculta-sfc-qa origin/fix/forum-cgu-sfc01-sfc02-20261121
-cd ../aculta-sfc-qa
-vendor/bin/phpunit web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/Security/CommentModerationBoundaryTest.php
-vendor/bin/phpunit web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/Security/TopicAdminPopupBoundaryTest.php
-vendor/bin/phpunit web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit/Security/CommentModerationFormBoundaryTest.php
+scripts/tests/verify-forum-cgu-sfc01-sfc02.sh --unit
 
-cd tests/browser
-ACULTA_SECURITY_QA_FIXTURE=/caminho/privado/security-fixture.json \
-  npx playwright test --config qa-security-forum-cgu/playwright.config.mjs
+# Apenas com SIMPLETEST_DB explícito, apontando a banco descartável:
+scripts/tests/verify-forum-cgu-sfc01-sfc02.sh --kernel
+
+# Apenas com fixture isolada e estados de autenticação sintéticos:
+ACULTA_QA_ISOLATED=yes \\
+ACULTA_SECURITY_QA_FIXTURE=/caminho/seguro/security-fixture.json \\
+  scripts/tests/verify-forum-cgu-sfc01-sfc02.sh --browser
 ```
 
-**Não use** este comando Playwright contra banco compartilhado ou contendo identidades reais. A ausência de fixture produz SKIP, não PASS.
+A ausência de fixture produz SKIP, não PASS. Nenhuma conta ou banco do Runtime compartilhado deve ser usado.
 
 ## Aceite obrigatório antes de integrar na PR #394
 
@@ -73,10 +74,10 @@ ACULTA_SECURITY_QA_FIXTURE=/caminho/privado/security-fixture.json \
 
 ## Limites e riscos residuais
 
-- **Sem execução verificada:** código e testes foram commitados via GitHub; nesta sessão não houve PHPUnit/Browser, banco Drupal ou análise de logs do Runtime. Exigir execução real no Homelab antes de merge.
+- **Sem homologação local verificada:** as correções já estão na feature, mas PHPUnit/Kernel/Browser autenticado exigem execução em worktree e banco isolados antes da incorporação da feature em `dev`.
 - O controle se aplica ao **Comment** original e ao host. Para comentários não publicados, o grant `view` precisa estar configurado para a moderação legítima; caso contrário o comportamento será negar por segurança.
 - O site pode permitir outros mecanismos de Group/Domain; a suíte Browser deve conferir que `node->access('view')` aplica as regras concretas do ambiente.
-- O arquivo RED da auditoria original também trata SFC-04, ainda pendente; não incorporá-lo como gate do pacote SFC-01/02.
-- Nada aqui corrige SFC-03 a SFC-09. Rebase/cherry-pick sobre a PR #394 só após revisão de concorrência dos arquivos.
+- A suíte RED antiga foi removida da feature no commit `9bc91475` após a integração, pois instanciava um construtor obsoleto; suas verificações SFC-01/02 foram substituídas por três suítes Unit dedicadas. SFC-04 continua pendente.
+- Nada aqui corrige SFC-03 a SFC-09. Não realizar novo merge/rebase/cherry-pick destes patches já integrados.
 
-**Política:** enquanto o agente local estiver ativo, manter PR de segurança em draft e **não efetuar merge**.
+**Política atual:** trabalhar diretamente em `feat/forum-paridade-discourse`, preservar commits concorrentes e registrar gates de execução antes de integrar com `dev`.
