@@ -16,6 +16,9 @@ services:
     tags:
       - { name: event_subscriber }
   Drupal\aculta_forum\Service\ForumItemMilestoneAwarder: '@aculta_forum.item_milestone_awarder'
+  Drupal\aculta_forum\Hook\TopicPollRenderHooks:
+    class: Drupal\aculta_forum\Hook\TopicPollRenderHooks
+    arguments: ['@aculta_forum.poll_manager', '@form_builder']
   Drupal\aculta_forum\Hook\ForumPostMoveHooks:
     class: Drupal\aculta_forum\Hook\ForumPostMoveHooks
     arguments: ['@aculta_forum.post_mover', '@current_user']
