@@ -114,7 +114,7 @@ final class CguMarleyCombinedRolesDecisionKernelTest extends KernelTestBase {
     self::assertSame((int) $wiki->id(), $wikis['items'][0]['target_id']);
     $both = $this->queue->getQueueItems($moderator);
     self::assertSame(2, $both['total_items']);
-    self::assertSameCanonicalizing(['forum', 'wiki'], array_column($both['items'], 'purpose'));
+    self::assertEqualsCanonicalizing(['forum', 'wiki'], array_column($both['items'], 'purpose'));
 
     try {
       $this->queue->getQueueItems($moderator, 'revista');
@@ -173,7 +173,7 @@ final class CguMarleyCombinedRolesDecisionKernelTest extends KernelTestBase {
 
     $all = $this->queue->getQueueItems($mixed);
     self::assertSame(2, $all['total_items']);
-    self::assertSameCanonicalizing(['forum', 'revista'], array_column($all['items'], 'purpose'));
+    self::assertEqualsCanonicalizing(['forum', 'revista'], array_column($all['items'], 'purpose'));
 
     $this->reports->decideReport($forum, $forumOnly, 'procedente', 'Caso do Fórum.');
     self::assertSame('procedente', $this->reload($forum)->get('status')->value);
@@ -187,7 +187,7 @@ final class CguMarleyCombinedRolesDecisionKernelTest extends KernelTestBase {
     $topic = $this->topic('aculta_forum_topic');
     $report = $this->report($topic, 'forum');
     $stale = $this->container->get('entity_type.manager')
-      ->getStorage('aculta_cgu_report')->loadUnchanged($report->id());
+      ->getStorage('aculta_cgu_report')->loadUnchanged($this->reportId($report));
     self::assertInstanceOf(CguReport::class, $stale);
     $first = $this->user('moderator_first', ['forum']);
     $second = $this->user('moderator_second', ['forum']);
@@ -195,7 +195,9 @@ final class CguMarleyCombinedRolesDecisionKernelTest extends KernelTestBase {
     $this->reports->decideReport($report, $first, 'procedente', 'Primeiro parecer.');
     $final = $this->reload($report);
     self::assertSame('procedente', $final->get('status')->value);
-    self::assertSame((int) $first->id(), (int) $final->get('decided_by')->value);
+    $firstDecider = $final->get('decided_by')->value;
+    self::assertTrue(is_numeric($firstDecider));
+    self::assertSame((int) $first->id(), (int) $firstDecider);
 
     try {
       $this->reports->decideReport($stale, $second, 'improcedente', 'Segunda tentativa.');
@@ -207,7 +209,9 @@ final class CguMarleyCombinedRolesDecisionKernelTest extends KernelTestBase {
     $after = $this->reload($report);
     self::assertSame('procedente', $after->get('status')->value);
     self::assertSame('Primeiro parecer.', $after->get('decision_notes')->value);
-    self::assertSame((int) $first->id(), (int) $after->get('decided_by')->value);
+    $storedDecider = $after->get('decided_by')->value;
+    self::assertTrue(is_numeric($storedDecider));
+    self::assertSame((int) $first->id(), (int) $storedDecider);
     self::assertTrue($topic->isPublished(), 'A decisão não despublica o conteúdo.');
   }
 
@@ -293,9 +297,18 @@ final class CguMarleyCombinedRolesDecisionKernelTest extends KernelTestBase {
     return $report;
   }
 
+  /**
+   * Returns a confirmed persisted report identifier.
+   */
+  private function reportId(CguReport $report): int|string {
+    $id = $report->id();
+    self::assertNotNull($id);
+    return $id;
+  }
+
   private function reload(CguReport $report): CguReport {
     $fresh = $this->container->get('entity_type.manager')
-      ->getStorage('aculta_cgu_report')->loadUnchanged($report->id());
+      ->getStorage('aculta_cgu_report')->loadUnchanged($this->reportId($report));
     self::assertInstanceOf(CguReport::class, $fresh);
     return $fresh;
   }
