@@ -15,7 +15,6 @@ label: Educador
 weight: 7
 is_admin: false
 permissions:
-  - 'access administration pages'
   - 'access group overview'
   - 'create course_document media'
   - 'create lms_class group'
@@ -24,4 +23,3 @@ permissions:
   - 'update own lms_teacher profile'
   - 'use text format aculta_lms_lesson'
   - 'view own lms_teacher profile'
-  - 'view the administration theme'

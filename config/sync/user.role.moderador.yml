@@ -8,3 +8,12 @@ weight: -3
 is_admin: false
 permissions:
   - 'access content'
+  - 'moderate aculta forum posts'
+  - 'moderate aculta forum topics'
+  - 'moderate aculta forum comments'
+  - 'review aculta forum reports'
+  - 'moderar denuncias do forum'
+  - 'reorganize aculta forum topics'
+  - 'close aculta forum polls'
+  - 'use aculta_forum_post transition approve'
+  - 'use aculta_forum_post transition reject'

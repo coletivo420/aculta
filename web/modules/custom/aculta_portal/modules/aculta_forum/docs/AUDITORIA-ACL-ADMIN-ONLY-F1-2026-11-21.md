@@ -45,3 +45,42 @@ aditiva e não quebra ninguém. A etapa F1b só deve ser autorizada depois de F2
 - F1 auditado: **concluído** (este documento).
 - F1a: **pendente de decisão** (ver acima).
 - F1b: **bloqueado por F2**.
+
+## Execução autorizada pelo responsável (2026-11-21)
+
+Autorização: remover acessos de backend agora e conceder a F1a ao papel `moderador`.
+
+- **F1b (feito no branch, não sincronizado no Runtime):** removidos de `content_editor` o backend
+  (`access administration pages`, `view the administration theme`, `access content overview`,
+  `access files overview`, `administer url aliases`, `administer comments`,
+  `administer aculta forum posts`); de `gerente_loja` o backend e relatórios
+  (`access administration pages`, `access site reports`, `access commerce_product overview`,
+  `access commerce_product_attribute overview`, `administer commerce_store`,
+  `administer aculta donation campaigns`, `administer aculta support settings`); de `lms_teacher`
+  (`access administration pages`, `view the administration theme`).
+- **F1a (feito no branch):** `moderador` recebeu `moderate aculta forum posts`,
+  `moderate aculta forum topics`, `moderate aculta forum comments`, `review aculta forum reports`,
+  `moderar denuncias do forum`, `reorganize aculta forum topics`, `close aculta forum polls`,
+  `use aculta_forum_post transition approve` e `reject`. Sem backend e sem `administer*`.
+- **lms_teacher NÃO recebeu permissão comunitária global.** A moderação pedagógica do LMS já é
+  concedida por contexto de Group (`LmsCommentModerationAccessHooks`, `educatorAccess`). Uma permissão
+  global daria ao educador moderação em todo o Fórum, o que o plano veda. Se o responsável quiser
+  outra coisa, é decisão separada.
+
+## Permanecem para decisão (não alterados)
+
+- `gerente_loja`: `administrar doacoes` (relatório e pagamento de doações pelo Mercado Pago) e
+  `delete any produto_loja commerce_product` (exclusão de produto). Ambas são operacionais; a
+  exclusão é destrutiva, então precisa de confirmação antes de qualquer corte.
+- `content_editor`: `moderar denuncias do forum` e `use aculta_forum_post transition approve`
+  mantidos, por serem moderação e fluxo editorial, não backend.
+- `moderate aculta forum topic deletions` (restrito) não foi concedido ao `moderador`.
+
+## Pendências de verificação
+
+- Nada disso foi sincronizado no Runtime. A aplicação exige plano, backup e autorização operacional
+  (`aculta-runtime-migracoes`).
+- Não houve teste de papéis em banco isolado; a verificação de acesso adversarial (F9) continua pendente.
+- Os usuários que hoje dependem do backend de `content_editor`, `gerente_loja` e `lms_teacher`
+  perderão o acesso ao `/painel-administrativo` assim que a config subir. Isso é consequência da
+  autorização, mas precisa de aviso prévio às pessoas.

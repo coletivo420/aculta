@@ -33,16 +33,10 @@ label: 'Editor de conteúdo'
 weight: -4
 is_admin: false
 permissions:
-  - 'access administration pages'
   - 'access content'
-  - 'access content overview'
   - 'access contextual links'
-  - 'access files overview'
   - 'access navigation'
   - 'add media gallery entities'
-  - 'administer aculta forum posts'
-  - 'administer comments'
-  - 'administer url aliases'
   - 'break content lock'
   - 'create document media'
   - 'create media'
@@ -84,5 +78,4 @@ permissions:
   - 'view latest version'
   - 'view own unpublished content'
   - 'view revista revisions'
-  - 'view the administration theme'
   - 'view wiki_entry revisions'
