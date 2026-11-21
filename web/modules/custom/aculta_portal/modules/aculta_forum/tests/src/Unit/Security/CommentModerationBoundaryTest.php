@@ -152,12 +152,18 @@ final class CommentModerationBoundaryTest extends UnitTestCase {
     $field->method('getValue')->willReturn([['target_id' => 'source-domain']]);
 
     $host = $this->createMock(NodeInterface::class);
+    $host->method('getCacheContexts')->willReturn([]);
+    $host->method('getCacheTags')->willReturn([]);
+    $host->method('getCacheMaxAge')->willReturn(-1);
     $host->method('bundle')->willReturn($bundle);
     $host->method('hasField')->willReturn(TRUE);
     $host->method('get')->with('field_domain_source')->willReturn($field);
     $host->method('access')->willReturn($hostView ? AccessResult::allowed() : AccessResult::forbidden());
 
     $comment = $this->createMock(CommentInterface::class);
+    $comment->method('getCacheContexts')->willReturn([]);
+    $comment->method('getCacheTags')->willReturn([]);
+    $comment->method('getCacheMaxAge')->willReturn(-1);
     $comment->method('bundle')->willReturn('aculta_discussion_post');
     $comment->method('getFieldName')->willReturn('field_aculta_discussion');
     $comment->method('getCommentedEntityTypeId')->willReturn('node');
@@ -172,6 +178,9 @@ final class CommentModerationBoundaryTest extends UnitTestCase {
     $origins->method('classify')->willReturn(DiscussionOriginClassification::from($origin, $comment));
 
     $context = $this->createMock(DiscussionContextInterface::class);
+    $context->method('getCacheContexts')->willReturn([]);
+    $context->method('getCacheTags')->willReturn([]);
+    $context->method('getCacheMaxAge')->willReturn(-1);
     $context->method('getReadAccess')->willReturn($contextRead ? AccessResult::allowed() : AccessResult::forbidden());
     $context->method('getModerationAccess')->willReturn($contextModerate ? AccessResult::allowed() : AccessResult::forbidden());
     $provider = $this->createMock(DiscussionContextProviderInterface::class);

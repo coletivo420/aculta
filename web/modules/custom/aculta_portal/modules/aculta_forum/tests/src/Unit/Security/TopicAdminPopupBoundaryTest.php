@@ -66,13 +66,23 @@ final class TopicAdminPopupBoundaryTest extends UnitTestCase {
   public function testRouteEnforcesContextAndDoesNotCachePopup(): void {
     $root = dirname(__DIR__, 4);
     $routes = Yaml::parseFile($root . '/aculta_forum.routing.yml');
-    $popup = $routes['aculta_forum.topic_admin_popup'];
-    self::assertSame('aculta_forum.topic_admin_popup_access:access', $popup['requirements']['_custom_access']);
-    self::assertSame('move aculta forum topics', $popup['requirements']['_permission']);
-    self::assertSame('forum', $popup['options']['_aculta_site_key']);
-    self::assertTrue($popup['options']['no_cache']);
+    self::assertIsArray($routes);
+    $popup = $routes['aculta_forum.topic_admin_popup'] ?? NULL;
+    self::assertIsArray($popup);
+    $requirements = $popup['requirements'] ?? NULL;
+    self::assertIsArray($requirements);
+    $options = $popup['options'] ?? NULL;
+    self::assertIsArray($options);
+    $params = $options['parameters'] ?? NULL;
+    self::assertIsArray($params);
+    $node = $params['node'] ?? NULL;
+    self::assertIsArray($node);
+    self::assertSame('aculta_forum.topic_admin_popup_access:access', $requirements['_custom_access']);
+    self::assertSame('move aculta forum topics', $requirements['_permission']);
+    self::assertSame('forum', $options['_aculta_site_key']);
+    self::assertTrue($options['no_cache']);
     self::assertSame(['GET', 'HEAD'], $popup['methods']);
-    self::assertSame('entity:node', $popup['options']['parameters']['node']['type']);
+    self::assertSame('entity:node', $node['type']);
 
     $source = (string) file_get_contents($root . '/src/Controller/TopicAdminPopupController.php');
     self::assertStringContainsString('popupAccess->access(', $source);
@@ -107,6 +117,9 @@ final class TopicAdminPopupBoundaryTest extends UnitTestCase {
     $field->method('isEmpty')->willReturn(FALSE);
     $field->method('getValue')->willReturn([['target_id' => 'source-domain']]);
     $topic = $this->createMock(NodeInterface::class);
+    $topic->method('getCacheContexts')->willReturn([]);
+    $topic->method('getCacheTags')->willReturn([]);
+    $topic->method('getCacheMaxAge')->willReturn(-1);
     $topic->method('bundle')->willReturn($bundle);
     $topic->method('hasField')->willReturn(TRUE);
     $topic->method('get')->with('field_domain_source')->willReturn($field);
