@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_cgu\Kernel;
 
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 
@@ -12,6 +13,16 @@ use PHPUnit\Framework\Attributes\Group;
  */
 #[Group('aculta_cgu')]
 final class ContributionSettingsPostUpdateKernelTest extends KernelTestBase {
+
+  use \Drupal\Tests\aculta_cgu\Kernel\CguPortalStubTrait;
+
+  /**
+   * Registra o stub do domínio do portal (ver CguPortalStubTrait).
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerDomainSiteStub($container);
+  }
 
   /**
    * {@inheritdoc}

@@ -7,6 +7,7 @@ namespace Drupal\Tests\aculta_cgu\Kernel;
 use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\Service\ReportService;
 use Drupal\aculta_cgu\Statistics\ForumModerationMetricsProvider;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
@@ -18,6 +19,8 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[Group('aculta_cgu')]
 #[RunTestsInSeparateProcesses]
 final class ForumModerationMetricsProviderKernelTest extends KernelTestBase {
+
+  use \Drupal\Tests\aculta_cgu\Kernel\CguPortalStubTrait;
 
   /**
    * {@inheritdoc}
@@ -47,6 +50,14 @@ final class ForumModerationMetricsProviderKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
+  /**
+   * Registra o stub do domínio do portal (ver CguPortalStubTrait).
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerDomainSiteStub($container);
+  }
+
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');

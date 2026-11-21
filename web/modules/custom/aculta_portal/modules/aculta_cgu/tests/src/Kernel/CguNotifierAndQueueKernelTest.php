@@ -29,6 +29,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 #[RunTestsInSeparateProcesses]
 final class CguNotifierAndQueueKernelTest extends KernelTestBase {
 
+  use \Drupal\Tests\aculta_cgu\Kernel\CguPortalStubTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -83,6 +85,7 @@ final class CguNotifierAndQueueKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
+    $this->registerDomainSiteStub($container);
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
     $loader->addPsr4('Drupal\\aculta_cgu\\', dirname(__DIR__, 3) . '/src', TRUE);
   }

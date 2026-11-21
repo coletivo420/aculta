@@ -29,6 +29,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 #[RunTestsInSeparateProcesses]
 final class CguMarleyCombinedRolesDecisionKernelTest extends KernelTestBase {
 
+  use \Drupal\Tests\aculta_cgu\Kernel\CguPortalStubTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -39,6 +41,7 @@ final class CguMarleyCombinedRolesDecisionKernelTest extends KernelTestBase {
     'text',
     'filter',
     'node',
+    'aculta_forum_post_test',
     'aculta_cgu',
   ];
 
@@ -55,6 +58,7 @@ final class CguMarleyCombinedRolesDecisionKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
+    $this->registerDomainSiteStub($container);
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
     self::assertInstanceOf(ClassLoader::class, $loader);
     $loader->addPsr4('Drupal\\aculta_cgu\\', dirname(__DIR__, 3) . '/src', TRUE);
@@ -75,7 +79,8 @@ final class CguMarleyCombinedRolesDecisionKernelTest extends KernelTestBase {
       NodeType::create(['type' => $bundle, 'name' => $bundle])->save();
     }
     Role::load('authenticated')?->grantPermission('access content')->save();
-    $this->role('forum', ['review aculta forum reports']);
+    // Permissão de moderação do Fórum declarada pelo fixture; a de revisão é do aculta_forum (não habilitado aqui).
+    $this->role('forum', ['moderar denuncias do forum']);
     $this->role('wiki', [ModerationScope::permissionFor('wiki')]);
     $this->role('revista', [ModerationScope::permissionFor('revista')]);
     $this->role('topic_operator', ['moderate aculta forum topics']);
@@ -221,12 +226,22 @@ final class CguMarleyCombinedRolesDecisionKernelTest extends KernelTestBase {
   public function testDecisionLockPreventsSimultaneousWrite(): void {
     $report = $this->report($this->topic('aculta_forum_topic'), 'forum');
     $moderator = $this->user('moderator_lock', ['forum']);
-    $lock = $this->container->get('lock');
+    // O KernelTestBase troca o serviço lock por um backend nulo, que nunca nega. Aqui o
+    // holder e o concorrente usam backends de banco separados, como dois processos reais.
+    $lock = new \Drupal\Core\Lock\DatabaseLockBackend($this->container->get('database'));
+    $contender = new \Drupal\aculta_cgu\Service\ReportService(
+      $this->container->get('entity_type.manager'),
+      $this->container->get('datetime.time'),
+      $this->container->get('aculta_cgu.moderation_notifier'),
+      new \Drupal\Core\Lock\DatabaseLockBackend($this->container->get('database')),
+      $this->container->get('logger.channel.aculta_cgu'),
+      $this->container->get('aculta_cgu.report_target_scope'),
+    );
     $key = 'aculta_cgu:report_decision:' . $report->id();
     self::assertTrue($lock->acquire($key, 15.0));
     try {
       try {
-        $this->reports->decideReport($report, $moderator, 'procedente', 'Tentativa concorrente.');
+        $contender->decideReport($report, $moderator, 'procedente', 'Tentativa concorrente.');
         self::fail('Uma decisão concorrente não pode ignorar o lock.');
       }
       catch (ReportNotAllowedException) {

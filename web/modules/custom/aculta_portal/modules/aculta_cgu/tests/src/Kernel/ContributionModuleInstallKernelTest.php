@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_cgu\Kernel;
 
 use Drupal\aculta_cgu\Adapter\ContributionAdapterRegistry;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -15,6 +16,16 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[Group('aculta_contributions')]
 #[RunTestsInSeparateProcesses]
 final class ContributionModuleInstallKernelTest extends KernelTestBase {
+
+  use \Drupal\Tests\aculta_cgu\Kernel\CguPortalStubTrait;
+
+  /**
+   * Registra o stub do domínio do portal (ver CguPortalStubTrait).
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerDomainSiteStub($container);
+  }
 
   /**
    * {@inheritdoc}

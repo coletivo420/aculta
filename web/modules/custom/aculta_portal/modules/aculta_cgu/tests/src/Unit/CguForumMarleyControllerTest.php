@@ -47,16 +47,35 @@ final class CguForumMarleyControllerTest extends UnitTestCase {
   public function testFrontendRoutesAreNotAdministrative(): void {
     $root = dirname(__DIR__, 3);
     $routes = Yaml::parseFile($root . '/aculta_cgu.routing.yml');
+    self::assertIsArray($routes);
     foreach (['aculta_cgu.forum_marley_queue', 'aculta_cgu.forum_marley_decide'] as $route) {
       self::assertArrayHasKey($route, $routes);
-      self::assertSame('account', $routes[$route]['options']['_aculta_site_key']);
-      self::assertTrue($routes[$route]['options']['no_cache']);
-      self::assertFalse($routes[$route]['options']['_admin_route'] ?? FALSE);
-      self::assertStringStartsWith('/marley/forum/moderacao/', $routes[$route]['path']);
-      self::assertStringContainsString('reportAccess', $routes['aculta_cgu.forum_marley_decide']['requirements']['_custom_access']);
+      $definition = $routes[$route];
+      self::assertIsArray($definition);
+      $options = $definition['options'] ?? [];
+      self::assertIsArray($options);
+      self::assertSame('account', $options['_aculta_site_key'] ?? NULL);
+      self::assertTrue($options['no_cache'] ?? FALSE);
+      self::assertFalse($options['_admin_route'] ?? FALSE);
+      $path = $definition['path'] ?? '';
+      self::assertIsString($path);
+      self::assertStringStartsWith('/marley/forum/moderacao/', $path);
     }
-    self::assertContains('POST', $routes['aculta_cgu.forum_marley_decide']['methods']);
-    self::assertSame('entity:aculta_cgu_report', $routes['aculta_cgu.forum_marley_decide']['options']['parameters']['aculta_cgu_report']['type']);
+    $decide = $routes['aculta_cgu.forum_marley_decide'] ?? [];
+    self::assertIsArray($decide);
+    $requirements = $decide['requirements'] ?? [];
+    self::assertIsArray($requirements);
+    $customAccess = $requirements['_custom_access'] ?? '';
+    self::assertIsString($customAccess);
+    self::assertStringContainsString('reportAccess', $customAccess);
+    self::assertContains('POST', is_array($decide['methods'] ?? NULL) ? $decide['methods'] : []);
+    $decideOptions = $decide['options'] ?? [];
+    self::assertIsArray($decideOptions);
+    $parameters = $decideOptions['parameters'] ?? [];
+    self::assertIsArray($parameters);
+    $reportParam = $parameters['aculta_cgu_report'] ?? [];
+    self::assertIsArray($reportParam);
+    self::assertSame('entity:aculta_cgu_report', $reportParam['type'] ?? NULL);
 
     $studioTab = (string) file_get_contents(dirname($root) . '/aculta_studio/src/Plugin/MarleyTab/ForumTab.php');
     self::assertStringContainsString("'aculta_cgu.forum_marley_queue'", $studioTab);
@@ -82,7 +101,7 @@ final class CguForumMarleyControllerTest extends UnitTestCase {
     self::assertStringContainsString('->loadUnchanged($reportId)', $service);
     self::assertStringContainsString('aculta_cgu:report_decision:', $service);
     self::assertStringContainsString('->release($lockName)', $service);
-    self::assertStringContainsString("=== 'aculta_cgu.forum_marley_decide'", $form);
+    self::assertStringContainsString("'aculta_cgu.forum_marley_decide' => 'aculta_cgu.forum_marley_queue'", $form);
     self::assertStringContainsString("'aculta_cgu.forum_marley_queue'", $form);
     self::assertStringNotContainsString('/painel-administrativo/', $controller);
   }
@@ -90,11 +109,20 @@ final class CguForumMarleyControllerTest extends UnitTestCase {
   /**
    * Builds the controller with only mocked collaborators (no Runtime).
    */
+  /**
+   * Instância sem construtor do ReportService (classe final, não mockável).
+   *
+   * Os casos deste teste verificam acesso e rotas do controller; nenhum deles chama o serviço.
+   */
+  private function reportServiceStub(): ReportService {
+    return (new \ReflectionClass(ReportService::class))->newInstanceWithoutConstructor();
+  }
+
   private function controller(): CguForumMarleyController {
     $entities = $this->createMock(EntityTypeManagerInterface::class);
     return new CguForumMarleyController(
       new CguReportQueue($entities),
-      $this->createMock(ReportService::class),
+      $this->reportServiceStub(),
       $entities,
       $this->createMock(AccountProxyInterface::class),
       $this->createMock(DateFormatterInterface::class),

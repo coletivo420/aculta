@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_cgu\Kernel;
 
 use Drupal\aculta_cgu\Entity\Contribution;
 use Drupal\aculta_cgu\Adapter\ContributionAdapterRegistry;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Core\Session\UserSession;
 use Drupal\user\Entity\Role;
@@ -16,12 +17,22 @@ use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 #[RunTestsInSeparateProcesses]
 final class ContributionEntityKernelTest extends KernelTestBase {
 
+  use \Drupal\Tests\aculta_cgu\Kernel\CguPortalStubTrait;
+
   /**
    * {@inheritdoc} */
   protected static $modules = ['system', 'user', 'options', 'views', 'aculta_cgu'];
 
   /**
    * {@inheritdoc} */
+  /**
+   * Registra o stub do domínio do portal (ver CguPortalStubTrait).
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerDomainSiteStub($container);
+  }
+
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
