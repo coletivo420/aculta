@@ -1,4 +1,5 @@
 comment_move_enabled: false
+item_milestones_enabled: false
 edit_window_minutes: 10
 restricted_group_type: ''
 reactions_enabled: true

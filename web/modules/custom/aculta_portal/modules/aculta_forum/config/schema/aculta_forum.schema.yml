@@ -5,6 +5,9 @@ aculta_forum.settings:
     comment_move_enabled:
       type: boolean
       label: 'Enable moving public Forum comments between topics'
+    item_milestones_enabled:
+      type: boolean
+      label: 'Enable Nice/Good/Great item milestone badges (10/25/50 likes on the same item); off until the anti-abuse policy is approved'
     edit_window_minutes:
       type: integer
       label: 'Minutes an author can edit a Forum post after its first publication'

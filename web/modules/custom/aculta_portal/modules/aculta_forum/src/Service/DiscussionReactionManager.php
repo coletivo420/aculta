@@ -7,6 +7,7 @@ namespace Drupal\aculta_forum\Service;
 use Drupal\aculta_forum\Analytics\ForumAnalyticsScope;
 use Drupal\aculta_forum\Analytics\ForumAnalyticsScopeResolver;
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Event\ForumItemReactionEvent;
 use Drupal\aculta_forum\Event\ForumReactionEvent;
 use Drupal\aculta_forum\Origin\DiscussionOrigin;
 use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
@@ -325,6 +326,10 @@ class DiscussionReactionManager {
         }
         if (!$wasPositive && $isPositive) {
           $this->dispatcher->dispatch(new ForumReactionEvent($reactionId), ForumReactionEvent::ADDED);
+          $this->dispatcher->dispatch(
+            new ForumItemReactionEvent($entityType, $entityId, $authorUid, $uid),
+            ForumItemReactionEvent::ADDED,
+          );
         }
 
         $this->invalidateEntityCache($entity, $uid, $authorUid);
@@ -369,6 +374,10 @@ class DiscussionReactionManager {
         $this->incrementStats($uid, $authorUid);
         // Events and existing user stats represent positive reactions only.
         $this->dispatcher->dispatch(new ForumReactionEvent($reactionId), ForumReactionEvent::ADDED);
+        $this->dispatcher->dispatch(
+          new ForumItemReactionEvent($entityType, $entityId, $authorUid, $uid),
+          ForumItemReactionEvent::ADDED,
+        );
       }
       $this->invalidateEntityCache($entity, $uid, $authorUid);
 
