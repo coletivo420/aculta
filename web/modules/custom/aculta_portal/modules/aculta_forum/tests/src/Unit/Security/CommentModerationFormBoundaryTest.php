@@ -17,7 +17,7 @@ final class CommentModerationFormBoundaryTest extends UnitTestCase {
   public function testFormReloadsEntityAndRechecksPolicyBeforeSaving(): void {
     $root = dirname(__DIR__, 4);
     $form = (string) file_get_contents($root . '/src/Form/DiscussionCommentModerationForm.php');
-    $services = Yaml::parseFile($root . '/aculta_forum.services.yml');
+    $services = Yaml::parseFile($root . '/aculta_forum.services.yml', Yaml::PARSE_CUSTOM_TAGS);
     self::assertContains(
       '@aculta_forum.comment_moderation_access',
       $services['services']['Drupal\\aculta_forum\\Form\\DiscussionCommentModerationForm']['arguments'],

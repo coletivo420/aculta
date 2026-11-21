@@ -17,21 +17,6 @@ function stateReady(name) {
   return ready && typeof data?.states?.[name] === 'string' && existsSync(data.states[name]);
 }
 
-async function getAs(accountName, origin, path, withHtmx = false) {
-  const ctx = await request.newContext({
-    ...(accountName ? { storageState: data.states[accountName] } : {}),
-  });
-  try {
-    return (await ctx.get(new URL(path, origin).toString(), {
-      maxRedirects: 0,
-      headers: withHtmx ? { 'HX-Request': 'true' } : {},
-    }));
-  } finally {
-    // Preserve the body and status for caller before disposing the context.
-    await ctx.dispose();
-  }
-}
-
 async function snapshotAs(accountName, origin, path, withHtmx = false) {
   const ctx = await request.newContext({
     ...(accountName ? { storageState: data.states[accountName] } : {}),
