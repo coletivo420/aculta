@@ -414,6 +414,55 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
 
 
   /**
+   * The CGU form validates an explanation and stores it as private data.
+   */
+  public function testReportedDescriptionAndCreateForm(): void {
+    $node = $this->makeNode();
+    $this->container->get('current_user')->setAccount($this->reporter);
+
+    $resolver = $this->container->get('aculta_cgu.report_target_resolver');
+    $access = new \Drupal\aculta_cgu\Access\CguReportCreateAccess($resolver, $this->service);
+    self::assertNull($resolver->load('user', (string) $this->reporter->id()));
+    self::assertTrue($access->access('node', (string) $node->id(), $this->reporter)->isAllowed());
+    self::assertFalse($access->access('node', (string) $node->id(), User::getAnonymousUser())->isAllowed());
+    self::assertFalse($access->access('user', (string) $this->reporter->id(), $this->reporter)->isAllowed());
+
+    $form = \Drupal\aculta_cgu\Form\CguReportCreateForm::create($this->container);
+    $state = new \Drupal\Core\Form\FormState();
+    $build = $form->buildForm([], $state, 'node', (string) $node->id());
+    self::assertArrayHasKey('reason', $build);
+    self::assertArrayHasKey('description', $build);
+    self::assertTrue($build['description']['#required']);
+    self::assertSame(ReportService::DESCRIPTION_MAX_LENGTH, $build['description']['#maxlength']);
+    self::assertSame('', $build['#attributes']['data-aculta-cgu-report-form']);
+
+    $state->setValues(['reason' => 'spam', 'description' => 'curto']);
+    $form->validateForm($build, $state);
+    self::assertArrayHasKey('description', $state->getErrors());
+
+    $description = 'Mensagem com detalhes suficientes para a moderação avaliar o caso.';
+    $report = $this->service->createReport($node, $this->reporter, 'spam', NULL, $description);
+    self::assertSame($description, $this->valueOf($report, 'description'));
+    self::assertFalse($access->access('node', (string) $node->id(), $this->reporter)->isAllowed());
+    // Another account cannot see the reporter's private case.
+    self::assertFalse($report->access('view', $this->outsider));
+  }
+
+  /**
+   * The service rejects oversized descriptions, even outside the Form API.
+   */
+  public function testReportDescriptionServiceLengthLimit(): void {
+    $this->expectException(ReportNotAllowedException::class);
+    $this->service->createReport(
+      $this->makeNode(),
+      $this->reporter,
+      'outro',
+      NULL,
+      str_repeat('x', ReportService::DESCRIPTION_MAX_LENGTH + 1),
+    );
+  }
+
+  /**
    * Valor atual de um campo da denúncia, lido do banco. O decideReport trabalha sobre uma cópia recarregada.
    */
   private function valueOf(\Drupal\aculta_cgu\Entity\CguReport $report, string $field): mixed {

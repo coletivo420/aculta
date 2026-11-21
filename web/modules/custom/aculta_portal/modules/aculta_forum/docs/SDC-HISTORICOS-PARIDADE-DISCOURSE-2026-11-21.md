@@ -1,4 +1,4 @@
-# ACULTA Fórum - SDC, UI Patterns, stories e históricos (21/11/2026)
+> **CGU transversal - 21/11/2026:** adicionado `cgu-report-button` como componente independente, conectado à `content-reply-bar` e à entidade `aculta_cgu_report` com descrição sigilosa. A UI do motivo/descrição é o Form API real dentro do SDC `popup`, carregado ao abrir com fallback GET sem JS. Ver [plano CGU](../../aculta_cgu/docs/CGU-DENUNCIA-COMPONENTE-TRANSVERSAL-2026-11-21.md). A validação Runtime/Browser continua DEFERRED.\n\n# ACULTA Fórum - SDC, UI Patterns, stories e históricos (21/11/2026)
 
 ## Escopo e metodologia
 

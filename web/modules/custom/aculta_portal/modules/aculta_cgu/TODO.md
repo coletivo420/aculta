@@ -4,7 +4,7 @@ Estado: Dev · versão 0.1.0-dev.1 (`aculta_cgu.info.yml`) · status: `docs/oper
 
 ## Próximo passo
 
-Confirmar no CI o uso de `FetchAs::Associative` na migração de relatórios; depois aplicar e homologar o post-update de propriedade de configuração e continuar a homologação dos fluxos unificados de CGU. A suíte Kernel geral ainda tem falhas independentes de Eventos, Commerce, LMS e Groups.
+Executar em worktree isolada os Kernel/Browser do novo fluxo de denúncia Form API (incluindo erros HTMX, conteúdo restrito, roles cruzados, duplicata e limite diário), validar a story UI Patterns Library e instalar o campo description com `drush updatedb` em Runtime autorizado. Manter a conferência de `FetchAs::Associative`, do post-update de propriedade de configuração e dos testes gerais independentes de Eventos, Commerce, LMS e Groups.
 
 ## Ao concluir uma fase
 

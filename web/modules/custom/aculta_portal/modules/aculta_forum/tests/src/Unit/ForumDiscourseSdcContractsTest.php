@@ -18,6 +18,7 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     $directory = dirname(__DIR__, 8) . '/themes/custom/aculta420_v2/components';
     $components = [
       'forum-poll-card' => ['form'],
+      'cgu-report-button' => ['dialog_content'],
       'forum-poll-builder' => ['toggle', 'fields'],
       'forum-poll-results' => [],
       'forum-revision-history' => ['revisions'],
@@ -90,6 +91,21 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     self::assertSame('poll_type', $builder['#slots']['fields']['poll_type']['#name']);
     self::assertArrayNotHasKey('poll_enabled', $builder);
     self::assertArrayNotHasKey('poll', $builder);
+  }
+
+  public function testReportButtonReusesPopupAndIsInTheReplyBar(): void {
+    $theme = dirname(__DIR__, 8) . '/themes/custom/aculta420_v2';
+    $button = (string) file_get_contents($theme . '/components/cgu-report-button/cgu-report-button.twig');
+    $bar = (string) file_get_contents($theme . '/components/content-reply-bar/content-reply-bar.twig');
+    $comment = (string) file_get_contents($theme . '/templates/comment--field-aculta-discussion.html.twig');
+    $presentation = (string) file_get_contents($theme . '/src/Hook/PagePresentationHooks.php');
+    self::assertStringContainsString("include('aculta420_v2:popup'", $button);
+    self::assertStringContainsString("name: 'flag'", $button);
+    self::assertStringContainsString('data-hx-select="[data-aculta-cgu-report-form]"', $button);
+    self::assertStringContainsString('show_dialog = with_dialog is defined ? with_dialog : true', $button);
+    self::assertStringContainsString('{{ report_action }}', $bar);
+    self::assertStringContainsString('report_action: report_action', $comment);
+    self::assertStringContainsString("'cgu-report-button',", $presentation);
   }
 
   public function testTimelineIsHistoryBackedAndClamped(): void {
