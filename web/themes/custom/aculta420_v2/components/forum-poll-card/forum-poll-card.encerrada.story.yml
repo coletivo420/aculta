@@ -1,0 +1,17 @@
+name: Enquete encerrada - resultados autorizados
+description: Prévia estática composta com forum-poll-results; encerramento, votos e ACL pertencem ao Fórum.
+component: aculta420_v2:forum-poll-card
+props:
+  label: Enquete encerrada
+slots:
+  form:
+    '#type': component
+    '#component': aculta420_v2:forum-poll-results
+    '#props':
+      title: Resultado final da votação
+      voters: 20
+      selections: 20
+      multiple: false
+      options:
+        - { label: Cultura, votes: 12, percentage: 60 }
+        - { label: Formação, votes: 8, percentage: 40 }

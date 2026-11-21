@@ -1,0 +1,19 @@
+name: Construtor - enquete de múltipla escolha
+description: Prévia visual dos campos nativos; sem Form API real ou armazenamento nesta story.
+component: aculta420_v2:forum-poll-builder
+props:
+  title: Configuração de enquete - múltipla escolha
+slots:
+  toggle:
+    type: inline_template
+    template: '<label><input type="checkbox" checked disabled /> Adicionar enquete</label>'
+  fields:
+    type: inline_template
+    template: |
+      <p>Configuração demonstrativa. O servidor controla as opções e validação.</p>
+      <p><label>Pergunta <input type="text" value="Quais atividades culturais você prefere?" readonly /></label></p>
+      <fieldset disabled>
+        <legend>Tipo de votação</legend>
+        <label><input type="radio" checked name="poll-example-type" /> Múltiplas opções</label>
+        <label><input type="radio" name="poll-example-type" /> Opção única</label>
+      </fieldset>

@@ -1,0 +1,11 @@
+name: Resultados sem votos
+description: Estado zero para validar legenda, barras e leitura acessível, usando dados fictícios.
+component: aculta420_v2:forum-poll-results
+props:
+  title: Resultado da enquete
+  voters: 0
+  selections: 0
+  multiple: false
+  options:
+    - { label: Cultura, votes: 0, percentage: 0 }
+    - { label: Educação, votes: 0, percentage: 0 }

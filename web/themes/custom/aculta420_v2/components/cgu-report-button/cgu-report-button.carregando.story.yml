@@ -1,0 +1,13 @@
+name: Denúncia - formulário carregando
+description: Apenas estado visual da janela; sem rede, denúncia real ou requisição HTMX.
+component: aculta420_v2:cgu-report-button
+props:
+  url: '#'
+  dialog_id: cgu-report-loading-demo
+  label: Denunciar
+  with_dialog: true
+  load_on_open: false
+slots:
+  dialog_content:
+    type: inline_template
+    template: '<p role="status">Carregando formulário de denúncia…</p><p>Se necessário, utilize o formulário em página completa.</p>'

@@ -1,0 +1,18 @@
+name: Histórico extenso - tabela responsiva
+description: Prévia sintética para avaliar a rolagem horizontal da tabela em 320 px e zoom de 200%.
+component: aculta420_v2:forum-revision-history
+props:
+  label: Histórico de revisões da publicação
+slots:
+  revisions:
+    type: inline_template
+    template: |
+      <table>
+        <caption>Revisões de exemplo</caption>
+        <thead><tr><th>Revisão</th><th>Data</th><th>Responsável</th><th>Estado</th><th>Comparação</th></tr></thead>
+        <tbody>
+          <tr><td>3</td><td>21/11/2026</td><td>Autor demonstrativo</td><td>Publicada</td><td>Comparação disponível após ACL</td></tr>
+          <tr><td>2</td><td>20/11/2026</td><td>Editor demonstrativo</td><td>Revisada</td><td>Comparação disponível após ACL</td></tr>
+          <tr><td>1</td><td>19/11/2026</td><td>Autor demonstrativo</td><td>Rascunho</td><td>Sem comparação</td></tr>
+        </tbody>
+      </table>

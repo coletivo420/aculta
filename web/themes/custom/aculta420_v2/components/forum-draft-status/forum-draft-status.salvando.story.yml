@@ -1,0 +1,6 @@
+name: Rascunho - salvando
+description: Estado ilustrativo; nenhum serviço de salvamento automático é ativado por esta story.
+component: aculta420_v2:forum-draft-status
+props:
+  state: saving
+  message: Salvando rascunho de demonstração…

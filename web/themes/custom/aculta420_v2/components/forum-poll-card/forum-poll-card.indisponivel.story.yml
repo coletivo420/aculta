@@ -1,0 +1,9 @@
+name: Enquete - estado indisponível
+description: Prévia de conteúdo indisponível; o backend decide quando a enquete pode ser exibida.
+component: aculta420_v2:forum-poll-card
+props:
+  label: Enquete indisponível
+slots:
+  form:
+    type: inline_template
+    template: '<p role="status">Esta enquete não está disponível para votação neste momento.</p>'
