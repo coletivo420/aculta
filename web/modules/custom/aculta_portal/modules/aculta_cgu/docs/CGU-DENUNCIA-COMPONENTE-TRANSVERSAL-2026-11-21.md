@@ -21,8 +21,11 @@ A denúncia é um recurso **transversal do aculta_cgu**, não exclusivo do Fóru
 | `CguReportDecisionForm` | `aculta_cgu` | Exibe descrição apenas na decisão sob ACL CGU |
 
 O link fallback `/denunciar/{entity_type}/{entity_id}` é GET e POST. Em modo
-ACULTA V2, o botão abre o SDC `popup`; HTMX carrega **somente**
-`[data-aculta-cgu-report-form]` para o corpo do modal. O formulário é o
+ACULTA V2, o botão abre o SDC `popup`; o evento
+`aculta:drawer:open` aciona o HTMX no **corpo do diálogo**, e não no clique
+do gatilho. O HTMX carrega **somente**
+`[data-aculta-cgu-report-form]` para o corpo do modal, preservando o
+contêiner para futuras reaberturas e evitando conflito entre os listeners de clique. O formulário é o
 mesmo da página acessível sem JavaScript, com token do Drupal Form API.
 **Nenhuma denúncia é criada por GET ou pelo clique no ícone**.
 

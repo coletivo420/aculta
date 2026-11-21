@@ -102,6 +102,9 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     self::assertStringContainsString("include('aculta420_v2:popup'", $button);
     self::assertStringContainsString("name: 'flag'", $button);
     self::assertStringContainsString('data-hx-select="[data-aculta-cgu-report-form]"', $button);
+    self::assertStringContainsString('data-hx-trigger="aculta:drawer:open from:closest dialog"', $button);
+    self::assertStringContainsString('data-hx-target="this"', $button);
+    self::assertStringNotContainsString('data-hx-trigger="click"', $button);
     self::assertStringContainsString('show_dialog = with_dialog is defined ? with_dialog : true', $button);
     self::assertStringContainsString('{{ report_action }}', $bar);
     self::assertStringContainsString('report_action: report_action', $comment);

@@ -3,21 +3,24 @@
 {% set load_form = load_on_open is defined ? load_on_open : true %}
 <a href="{{ url }}" class="cgu-report-button content-reply-bar__action content-reply-bar__action--report"
    aria-label="{{ label|default('Denunciar'|t) }}" title="{{ label|default('Denunciar'|t) }}"
-   {% if show_dialog %}aria-controls="{{ dialog_id }}" aria-haspopup="dialog" aria-expanded="false" data-aculta-dialog-trigger{% endif %}
-   {% if show_dialog and load_form %}
-     data-hx-get="{{ url }}"
-     data-hx-trigger="click"
-     data-hx-target="#{{ dialog_id }}-body"
-     data-hx-select="[data-aculta-cgu-report-form]"
-     data-hx-swap="innerHTML"
-     data-hx-push-url="false"
-   {% endif %}>
+   {% if show_dialog %}aria-controls="{{ dialog_id }}" aria-haspopup="dialog" aria-expanded="false" data-aculta-dialog-trigger{% endif %}>
   {{ include('aculta420_v2:icon', { name: 'flag', variant: 'regular', size: 'md' }, with_context = false) }}
   <span class="cgu-report-button__label">{{ label|default('Denunciar'|t) }}</span>
 </a>
 {% if show_dialog %}
   {% set report_dialog_body %}
-    <div class="cgu-report-button__dialog-body" id="{{ dialog_id }}-body">
+    {# The dialog dispatches aculta:drawer:open after showModal(), avoiding
+       competing click handlers on the trigger link. HTMX reloads the real
+       Drupal form for each opening; the outer wrapper remains stable. #}
+    <div class="cgu-report-button__dialog-body" id="{{ dialog_id }}-body"
+      {% if load_form %}
+        data-hx-get="{{ url }}"
+        data-hx-trigger="aculta:drawer:open from:closest dialog"
+        data-hx-target="this"
+        data-hx-select="[data-aculta-cgu-report-form]"
+        data-hx-swap="innerHTML"
+        data-hx-push-url="false"
+      {% endif %}>
       {% if dialog_content %}{{ dialog_content }}
       {% else %}
         <p>{{ 'Selecione um motivo, descreva a ocorrência e confirme o envio.'|t }}</p>
