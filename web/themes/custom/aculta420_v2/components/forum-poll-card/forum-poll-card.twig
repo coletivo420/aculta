@@ -1,3 +1,11 @@
+{# Poll decisions, access, forms and CSRF belong to aculta_forum. #}
 <section{{ attributes.addClass('forum-poll-card') }} aria-label="{{ label }}">
-  <div class="forum-poll-card__body">{{ form }}</div>
+  {{ include('aculta420_v2:surface', {
+    tone: 'green-soft',
+    radius: 'lg',
+    spacing: 'normal',
+    border: 'subtle',
+    elevation: 'subtle',
+    content: form,
+  }, with_context = false) }}
 </section>

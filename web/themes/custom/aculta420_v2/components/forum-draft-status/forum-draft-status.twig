@@ -1,4 +1,11 @@
+{# The editor/provider must provide a confirmed state; this component saves nothing. #}
+{% set state_icon = state == 'saved' ? 'check-circle' : (state == 'saving' ? 'spinner-gap' : (state == 'error' ? 'warning-circle' : 'pencil-simple')) %}
+{% set badge_variant = state == 'saved' ? 'primary' : (state == 'error' ? 'highlight' : 'neutral') %}
 <div{{ attributes.addClass('forum-draft-status', 'forum-draft-status--' ~ state) }} role="status" aria-live="polite">
-  <span class="forum-draft-status__message">{{ message }}</span>
+  {{ include('aculta420_v2:badge', {
+    label: message,
+    icon_name: state_icon,
+    variant: badge_variant,
+  }, with_context = false) }}
   {% if actions %}<span class="forum-draft-status__actions">{{ actions }}</span>{% endif %}
 </div>

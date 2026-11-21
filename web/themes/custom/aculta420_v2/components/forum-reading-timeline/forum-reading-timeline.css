@@ -1,7 +1,50 @@
-.forum-reading-timeline { display: grid; padding: .75rem; color: var(--color-text-primary, currentColor); border: 1px solid var(--color-border, currentColor); border-radius: var(--radius-md, .75rem); background: var(--color-surface-raised, transparent); gap: .65rem; min-inline-size: 0; }
+.forum-reading-timeline {
+  display: grid;
+  color: var(--color-text-primary);
+  gap: var(--spacing-sm);
+  min-inline-size: 0;
+}
+
 .forum-reading-timeline__summary,
-.forum-reading-timeline__links { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; }
-.forum-reading-timeline__progress { inline-size: 100%; block-size: .8rem; accent-color: var(--color-text-primary, currentColor); }
-.forum-reading-timeline__navigation { display: flex; flex-wrap: wrap; gap: .5rem; }
-.forum-reading-timeline__links a { min-block-size: 2.75rem; display: inline-flex; align-items: center; padding: .3rem .55rem; }
-.forum-reading-timeline__links a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
+.forum-reading-timeline__links,
+.forum-reading-timeline__navigation {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.forum-reading-timeline__summary {
+  justify-content: space-between;
+}
+
+.forum-reading-timeline__text {
+  flex: 1;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+.forum-reading-timeline__progress {
+  accent-color: var(--color-brand-primary);
+  inline-size: 100%;
+  block-size: .875rem;
+}
+
+.forum-reading-timeline__navigation {
+  gap: var(--spacing-xs);
+}
+
+.forum-reading-timeline__links a {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  min-block-size: var(--tap-target-min);
+}
+
+.forum-reading-timeline__links a:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}

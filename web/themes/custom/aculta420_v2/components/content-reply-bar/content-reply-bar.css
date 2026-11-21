@@ -1,7 +1,7 @@
 /* Barra de Respostas de Conteúdo: ícones Phosphor coloridos com tokens do tema.
    Os tokens mudam sozinhos entre o modo claro e o escuro (data-theme). */
 .content-reply-bar {
-  --content-reply-size: 2.25rem;
+  --content-reply-size: var(--tap-target-min);
 
   display: inline-flex;
   flex-wrap: wrap;

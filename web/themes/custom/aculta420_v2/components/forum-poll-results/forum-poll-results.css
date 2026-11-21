@@ -1,8 +1,63 @@
-.forum-poll-results { display: grid; gap: .875rem; min-inline-size: 0; color: var(--color-text-primary, currentColor); }
-.forum-poll-results__title { margin: 0; font-size: 1.1rem; }
-.forum-poll-results__list { display: grid; margin: 0; padding: 0; list-style: none; gap: 1rem; }
-.forum-poll-results__item { display: grid; gap: .375rem; min-inline-size: 0; }
-.forum-poll-results__line { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .25rem .75rem; overflow-wrap: anywhere; }
-.forum-poll-results__bar { inline-size: 100%; block-size: .9rem; accent-color: var(--color-text-primary, currentColor); }
-.forum-poll-results__caption,
-.forum-poll-results__note { margin: 0; color: var(--color-text-secondary, currentColor); font-size: .875rem; }
+.forum-poll-results {
+  display: grid;
+  color: var(--color-text-primary);
+  gap: var(--spacing-base);
+  min-inline-size: 0;
+}
+
+.forum-poll-results__title {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: 0;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  gap: var(--spacing-xs);
+}
+
+.forum-poll-results__list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: var(--spacing-base);
+}
+
+.forum-poll-results__item {
+  display: grid;
+  gap: var(--spacing-xs);
+  min-inline-size: 0;
+}
+
+.forum-poll-results__line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--spacing-xs) var(--spacing-md);
+  overflow-wrap: anywhere;
+}
+
+.forum-poll-results__count {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.forum-poll-results__bar {
+  accent-color: var(--color-brand-primary);
+  inline-size: 100%;
+  block-size: .875rem;
+}
+
+.forum-poll-results__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+}
+
+.forum-poll-results__note {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}

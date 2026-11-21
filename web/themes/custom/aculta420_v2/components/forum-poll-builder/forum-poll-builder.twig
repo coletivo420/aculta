@@ -1,4 +1,15 @@
+{# Reuses ACULTA surface, retaining native post-processed Form API slots. #}
 <section{{ attributes.addClass('forum-poll-builder') }} aria-label="{{ title }}">
-  <div class="forum-poll-builder__toggle">{{ toggle }}</div>
-  <div class="forum-poll-builder__fields">{{ fields }}</div>
+  {% set poll_controls %}
+    <div class="forum-poll-builder__toggle">{{ toggle }}</div>
+    <div class="forum-poll-builder__fields">{{ fields }}</div>
+  {% endset %}
+  {{ include('aculta420_v2:surface', {
+    tone: 'green-soft',
+    radius: 'lg',
+    spacing: 'compact',
+    border: 'subtle',
+    elevation: 'none',
+    content: poll_controls,
+  }, with_context = false) }}
 </section>

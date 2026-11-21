@@ -1,5 +1,16 @@
+{# The revisions table comes from an access-checked Drupal controller. #}
 <section{{ attributes.addClass('forum-revision-history') }} aria-label="{{ label }}">
-  <div class="forum-revision-history__scroll" tabindex="0" role="region" aria-label="{{ 'Tabela de revisões'|t }}">
-    {{ revisions }}
-  </div>
+  {% set history_content %}
+    <div class="forum-revision-history__scroll" tabindex="0" role="region" aria-label="{{ 'Tabela de revisões'|t }}">
+      {{ revisions }}
+    </div>
+  {% endset %}
+  {{ include('aculta420_v2:surface', {
+    tone: 'raised',
+    radius: 'lg',
+    spacing: 'compact',
+    border: 'subtle',
+    elevation: 'subtle',
+    content: history_content,
+  }, with_context = false) }}
 </section>

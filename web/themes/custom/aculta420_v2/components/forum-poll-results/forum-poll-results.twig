@@ -1,19 +1,31 @@
 <section{{ attributes.addClass('forum-poll-results') }} aria-label="{{ title }}">
-  <h3 class="forum-poll-results__title">{{ title }}</h3>
+  <h3 class="forum-poll-results__title">
+    {{ include('aculta420_v2:icon', { name: 'chart-bar', variant: 'regular', size: 'md' }, with_context = false) }}
+    <span>{{ title }}</span>
+  </h3>
   <ul class="forum-poll-results__list">
     {% for option in options %}
       <li class="forum-poll-results__item">
         <div class="forum-poll-results__line">
           <span>{{ option.label }}</span>
-          <span>{{ option.votes }} {{ 'seleções'|t }} · {{ option.percentage }}%</span>
+          <span class="forum-poll-results__count">{{ option.votes }} {{ 'seleções'|t }} · {{ option.percentage }}%</span>
         </div>
-        <progress class="forum-poll-results__bar" value="{{ option.percentage }}" max="100" aria-label="{{ option.label }}"></progress>
+        <progress class="forum-poll-results__bar" value="{{ option.percentage }}" max="100" aria-label="{{ option.label }}">{{ option.percentage }}%</progress>
       </li>
     {% endfor %}
   </ul>
-  <p class="forum-poll-results__caption">
-    {{ 'Pessoas votantes:'|t }} {{ voters }} · {{ 'Seleções:'|t }} {{ selections }}
-  </p>
+  <div class="forum-poll-results__stats">
+    {{ include('aculta420_v2:badge', {
+      label: 'Pessoas votantes: @total'|t({'@total': voters}),
+      icon_name: 'users-three',
+      variant: 'neutral',
+    }, with_context = false) }}
+    {{ include('aculta420_v2:badge', {
+      label: 'Seleções: @total'|t({'@total': selections}),
+      icon_name: 'check-square',
+      variant: 'neutral',
+    }, with_context = false) }}
+  </div>
   {% if multiple %}
     <p class="forum-poll-results__note">{{ 'Na múltipla escolha, percentuais usam pessoas votantes como base e podem somar mais de 100%.'|t }}</p>
   {% endif %}
