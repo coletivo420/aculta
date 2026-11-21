@@ -51,3 +51,8 @@ close aculta forum polls:
   title: 'Encerrar enquetes do Fórum'
   description: 'Permite fechar ou reabrir enquetes de tópicos no Fórum.'
 
+
+moderar denuncias lms:
+  title: 'Moderar denúncias de discussões LMS do próprio Group'
+  description: 'Permite decidir denúncias de discussões LMS apenas dos cursos e turmas em que a conta é educadora. Não concede moderação comunitária do Fórum.'
+  restrict access: true

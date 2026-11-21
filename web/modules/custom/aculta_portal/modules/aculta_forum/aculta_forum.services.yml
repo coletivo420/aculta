@@ -16,6 +16,12 @@ services:
     tags:
       - { name: event_subscriber }
   Drupal\aculta_forum\Service\ForumItemMilestoneAwarder: '@aculta_forum.item_milestone_awarder'
+  # Adaptador de escopo LMS por Group para denúncias do CGU (purpose lms).
+  aculta_forum.cgu_lms_report_scope:
+    class: Drupal\aculta_forum\Cgu\LmsReportTargetScopeProvider
+    arguments: ['@aculta_forum.discussion_context_resolver']
+    tags:
+      - { name: aculta_cgu.report_target_scope_provider }
   Drupal\aculta_forum\Hook\TopicPollRenderHooks:
     class: Drupal\aculta_forum\Hook\TopicPollRenderHooks
     arguments: ['@aculta_forum.poll_manager', '@form_builder']
