@@ -150,6 +150,9 @@ final class TopicComposerFormHooks {
    * bloco não aparece. A validação reutiliza PollDefinition, a mesma regra do domínio.
    *
    * @param array<mixed> $form
+   *   Render array do formulário, alterado por referência.
+   * @param FormStateInterface $formState
+   *   Estado atual do formulário.
    */
   private function addPollComposer(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();
@@ -233,6 +236,9 @@ final class TopicComposerFormHooks {
    * Valida a enquete opcional com as mesmas regras do domínio.
    *
    * @param array<mixed> $form
+   *   Render array do formulário.
+   * @param FormStateInterface $formState
+   *   Estado atual do formulário.
    */
   public function validatePoll(array &$form, FormStateInterface $formState): void {
     if (!$formState->getValue('poll_enabled')) {
@@ -250,6 +256,9 @@ final class TopicComposerFormHooks {
    * Cria a enquete do tópico recém-salvo.
    *
    * @param array<mixed> $form
+   *   Render array do formulário.
+   * @param FormStateInterface $formState
+   *   Estado atual do formulário.
    */
   public function createPoll(array &$form, FormStateInterface $formState): void {
     if (!$formState->getValue('poll_enabled')) {

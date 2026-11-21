@@ -63,6 +63,7 @@ final class ForumItemMilestoneAwarder implements EventSubscriberInterface {
    * {@inheritdoc}
    *
    * @return array<string, string>
+   *   Nome do evento mapeado ao método que o trata.
    */
   public static function getSubscribedEvents(): array {
     return [ForumItemReactionEvent::ADDED => 'onPositiveReaction'];
