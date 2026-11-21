@@ -89,6 +89,12 @@ services:
   aculta_studio.course_authoring_controller:
     class: Drupal\aculta_studio\Controller\CourseAuthoringController
     arguments: ['@entity_type.manager', '@entity.form_builder', '@current_user', '@string_translation']
+  aculta_studio.educator_report_controller:
+    class: Drupal\aculta_studio\Controller\EducatorReportController
+    arguments: ['@aculta_cgu.report_queue', '@aculta_cgu.report_target_scope', '@entity_type.manager', '@date.formatter', '@current_user']
+  Drupal\aculta_studio\Form\EducatorReportDecisionForm:
+    class: Drupal\aculta_studio\Form\EducatorReportDecisionForm
+    arguments: ['@aculta_cgu.report_service', '@aculta_cgu.report_target_scope', '@entity_type.manager', '@current_user']
   aculta_studio.we_sativa_controller:
     class: Drupal\aculta_studio\Controller\WeSativaController
     arguments: ['@aculta_studio.experience_manager', '@current_user']

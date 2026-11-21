@@ -60,7 +60,7 @@ final class CourseAuthoringControllerTest extends UnitTestCase {
    */
   public function testDashboardBuildsCreateLinkWithPortalAttributes(): void {
     $account = $this->createMock(AccountInterface::class);
-    $account->method('hasPermission')->with('create lms_course group')->willReturn(TRUE);
+    $account->method('hasPermission')->willReturnCallback(static fn (string $permission): bool => $permission === 'create lms_course group');
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->with(TRUE)->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -97,7 +97,7 @@ final class CourseAuthoringControllerTest extends UnitTestCase {
    */
   public function testDashboardLinksManagedCourseToItsStructureEditor(): void {
     $account = $this->createMock(AccountInterface::class);
-    $account->method('hasPermission')->with('create lms_course group')->willReturn(TRUE);
+    $account->method('hasPermission')->willReturnCallback(static fn (string $permission): bool => $permission === 'create lms_course group');
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();
