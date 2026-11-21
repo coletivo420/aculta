@@ -1,0 +1,9 @@
+name: Denúncia - fallback sem JavaScript
+description: Demonstração do botão independente; sem modal o link leva ao formulário CGU.
+component: aculta420_v2:cgu-report-button
+props:
+  url: /denunciar/node/123
+  dialog_id: cgu-report-fallback-demo
+  label: Denunciar conteúdo
+  with_dialog: false
+  load_on_open: false

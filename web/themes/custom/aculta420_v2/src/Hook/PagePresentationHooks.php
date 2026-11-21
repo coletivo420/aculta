@@ -469,6 +469,7 @@ final class PagePresentationHooks {
 
     $bookmark = $content['flag_salvar_topico'] ?? [];
     $openingReactionBar = $variables['reaction_bar'] ?? $content['reaction_bar'] ?? [];
+    $reportAction = $content['aculta_cgu_report_action'] ?? [];
     $owner = $node->getOwner();
     $excludedContentKeys = [
       'flag_salvar_topico',
@@ -477,6 +478,7 @@ final class PagePresentationHooks {
       'body',
       'reaction_bar',
       'author_card',
+      'aculta_cgu_report_action',
     ];
     foreach ($excludedContentKeys as $key) {
       unset($content[$key]);
@@ -501,6 +503,7 @@ final class PagePresentationHooks {
         'body' => $variables['content']['body'] ?? [],
         'avatar' => $variables['opening_author_avatar'] ?? [],
         'reactions_slot' => $openingReactionBar,
+        'report_action' => $reportAction,
       ],
       '#weight' => -100,
     ];

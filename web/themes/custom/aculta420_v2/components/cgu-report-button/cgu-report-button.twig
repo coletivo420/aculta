@@ -1,0 +1,30 @@
+{# Ícone independente do Forum: o CGU controla URL, visibilidade e POST. #}
+<a href="{{ url }}" class="cgu-report-button content-reply-bar__action content-reply-bar__action--report"
+   aria-label="{{ label|default('Denunciar'|t) }}" title="{{ label|default('Denunciar'|t) }}"
+   {% if with_dialog|default(true) %}aria-controls="{{ dialog_id }}" aria-haspopup="dialog" aria-expanded="false" data-aculta-dialog-trigger{% endif %}
+   {% if with_dialog|default(true) and load_on_open|default(true) %}
+     data-hx-get="{{ url }}"
+     data-hx-trigger="click"
+     data-hx-target="#{{ dialog_id }}-body"
+     data-hx-select="[data-aculta-cgu-report-form]"
+     data-hx-swap="innerHTML"
+     data-hx-push-url="false"
+   {% endif %}>
+  {{ include('aculta420_v2:icon', { name: 'flag', variant: 'regular', size: 'md' }, with_context = false) }}
+  <span class="cgu-report-button__label">{{ label|default('Denunciar'|t) }}</span>
+</a>
+{% if with_dialog|default(true) %}
+  {% set report_dialog_body %}
+    <div class="cgu-report-button__dialog-body" id="{{ dialog_id }}-body">
+      {% if dialog_content %}{{ dialog_content }}
+      {% else %}<p>{{ 'Selecione um motivo, descreva a ocorrência e confirme o envio.'|t }}</p>{% endif %}
+    </div>
+  {% endset %}
+  {{ include('aculta420_v2:popup', {
+    id: dialog_id,
+    title: 'Denunciar conteúdo'|t,
+    subtitle: 'A denúncia será encaminhada à moderação para análise.'|t,
+    close_label: 'Fechar'|t,
+    content: report_dialog_body,
+  }, with_context = false) }}
+{% endif %}

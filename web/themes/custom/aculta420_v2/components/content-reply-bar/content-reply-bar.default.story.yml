@@ -11,6 +11,19 @@ props:
   admin_with_dialog: true
   admin_author_name: Participante
 slots:
+  report_action:
+    '#type': component
+    '#component': aculta420_v2:cgu-report-button
+    '#props':
+      url: '#'
+      dialog_id: cgu-report-bar-demo
+      label: Denunciar
+      with_dialog: true
+      load_on_open: false
+    '#slots':
+      dialog_content:
+        type: inline_template
+        template: '<p>Prévia visual: escolha um motivo, descreva a denúncia e confirme no formulário real do CGU.</p><label>Descrição <textarea rows="3" placeholder="Descreva a ocorrência"></textarea></label>'
   reply_dialog:
     '#type': component
     '#component': aculta420_v2:discussion-reply-composer

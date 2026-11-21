@@ -62,6 +62,9 @@ slots:
   avatar:
     title: Avatar ou cartão de autor
     description: Avatar ou bloco de autoria do criador do tópico.
+  report_action:
+    title: Denunciar tópico
+    description: Ação CGU já autorizada para a publicação de abertura, composta na barra de respostas.
   body:
     title: Corpo da postagem
     description: Corpo do tópico renderizado pelo Drupal.

@@ -2,7 +2,8 @@
 <div id="aculta-comment-{{ comment.id }}" class="aculta-comment-item">
 {% set author_card = content.author_card|default(null) %}
 {% set reaction_bar_val = reaction_bar|default(content.reaction_bar|default(null)) %}
-{% set comment_body = content|without('author_card', 'reaction_bar', 'links') %}
+{% set report_action = content.aculta_cgu_report_action|default(null) %}
+{% set comment_body = content|without('author_card', 'reaction_bar', 'links', 'aculta_cgu_report_action') %}
 {% set actions_markup %}
   {{ permalink }}
   {{ content.links }}
@@ -25,7 +26,8 @@
       delete_target: delete_allowed|default(false) ? 'delete-confirm-' ~ comment.id : null,
       target_id: 'aculta-reply-dialog-body',
       admin_url: admin_url|default(null),
-      admin_author_name: author_name_val|default('Participante'|t)
+      admin_author_name: author_name_val|default('Participante'|t),
+      report_action: report_action
     }, with_context = false) }}
     {% if delete_allowed|default(false) %}
       {{ include('aculta420_v2:delete-confirm', {
@@ -66,7 +68,7 @@
 {% set admin_markup = null %}
 {% set forum_delete_markup %}
   {% if delete_allowed|default(false) %}
-    {{ include('aculta420_v2:content-reply-bar', { delete_target: 'delete-confirm-' ~ comment.id, target_id: 'aculta-reply-dialog-body', admin_url: admin_url|default(null), admin_author_name: author_name_val|default('Participante'|t) }, with_context = false) }}
+    {{ include('aculta420_v2:content-reply-bar', { delete_target: 'delete-confirm-' ~ comment.id, target_id: 'aculta-reply-dialog-body', admin_url: admin_url|default(null), admin_author_name: author_name_val|default('Participante'|t), report_action: report_action }, with_context = false) }}
     {{ include('aculta420_v2:delete-confirm', {
       target_id: 'delete-confirm-' ~ comment.id,
       title: 'Excluir resposta?'|t,
@@ -76,6 +78,9 @@
       token: delete_token|default(''),
       confirm_url: delete_url|default('')
     }, with_context = false) }}
+  {% endif %}
+  {% if not delete_allowed|default(false) and report_action %}
+    {{ include('aculta420_v2:content-reply-bar', { report_action: report_action }, with_context = false) }}
   {% endif %}
 {% endset %}
 {% embed 'aculta420_v2:forum-comment' with {

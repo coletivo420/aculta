@@ -87,6 +87,16 @@ final class ComponentFallbackHooks {
         }
         break;
 
+      case 'cgu-report-button':
+        if (!empty($props['url'])) {
+          $build['report_link'] = [
+            '#type' => 'link',
+            '#title' => $props['label'] ?? new \Drupal\Core\StringTranslation\TranslatableMarkup('Denunciar'),
+            '#url' => \Drupal\Core\Url::fromUserInput((string) $props['url']),
+          ];
+        }
+        break;
+
       case 'context-tabs':
         if (!empty($props['label'])) {
           $build['#attributes']['aria-label'] = $props['label'];

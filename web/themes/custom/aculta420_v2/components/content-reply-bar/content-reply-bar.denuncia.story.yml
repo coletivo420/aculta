@@ -1,0 +1,20 @@
+name: Barra de respostas com denúncia CGU
+description: Ação de denúncia do componente independente; popup usa o padrão aculta420_v2:popup.
+component: aculta420_v2:content-reply-bar
+props:
+  permalink_url: /forum/topico/123
+  reply_url: /discussoes/responder/123
+slots:
+  report_action:
+    '#type': component
+    '#component': aculta420_v2:cgu-report-button
+    '#props':
+      url: '#'
+      dialog_id: cgu-report-bar-story
+      label: Denunciar
+      with_dialog: true
+      load_on_open: false
+    '#slots':
+      dialog_content:
+        type: inline_template
+        template: '<p>Confirme o relato no formulário real do CGU. Esta prévia não envia informações.</p><label>Descrição<textarea rows="3" disabled></textarea></label>'

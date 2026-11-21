@@ -66,6 +66,9 @@ props:
       description: ID do contêiner que recebe o fragmento HTMX das ações de excluir, editar, citar e responder.
       default: 'aculta-reply-dialog-body'
 slots:
+  report_action:
+    title: Botão de denúncia CGU
+    description: SDC cgu-report-button já autorizado pelo serviço transversal CGU. Nenhuma lógica de denúncia pertence à barra.
   reply_dialog:
     title: Popup de resposta
     description: Conteúdo do popup de resposta (discussion-reply-composer), usado quando reply_with_dialog é verdadeiro.
