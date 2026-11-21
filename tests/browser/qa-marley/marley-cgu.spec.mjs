@@ -163,8 +163,16 @@ test.describe('Marley / CGU - Form API e decisões auditáveis', () => {
         },
         maxRedirects: 0,
       });
-      expect(response.status(), 'POST sem CSRF não pode indicar sucesso/redirect de decisão')
-        .not.toBe(200);
+      // Drupal Form API may return HTTP 200 with an error message after a
+      // malformed POST. The authoritative assertion is that status remains
+      // pending on a fresh GET (not merely the HTTP response status).
+      expect(response.status()).toBeLessThan(500);
+      const fresh = await client.get(url(path));
+      expect(fresh.status()).toBe(200);
+      const html = await fresh.text();
+      expect(html).toContain('aculta_cgu_report_decision_form');
+      expect(html).toContain('decision_notes');
+      expect(html).not.toContain('Decisão proferida');
     });
   });
 

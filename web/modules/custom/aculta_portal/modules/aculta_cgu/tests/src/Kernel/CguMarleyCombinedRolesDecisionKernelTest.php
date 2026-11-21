@@ -153,7 +153,31 @@ final class CguMarleyCombinedRolesDecisionKernelTest extends KernelTestBase {
     self::assertSame('pendente', $this->reload($revista)->get('status')->value);
     $this->reports->decideReport($forum, $operator, 'improcedente', 'Revisão concluída.');
     self::assertSame('improcedente', $this->reload($forum)->get('status')->value);
-    self::assertSame(1, $topic->isPublished() ? 1 : 0, 'A decisão não altera o tópico.');
+    self::assertTrue($topic->isPublished(), 'A decisão não altera o tópico.');
+  }
+
+  /**
+   * Different report purposes on the same entity stay separate in the queue.
+   */
+  public function testSameTargetWithDifferentPurposesIsNeverCrossCounted(): void {
+    $topic = $this->topic('aculta_forum_topic');
+    $forum = $this->report($topic, 'forum');
+    $foreign = $this->report($topic, 'revista');
+    $forumOnly = $this->user('forum_only_same_target', ['forum']);
+    $mixed = $this->user('forum_revista_same_target', ['forum', 'revista']);
+
+    $forumRows = $this->queue->getQueueItems($forumOnly, 'forum');
+    self::assertSame(1, $forumRows['total_items']);
+    self::assertSame(1, $forumRows['items'][0]['total']);
+    self::assertSame('forum', $forumRows['items'][0]['purpose']);
+
+    $all = $this->queue->getQueueItems($mixed);
+    self::assertSame(2, $all['total_items']);
+    self::assertSameCanonicalizing(['forum', 'revista'], array_column($all['items'], 'purpose'));
+
+    $this->reports->decideReport($forum, $forumOnly, 'procedente', 'Caso do Fórum.');
+    self::assertSame('procedente', $this->reload($forum)->get('status')->value);
+    self::assertSame('pendente', $this->reload($foreign)->get('status')->value);
   }
 
   /**
