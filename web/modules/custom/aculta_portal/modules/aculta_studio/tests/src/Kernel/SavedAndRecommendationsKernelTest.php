@@ -51,8 +51,10 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     'node',
     'taxonomy',
     'flag',
+    'options',
     'aculta_studio',
     'aculta_calendar',
+    'aculta_cgu',
   ];
 
   /**
