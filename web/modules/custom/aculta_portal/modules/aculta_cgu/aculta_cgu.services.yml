@@ -57,6 +57,7 @@ services:
       - '@entity_type.manager'
       - '@current_user'
       - '@database'
+      - '@aculta_cgu.report_target_scope'
 
   aculta_cgu.mail_type.report_notice:
     class: Drupal\aculta_cgu\Mail\CguReportNoticeMailType

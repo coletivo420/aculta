@@ -18,6 +18,11 @@ use Drupal\Core\Session\AccountInterface;
 interface ReportTargetScopeProviderInterface {
 
   /**
+   * Permissão que a conta precisa ter para o adaptador considerar o alvo.
+   */
+  public function permission(): string;
+
+  /**
    * Informa se o adaptador trata denúncias deste purpose.
    */
   public function supports(string $purpose): bool;

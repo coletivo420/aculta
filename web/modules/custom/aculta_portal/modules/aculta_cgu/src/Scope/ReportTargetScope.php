@@ -19,7 +19,12 @@ use Drupal\Core\Session\AccountInterface;
 final class ReportTargetScope {
 
   /**
+   * Cria o escopo com os adaptadores registrados e o gerenciador de entidades.
+   *
    * @param iterable<ReportTargetScopeProviderInterface> $providers
+   *   Adaptadores de alvo, vindos da tag aculta_cgu.report_target_scope_provider.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entityTypeManager
+   *   Carrega o alvo das denúncias.
    */
   public function __construct(
     private readonly iterable $providers,
@@ -36,6 +41,28 @@ final class ReportTargetScope {
       }
     }
     return FALSE;
+  }
+
+  /**
+   * Purposes restritos que a conta pode tentar moderar via adaptador de alvo.
+   *
+   * Só lista purposes cujo adaptador exige uma permissão que a conta tem. A decisão
+   * final, por alvo, continua em decide().
+   *
+   * @return list<string>
+   *   Purposes restritos, em ordem estável, que a conta pode tentar moderar.
+   */
+  public function scopedPurposesFor(AccountInterface $account): array {
+    $purposes = [];
+    foreach (ModerationScope::PURPOSES as $purpose) {
+      foreach ($this->providers as $provider) {
+        if ($provider->supports($purpose) && $account->hasPermission($provider->permission())) {
+          $purposes[] = $purpose;
+          break;
+        }
+      }
+    }
+    return $purposes;
   }
 
   /**

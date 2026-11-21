@@ -28,6 +28,13 @@ final class LmsReportTargetScopeProvider implements ReportTargetScopeProviderInt
   /**
    * {@inheritdoc}
    */
+  public function permission(): string {
+    return self::PERMISSION;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function supports(string $purpose): bool {
     return $purpose === 'lms';
   }
