@@ -61,6 +61,11 @@ final class TopicModerationPublishForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function getCancelUrl(): Url {
+    // A frontend command returns to Marley, never to a Drupal admin page.
+    $routeName = $this->topicRoute->getRouteName();
+    if (is_string($routeName) && str_starts_with($routeName, 'aculta_forum.marley_topic_')) {
+      return Url::fromRoute('aculta_cgu.forum_marley_queue');
+    }
     return Url::fromRoute('entity.node.canonical', ['node' => $this->topic()?->id()]);
   }
 

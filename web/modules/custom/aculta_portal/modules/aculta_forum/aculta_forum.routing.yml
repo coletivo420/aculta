@@ -419,6 +419,22 @@ aculta_forum.marley_topic_close:
     no_cache: true
   methods: [GET, HEAD, POST]
 
+aculta_forum.marley_topic_publish:
+  path: '/marley/forum/topico/{node}/publicar'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationPublishForm'
+    _title: 'Despublicar ou republicar tópico'
+  requirements:
+    _custom_access: 'aculta_forum.marley_topic_actions:access'
+    node: '\d+'
+  options:
+    _aculta_site_key: account
+    parameters:
+      node:
+        type: entity:node
+    no_cache: true
+  methods: [GET, HEAD, POST]
+
 aculta_forum.marley_topic_pin:
   path: '/marley/forum/topico/{node}/fixar'
   defaults:

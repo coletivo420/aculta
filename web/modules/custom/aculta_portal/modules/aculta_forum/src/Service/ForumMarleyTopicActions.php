@@ -35,7 +35,8 @@ final class ForumMarleyTopicActions {
     if (!$permission->isAllowed() || $node === NULL || $node->bundle() !== 'aculta_forum_topic'
       || !$node->hasField('field_domain_source') || $node->get('field_domain_source')->isEmpty()
       || $this->sites->getSiteKeyValueForDomainId((string) $node->get('field_domain_source')->target_id) !== 'forum') {
-      return AccessResult::forbidden()->cachePerUser()->cachePerPermissions()->addCacheableDependency($node);
+      $denied = AccessResult::forbidden()->cachePerUser()->cachePerPermissions();
+      return $node instanceof NodeInterface ? $denied->addCacheableDependency($node) : $denied;
     }
 
     // Evaluate Node Access in its owner domain. Checking only the current
@@ -68,6 +69,12 @@ final class ForumMarleyTopicActions {
         'label' => $topic->isSticky() ? 'Desafixar tópico' : 'Fixar tópico',
         'icon' => 'push-pin-simple',
         'tone' => 'primary',
+      ],
+      [
+        'route' => 'aculta_forum.marley_topic_publish',
+        'label' => $topic->isPublished() ? 'Despublicar tópico' : 'Republicar tópico',
+        'icon' => $topic->isPublished() ? 'eye-slash' : 'eye',
+        'tone' => $topic->isPublished() ? 'warning' : 'success',
       ],
       [
         'route' => 'aculta_forum.marley_topic_close',

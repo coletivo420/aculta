@@ -58,6 +58,7 @@ final class ForumMarleyTopicActionsTest extends UnitTestCase {
     $routes = Yaml::parseFile($root . '/aculta_forum.routing.yml');
     self::assertIsArray($routes);
     foreach ([
+      'aculta_forum.marley_topic_publish' => 'TopicModerationPublishForm',
       'aculta_forum.marley_topic_close' => 'TopicModerationCloseForm',
       'aculta_forum.marley_topic_pin' => 'TopicModerationPinForm',
       'aculta_forum.marley_topic_archive' => 'TopicModerationArchiveForm',
