@@ -31,6 +31,7 @@ props:
 slots:
   actions:
     title: Links e formulários autorizados
+    description: Links para formulários reais, renderizados somente após controle de acesso por entidade.
 assets:
   css:
     component:

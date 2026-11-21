@@ -17,8 +17,10 @@ props:
 slots:
   context:
     title: Contexto autorizado do alvo
+    description: Nome e metadados apenas do alvo Wiki cuja leitura foi autorizada.
   form:
     title: Form API do proprietário (inclui CSRF)
+    description: Formulário real do CGU ou da Wiki; SDC nunca aplica decisões em JavaScript.
 assets:
   css:
     component:

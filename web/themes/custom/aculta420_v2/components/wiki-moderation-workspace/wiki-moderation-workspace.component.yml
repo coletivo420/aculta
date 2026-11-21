@@ -24,10 +24,13 @@ slots:
     description: Links de seções autorizados pela Wiki.
   summary:
     title: Resumo editorial
+    description: Indicadores de filas sem expor contagens ou dados de casos restritos.
   content:
     title: Fila ou análise
+    description: Render array da lista de casos, aprovado pelo provider da Wiki.
   footer:
     title: Orientações
+    description: Notas de política editorial sem dados privados ou pareceres de terceiros.
 assets:
   css:
     component:
