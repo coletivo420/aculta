@@ -1,0 +1,8 @@
+name: Votação de tópico - voto confirmado
+description: Dados sintéticos; não altera votos nem contabiliza a enquete.
+component: aculta420_v2:forum-topic-vote-summary
+props:
+  title: Votos no tópico
+  votes: 18
+  voted: true
+  status_label: Seu voto registrado

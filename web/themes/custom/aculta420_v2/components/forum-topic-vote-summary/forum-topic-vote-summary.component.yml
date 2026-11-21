@@ -1,0 +1,33 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Resumo de votação do tópico
+description: Mostra votos em um tópico, distintos de opções de enquete. Apenas dados confirmados pelo backend.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [title, votes, voted, status_label]
+  properties:
+    title:
+      type: string
+      title: Nome da área de votos
+      minLength: 1
+    votes:
+      type: integer
+      title: Votos confirmados
+      minimum: 0
+    voted:
+      type: boolean
+      title: Voto da conta confirmado
+    status_label:
+      type: string
+      title: Estado do voto da conta
+      minLength: 1
+slots:
+  actions:
+    title: Ação de voto autorizada
+    description: Somente Form API/HTMX gerado pelo owner. Este SDC não cria voto nem URL.
+assets:
+  css:
+    component:
+      forum-topic-vote-summary.css: {}

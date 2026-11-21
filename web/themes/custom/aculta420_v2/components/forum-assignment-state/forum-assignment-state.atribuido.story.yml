@@ -1,0 +1,9 @@
+name: Tópico atribuído - estado visual
+description: Atribuição fictícia; não há serviço Assign ou operação de escrita nesta story.
+component: aculta420_v2:forum-assignment-state
+props:
+  title: Responsável pelo tópico
+  assigned: true
+  status_label: Atribuído
+  assignee_label: Participante demonstrativo
+  description: Nome público autorizado pelo responsável editorial em um cenário ilustrativo.

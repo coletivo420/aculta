@@ -34,6 +34,11 @@ independente `cgu-report-button`.
   `excerpt` e `actions`. Duas stories; **ainda sem motor Solved**.
 - `forum-tracking-level`: quatro estados de acompanhamento e slot `actions`.
   Quatro stories; **ainda sem serviço de preferências/notificação**.
+- `forum-assignment-state`: atribuído/não atribuído com nome autorizado e
+  ações em slot, duas stories; **ainda sem backend Assign**.
+- `forum-topic-vote-summary`: total/estado de voto em tópico, distinto de
+  enquetes, duas stories; **ainda sem backend Topic Voting**.
+- `flag-button` já contempla seguir e salvar; não criar duplicata.
 - Stories extras cobrem estados vazios, encerrados, salvando/salvo,
   leitura completa e modal de denúncia em falha/carregamento.
 - UI Patterns Library oferece comutação global claro/escuro; não se criam

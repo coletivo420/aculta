@@ -34,16 +34,18 @@ resultados sem votos, novas publicações/leitura completa, rascunho salvando/
 salvo, histórico vazio/extenso, popup CGU carregando/erro, barra somente com
 ação de denúncia.
 
-Novos SDCs visuais: `forum-solution-state` (duas stories) e
-`forum-tracking-level` (quatro stories). Reutilizam `surface` e `badge`.
-Nenhum dos dois registra solução, altera notificações, modifica banco ou
-cria permissões. Os slots `actions` só recebem comandos autorizados do owner
+Novos SDCs visuais: `forum-solution-state` (duas stories),
+`forum-tracking-level` (quatro), `forum-assignment-state` (duas)
+e `forum-topic-vote-summary` (duas). Reutilizam `surface`, `badge` e
+`icon`. Nenhum registra solução, atribui responsável, altera notificações,
+registra voto, modifica banco ou cria permissões. Os slots `actions` só recebem comandos autorizados do owner
 em uma fase futura.
 
 ## Outras lacunas Discourse
 
 1. Conectar Solved/Assign/Topic Voting ao serviço proprietário, à ACL e aos
-   dados, antes de expor ações públicas.
+   dados, antes de expor ações públicas. Os novos SDCs exibem somente
+   os estados que futuros providers deverão fornecer.
 2. Persistência real de nível de acompanhamento e notificações por conta,
    purpose e Group; `forum-tracking-level` não é seletor funcional.
 3. Rascunho com autosave/retomada e concorrência protegidos; stories de

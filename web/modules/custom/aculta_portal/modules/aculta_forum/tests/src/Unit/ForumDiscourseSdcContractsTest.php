@@ -26,6 +26,8 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
       'forum-draft-status' => ['actions'],
       'forum-solution-state' => ['excerpt', 'actions'],
       'forum-tracking-level' => ['actions'],
+      'forum-assignment-state' => ['actions'],
+      'forum-topic-vote-summary' => ['actions'],
     ];
     foreach ($components as $name => $requiredSlots) {
       $path = $directory . '/' . $name;
@@ -130,6 +132,8 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
       'forum-revision-history',
       'forum-solution-state',
       'forum-tracking-level',
+      'forum-assignment-state',
+      'forum-topic-vote-summary',
     ] as $name) {
       $twig = (string) file_get_contents($theme . '/' . $name . '/' . $name . '.twig');
       self::assertStringContainsString("include('aculta420_v2:surface'", $twig, $name);
@@ -137,6 +141,8 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     foreach ([
       'forum-tracking-level' => 4,
       'forum-solution-state' => 2,
+      'forum-assignment-state' => 2,
+      'forum-topic-vote-summary' => 2,
       'forum-draft-status' => 4,
       'forum-poll-card' => 3,
     ] as $name => $minimum) {
@@ -150,6 +156,11 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     self::assertStringNotContainsString('data-hx-post', $solved);
     self::assertStringContainsString("include('aculta420_v2:badge'", $tracking);
     self::assertStringContainsString("include('aculta420_v2:badge'", $solved);
+    foreach (['forum-assignment-state', 'forum-topic-vote-summary'] as $visualOnly) {
+      $twig = (string) file_get_contents($theme . '/' . $visualOnly . '/' . $visualOnly . '.twig');
+      self::assertStringContainsString("include('aculta420_v2:badge'", $twig);
+      self::assertStringNotContainsString('data-hx-post', $twig);
+    }
   }
 
   public function testTimelineIsHistoryBackedAndClamped(): void {

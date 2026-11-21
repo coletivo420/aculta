@@ -1,0 +1,28 @@
+{# Topic voting must not be confused with the separate poll SDCs. #}
+{% set vote_content %}
+  <div class="forum-topic-vote-summary__summary">
+    <div class="forum-topic-vote-summary__count">
+      {{ include('aculta420_v2:icon', { name: 'arrow-fat-up', variant: 'regular', size: 'md' }, with_context = false) }}
+      <span class="forum-topic-vote-summary__number">{{ votes }}</span>
+      <span>{{ title }}</span>
+    </div>
+    {{ include('aculta420_v2:badge', {
+      label: status_label,
+      icon_name: voted ? 'check-circle' : 'arrow-up',
+      variant: voted ? 'primary' : 'neutral',
+    }, with_context = false) }}
+  </div>
+  {% if actions %}
+    <div class="forum-topic-vote-summary__actions">{{ actions }}</div>
+  {% endif %}
+{% endset %}
+<section{{ attributes.addClass('forum-topic-vote-summary') }} aria-label="{{ title }}">
+  {{ include('aculta420_v2:surface', {
+    tone: 'raised',
+    radius: 'lg',
+    spacing: 'compact',
+    border: 'subtle',
+    elevation: 'subtle',
+    content: vote_content,
+  }, with_context = false) }}
+</section>
