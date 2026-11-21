@@ -60,7 +60,8 @@ final class ReportTargetResolver {
    * ForumPosts must also be readable through their parent topic.
    */
   public function canViewContext(ContentEntityInterface $entity, AccountInterface $account): bool {
-    if (!$this->allowsEntity($entity)
+    if ($account->isAnonymous()
+      || !$this->allowsEntity($entity)
       || ($entity instanceof EntityPublishedInterface && !$entity->isPublished())
       || !$entity->access('view', $account)) {
       return FALSE;

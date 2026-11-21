@@ -478,6 +478,30 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
   }
 
   /**
+   * Even a publicly readable comment cannot be reported through a hidden host.
+   */
+  public function testNewReportActionRequiresVisibleCommentHost(): void {
+    $resolver = $this->container->get('aculta_cgu.report_target_resolver');
+
+    $publishedHost = $this->makeNode('revista');
+    $visible = $this->createMock(CommentInterface::class);
+    $visible->method('getEntityTypeId')->willReturn('comment');
+    $visible->method('getCommentedEntity')->willReturn($publishedHost);
+    $visible->method('isPublished')->willReturn(TRUE);
+    $visible->method('access')->willReturn(TRUE);
+    self::assertTrue($resolver->canViewContext($visible, $this->reporter));
+
+    $unpublishedHost = $this->makeNode('revista', FALSE);
+    $hidden = $this->createMock(CommentInterface::class);
+    $hidden->method('getEntityTypeId')->willReturn('comment');
+    $hidden->method('getCommentedEntity')->willReturn($unpublishedHost);
+    $hidden->method('isPublished')->willReturn(TRUE);
+    $hidden->method('access')->willReturn(TRUE);
+    self::assertFalse($resolver->canViewContext($hidden, $this->reporter));
+    self::assertFalse($resolver->canViewContext($visible, User::getAnonymousUser()));
+  }
+
+  /**
    * Valor atual de um campo da denúncia, lido do banco. O decideReport trabalha sobre uma cópia recarregada.
    */
   private function valueOf(\Drupal\aculta_cgu\Entity\CguReport $report, string $field): mixed {
