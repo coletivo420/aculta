@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Controller;
 
 use Drupal\aculta_cgu\Entity\CguReport;
+use Drupal\aculta_cgu\ModerationScope;
+use Drupal\aculta_forum\Access\TopicAdminPopupAccess;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\aculta_forum\Service\TopicModerationAudit;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Database\Connection;
@@ -29,6 +32,7 @@ final class TopicAdminPopupController extends ControllerBase {
     $instance->database = $container->get('database');
     $instance->audit = $container->get('aculta_forum.topic_moderation_audit');
     $instance->dateFormatter = $container->get('date.formatter');
+    $instance->popupAccess = $container->get('aculta_forum.topic_admin_popup_access');
     return $instance;
   }
 
@@ -48,12 +52,23 @@ final class TopicAdminPopupController extends ControllerBase {
   private DateFormatterInterface $dateFormatter;
 
   /**
+   * Entity-aware access gate shared with the route.
+   */
+  private TopicAdminPopupAccess $popupAccess;
+
+  /**
    * Returns the topic moderation popup content.
    *
    * @return array<string, mixed>
    *   Render array for topic-admin-controls.
    */
   public function view(NodeInterface $node): array {
+    // Recheck before reading labels, counts or confidential CGU notes, even
+    // when this method is invoked without going through the route matcher.
+    $account = $this->currentUser();
+    if (!$this->popupAccess->access($account, $node)->isAllowed()) {
+      throw new AccessDeniedHttpException('Not authorized to inspect this Forum topic.');
+    }
     $nid = (int) $node->id();
     $owner = $node->getOwner();
     $authorName = (string) $owner->getDisplayName();
@@ -83,12 +98,17 @@ final class TopicAdminPopupController extends ControllerBase {
     $reactionTotal = is_scalar($reactionValue) ? (int) $reactionValue : 0;
 
     $items = [];
-    $reports = $this->entityTypeManager()->getStorage('aculta_cgu_report')->loadByProperties([
-      'target_type' => 'node',
-      'target_id' => $nid,
-    ]);
+    // CGU reports have a separate privilege boundary from topic moderation.
+    // In particular, 'move aculta forum topics' does not grant report access.
+    $reports = ModerationScope::allows($account, 'forum')
+      ? $this->entityTypeManager()->getStorage('aculta_cgu_report')->loadByProperties([
+        'target_type' => 'node',
+        'target_id' => $nid,
+        'purpose' => 'forum',
+      ])
+      : [];
     foreach ($reports as $report) {
-      if (!$report instanceof CguReport) {
+      if (!$report instanceof CguReport || !$report->access('view', $account)) {
         continue;
       }
       $statusField = $report->get('status');
@@ -204,7 +224,10 @@ final class TopicAdminPopupController extends ControllerBase {
         'log' => $log ?? [],
       ],
       '#cache' => [
-        'contexts' => ['user.permissions'],
+        // Contextual moderation and report metadata must never be cached for
+        // a different account or stale Group membership.
+        'max-age' => 0,
+        'contexts' => ['user', 'user.permissions', 'domain'],
         'tags' => array_merge($node->getCacheTags(), ['aculta_cgu_report_list']),
       ],
     ];

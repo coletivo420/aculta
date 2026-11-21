@@ -264,11 +264,15 @@ aculta_forum.topic_admin_popup:
     _title: 'Ações de moderação do tópico'
   requirements:
     _permission: 'move aculta forum topics'
+    _custom_access: 'aculta_forum.topic_admin_popup_access:access'
     node: \d+
   options:
+    _aculta_site_key: forum
+    no_cache: true
     parameters:
       node:
         type: 'entity:node'
+  methods: [GET, HEAD]
 
 aculta_forum.topic_moderation_remove:
   path: '/painel-administrativo/forum/{node}/remover-topico'
