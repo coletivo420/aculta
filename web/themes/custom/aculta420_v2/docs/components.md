@@ -1,6 +1,6 @@
 # Catálogo de componentes do tema V2
 
-Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário estático atual: 151 manifests SDC e 252 stories; os gates SDC/Library passaram, mas a nova story do Color Mode Switcher ainda aguarda homologação visual no Runtime. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
+Componentes SDC com schemas estritos (`additionalProperties: false`). Os nomes de prop e slot abaixo são os do `*.component.yml`. "Estado" indica o que foi entregue e verificado. Inventário Git estático de 21/11/2026: 174 manifests SDC e 318 stories, sem componentes desprovidos de story. Os gates de descoberta/Browser do pacote visual atual permanecem pendentes no Runtime. A existência do manifest/story não prova, por si só, que um consumidor de produção esteja configurado.
 
 Prefixo de uso: `aculta420_v2:<nome>`. Em Twig, use `include` com `with_context = false`, ou `embed` quando o componente tem slots.
 
@@ -51,7 +51,7 @@ Consulte `aculta_forum/docs/SDC-PARIDADE-VISUAL-DISCOURSE-2026-11-21.md`.
 
 A UI Patterns Library descobre os componentes diretamente dos arquivos
 `*.component.yml` e suas stories; não há uma lista paralela para manter. Neste
-worktree há 151 manifests SDC e 252 stories; todos têm ao menos uma story e templates Twig em schema estrito. O Drupal precisa reconstruir seus caches de descoberta para
+snapshot Git há 174 manifests SDC e 318 stories; todos têm ao menos uma story. A conformidade de schema/markup é verificada pelos gates específicos, ainda pendentes nesta entrega. O Drupal precisa reconstruir seus caches de descoberta para
 refletir alterações no Runtime. Todos os SDCs têm ao
 menos uma story. A configuração habilita
 `ui_patterns_library`. A última descoberta Runtime registrada listou 145 SDCs, anterior à inclusão do Color Mode Switcher; cache e descoberta precisam ser atualizados após consolidar os 151 manifests do worktree.

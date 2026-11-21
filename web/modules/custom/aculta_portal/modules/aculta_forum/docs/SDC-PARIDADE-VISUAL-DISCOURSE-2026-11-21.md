@@ -57,6 +57,18 @@ em uma fase futura.
    apresenta a interface e não substitui testes do Form API.
 7. Revisões comparadas fora do admin: definir ACL antes de integrar frontend.
 
+## Inventário estático Git
+
+No snapshot da branch em 21/11/2026 foram encontrados **174 manifests
+SDC** e **318 stories**, com zero diretórios de SDC sem story. Essa
+checagem confirma integridade estrutural básica, não renderização Drupal.
+
+A revisão incluiu as superfícies Wiki de moderação recém-criadas como
+referência visual adicional. `wiki-moderation-filters` e
+`wiki-moderation-workspace` ainda usam o fallback de raio
+`--radius-md`; sua substituição por `--radius-base` requer alinhamento
+com a frente Wiki e não é parte desta entrega do Fórum.
+
 ## Gates de aceite e situação
 
 - Contratos PHPUnit: `ForumDiscourseSdcContractsTest` acrescido para
