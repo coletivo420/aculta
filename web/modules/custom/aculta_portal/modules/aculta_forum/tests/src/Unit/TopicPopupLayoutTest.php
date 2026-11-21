@@ -46,9 +46,9 @@ final class TopicPopupLayoutTest extends UnitTestCase {
     self::assertArrayHasKey('field_aculta_tags', $form);
     self::assertArrayHasKey('poll_builder', $form);
     self::assertArrayNotHasKey('unrelated_admin_field', $form);
-    self::assertSame('poll_enabled', $form['poll_builder']['poll_enabled']['#name']);
-    self::assertSame('poll_options', $form['poll_builder']['poll']['poll_options']['#name']);
-    self::assertSame(['visible' => [':input[name="poll_enabled"]' => ['checked' => TRUE]]], $form['poll_builder']['poll']['#states']);
+    self::assertSame('poll_enabled', self::at($form, 'poll_builder', 'poll_enabled', '#name'));
+    self::assertSame('poll_options', self::at($form, 'poll_builder', 'poll', 'poll_options', '#name'));
+    self::assertSame(['visible' => [':input[name="poll_enabled"]' => ['checked' => TRUE]]], self::at($form, 'poll_builder', 'poll', '#states'));
     self::assertArrayHasKey('forum_composer_guidelines', $form);
     $guidelines = $form['forum_composer_guidelines'];
     self::assertIsArray($guidelines);
@@ -61,6 +61,19 @@ final class TopicPopupLayoutTest extends UnitTestCase {
     self::assertCount(3, $props['tips']);
     self::assertArrayHasKey('community_rules', $props);
     self::assertNull($props['community_rules']);
+  }
+
+  /**
+   * Lê um caminho aninhado de um render array sem acessar offsets de mixed.
+   */
+  private static function at(mixed $value, string|int ...$keys): mixed {
+    foreach ($keys as $key) {
+      if (!is_array($value)) {
+        return NULL;
+      }
+      $value = $value[$key] ?? NULL;
+    }
+    return $value;
   }
 
 }

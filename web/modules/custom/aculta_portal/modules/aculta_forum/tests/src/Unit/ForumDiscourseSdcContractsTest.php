@@ -31,11 +31,13 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
       $metadata = Yaml::parseFile($path . '/' . $name . '.component.yml');
       self::assertIsArray($metadata);
       self::assertSame('Comunidade', $metadata['group'] ?? NULL);
-      self::assertSame(FALSE, $metadata['props']['additionalProperties'] ?? NULL);
+      self::assertFalse(self::at($metadata, 'props', 'additionalProperties'));
       self::assertFileExists($path . '/' . $name . '.twig');
       self::assertFileExists($path . '/' . $name . '.css');
       foreach ($requiredSlots as $slot) {
-        self::assertArrayHasKey($slot, $metadata['slots'] ?? [], $name);
+        $slots = self::at($metadata, 'slots') ?? [];
+        self::assertIsArray($slots);
+        self::assertArrayHasKey($slot, $slots, $name);
       }
       $stories = glob($path . '/' . $name . '.*.story.yml');
       self::assertIsArray($stories);
@@ -66,15 +68,17 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     $forum = dirname(__DIR__, 3);
     $composer = (string) file_get_contents($forum . '/src/Hook/TopicComposerFormHooks.php');
     self::assertStringContainsString("'#after_build' => [[self::class, 'afterBuildPollBuilder']]", $composer);
-    $pending = [['existing', 'callback']];
+    $existing = static fn (): array => [];
     $after = \Drupal\aculta_forum\Hook\TopicComposerFormHooks::afterBuildPollBuilder(
-      ['#pre_render' => $pending, 'poll_enabled' => ['#name' => 'poll_enabled']],
+      ['#pre_render' => [$existing], 'poll_enabled' => ['#name' => 'poll_enabled']],
       $this->createMock(\Drupal\Core\Form\FormStateInterface::class),
     );
-    self::assertCount(2, $after['#pre_render']);
-    self::assertSame(['existing', 'callback'], $after['#pre_render'][0]);
-    self::assertSame([\Drupal\aculta_forum\Hook\TopicComposerFormHooks::class, 'preRenderPollBuilder'], $after['#pre_render'][1]);
-    self::assertSame('poll_enabled', $after['poll_enabled']['#name']);
+    $preRender = self::at($after, '#pre_render');
+    self::assertIsArray($preRender);
+    self::assertCount(2, $preRender);
+    self::assertSame($existing, $preRender[0]);
+    self::assertSame([\Drupal\aculta_forum\Hook\TopicComposerFormHooks::class, 'preRenderPollBuilder'], $preRender[1]);
+    self::assertSame('poll_enabled', self::at($after, 'poll_enabled', '#name'));
     self::assertStringContainsString("':input[name=\"poll_enabled\"]'", $composer);
     $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
     $container->set('string_translation', $this->getStringTranslationStub());
@@ -87,8 +91,8 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     ]);
     self::assertSame('portal_component', $builder['#theme']);
     self::assertSame('forum-poll-builder', $builder['#name']);
-    self::assertSame('poll_enabled', $builder['#slots']['toggle']['#name']);
-    self::assertSame('poll_type', $builder['#slots']['fields']['poll_type']['#name']);
+    self::assertSame('poll_enabled', self::at($builder, '#slots', 'toggle', '#name'));
+    self::assertSame('poll_type', self::at($builder, '#slots', 'fields', 'poll_type', '#name'));
     self::assertArrayNotHasKey('poll_enabled', $builder);
     self::assertArrayNotHasKey('poll', $builder);
   }
@@ -127,6 +131,19 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     self::assertStringContainsString("'fragment' => 'forum-post-' . (int) \$receipt['post_id']", $source);
     self::assertStringContainsString("'max-age' => 0", $source);
     self::assertStringContainsString("->accessCheck(TRUE)", $source);
+  }
+
+  /**
+   * Lê um caminho aninhado de um render array sem acessar offsets de mixed.
+   */
+  private static function at(mixed $value, string|int ...$keys): mixed {
+    foreach ($keys as $key) {
+      if (!is_array($value)) {
+        return NULL;
+      }
+      $value = $value[$key] ?? NULL;
+    }
+    return $value;
   }
 
 }

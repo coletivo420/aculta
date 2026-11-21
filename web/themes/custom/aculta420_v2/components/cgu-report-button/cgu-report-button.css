@@ -1,16 +1,17 @@
 .cgu-report-button {
   --content-reply-color: var(--accent-red-stripe, var(--color-brand-primary));
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: .375rem;
-  min-inline-size: 2.75rem;
-  min-block-size: 2.75rem;
+  text-decoration: none;
   color: var(--content-reply-color);
   border: 1px solid var(--color-border, currentColor);
   border-radius: 999px;
   background: var(--color-surface, transparent);
-  text-decoration: none;
+  gap: .375rem;
+  min-inline-size: 2.75rem;
+  min-block-size: 2.75rem;
 }
 .cgu-report-button:hover { border-color: var(--content-reply-color); }
 .cgu-report-button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }

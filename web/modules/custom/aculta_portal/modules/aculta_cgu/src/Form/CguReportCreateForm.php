@@ -23,8 +23,8 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class CguReportCreateForm extends FormBase {
 
   public function __construct(
-    private readonly ReportTargetResolver $targets,
-    private readonly ReportService $reports,
+    protected readonly ReportTargetResolver $targets,
+    protected readonly ReportService $reports,
   ) {}
 
   public static function create(ContainerInterface $container): static {
@@ -45,7 +45,12 @@ final class CguReportCreateForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state, string $entity_type = '', string $entity_id = ''): array {
     $target = $this->target($entity_type, $entity_id);
-    $form['#attributes']['data-aculta-cgu-report-form'] = '';
+    $attributes = $form['#attributes'] ?? [];
+    if (!is_array($attributes)) {
+      $attributes = [];
+    }
+    $attributes['data-aculta-cgu-report-form'] = '';
+    $form['#attributes'] = $attributes;
     $form['#cache'] = [
       'contexts' => ['user', 'user.permissions', 'domain'],
       'max-age' => 0,
@@ -133,16 +138,18 @@ final class CguReportCreateForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $route = $this->getRouteMatch();
-    $entityType = (string) $route->getParameter('entity_type');
-    $entityId = (string) $route->getParameter('entity_id');
+    $rawType = $route->getParameter('entity_type');
+    $rawId = $route->getParameter('entity_id');
+    $entityType = is_string($rawType) ? $rawType : '';
+    $entityId = is_scalar($rawId) ? (string) $rawId : '';
     $target = $this->target($entityType, $entityId);
     try {
       $this->reports->createReport(
         $target,
         $this->currentUser(),
-        (string) $form_state->getValue('reason'),
+        $this->textValue($form_state, 'reason'),
         NULL,
-        (string) $form_state->getValue('description'),
+        $this->textValue($form_state, 'description'),
       );
       $this->messenger()->addStatus($this->t('Denúncia encaminhada à moderação. Obrigado por relatar.'));
       $form_state->setRedirectUrl($this->returnUrl($target));
@@ -177,8 +184,12 @@ final class CguReportCreateForm extends FormBase {
       : Url::fromRoute('<front>');
   }
 
-  private function getRouteMatch(): \Drupal\Core\Routing\RouteMatchInterface {
-    return \Drupal::routeMatch();
+  /**
+   * Lê um valor de texto do formulário; ausente ou não textual vira vazio.
+   */
+  private function textValue(FormStateInterface $formState, string $key): string {
+    $value = $formState->getValue($key);
+    return is_string($value) ? $value : '';
   }
 
 }

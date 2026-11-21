@@ -81,8 +81,8 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
     parent::register($container);
     // O controller Marley referencia aculta_portal.domain_site sem habilitar o aculta_portal
     // inteiro; o serviço sintético satisfaz a referência e não é usado pelas decisões de denúncia.
-    $container->register('aculta_portal.domain_site', \stdClass::class)
-      ->setSynthetic(TRUE)
+    $container->register('aculta_portal.domain_site', \Drupal\aculta_portal\Domain\DomainSiteManager::class)
+      ->setFactory([CguDomainSiteStub::class, 'create'])
       ->setPublic(TRUE);
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
     if (!$loader instanceof ClassLoader) {
@@ -442,9 +442,9 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
     $build = $form->buildForm([], $state, 'node', (string) $node->id());
     self::assertArrayHasKey('reason', $build);
     self::assertArrayHasKey('description', $build);
-    self::assertTrue($build['description']['#required']);
-    self::assertSame(ReportService::DESCRIPTION_MAX_LENGTH, $build['description']['#maxlength']);
-    self::assertSame('', $build['#attributes']['data-aculta-cgu-report-form']);
+    self::assertTrue(self::at($build, 'description', '#required'));
+    self::assertSame(ReportService::DESCRIPTION_MAX_LENGTH, self::at($build, 'description', '#maxlength'));
+    self::assertSame('', self::at($build, '#attributes', 'data-aculta-cgu-report-form'));
 
     $state->setValues(['reason' => 'spam', 'description' => 'curto']);
     $form->validateForm($build, $state);
@@ -515,6 +515,19 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
   private function statusOf(\Drupal\aculta_cgu\Entity\CguReport $report): string {
     $status = $this->valueOf($report, 'status');
     return is_string($status) ? $status : '';
+  }
+
+  /**
+   * Lê um caminho aninhado de um render array sem acessar offsets de mixed.
+   */
+  private static function at(mixed $value, string|int ...$keys): mixed {
+    foreach ($keys as $key) {
+      if (!is_array($value)) {
+        return NULL;
+      }
+      $value = $value[$key] ?? NULL;
+    }
+    return $value;
   }
 
 }

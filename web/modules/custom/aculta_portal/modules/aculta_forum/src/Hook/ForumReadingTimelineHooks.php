@@ -81,7 +81,7 @@ final class ForumReadingTimelineHooks {
     ];
 
     if ($unread > 0 && is_array($receipt)
-      && (int) ($receipt['post_id'] ?? 0) > 0 && (int) ($receipt['page'] ?? -1) >= 0) {
+      && (int) $receipt['post_id'] > 0 && (int) $receipt['page'] >= 0) {
       $firstUrl = Url::fromRoute('entity.node.canonical', ['node' => $topicId], [
         'query' => $this->threadBuilder->getTopicPagerQuery((int) $receipt['page']),
         'fragment' => 'forum-post-' . (int) $receipt['post_id'],

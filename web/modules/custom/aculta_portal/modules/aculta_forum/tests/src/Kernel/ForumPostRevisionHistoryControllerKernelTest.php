@@ -155,7 +155,7 @@ final class ForumPostRevisionHistoryControllerKernelTest extends KernelTestBase 
     self::assertIsArray($history);
     self::assertSame('portal_component', $history['#theme']);
     self::assertSame('forum-revision-history', $history['#name']);
-    $table = $history['#slots']['revisions'];
+    $table = self::at($history, '#slots', 'revisions');
     self::assertIsArray($table);
     self::assertSame('table', $table['#type']);
     $rows = $table['#rows'];
@@ -255,6 +255,19 @@ final class ForumPostRevisionHistoryControllerKernelTest extends KernelTestBase 
       $this->container->get('date.formatter'),
       $this->container->get('form_builder'),
     );
+  }
+
+  /**
+   * Lê um caminho aninhado de um render array sem acessar offsets de mixed.
+   */
+  private static function at(mixed $value, string|int ...$keys): mixed {
+    foreach ($keys as $key) {
+      if (!is_array($value)) {
+        return NULL;
+      }
+      $value = $value[$key] ?? NULL;
+    }
+    return $value;
   }
 
 }

@@ -39,7 +39,7 @@ final class CguReportActionHooks {
     if (!$entity instanceof ContentEntityInterface
       || $this->currentUser->isAnonymous()
       || $entity->isNew()
-      || !in_array((string) ($build['#view_mode'] ?? ''), ['full', 'default'], TRUE)) {
+      || !in_array(is_string($build['#view_mode'] ?? NULL) ? $build['#view_mode'] : '', ['full', 'default'], TRUE)) {
       return;
     }
 

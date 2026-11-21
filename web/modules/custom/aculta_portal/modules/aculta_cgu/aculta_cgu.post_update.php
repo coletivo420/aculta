@@ -141,7 +141,7 @@ function aculta_cgu_post_update_migrate_moderator_role(): string {
  */
 function aculta_cgu_post_update_add_report_description(): string {
   $updates = \Drupal::entityDefinitionUpdateManager();
-  if ($updates->getInstalledFieldStorageDefinition('description', 'aculta_cgu_report') !== NULL) {
+  if ($updates->getFieldStorageDefinition('description', 'aculta_cgu_report') !== NULL) {
     return 'O campo description já estava instalado na entidade aculta_cgu_report.';
   }
   $definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('aculta_cgu_report');

@@ -36,7 +36,7 @@ final class CguReportDecisionForm extends FormBase {
     protected readonly ReportService $reportService,
     protected readonly EntityTypeManagerInterface $entityTypeMgr,
     protected readonly DateFormatterInterface $dateFormatter,
-    private readonly ?RouteMatchInterface $cguDecisionRouteMatch = NULL,
+    protected readonly ?RouteMatchInterface $cguDecisionRouteMatch = NULL,
   ) {}
 
   /**
