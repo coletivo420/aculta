@@ -73,6 +73,8 @@ services:
       - '@current_route_match'
       - '@request_stack'
       - '@string_translation'
+      - '@aculta_forum.poll_manager'
+      - '@messenger'
   Drupal\aculta_forum\Hook\DiscussionReplyFormHooks:
     class: Drupal\aculta_forum\Hook\DiscussionReplyFormHooks
     arguments:
