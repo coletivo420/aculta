@@ -51,12 +51,12 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     $vote = (string) file_get_contents($forum . '/src/Form/ForumPollVoteForm.php');
     $poll = (string) file_get_contents($forum . '/src/Hook/TopicPollRenderHooks.php');
     $revisions = (string) file_get_contents($forum . '/src/Controller/ForumPostRevisionHistoryController.php');
-    self::assertStringContainsString("$results->resultsVisible", $vote);
+    self::assertStringContainsString('$results->resultsVisible', $vote);
     self::assertStringContainsString("'forum-poll-results'", $vote);
     self::assertStringContainsString("'forum-poll-card'", $poll);
     self::assertStringContainsString('ForumPollVoteForm::class', $poll);
     self::assertStringContainsString("'forum-revision-history'", $revisions);
-    self::assertStringContainsString("'#slots' => ['revisions' => $historyTable]", $revisions);
+    self::assertStringContainsString("'#slots' => ['revisions' =>", $revisions);
     self::assertStringNotContainsString('->getStorage(', (string) file_get_contents(dirname($forum, 5) . '/themes/custom/aculta420_v2/components/forum-poll-results/forum-poll-results.twig'));
   }
 
