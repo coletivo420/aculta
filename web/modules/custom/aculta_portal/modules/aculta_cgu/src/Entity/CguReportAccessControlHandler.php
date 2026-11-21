@@ -7,6 +7,7 @@ namespace Drupal\aculta_cgu\Entity;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityAccessControlHandler;
+use Drupal\Core\Entity\EntityHandlerInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_cgu\ModerationScope;
@@ -21,7 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  * adaptador de alvo (ex.: LMS por Group) liberam apenas as denúncias sobre alvos
  * que a conta pode moderar. O denunciante vê somente as próprias denúncias.
  */
-final class CguReportAccessControlHandler extends EntityAccessControlHandler {
+final class CguReportAccessControlHandler extends EntityAccessControlHandler implements EntityHandlerInterface {
 
   public function __construct(EntityTypeInterface $entity_type, protected readonly ReportTargetScope $targetScope) {
     parent::__construct($entity_type);

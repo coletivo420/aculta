@@ -79,6 +79,11 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
+    // O controller Marley referencia aculta_portal.domain_site sem habilitar o aculta_portal
+    // inteiro; o serviço sintético satisfaz a referência e não é usado pelas decisões de denúncia.
+    $container->register('aculta_portal.domain_site', \stdClass::class)
+      ->setSynthetic(TRUE)
+      ->setPublic(TRUE);
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
     if (!$loader instanceof ClassLoader) {
       throw new \LogicException('O autoloader Composer não está disponível no Kernel.');
@@ -202,7 +207,7 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
       }
     }
     $report = $this->service->createReport($node, $this->reporter, '  SPAM ');
-    $this->assertSame('spam', $report->get('motivo')->value);
+    $this->assertSame('spam', $this->valueOf($report, 'motivo'));
   }
 
   /**
@@ -220,7 +225,7 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
     $this->assertSame([], $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report')->loadMultiple());
 
     $report = $this->service->createReport($topic, $this->reporter, 'spam', 'forum');
-    $this->assertSame('forum', $report->get('purpose')->value);
+    $this->assertSame('forum', $this->valueOf($report, 'purpose'));
   }
 
   /**
@@ -310,8 +315,8 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
 
     $this->service->decideReport($portalReport, $this->portalModerator, 'procedente', 'ok');
     $this->service->decideReport($forumReport, $this->forumModerator, 'improcedente', 'ok');
-    $this->assertSame('procedente', $portalReport->get('status')->value);
-    $this->assertSame('improcedente', $forumReport->get('status')->value);
+    $this->assertSame('procedente', $this->statusOf($portalReport));
+    $this->assertSame('improcedente', $this->statusOf($forumReport));
   }
 
   /**
@@ -337,18 +342,18 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
         $this->fail('Status inválido aceito: ' . $invalid);
       }
       catch (ReportNotAllowedException) {
-        $this->assertSame('pendente', $report->get('status')->value);
+        $this->assertSame('pendente', $this->valueOf($report, 'status'));
       }
     }
 
     $this->service->decideReport($report, $this->globalModerator, 'em_analise', 'Em apuração');
-    $this->assertSame('em_analise', $report->get('status')->value);
-    $this->assertEmpty($report->get('decided_at')->value, 'Análise não é decisão final.');
+    $this->assertSame('em_analise', $this->statusOf($report));
+    $this->assertEmpty($this->valueOf($report, 'decided_at'), 'Análise não é decisão final.');
 
     $this->service->decideReport($report, $this->globalModerator, 'procedente', 'Confirmada');
-    $this->assertNotEmpty($report->get('decided_at')->value);
+    $this->assertNotEmpty($this->valueOf($report, 'decided_at'));
     $moderatorId = $this->globalModerator->id();
-    $decidedBy = $report->get('decided_by')->value;
+    $decidedBy = $this->valueOf($report, 'decided_by');
     self::assertIsNumeric($moderatorId);
     self::assertIsNumeric($decidedBy);
     self::assertSame((int) $moderatorId, (int) $decidedBy);
@@ -360,10 +365,10 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
         $this->fail('Redecisão aceita: ' . $next);
       }
       catch (ReportNotAllowedException) {
-        $this->assertSame('procedente', $report->get('status')->value);
+        $this->assertSame('procedente', $this->valueOf($report, 'status'));
       }
     }
-    $this->assertSame('Confirmada', $report->get('decision_notes')->value);
+    $this->assertSame('Confirmada', $this->valueOf($report, 'decision_notes'));
   }
 
   /**
@@ -405,6 +410,23 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
       self::assertIsArray($permission);
       self::assertTrue($permission['restrict access'] ?? FALSE);
     }
+  }
+
+
+  /**
+   * Valor atual de um campo da denúncia, lido do banco. O decideReport trabalha sobre uma cópia recarregada.
+   */
+  private function valueOf(\Drupal\aculta_cgu\Entity\CguReport $report, string $field): mixed {
+    $fresh = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report')->loadUnchanged((int) $report->id());
+    return $fresh instanceof \Drupal\aculta_cgu\Entity\CguReport ? $fresh->get($field)->value : NULL;
+  }
+
+  /**
+   * Status atual da denúncia no banco.
+   */
+  private function statusOf(\Drupal\aculta_cgu\Entity\CguReport $report): string {
+    $status = $this->valueOf($report, 'status');
+    return is_string($status) ? $status : '';
   }
 
 }
