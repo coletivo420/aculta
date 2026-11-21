@@ -1,0 +1,26 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Item de denúncia (educador)
+status: experimental
+description: Linha da fila do Ganjalab Educador com um conteúdo denunciado, a contagem de denúncias pendentes e o link para analisar. Usado só no workspace do educador.
+group: Ganjalab Educador
+props:
+  type: object
+  additionalProperties: false
+  required: [label, total, url]
+  properties:
+    label:
+      type: string
+      title: Conteúdo
+      description: Título ou trecho identificador do conteúdo denunciado.
+    total:
+      type: integer
+      title: Denúncias pendentes
+      minimum: 1
+    last_at:
+      type: string
+      title: Última denúncia
+      description: Data já formatada pelo servidor.
+    url:
+      type: string
+      title: Destino
+      description: Tela de análise deste conteúdo.
