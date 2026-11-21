@@ -1,0 +1,9 @@
+name: "WE Sativa - Denúncia Wiki"
+description: "O motivo é sintético; nenhum dado de denunciante ou parecer confidencial."
+props:
+  kind: report
+  title: Denúncia de verbete
+  status: review
+  status_label: Em análise
+  summary: "Conteúdo sinalizado para avaliação no CGU, propósito Wiki."
+  meta: "Os detalhes só aparecem para contas autorizadas."

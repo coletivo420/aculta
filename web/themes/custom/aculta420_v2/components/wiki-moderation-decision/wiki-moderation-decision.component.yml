@@ -1,0 +1,25 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: WE Sativa - Inspeção e decisão
+description: Painel de análise com formulário real fornecido pelo aculta_wiki ou aculta_cgu, sem motor de decisão no componente.
+status: experimental
+group: Studio
+props:
+  type: object
+  additionalProperties: false
+  required: [title]
+  properties:
+    title:
+      type: string
+      title: Título da análise
+    note:
+      type: string
+      title: Orientação sobre a decisão
+slots:
+  context:
+    title: Contexto autorizado do alvo
+  form:
+    title: Form API do proprietário (inclui CSRF)
+assets:
+  css:
+    component:
+      wiki-moderation-decision.css: {}

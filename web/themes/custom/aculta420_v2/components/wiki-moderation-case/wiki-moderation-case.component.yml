@@ -1,0 +1,37 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: WE Sativa - Caso de moderação
+description: Cartão de verbete, proposta ou denúncia autorizado pelo módulo Wiki, com estado e ações reais via slots.
+status: experimental
+group: Studio
+props:
+  type: object
+  additionalProperties: false
+  required: [title, kind, status]
+  properties:
+    title:
+      type: string
+      title: Identificação do caso
+    kind:
+      type: string
+      title: Tipo de fila
+      enum: [entry, proposal, report]
+    status:
+      type: string
+      title: Estado de triagem
+      enum: [pending, review, changes, decided]
+    status_label:
+      type: string
+      title: Texto do estado
+    summary:
+      type: string
+      title: Descrição resumida
+    meta:
+      type: string
+      title: Metadados públicos autorizados
+slots:
+  actions:
+    title: Links e formulários autorizados
+assets:
+  css:
+    component:
+      wiki-moderation-case.css: {}

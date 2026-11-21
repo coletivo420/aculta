@@ -1,0 +1,19 @@
+{# Moderação Wiki: links, dados e autorizações pertencem ao aculta_wiki. #}
+<section{{ attributes.addClass('wiki-moderation-workspace') }} aria-label="{{ title }}">
+  <header class="wiki-moderation-workspace__heading">
+    <span class="wiki-moderation-workspace__eyebrow">
+      {{ include('aculta420_v2:icon', {name: 'book-open-text', variant: 'regular', size: 'sm'}, with_context = false) }}
+      {{ eyebrow|default('WE SATIVA') }}
+    </span>
+    <h1 class="wiki-moderation-workspace__title">{{ title }}</h1>
+    {% if description %}<p class="wiki-moderation-workspace__description">{{ description }}</p>{% endif %}
+  </header>
+  {% if tabs %}
+    <nav class="wiki-moderation-workspace__nav" aria-label="Seções da moderação da Wiki">
+      {{ tabs }}
+    </nav>
+  {% endif %}
+  {% if summary %}<div class="wiki-moderation-workspace__summary">{{ summary }}</div>{% endif %}
+  <div class="wiki-moderation-workspace__content">{{ content }}</div>
+  {% if footer %}<footer class="wiki-moderation-workspace__footer">{{ footer }}</footer>{% endif %}
+</section>

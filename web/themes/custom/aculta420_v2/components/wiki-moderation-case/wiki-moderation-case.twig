@@ -1,0 +1,19 @@
+{% set icons = {entry: 'article', proposal: 'pencil-line', report: 'shield-check'} %}
+{% set kind = kind in ['entry', 'proposal', 'report'] ? kind : 'entry' %}
+{% set status = status in ['pending', 'review', 'changes', 'decided'] ? status : 'pending' %}
+<article{{ attributes.addClass('wiki-moderation-case', 'wiki-moderation-case--' ~ kind) }}>
+  <div class="wiki-moderation-case__icon" aria-hidden="true">
+    {{ include('aculta420_v2:icon', {name: icons[kind], variant: 'regular', size: 'md'}, with_context=false) }}
+  </div>
+  <div class="wiki-moderation-case__main">
+    <div class="wiki-moderation-case__heading">
+      <h2 class="wiki-moderation-case__title">{{ title }}</h2>
+      <span class="wiki-moderation-case__status wiki-moderation-case__status--{{ status }}">
+        {{ status_label|default(status) }}
+      </span>
+    </div>
+    {% if summary %}<p class="wiki-moderation-case__summary">{{ summary }}</p>{% endif %}
+    {% if meta %}<p class="wiki-moderation-case__meta">{{ meta }}</p>{% endif %}
+    {% if actions %}<div class="wiki-moderation-case__actions">{{ actions }}</div>{% endif %}
+  </div>
+</article>
