@@ -14,6 +14,8 @@ use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\aculta_forum\Hook\DiscussionModerationEditHooks;
+use Drupal\aculta_forum\Access\CommentModerationAccess;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Drupal\Core\Url;
 use Drupal\aculta_forum\Service\DiscussionReactionManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -32,6 +34,7 @@ final class DiscussionCommentModerationForm extends FormBase {
     protected readonly EntityTypeManagerInterface $modEntities,
     protected readonly DiscussionReactionManager $modReactions,
     protected readonly DiscussionModerationEditHooks $modEdits,
+    protected readonly CommentModerationAccess $modAccess,
   ) {}
 
   /**
@@ -50,6 +53,7 @@ final class DiscussionCommentModerationForm extends FormBase {
       $container->get('entity_type.manager'),
       $container->get('aculta_forum.discussion_reaction_manager'),
       $container->get(DiscussionModerationEditHooks::class),
+      $container->get('aculta_forum.comment_moderation_access'),
     );
   }
 
@@ -77,6 +81,9 @@ final class DiscussionCommentModerationForm extends FormBase {
       return $form;
     }
     $cid = (int) $comment->id();
+    if (!$form_state->get('acao_feita') && !$this->modAccess->canModerate($comment, $this->modModerator)->isAllowed()) {
+      throw new AccessDeniedHttpException('Comment moderation is not permitted for this context.');
+    }
 
     // Ação concluída: o modal só confirma e a página recarrega para mostrar o novo estado do comentário.
     if ($form_state->get('acao_feita')) {
@@ -204,6 +211,13 @@ final class DiscussionCommentModerationForm extends FormBase {
       return;
     }
     $cid = (int) $comment->id();
+    // The route parameter may have been loaded before a Group membership or
+    // moderation grant changed. Reload and authorize the exact fresh target.
+    $fresh = $this->modEntities->getStorage('comment')->loadUnchanged($cid);
+    if (!$fresh instanceof CommentInterface || !$this->modAccess->canModerate($fresh, $this->modModerator)->isAllowed()) {
+      throw new AccessDeniedHttpException('Comment moderation is no longer permitted.');
+    }
+    $comment = $fresh;
     $acao = $this->acaoDoBotao($form_state);
     $tombstones = $this->modKeyValue->get('aculta_forum_comment_tombstones');
 

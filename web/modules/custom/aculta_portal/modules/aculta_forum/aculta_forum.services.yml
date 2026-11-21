@@ -149,9 +149,10 @@ services:
     arguments: ['@entity_type.manager', '@entity.form_builder', '@renderer']
   aculta_forum.comment_moderation_access:
     class: Drupal\aculta_forum\Access\CommentModerationAccess
+    arguments: ['@aculta_portal.domain_site', '@aculta_forum.discussion_origin_resolver', '@aculta_forum.discussion_context_resolver']
   Drupal\aculta_forum\Form\DiscussionCommentModerationForm:
     class: Drupal\aculta_forum\Form\DiscussionCommentModerationForm
-    arguments: ['@current_route_match', '@keyvalue', '@logger.factory', '@current_user', '@date.formatter', '@entity_type.manager', '@aculta_forum.discussion_reaction_manager', '@Drupal\aculta_forum\Hook\DiscussionModerationEditHooks']
+    arguments: ['@current_route_match', '@keyvalue', '@logger.factory', '@current_user', '@date.formatter', '@entity_type.manager', '@aculta_forum.discussion_reaction_manager', '@Drupal\aculta_forum\Hook\DiscussionModerationEditHooks', '@aculta_forum.comment_moderation_access'
   Drupal\aculta_forum\Hook\RevistaDiscussionPageHooks:
     class: Drupal\aculta_forum\Hook\RevistaDiscussionPageHooks
     arguments: ['@current_route_match', '@current_user']
