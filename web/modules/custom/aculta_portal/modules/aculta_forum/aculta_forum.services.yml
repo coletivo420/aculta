@@ -16,7 +16,7 @@ services:
 
   aculta_forum.poll_manager:
     class: Drupal\aculta_forum\Poll\ForumPollManager
-    arguments: ['@database', '@lock', '@logger.channel.aculta_forum']
+    arguments: ['@database', '@lock', '@datetime.time', '@logger.channel.aculta_forum']
   Drupal\aculta_forum\Poll\ForumPollManager: '@aculta_forum.poll_manager'
 
   aculta_forum.content_index_provider:
