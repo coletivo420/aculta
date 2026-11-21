@@ -423,6 +423,7 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
     $resolver = $this->container->get('aculta_cgu.report_target_resolver');
     $access = new \Drupal\aculta_cgu\Access\CguReportCreateAccess($resolver, $this->service);
     self::assertNull($resolver->load('user', (string) $this->reporter->id()));
+    self::assertNull($resolver->load('node', '0'));
     self::assertTrue($access->access('node', (string) $node->id(), $this->reporter)->isAllowed());
     self::assertFalse($access->access('node', (string) $node->id(), User::getAnonymousUser())->isAllowed());
     self::assertFalse($access->access('user', (string) $this->reporter->id(), $this->reporter)->isAllowed());

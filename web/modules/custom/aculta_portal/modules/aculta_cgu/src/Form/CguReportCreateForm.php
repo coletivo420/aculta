@@ -9,6 +9,7 @@ use Drupal\aculta_cgu\Service\ReportService;
 use Drupal\aculta_cgu\Service\ReportTargetResolver;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
@@ -78,13 +79,13 @@ final class CguReportCreateForm extends FormBase {
     $form['actions'] = [
       '#type' => 'actions',
       'cancel' => [
-        '#type' => 'link',
-        '#title' => $this->t('Cancelar'),
-        '#url' => $this->returnUrl($target),
-        '#attributes' => [
-          'data-aculta-dialog-close' => '',
-          'class' => ['button', 'button--secondary'],
+        '#type' => 'portal_button',
+        '#props' => [
+          'text' => $this->t('Cancelar'),
+          'url' => $this->returnUrl($target)->toString(),
+          'variant' => 'secondary',
         ],
+        '#attributes' => ['data-aculta-dialog-close' => ''],
       ],
       'submit' => [
         '#type' => 'submit',
@@ -156,7 +157,9 @@ final class CguReportCreateForm extends FormBase {
 
   private function target(string $type, string $id): ContentEntityInterface {
     $target = $this->targets->load($type, $id);
-    if ($target === NULL || !$this->reports->canReport($target, $this->currentUser())) {
+    if ($target === NULL
+      || ($target instanceof EntityPublishedInterface && !$target->isPublished())
+      || !$this->reports->canReport($target, $this->currentUser())) {
       throw new AccessDeniedHttpException();
     }
     return $target;
