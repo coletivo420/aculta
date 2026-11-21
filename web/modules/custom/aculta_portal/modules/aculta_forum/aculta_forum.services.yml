@@ -7,8 +7,12 @@ services:
       - '@aculta_forum.discussion_write_guard'
       - '@database'
       - '@cache_tags.invalidator'
+      - '@datetime.time'
       - '@logger.channel.aculta_forum'
   Drupal\aculta_forum\Service\ForumPostMover: '@aculta_forum.post_mover'
+  Drupal\aculta_forum\Hook\ForumPostMoveHooks:
+    class: Drupal\aculta_forum\Hook\ForumPostMoveHooks
+    arguments: ['@aculta_forum.post_mover', '@current_user']
 
   aculta_forum.poll_manager:
     class: Drupal\aculta_forum\Poll\ForumPollManager
