@@ -19,7 +19,10 @@
   {% set report_dialog_body %}
     <div class="cgu-report-button__dialog-body" id="{{ dialog_id }}-body">
       {% if dialog_content %}{{ dialog_content }}
-      {% else %}<p>{{ 'Selecione um motivo, descreva a ocorrência e confirme o envio.'|t }}</p>{% endif %}
+      {% else %}
+        <p>{{ 'Selecione um motivo, descreva a ocorrência e confirme o envio.'|t }}</p>
+        <p><a href="{{ url }}">{{ 'Abrir formulário em página completa'|t }}</a></p>
+      {% endif %}
     </div>
   {% endset %}
   {{ include('aculta420_v2:popup', {
