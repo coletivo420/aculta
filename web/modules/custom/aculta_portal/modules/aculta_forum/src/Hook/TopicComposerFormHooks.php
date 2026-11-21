@@ -168,6 +168,8 @@ final class TopicComposerFormHooks {
     // rendering phase moves the already-processed controls to SDC slots.
     $form['poll_builder'] = [
       '#type' => 'container',
+      // Preserve flat Form API input names and getValue('poll_enabled').
+      '#tree' => FALSE,
       '#weight' => 5,
       '#after_build' => [[self::class, 'afterBuildPollBuilder']],
     ];
@@ -181,6 +183,7 @@ final class TopicComposerFormHooks {
     $multiple = [':input[name="poll_type"]' => ['value' => 'multiple']];
     $form['poll_builder']['poll'] = [
       '#type' => 'container',
+      '#tree' => FALSE,
       '#weight' => 1,
       '#states' => ['visible' => $enabled],
       'poll_question' => [

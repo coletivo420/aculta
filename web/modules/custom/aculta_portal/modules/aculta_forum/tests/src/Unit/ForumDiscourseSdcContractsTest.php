@@ -75,6 +75,9 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     self::assertSame([\Drupal\aculta_forum\Hook\TopicComposerFormHooks::class, 'preRenderPollBuilder'], $after['#pre_render'][1]);
     self::assertSame('poll_enabled', $after['poll_enabled']['#name']);
     self::assertStringContainsString("':input[name=\"poll_enabled\"]'", $composer);
+    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container->set('string_translation', $this->getStringTranslationStub());
+    \Drupal::setContainer($container);
     $builder = \Drupal\aculta_forum\Hook\TopicComposerFormHooks::preRenderPollBuilder([
       '#type' => 'container',
       '#pre_render' => [],
