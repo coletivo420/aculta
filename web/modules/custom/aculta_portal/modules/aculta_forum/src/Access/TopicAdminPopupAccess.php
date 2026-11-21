@@ -29,8 +29,11 @@ final class TopicAdminPopupAccess {
     $denied = AccessResult::forbidden()
       ->cachePerUser()
       ->cachePerPermissions()
-      ->addCacheContexts(['domain'])
-      ->addCacheableDependency($node);
+      ->addCacheContexts(['domain']);
+    // The route may evaluate access without an entity parameter.
+    if ($node !== NULL) {
+      $denied->addCacheableDependency($node);
+    }
 
     if (!$account->isAuthenticated()
       || !$account->hasPermission('move aculta forum topics')
@@ -43,10 +46,9 @@ final class TopicAdminPopupAccess {
     }
 
     $domain = $node->get('field_domain_source')->getValue();
-    $domainId = is_array($domain) && isset($domain[0]['target_id'])
-      && is_scalar($domain[0]['target_id'])
-      ? (string) $domain[0]['target_id']
-      : '';
+    $first = is_array($domain) ? ($domain[0] ?? NULL) : NULL;
+    $rawDomainId = is_array($first) ? ($first['target_id'] ?? NULL) : NULL;
+    $domainId = is_scalar($rawDomainId) ? (string) $rawDomainId : '';
     if ($domainId === '' || $this->sites->getSiteKeyValueForDomainId($domainId) !== 'forum') {
       return $denied;
     }
