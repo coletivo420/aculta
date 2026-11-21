@@ -1,6 +1,12 @@
-name: Filtros de denúncias Wiki
-description: Prévia fictícia da navegação por situação, sem casos privados.
+name: "WE Sativa - Filtros de denúncias"
+description: "Prévia fictícia da navegação por situação; sem casos privados nem ações POST."
 props:
   title: Filtrar denúncias por situação
 slots:
-  options: '<a href="#" aria-current="page">Pendente</a> <a href="#">Em análise</a> <a href="#">Procedente</a> <a href="#">Improcedente</a>'
+  options:
+    type: inline_template
+    template: |
+      <a href="#" aria-current="page">Pendente</a>
+      <a href="#">Em análise</a>
+      <a href="#">Procedente</a>
+      <a href="#">Improcedente</a>
