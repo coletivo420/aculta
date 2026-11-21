@@ -13,6 +13,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -55,19 +56,35 @@ final class ForumMarleyTopicActionsTest extends UnitTestCase {
   public function testRoutesUseOwnerFormsAndNeverAdminPaths(): void {
     $root = dirname(__DIR__, 3);
     $routes = Yaml::parseFile($root . '/aculta_forum.routing.yml');
+    self::assertIsArray($routes);
     foreach ([
       'aculta_forum.marley_topic_close' => 'TopicModerationCloseForm',
       'aculta_forum.marley_topic_pin' => 'TopicModerationPinForm',
       'aculta_forum.marley_topic_archive' => 'TopicModerationArchiveForm',
     ] as $name => $form) {
-      $route = $routes[$name];
-      self::assertStringContainsString($form, $route['defaults']['_form']);
-      self::assertSame('account', $route['options']['_aculta_site_key']);
-      self::assertSame('entity:node', $route['options']['parameters']['node']['type']);
-      self::assertContains('POST', $route['methods']);
-      self::assertStringStartsWith('/marley/forum/topico/', $route['path']);
-      self::assertFalse($route['options']['_admin_route'] ?? FALSE);
-      self::assertSame('aculta_forum.marley_topic_actions:access', $route['requirements']['_custom_access']);
+      $route = $routes[$name] ?? [];
+      self::assertIsArray($route);
+      $defaults = $route['defaults'] ?? [];
+      self::assertIsArray($defaults);
+      $formClass = $defaults['_form'] ?? '';
+      self::assertIsString($formClass);
+      self::assertStringContainsString($form, $formClass);
+      $options = $route['options'] ?? [];
+      self::assertIsArray($options);
+      self::assertSame('account', $options['_aculta_site_key'] ?? NULL);
+      $parameters = $options['parameters'] ?? [];
+      self::assertIsArray($parameters);
+      $node = $parameters['node'] ?? [];
+      self::assertIsArray($node);
+      self::assertSame('entity:node', $node['type'] ?? NULL);
+      self::assertContains('POST', is_array($route['methods'] ?? NULL) ? $route['methods'] : []);
+      $path = $route['path'] ?? '';
+      self::assertIsString($path);
+      self::assertStringStartsWith('/marley/forum/topico/', $path);
+      self::assertFalse($options['_admin_route'] ?? FALSE);
+      $requirements = $route['requirements'] ?? [];
+      self::assertIsArray($requirements);
+      self::assertSame('aculta_forum.marley_topic_actions:access', $requirements['_custom_access'] ?? NULL);
     }
 
     $source = (string) file_get_contents($root . '/src/Service/ForumMarleyTopicActions.php');
@@ -80,11 +97,14 @@ final class ForumMarleyTopicActionsTest extends UnitTestCase {
     }
   }
 
-  private function topic(string $bundle): NodeInterface {
+  private function topic(string $bundle): MockObject&NodeInterface {
     $field = $this->createMock(FieldItemListInterface::class);
     $field->method('isEmpty')->willReturn(FALSE);
     $field->method('__get')->with('target_id')->willReturn('domain-forum');
     $node = $this->createMock(NodeInterface::class);
+    $node->method('getCacheContexts')->willReturn([]);
+    $node->method('getCacheTags')->willReturn([]);
+    $node->method('getCacheMaxAge')->willReturn(-1);
     $node->method('bundle')->willReturn($bundle);
     $node->method('hasField')->willReturn(TRUE);
     $node->method('get')->willReturn($field);

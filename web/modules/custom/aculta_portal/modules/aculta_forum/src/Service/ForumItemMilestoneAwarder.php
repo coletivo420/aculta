@@ -55,8 +55,9 @@ final class ForumItemMilestoneAwarder implements EventSubscriberInterface {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'config.factory')]
     private readonly ConfigFactoryInterface $configFactory,
+    // Opcional: sem o aculta_user não há conquistas para conceder, e o Fórum continua funcionando.
     #[Autowire(service: 'aculta_user.badge_service')]
-    private readonly BadgeService $badges,
+    private readonly ?BadgeService $badges,
   ) {}
 
   /**
@@ -85,7 +86,7 @@ final class ForumItemMilestoneAwarder implements EventSubscriberInterface {
     }
     $score = $this->score($event->entityType, $event->entityId, $event->authorUid);
     foreach (self::badgesForScore($kind, $score) as $badge) {
-      $this->badges->award($event->authorUid, $badge);
+      $this->badges?->award($event->authorUid, $badge);
     }
   }
 

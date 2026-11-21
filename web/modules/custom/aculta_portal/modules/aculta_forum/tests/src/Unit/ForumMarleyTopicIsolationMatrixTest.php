@@ -14,6 +14,7 @@ use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\MockObject\MockObject;
 
 /**
  * Tests Marley topic controls against authorization and source-domain leaks.
@@ -84,12 +85,18 @@ final class ForumMarleyTopicIsolationMatrixTest extends UnitTestCase {
     );
   }
 
-  private function topic(string $bundle, bool $canView): NodeInterface {
+  private function topic(string $bundle, bool $canView): MockObject&NodeInterface {
     $domain = $this->createMock(FieldItemListInterface::class);
     $domain->method('isEmpty')->willReturn(FALSE);
     $domain->method('__get')->with('target_id')->willReturn('domain-forum');
 
     $topic = $this->createMock(NodeInterface::class);
+
+    $topic->method('getCacheContexts')->willReturn([]);
+
+    $topic->method('getCacheTags')->willReturn([]);
+
+    $topic->method('getCacheMaxAge')->willReturn(-1);
     $topic->method('bundle')->willReturn($bundle);
     $topic->method('hasField')->willReturn(TRUE);
     $topic->method('get')->with('field_domain_source')->willReturn($domain);
