@@ -32,6 +32,9 @@ Marley/Fórum apenas após contrato de audit trail e ACL.
 
 ## Continuação: construtor de enquete + leitura com History
 
+- `TopicPopupLayout::KEEP` inclui `poll_builder`; um teste Unit protege
+  sua presença no popup, preservando `field_aculta_tags` e removendo
+  campos administrativos.
 - O SDC `forum-poll-builder` usa slots para receber o checkbox e os campos
   **já processados** pelo Form API. `afterBuildPollBuilder` registra a
   conversão apenas para `#pre_render`: `#parents`, `#name`,

@@ -1,5 +1,6 @@
 .forum-reading-timeline { display: grid; gap: .65rem; min-inline-size: 0; padding: .75rem; color: var(--color-text-primary, currentColor); background: var(--color-surface-raised, transparent); border: 1px solid var(--color-border, currentColor); border-radius: var(--radius-md, .75rem); }
 .forum-reading-timeline__summary, .forum-reading-timeline__links { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; }
 .forum-reading-timeline__progress { inline-size: 100%; block-size: .8rem; accent-color: var(--color-text-primary, currentColor); }
+.forum-reading-timeline__navigation { display: flex; flex-wrap: wrap; gap: .5rem; }
 .forum-reading-timeline__links a { min-block-size: 2.75rem; display: inline-flex; align-items: center; padding: .3rem .55rem; }
 .forum-reading-timeline__links a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }

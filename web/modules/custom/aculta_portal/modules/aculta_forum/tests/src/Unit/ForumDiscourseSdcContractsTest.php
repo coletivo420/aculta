@@ -65,6 +65,15 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     $forum = dirname(__DIR__, 3);
     $composer = (string) file_get_contents($forum . '/src/Hook/TopicComposerFormHooks.php');
     self::assertStringContainsString("'#after_build' => [[self::class, 'afterBuildPollBuilder']]", $composer);
+    $pending = [['existing', 'callback']];
+    $after = \Drupal\aculta_forum\Hook\TopicComposerFormHooks::afterBuildPollBuilder(
+      ['#pre_render' => $pending, 'poll_enabled' => ['#name' => 'poll_enabled']],
+      $this->createMock(\Drupal\Core\Form\FormStateInterface::class),
+    );
+    self::assertCount(2, $after['#pre_render']);
+    self::assertSame(['existing', 'callback'], $after['#pre_render'][0]);
+    self::assertSame([\Drupal\aculta_forum\Hook\TopicComposerFormHooks::class, 'preRenderPollBuilder'], $after['#pre_render'][1]);
+    self::assertSame('poll_enabled', $after['poll_enabled']['#name']);
     self::assertStringContainsString("':input[name=\"poll_enabled\"]'", $composer);
     $builder = \Drupal\aculta_forum\Hook\TopicComposerFormHooks::preRenderPollBuilder([
       '#type' => 'container',
