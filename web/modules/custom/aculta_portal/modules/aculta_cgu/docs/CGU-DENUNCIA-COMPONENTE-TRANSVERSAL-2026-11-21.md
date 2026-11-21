@@ -45,16 +45,16 @@ mesmo da página acessível sem JavaScript, com token do Drupal Form API.
    Conteúdo contextual da Wiki/Revista/LMS não é classificado como Fórum.
 3. `ReportService::resolvePurpose` calcula a origem a partir da entidade e
    do host; o usuário não submete um purpose.
-3. Descrição de 10 a 2000 caracteres no formulário; o serviço limita 2000 para
+4. Descrição de 10 a 2000 caracteres no formulário; o serviço limita 2000 para
    chamadas legadas e grava em `description`. Notificação não inclui o texto
    nem identidade do denunciante.
-4. Nenhum botão aparece ao anônimo; acesso direto ao formulário é negado.
+5. Nenhum botão aparece ao anônimo; acesso direto ao formulário é negado.
    Duplicatas abertas e excesso diário também são recusados, com lock na gravação.
-5. Alterações nos registros pertencem apenas ao CGU. Flagging legado permanece
+6. Alterações nos registros pertencem apenas ao CGU. Flagging legado permanece
    separado, sem criar denúncia duas vezes no novo fluxo.
-6. O cache do botão considera conta, permissões e domínio; `max-age: 0` por
+7. O cache do botão considera conta, permissões e domínio; `max-age: 0` por
    depender da contagem e do histórico de denúncias da conta.
-7. O histórico Growroom é isolado e não recebe denúncia pelo motor padrão.
+8. O histórico Growroom é isolado e não recebe denúncia pelo motor padrão.
 
 ## Instalação / alterações estruturais
 
