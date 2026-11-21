@@ -130,6 +130,7 @@ final class CguReportDecisionForm extends FormBase {
           [$this->t('Conteúdo denunciado:'), $targetLabel],
           [$this->t('Área / Purpose:'), ucfirst($purpose)],
           [$this->t('Motivo apontado:'), ucfirst($motivo)],
+          [$this->t('Descrição do relato:'), $this->report->get('description')->getString() ?: '-'],
           [$this->t('Data da denúncia:'), $created > 0 ? $this->dateFormatter->format($created, 'medium') : '-'],
           [$this->t('Situação atual:'), ucfirst($status)],
         ],

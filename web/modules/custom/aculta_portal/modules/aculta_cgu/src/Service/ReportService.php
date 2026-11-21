@@ -65,6 +65,11 @@ final class ReportService {
    */
   public const NOTES_MAX_LENGTH = 2000;
 
+  /**
+   * Maximum length of the confidential description supplied by the reporter.
+   */
+  public const DESCRIPTION_MAX_LENGTH = 2000;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly TimeInterface $time,
@@ -147,7 +152,11 @@ final class ReportService {
    *
    * @throws \Drupal\aculta_cgu\Exception\ReportNotAllowedException
    */
-  public function createReport(EntityInterface $entity, AccountInterface $account, string $motivo, ?string $purpose = NULL): CguReport {
+  public function createReport(EntityInterface $entity, AccountInterface $account, string $motivo, ?string $purpose = NULL, string $description = ''): CguReport {
+    $description = trim($description);
+    if (mb_strlen($description) > self::DESCRIPTION_MAX_LENGTH) {
+      throw new ReportNotAllowedException('Descrição da denúncia muito longa.');
+    }
     $motivo = strtolower(trim($motivo));
     if (!in_array($motivo, self::REASONS, TRUE)) {
       throw new ReportNotAllowedException('Motivo de denúncia inválido.');
@@ -172,6 +181,7 @@ final class ReportService {
         'target_id' => (int) $entity->id(),
         'uid' => (int) $account->id(),
         'motivo' => $motivo,
+        'description' => $description,
         'purpose' => $resolvedPurpose,
         'status' => self::STATUS_PENDING,
       ]);
