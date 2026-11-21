@@ -23,7 +23,7 @@ final class ModerationScope {
   /**
    * Purposes que aceitam denúncia.
    */
-  public const PURPOSES = ['portal', 'eventos', 'forum', 'revista', 'wiki'];
+  public const PURPOSES = ['portal', 'eventos', 'forum', 'revista', 'wiki', 'lms'];
 
   /**
    * Nome da permissão que modera um purpose.

@@ -34,6 +34,13 @@ services:
       - '@logger.channel.aculta_cgu'
       - '@?aculta_mailer.mailer'
 
+  # Escopo por alvo para purposes restritos (ex.: LMS por Group). Adaptadores entram pela tag.
+  aculta_cgu.report_target_scope:
+    class: Drupal\aculta_cgu\Scope\ReportTargetScope
+    arguments:
+      - !tagged_iterator aculta_cgu.report_target_scope_provider
+      - '@entity_type.manager'
+
   aculta_cgu.report_service:
     class: Drupal\aculta_cgu\Service\ReportService
     arguments:
@@ -42,6 +49,7 @@ services:
       - '@aculta_cgu.moderation_notifier'
       - '@lock'
       - '@logger.channel.aculta_cgu'
+      - '@aculta_cgu.report_target_scope'
 
   aculta_cgu.report_queue:
     class: Drupal\aculta_cgu\Service\CguReportQueue

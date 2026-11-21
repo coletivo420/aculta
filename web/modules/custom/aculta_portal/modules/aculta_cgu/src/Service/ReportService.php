@@ -14,6 +14,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\Exception\ReportNotAllowedException;
 use Drupal\aculta_cgu\ModerationScope;
+use Drupal\aculta_cgu\Scope\ReportTargetScope;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -71,6 +72,7 @@ final class ReportService {
     private readonly ModerationNotifier $notifier,
     private readonly LockBackendInterface $lock,
     private readonly LoggerInterface $logger,
+    private readonly ReportTargetScope $targetScope,
   ) {}
 
   /**
@@ -203,9 +205,7 @@ final class ReportService {
    *   Status ou transição inválidos, ou parecer longo demais.
    */
   public function decideReport(CguReport $report, AccountInterface $moderator, string $status, string $notes): void {
-    $purposeVal = $report->get('purpose')->value;
-    $purpose = is_scalar($purposeVal) ? (string) $purposeVal : '';
-    if (!ModerationScope::allows($moderator, $purpose)) {
+    if (!$this->targetScope->allowsReport($report, $moderator)) {
       throw new AccessDeniedHttpException('Usuário sem permissão para moderar denúncias deste purpose.');
     }
 
@@ -232,7 +232,7 @@ final class ReportService {
       }
       $freshPurpose = $fresh->get('purpose')->value;
       $purpose = is_scalar($freshPurpose) ? (string) $freshPurpose : '';
-      if (!ModerationScope::allows($moderator, $purpose)) {
+      if (!$this->targetScope->allowsReport($fresh, $moderator)) {
         throw new AccessDeniedHttpException('Usuário sem permissão para moderar denúncias deste purpose.');
       }
 
@@ -265,6 +265,16 @@ final class ReportService {
   }
 
   /**
+   * Purpose LMS só existe quando um adaptador de Group está registrado (fail closed).
+   */
+  private function lmsPurpose(): string {
+    if (!$this->targetScope->supports('lms')) {
+      throw new ReportNotAllowedException('Contexto de moderação LMS ainda não habilitado.');
+    }
+    return 'lms';
+  }
+
+  /**
    * Resolves the authoritative reporting scope from the actual host.
    *
    * A Comment bundle is shared by multiple purposes. LMS discussions require
@@ -278,7 +288,7 @@ final class ReportService {
         throw new ReportNotAllowedException('Contexto do comentário não reconhecido.');
       }
       $purpose = $this->resolvePurpose($host);
-      if (!in_array($purpose, ['forum', 'revista', 'wiki'], TRUE)) {
+      if (!in_array($purpose, ['forum', 'revista', 'wiki', 'lms'], TRUE)) {
         throw new ReportNotAllowedException('Contexto de moderação do comentário ainda não habilitado.');
       }
       return $purpose;
@@ -291,6 +301,7 @@ final class ReportService {
         'aculta_forum_topic' => 'forum',
         'revista' => 'revista',
         'wiki_entry' => 'wiki',
+        'aculta_lms_topic' => $this->lmsPurpose(),
         default => 'portal',
       };
     }
