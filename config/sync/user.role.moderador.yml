@@ -15,5 +15,6 @@ permissions:
   - 'moderar denuncias do forum'
   - 'reorganize aculta forum topics'
   - 'close aculta forum polls'
+  - 'moderate aculta forum topic deletions'
   - 'use aculta_forum_post transition approve'
   - 'use aculta_forum_post transition reject'
