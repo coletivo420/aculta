@@ -1,0 +1,5 @@
+name: Botão de marcação (marcado)
+props:
+  label: Seguindo
+  icon: bell-simple
+  pressed: true

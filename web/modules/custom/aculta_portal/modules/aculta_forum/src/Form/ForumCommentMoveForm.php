@@ -23,7 +23,11 @@ final class ForumCommentMoveForm extends FormBase {
   ) {}
 
   /**
-   * {@inheritdoc} */
+   * Creates an instance from the service container.
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_forum.comment_mover'),
@@ -32,7 +36,8 @@ final class ForumCommentMoveForm extends FormBase {
   }
 
   /**
-   * {@inheritdoc} */
+   * Provides the getFormId operation.
+   */
   public function getFormId(): string {
     return 'aculta_forum_comment_move';
   }
@@ -41,7 +46,14 @@ final class ForumCommentMoveForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param ?CommentInterface $comment
+   *   Value used for $comment.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?CommentInterface $comment = NULL): array {
     if (!$comment instanceof CommentInterface || !$this->mover->access($comment, $this->account)->isAllowed()) {
@@ -95,7 +107,7 @@ final class ForumCommentMoveForm extends FormBase {
         '#button_type' => 'primary',
       ],
       'cancel' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Cancelar'),
           'url' => Url::fromRoute('aculta_forum.admin')->toString(),
@@ -110,6 +122,9 @@ final class ForumCommentMoveForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $destination_id = filter_var($form_state->getValue('destination'), FILTER_VALIDATE_INT);
@@ -122,6 +137,9 @@ final class ForumCommentMoveForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $comment_id = filter_var($form_state->get('comment_id'), FILTER_VALIDATE_INT);

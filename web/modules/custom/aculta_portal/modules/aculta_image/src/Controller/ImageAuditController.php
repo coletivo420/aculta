@@ -26,6 +26,9 @@ final class ImageAuditController extends ControllerBase {
 
   /**
    * Creates the object with its injected services.
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -37,6 +40,9 @@ final class ImageAuditController extends ControllerBase {
 
   /**
    * Builds the image audit dashboard.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function dashboard(): array {
     $resumo = $this->audit->resumo();
@@ -107,6 +113,9 @@ final class ImageAuditController extends ControllerBase {
 
   /**
    * Builds the detailed image audit report.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function report(): array {
     $resumo = $this->audit->resumo();
@@ -141,43 +150,43 @@ final class ImageAuditController extends ControllerBase {
     }
 
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:image-audit-report',
+      '#theme' => 'portal_component',
+      '#name' => 'image-audit-report',
       '#slots' => ['content' => [
-      'aviso' => ['#markup' => '<p>' . $this->t('Relatório somente de leitura. Nada é apagado aqui: candidatas passam pela revisão e pela quarentena.') . '</p>'],
-      'resumo' => ['#type' => 'table', '#header' => [$this->t('Indicador'), $this->t('Valor')], '#rows' => $linhas],
-      'duplicatas' => [
-        '#type' => 'table',
-        '#caption' => $this->t('Grupos de duplicatas exatas (checksum)'),
-        '#header' => [$this->t('Checksum'), $this->t('Mídias')],
-        '#rows' => $grupos,
-        '#empty' => $this->t('Nenhuma duplicata exata encontrada.'),
-      ],
-      'visuais' => [
-        '#type' => 'table',
-        '#caption' => $this->t('Possíveis duplicatas visuais (imagens parecidas, a revisar)'),
-        '#header' => [$this->t('Imagem A (fid)'), $this->t('Imagem B (fid)'), $this->t('Distância (bits)')],
-        '#rows' => $visuais,
-        '#empty' => $this->t('Nenhum par parecido. As impressões digitais são calculadas no cron, em lotes.'),
-      ],
-      'candidatas' => [
-        '#type' => 'table',
-        '#caption' => $this->t('Candidatas à revisão (sem referência em file_usage)'),
-        '#header' => [$this->t('Arquivo'), $this->t('Tamanho'), $this->t('Motivos')],
-        '#rows' => $candidatas,
-        '#empty' => $this->t('Nenhuma imagem sem referência.'),
-      ],
-      'usos_arquivo' => [
-        '#type' => 'table',
-        '#caption' => $this->t('Uso de arquivos de imagem'),
-        '#header' => [$this->t('Arquivo'), $this->t('Tamanho'), $this->t('Ação')],
-        '#rows' => array_map(fn (array $arquivo): array => [
-          $arquivo['filename'],
-          round($arquivo['filesize'] / 1024, 1) . ' KB',
-          Link::createFromRoute($this->t('Onde é usado'), 'aculta_image.file_usage', ['file' => $arquivo['fid']]),
-        ], $this->audit->arquivos()),
-        '#empty' => $this->t('Nenhum arquivo de imagem gerenciado.'),
-      ],
+        'aviso' => ['#markup' => '<p>' . $this->t('Relatório somente de leitura. Nada é apagado aqui: candidatas passam pela revisão e pela quarentena.') . '</p>'],
+        'resumo' => ['#type' => 'table', '#header' => [$this->t('Indicador'), $this->t('Valor')], '#rows' => $linhas],
+        'duplicatas' => [
+          '#type' => 'table',
+          '#caption' => $this->t('Grupos de duplicatas exatas (checksum)'),
+          '#header' => [$this->t('Checksum'), $this->t('Mídias')],
+          '#rows' => $grupos,
+          '#empty' => $this->t('Nenhuma duplicata exata encontrada.'),
+        ],
+        'visuais' => [
+          '#type' => 'table',
+          '#caption' => $this->t('Possíveis duplicatas visuais (imagens parecidas, a revisar)'),
+          '#header' => [$this->t('Imagem A (fid)'), $this->t('Imagem B (fid)'), $this->t('Distância (bits)')],
+          '#rows' => $visuais,
+          '#empty' => $this->t('Nenhum par parecido. As impressões digitais são calculadas no cron, em lotes.'),
+        ],
+        'candidatas' => [
+          '#type' => 'table',
+          '#caption' => $this->t('Candidatas à revisão (sem referência em file_usage)'),
+          '#header' => [$this->t('Arquivo'), $this->t('Tamanho'), $this->t('Motivos')],
+          '#rows' => $candidatas,
+          '#empty' => $this->t('Nenhuma imagem sem referência.'),
+        ],
+        'usos_arquivo' => [
+          '#type' => 'table',
+          '#caption' => $this->t('Uso de arquivos de imagem'),
+          '#header' => [$this->t('Arquivo'), $this->t('Tamanho'), $this->t('Ação')],
+          '#rows' => array_map(fn (array $arquivo): array => [
+            $arquivo['filename'],
+            round($arquivo['filesize'] / 1024, 1) . ' KB',
+            Link::createFromRoute($this->t('Onde é usado'), 'aculta_image.file_usage', ['file' => $arquivo['fid']]),
+          ], $this->audit->arquivos()),
+          '#empty' => $this->t('Nenhum arquivo de imagem gerenciado.'),
+        ],
       ]],
       '#cache' => ['max-age' => 0],
     ];

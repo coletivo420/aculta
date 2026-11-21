@@ -32,7 +32,7 @@ final class GreenStashProductController {
    * @param string $produto
    *   Identificador do produto solicitado.
    *
-   * @return array
+   * @return array<array-key, mixed>
    *   Estrutura renderizável da página do produto.
    */
   public function detail(string $produto): array {
@@ -54,7 +54,7 @@ final class GreenStashProductController {
     $build['heading']['#value'] = $entity->label();
     $build['notice']['#value'] = 'Detalhes do produto. A edição dentro do Green Stash será disponibilizada na próxima fase.';
     $build['back'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => 'Voltar aos produtos',
         'url' => Url::fromRoute('aculta_commerce.green_stash_area', ['secao' => 'produtos'])->toString(),

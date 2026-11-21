@@ -1,0 +1,18 @@
+.forum-poll-card {
+  inline-size: 100%;
+  min-inline-size: 0;
+  max-inline-size: 100%;
+}
+
+.forum-poll-card .aculta-surface {
+  color: var(--color-text-primary);
+}
+
+.forum-poll-card :is(fieldset, legend, input, select, button) {
+  max-inline-size: 100%;
+}
+
+.forum-poll-card :focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}

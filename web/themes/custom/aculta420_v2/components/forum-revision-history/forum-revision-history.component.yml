@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Histórico revisionável de publicação do Fórum
+description: Superfície para tabela paginada e comparações autorizadas pelo owner; nunca consulta revisões no Twig.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [label]
+  properties:
+    label:
+      title: Nome acessível do histórico
+      type: string
+      minLength: 1
+slots:
+  revisions:
+    title: Revisões autorizadas
+    description: Tabela e links para comparação criados pelo controlador de histórico revisionável.
+assets:
+  css:
+    component:
+      forum-revision-history.css: {}

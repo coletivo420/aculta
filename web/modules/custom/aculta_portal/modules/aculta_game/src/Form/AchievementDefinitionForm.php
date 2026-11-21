@@ -30,6 +30,9 @@ final class AchievementDefinitionForm extends FormBase {
 
   /**
    * Create the definition form from Drupal services.
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -49,6 +52,16 @@ final class AchievementDefinitionForm extends FormBase {
 
   /**
    * Build the achievement definition editor.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param ?string $conquista
+   *   Value used for $conquista.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?string $conquista = NULL): array {
     $all = $this->definitions->all();
@@ -108,7 +121,7 @@ final class AchievementDefinitionForm extends FormBase {
       ];
       if ($conquista !== NULL) {
         $form['image_section']['remove_link'] = [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => (string) $this->t('Remover imagem atual'),
             'url' => Url::fromRoute('aculta_game.achievement_image_remove_confirm', ['conquista' => $conquista])->toString(),

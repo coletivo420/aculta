@@ -1,0 +1,18 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Controles administrativos da discussão (conteúdo)
+status: experimental
+description: "Conteúdo do popup de moderação da discussão de um conteúdo de consumidor (Wiki, Revista, LMS). Mostra a situação e as ações autorizadas."
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [state_label]
+  properties:
+    state_label:
+      type: string
+      title: Situação da discussão
+      description: "Aberta ou fechada, conforme o campo de discussão do conteúdo."
+slots:
+  actions:
+    title: Ações autorizadas
+    description: "Links das ações permitidas ao moderador (ex.: abrir ou fechar discussão)."

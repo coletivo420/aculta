@@ -57,6 +57,20 @@ aculta_forum.comment_move:
         type: 'entity:comment'
   methods: [GET, HEAD, POST]
 
+# Post split/move: the form re-checks ForumPostMover::access() (domain, entity and view ACL).
+aculta_forum.post_move:
+  path: '/painel-administrativo/forum/publicacao/{aculta_forum_post}/mover'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumPostMoveForm'
+    _title: 'Mover publicação do fórum'
+  requirements:
+    _permission: 'administer aculta forum posts,moderate aculta forum posts,reorganize aculta forum topics'
+  options:
+    parameters:
+      aculta_forum_post:
+        type: 'entity:aculta_forum_post'
+  methods: [GET, HEAD, POST]
+
 aculta_forum.settings:
   path: '/painel-administrativo/forum/configuracoes'
   defaults:
@@ -149,7 +163,8 @@ aculta_forum.topic_deletion_queue:
 aculta_forum.topic_deletion_approve:
   path: '/painel-administrativo/forum/exclusoes-topicos/{id}/aprovar'
   defaults:
-    _controller: '\Drupal\aculta_forum\Controller\TopicDeletionQueueController::approve'
+    _form: '\Drupal\aculta_forum\Form\TopicDeletionDecisionForm'
+    _title: 'Confirmar exclusão do tópico'
   requirements:
     _permission: 'moderate aculta forum topic deletions,administer nodes'
     id: '\d+'
@@ -160,7 +175,8 @@ aculta_forum.topic_deletion_approve:
 aculta_forum.topic_deletion_reject:
   path: '/painel-administrativo/forum/exclusoes-topicos/{id}/rejeitar'
   defaults:
-    _controller: '\Drupal\aculta_forum\Controller\TopicDeletionQueueController::reject'
+    _form: '\Drupal\aculta_forum\Form\TopicDeletionDecisionForm'
+    _title: 'Confirmar restauração do tópico'
   requirements:
     _permission: 'moderate aculta forum topic deletions,administer nodes'
     id: '\d+'
@@ -240,3 +256,229 @@ aculta_forum.comment_moderation:
     _htmx_route: TRUE
     _aculta_site_keys: [forum, magazine, courses, wiki]
   methods: [GET, POST]
+
+aculta_forum.topic_admin_popup:
+  path: '/forum/topicos/{node}/controles'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\TopicAdminPopupController::view'
+    _title: 'Ações de moderação do tópico'
+  requirements:
+    _permission: 'move aculta forum topics'
+    _custom_access: 'aculta_forum.topic_admin_popup_access:access'
+    node: \d+
+  options:
+    _aculta_site_key: forum
+    no_cache: true
+    parameters:
+      node:
+        type: 'entity:node'
+  methods: [GET, HEAD]
+
+aculta_forum.topic_moderation_remove:
+  path: '/painel-administrativo/forum/{node}/remover-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationRemoveForm'
+    _title: 'Remover tópico pela moderação'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+aculta_forum.topic_moderation_close:
+  path: '/painel-administrativo/forum/{node}/fechar-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationCloseForm'
+    _title: 'Fechar ou reabrir tópico pela moderação'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+aculta_forum.discussion_host_status:
+  path: '/painel-administrativo/discussao/{node}/status'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\DiscussionHostStatusForm'
+    _title: 'Abrir ou fechar discussão pela moderação'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+aculta_forum.discussion_host_admin_popup:
+  path: '/discussao/{node}/controles'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\DiscussionHostAdminPopupController::view'
+    _title: 'Controles da discussão'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+aculta_forum.topic_moderation_pin:
+  path: '/painel-administrativo/forum/{node}/fixar-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationPinForm'
+    _title: 'Fixar ou desafixar tópico'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+aculta_forum.pinned_topics:
+  path: '/painel-administrativo/forum/fixados'
+  defaults:
+    _controller: '\Drupal\aculta_forum\Controller\PinnedTopicsAdminController::list'
+    _title: 'Tópicos fixados'
+  requirements:
+    _permission: 'administer comments'
+  options:
+    _admin_route: TRUE
+
+aculta_forum.topic_moderation_publish:
+  path: '/painel-administrativo/forum/{node}/publicar-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationPublishForm'
+    _title: 'Despublicar ou republicar tópico'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+aculta_forum.topic_moderation_archive:
+  path: '/painel-administrativo/forum/{node}/arquivar-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationArchiveForm'
+    _title: 'Arquivar ou desarquivar tópico'
+  requirements:
+    _permission: 'administer comments'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+aculta_forum.topic_moderation_merge:
+  path: '/painel-administrativo/forum/{node}/juntar-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicMergeForm'
+    _title: 'Juntar tópico'
+  requirements:
+    _permission: 'move aculta forum topics'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+aculta_forum.topic_moderation_split:
+  path: '/painel-administrativo/forum/{node}/dividir-topico'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicSplitForm'
+    _title: 'Dividir tópico'
+  requirements:
+    _permission: 'move aculta forum topics'
+    node: \d+
+  options:
+    parameters:
+      node:
+        type: 'entity:node'
+
+# ConfirmFormBase reuses the Forum owner commands in the FRONTEND Marley.
+# Domain+entity+permission access is checked by the Forum service, not CGU.
+aculta_forum.marley_topic_close:
+  path: '/marley/forum/topico/{node}/fechar'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationCloseForm'
+    _title: 'Fechar ou reabrir tópico'
+  requirements:
+    _custom_access: 'aculta_forum.marley_topic_actions:access'
+    node: '\d+'
+  options:
+    _aculta_site_key: account
+    parameters:
+      node:
+        type: entity:node
+    no_cache: true
+  methods: [GET, HEAD, POST]
+
+aculta_forum.marley_post_move:
+  path: '/marley/forum/publicacao/{aculta_forum_post}/mover'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumPostMoveForm'
+    _title: 'Mover publicação do fórum'
+  requirements:
+    _custom_access: 'aculta_forum.marley_post_actions:access'
+    aculta_forum_post: '\d+'
+  options:
+    _aculta_site_key: account
+    parameters:
+      aculta_forum_post:
+        type: 'entity:aculta_forum_post'
+    no_cache: true
+  methods: [GET, HEAD, POST]
+
+aculta_forum.marley_topic_publish:
+  path: '/marley/forum/topico/{node}/publicar'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationPublishForm'
+    _title: 'Despublicar ou republicar tópico'
+  requirements:
+    _custom_access: 'aculta_forum.marley_topic_actions:access'
+    node: '\d+'
+  options:
+    _aculta_site_key: account
+    parameters:
+      node:
+        type: entity:node
+    no_cache: true
+  methods: [GET, HEAD, POST]
+
+aculta_forum.marley_topic_pin:
+  path: '/marley/forum/topico/{node}/fixar'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationPinForm'
+    _title: 'Fixar ou desafixar tópico'
+  requirements:
+    _custom_access: 'aculta_forum.marley_topic_actions:access'
+    node: '\d+'
+  options:
+    _aculta_site_key: account
+    parameters:
+      node:
+        type: entity:node
+    no_cache: true
+  methods: [GET, HEAD, POST]
+
+aculta_forum.marley_topic_archive:
+  path: '/marley/forum/topico/{node}/arquivar'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\TopicModerationArchiveForm'
+    _title: 'Arquivar ou desarquivar tópico'
+  requirements:
+    _custom_access: 'aculta_forum.marley_topic_actions:access'
+    node: '\d+'
+  options:
+    _aculta_site_key: account
+    parameters:
+      node:
+        type: entity:node
+    no_cache: true
+  methods: [GET, HEAD, POST]

@@ -1,0 +1,36 @@
+name: "Marley - popup de decisão CGU"
+description: "Decisão de denúncia separada da ação editorial sobre o alvo, sem link ao painel administrativo."
+component: aculta420_v2:popup
+props:
+  id: marley-decidir-denuncia-demo
+  title: "Analisar denúncia"
+  subtitle: "Prévia visual - ações de moderação desabilitadas; os módulos proprietários controlam permissões e POST."
+  trigger_label: "Marley - popup de decisão CGU"
+  trigger_url: '#marley-decidir-denuncia-demo'
+  header_variant: neutral
+slots:
+  content:
+    type: inline_template
+    template: |
+      <section class="studio studio-marley-workspace">
+        <p>{{ include('aculta420_v2:badge', { label: 'Em análise', icon_name: 'flag', variant: 'highlight' }, with_context = false) }} Caso demonstrativo #A01</p>
+        <p class="studio-marley-workspace__case-excerpt">Descrição ilustrativa do relato, sem dados pessoais.</p>
+        <fieldset>
+          <legend>1. Decisão sobre a denúncia</legend>
+          <p>A resolução do relato não altera automaticamente a publicação.</p>
+          <div class="studio-marley-workspace__control-row">
+            {{ include('aculta420_v2:moderation-submit', { label: 'Resolver denúncia', icon: 'check-circle', variant: 'regular', tone: 'success', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+            {{ include('aculta420_v2:moderation-submit', { label: 'Rejeitar relato', icon: 'prohibit', variant: 'regular', tone: 'neutral', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+            {{ include('aculta420_v2:moderation-submit', { label: 'Atribuir caso', icon: 'users', variant: 'regular', tone: 'neutral', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>2. Ação editorial independente</legend>
+          <p>Somente com autorização por alvo e confirmação explícita.</p>
+          <div class="studio-marley-workspace__control-row">
+            {{ include('aculta420_v2:moderation-submit', { label: 'Ocultar publicação', icon: 'eye-slash', variant: 'regular', tone: 'danger', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+            {{ include('aculta420_v2:moderation-submit', { label: 'Restaurar', icon: 'shield-check', variant: 'regular', tone: 'success', attributes: create_attribute({type: 'button', disabled: 'disabled', 'aria-disabled': 'true'}) }, with_context = false) }}
+          </div>
+        </fieldset>
+        <p role="note">A implementação funcional usa os serviços de moderação de aculta_cgu e aculta_forum; nunca uma operação GET.</p>
+      </section>

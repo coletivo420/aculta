@@ -6,6 +6,10 @@ namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\domain\DomainNegotiatorInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -122,13 +126,28 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
             $this->createMock(ConfigFactoryInterface::class),
             new RequestStack(),
           ),
+          $this->currentOriginResolver(),
         ),
       ),
     );
   }
 
   /**
+   * Creates the currentOriginResolver fixture.
+   */
+  private function currentOriginResolver(): DiscussionOriginResolverInterface {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from(DiscussionOrigin::CURRENT, new CacheableMetadata()),
+    );
+    return $resolver;
+  }
+
+  /**
    * Creates a mocked account with the requested roles.
+   *
+   * @param list<string> $roles
+   *   Roles assigned to the account.
    */
   private function account(array $roles): AccountInterface {
     $account = $this->createMock(AccountInterface::class);
@@ -139,6 +158,13 @@ final class PersistentNoticeAccessTest extends UnitTestCase {
 
   /**
    * Creates a notice entity double with the supplied fields.
+   *
+   * @param list<string> $roles
+   *   Audience role IDs.
+   * @param bool $published
+   *   Whether the notice is published.
+   * @param array<string, string> $dates
+   *   Date field values keyed by field name.
    */
   private function notice(array $roles, bool $published = TRUE, array $dates = []): NodeInterface {
     $node = $this->createMock(NodeInterface::class);

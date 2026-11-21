@@ -24,6 +24,9 @@ final class EventOrganizationPageController extends ControllerBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -33,6 +36,9 @@ final class EventOrganizationPageController extends ControllerBase {
 
   /**
    * Título da página pública da organização.
+   *
+   * @param string $slug
+   *   Value used for $slug.
    */
   public function title(string $slug): string {
     $org = $this->loadBySlug($slug);
@@ -41,6 +47,12 @@ final class EventOrganizationPageController extends ControllerBase {
 
   /**
    * Renderiza o perfil público da organização.
+   *
+   * @param string $slug
+   *   Value used for $slug.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function page(string $slug): array {
     $org = $this->loadBySlug($slug);
@@ -191,7 +203,7 @@ final class EventOrganizationPageController extends ControllerBase {
       $adminClaimsUrl = $this->purposes->environmentPathUrl(SiteKey::Main, '/painel-administrativo/pessoas/reivindicacoes?target_type=aculta_event_organization&target_id=' . $org->id());
       if ($adminClaimsUrl !== NULL) {
         $build['actions']['admin_claims'] = [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => (string) $this->t('Ver pedidos de reivindicação desta organização'),
             'url' => $adminClaimsUrl->toString(),

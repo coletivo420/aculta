@@ -1,5 +1,15 @@
 Histórico arquivado do CHANGELOG.md de aculta_forum. Não é fonte de decisão vigente: ver docs/decisions/ e docs/architecture/aculta_forum.md.
 
+## `0.1.0-dev.6` (aculta_forum_legacy) — entidades próprias do acervo — 2026-11-20
+
+- Criadas `aculta_forum_legacy_topics`, `aculta_forum_legacy_comments` e
+  `aculta_forum_legacy_attachments`, separadas das entidades correntes.
+- Acervo somente leitura: sem comentários, reações, moderação ou criação pela
+  interface. Reações do acervo removidas do escopo.
+- Classificador marca as entidades do acervo como `ARCHIVE`.
+- Kernel `LegacyForumContentEntitiesKernelTest` (20 asserções, OK).
+- Update 8001 criado e não aplicado no Runtime.
+
 ## `0.1.0-dev.295` — provar o "marcar tudo como lido" sem tópicos — 2026-10-24
 
 - Novo Kernel `ForumMarkAllReadFormKernelTest`: sem tópicos acessíveis, o

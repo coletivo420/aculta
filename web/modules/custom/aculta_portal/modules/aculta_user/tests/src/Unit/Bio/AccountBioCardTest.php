@@ -61,7 +61,7 @@ final class AccountBioCardTest extends UnitTestCase {
     self::assertIsArray($dialog['#slots']['content']['#attributes']);
     self::assertIsArray($dialog['#attributes']);
 
-    self::assertSame('aculta420_v2:dialog', $dialog['#component']);
+    self::assertSame('dialog', $dialog['#name']);
     self::assertSame('aculta-account-bio-dialog', $dialog['#props']['id']);
     self::assertSame('/conta/bio', $dialog['#props']['trigger_url']);
     self::assertSame('', $dialog['#slots']['content']['#attributes']['data-aculta-drawer-content']);

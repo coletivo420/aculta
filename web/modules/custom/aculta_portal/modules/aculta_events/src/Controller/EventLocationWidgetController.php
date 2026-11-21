@@ -66,13 +66,35 @@ final class EventLocationWidgetController extends ControllerBase {
 
   /**
    * Rebuilds the empty location card from a Form API AJAX action.
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function clearLocationFormWidget(array &$form, FormStateInterface $formState): array {
     $triggering = $formState->getTriggeringElement();
-    $parents = array_slice($triggering['#array_parents'], 0, -2);
+    if (!is_array($triggering)) {
+      return [];
+    }
+    $arrayParents = $triggering['#array_parents'] ?? NULL;
+    if (!is_array($arrayParents)) {
+      return [];
+    }
+    $parents = array_slice($arrayParents, 0, -2);
     $widget = NestedArray::getValue($form, $parents);
+    if (!is_array($widget)) {
+      $widget = [];
+    }
     $fieldName = $parents[count($parents) - 1] ?? self::FIELD_NAME;
-    $wrapperId = $widget['#attributes']['id'] ?? self::WRAPPER_ID;
+    $fieldName = is_string($fieldName) ? $fieldName : self::FIELD_NAME;
+    $attributes = $widget['#attributes'] ?? NULL;
+    $wrapperId = is_array($attributes) && is_string($attributes['id'] ?? NULL)
+      ? $attributes['id']
+      : self::WRAPPER_ID;
     $widget['target_id']['#value'] = '';
     unset($widget['summary'], $widget['actions']);
     return $widget + EventLocationModalWidget::buildCardOrEmpty(

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Form;
 
+use Drupal\Core\Template\Attribute;
+
 /**
  * Layout do popup de criação de tópico (Compositor de Criação de Tópico).
  *
@@ -15,12 +17,13 @@ final class TopicPopupLayout {
   /**
    * Campos do nó que o popup mantém. Menu, autor, revisão e abas saem.
    */
-  private const KEEP = ['title', 'body', 'field_aculta_categories', 'actions', 'form_id', 'form_build_id', 'form_token'];
+  private const KEEP = ['title', 'body', 'field_aculta_categories', 'field_aculta_tags', 'poll_builder', 'actions', 'form_id', 'form_build_id', 'form_token'];
 
   /**
    * Aplica o layout do popup ao formulário do nó aculta_forum_topic.
    *
    * @param array<mixed> $form
+   *   Form render array.
    */
   public static function apply(array &$form): void {
     foreach (array_keys($form) as $key) {
@@ -45,16 +48,34 @@ final class TopicPopupLayout {
         }
       }
     }
+    // Moldura real: o SDC discussion-topic-composer envolve o formulário sem mover campos.
+    $form['#theme_wrappers'] = ['discussion_topic_composer'];
+
+    // Diretrizes do Compositor de Criação de Tópico (SDC forum-composer-guidelines).
+    $form['forum_composer_guidelines'] = [
+      '#theme' => 'portal_component',
+      '#name' => 'forum-composer-guidelines',
+      '#props' => [
+        'collapsed' => TRUE,
+        'tips' => [
+          (string) t('Use um título que resuma a dúvida ou o assunto.'),
+          (string) t('Cite a fonte quando citar pesquisas ou experiências de terceiros.'),
+          (string) t('Respeite as regras da comunidade antes de publicar.'),
+        ],
+        'community_rules' => NULL,
+      ],
+      '#weight' => -10,
+    ];
     if (isset($form['actions']) && is_array($form['actions'])) {
       // Sem pré-visualização. "Cancelar" (secundário) fecha o popup.
       unset($form['actions']['preview']);
       $form['actions']['cancel'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#theme' => 'portal_component',
+        '#name' => 'button',
         '#props' => [
           'text' => (string) t('Cancelar'),
           'variant' => 'secondary',
-          'attributes' => new \Drupal\Core\Template\Attribute(['data-aculta-dialog-close' => '']),
+          'attributes' => new Attribute(['data-aculta-dialog-close' => '']),
         ],
         '#weight' => 50,
       ];

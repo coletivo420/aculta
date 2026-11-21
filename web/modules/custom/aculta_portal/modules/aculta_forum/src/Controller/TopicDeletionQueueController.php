@@ -5,33 +5,44 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Controller;
 
 use Drupal\aculta_forum\Service\TopicDeletionModerationManager;
-use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Link;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
  * Controller for the topic deletion moderation queue.
  */
 final class TopicDeletionQueueController extends ControllerBase {
 
+  /**
+   * Creates the queue controller.
+   *
+   * @param \Drupal\aculta_forum\Service\TopicDeletionModerationManager $moderationManager
+   *   The topic deletion moderation manager.
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $dateFormatter
+   *   The date formatter.
+   */
   public function __construct(
     protected readonly TopicDeletionModerationManager $moderationManager,
     protected readonly DateFormatterInterface $dateFormatter,
-    protected readonly CsrfTokenGenerator $csrfTokenGenerator,
   ) {}
 
+  /**
+   * Creates the controller from the service container.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container.
+   *
+   * @return static
+   *   A controller instance.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_forum.topic_deletion_moderation_manager'),
-      $container->get('date.formatter'),
-      $container->get('csrf_token')
+      $container->get('date.formatter')
     );
   }
 
@@ -39,6 +50,7 @@ final class TopicDeletionQueueController extends ControllerBase {
    * Displays topics awaiting deletion moderation.
    *
    * @return array<string, mixed>
+   *   The moderation queue render array.
    */
   public function queue(): array {
     $requests = $this->moderationManager->getPendingRequests();
@@ -55,11 +67,9 @@ final class TopicDeletionQueueController extends ControllerBase {
       $requesterName = $requester ? $requester->getDisplayName() : $this->t('Usuário ID @uid', ['@uid' => $item['uid']]);
       $date = $this->dateFormatter->format($item['created'], 'short');
 
-      $approveToken = $this->csrfTokenGenerator->get("topic_deletion_approve:{$id}");
-      $rejectToken = $this->csrfTokenGenerator->get("topic_deletion_reject:{$id}");
-
-      $approveUrl = Url::fromRoute('aculta_forum.topic_deletion_approve', ['id' => $id], ['query' => ['token' => $approveToken]]);
-      $rejectUrl = Url::fromRoute('aculta_forum.topic_deletion_reject', ['id' => $id], ['query' => ['token' => $rejectToken]]);
+      // Links open Drupal confirmation forms. GET/HEAD never execute a change.
+      $approveUrl = Url::fromRoute('aculta_forum.topic_deletion_approve', ['id' => $id]);
+      $rejectUrl = Url::fromRoute('aculta_forum.topic_deletion_reject', ['id' => $id]);
 
       $actions = [
         'data' => [
@@ -100,46 +110,6 @@ final class TopicDeletionQueueController extends ControllerBase {
     ];
 
     return $build;
-  }
-
-  /**
-   * Approves deletion of a topic.
-   */
-  public function approve(int $id, Request $request): RedirectResponse {
-    $token = $request->query->get('token');
-    if (!$token || !$this->csrfTokenGenerator->validate((string) $token, "topic_deletion_approve:{$id}")) {
-      throw new AccessDeniedHttpException('Token CSRF inválido.');
-    }
-
-    $success = $this->moderationManager->approveDeletion($id, $this->currentUser());
-    if ($success) {
-      $this->messenger()->addStatus($this->t('Solicitação de exclusão aprovada e tópico excluído definitivamente.'));
-    }
-    else {
-      $this->messenger()->addError($this->t('Não foi possível processar a solicitação de exclusão.'));
-    }
-
-    return $this->redirect('aculta_forum.topic_deletion_queue');
-  }
-
-  /**
-   * Rejects deletion of a topic, restoring it.
-   */
-  public function reject(int $id, Request $request): RedirectResponse {
-    $token = $request->query->get('token');
-    if (!$token || !$this->csrfTokenGenerator->validate((string) $token, "topic_deletion_reject:{$id}")) {
-      throw new AccessDeniedHttpException('Token CSRF inválido.');
-    }
-
-    $success = $this->moderationManager->rejectDeletion($id, $this->currentUser());
-    if ($success) {
-      $this->messenger()->addStatus($this->t('Solicitação de exclusão rejeitada e tópico restaurado com sucesso.'));
-    }
-    else {
-      $this->messenger()->addError($this->t('Não foi possível processar a rejeição da solicitação.'));
-    }
-
-    return $this->redirect('aculta_forum.topic_deletion_queue');
   }
 
 }

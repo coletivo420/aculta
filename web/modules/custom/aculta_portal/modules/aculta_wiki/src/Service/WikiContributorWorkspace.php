@@ -7,6 +7,7 @@ namespace Drupal\aculta_wiki\Service;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_cgu\Entity\Contribution;
+use Drupal\aculta_cgu\ModerationScope;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -102,7 +103,17 @@ final class WikiContributorWorkspace {
         ->condition('purpose', 'wiki')
         ->range(0, 1)
         ->execute();
-      $result = $create->orIf(AccessResult::allowedIf($node !== [] || $proposal !== [] || $contribution !== []));
+      // A moderator may need WE Sativa even without own drafts or a Node
+      // creation grant; Wiki moderation is independent of Forum privileges.
+      $canModerateWiki = ($account->hasPermission('moderate wiki proposals')
+          && ($account->hasPermission('view any wiki proposals') || $account->hasPermission('administer wiki proposals')))
+        || ($account->hasPermission('edit any wiki_entry content')
+          && ($account->hasPermission('use wiki_editorial transition review_to_draft')
+            || $account->hasPermission('use wiki_editorial transition review_to_published')))
+        || ModerationScope::allows($account, 'wiki');
+      $result = $create
+        ->orIf(AccessResult::allowedIf($node !== [] || $proposal !== [] || $contribution !== []))
+        ->orIf(AccessResult::allowedIf($canModerateWiki)->cachePerPermissions());
       if ($result instanceof RefinableCacheableDependencyInterface) {
         $result->addCacheContexts(['user', 'user.permissions', 'domain'])
           ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list', 'aculta_contribution_list']);
@@ -120,6 +131,12 @@ final class WikiContributorWorkspace {
 
   /**
    * Builds the private, bounded "Meu trabalho" page.
+   *
+   * @param AccountInterface $account
+   *   Account to evaluate.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function build(AccountInterface $account): array {
     $access = $this->access($account);
@@ -141,7 +158,7 @@ final class WikiContributorWorkspace {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-workspace'],
       'header' => [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'context-header',
         '#props' => [
           'eyebrow' => (string) $this->t('Wiki420'),
@@ -175,6 +192,22 @@ final class WikiContributorWorkspace {
       }
     }
 
+    // A separate WE Sativa surface owns moderation. A route access result,
+    // not the role name, decides whether the navigation link is rendered.
+    $moderationUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_wiki.moderation_home');
+    if ($moderationUrl !== NULL) {
+      $moderationRouteAccess = $this->siteManagers->runInSite(SiteKey::Wiki,
+        static fn () => $moderationUrl->access($account, TRUE));
+      if ($moderationRouteAccess instanceof AccessResultInterface) {
+        $cacheability->addCacheableDependency($moderationRouteAccess);
+        if ($moderationRouteAccess->isAllowed()) {
+          $build['moderation_navigation'] = Link::fromTextAndUrl(
+            $this->t('Abrir moderação da Wiki'), $moderationUrl,
+          )->toRenderable();
+        }
+      }
+    }
+
     $nodeCursor = $this->requestCursor('wiki_node_cursor');
     $nodeState = $this->requestEntryState();
     $nodePage = $this->siteManagers->runInSite(SiteKey::Wiki, function () use ($account, $nodeCursor, $nodeState, $cacheability): array {
@@ -198,7 +231,7 @@ final class WikiContributorWorkspace {
       $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'entity.node.canonical', ['node' => $node->id()]);
       if ($url !== NULL) {
         $item = [
-          '#theme' => 'aculta_portal_component',
+          '#theme' => 'portal_component',
           '#name' => 'card',
           '#slots' => [
             'header' => Link::fromTextAndUrl((string) $node->label(), $url)->toRenderable(),
@@ -255,7 +288,7 @@ final class WikiContributorWorkspace {
       $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_wiki.proposal_status', ['proposal' => $proposal->id()]);
       if ($url !== NULL) {
         $proposalLinks[] = [
-          '#theme' => 'aculta_portal_component',
+          '#theme' => 'portal_component',
           '#name' => 'card',
           '#slots' => [
             'header' => Link::fromTextAndUrl((string) $proposal->label(), $url)->toRenderable(),
@@ -284,7 +317,7 @@ final class WikiContributorWorkspace {
           ]);
           if ($url !== NULL) {
             $items[] = [
-              '#theme' => 'aculta_portal_component',
+              '#theme' => 'portal_component',
               '#name' => 'card',
               '#slots' => [
                 'header' => Link::fromTextAndUrl((string) $revision->label(), $url)->toRenderable(),
@@ -308,7 +341,7 @@ final class WikiContributorWorkspace {
           $url = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_wiki.proposal_decide', ['proposal' => $proposal->id()]);
           if ($url !== NULL) {
             $items[] = [
-              '#theme' => 'aculta_portal_component',
+              '#theme' => 'portal_component',
               '#name' => 'card',
               '#slots' => [
                 'header' => Link::fromTextAndUrl((string) $proposal->label(), $url)->toRenderable(),
@@ -346,7 +379,7 @@ final class WikiContributorWorkspace {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-start'],
       'header' => [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'context-header',
         '#props' => [
           'eyebrow' => (string) $this->t('Wiki420'),
@@ -370,6 +403,20 @@ final class WikiContributorWorkspace {
               $build['header']['#slots']['actions'] = Link::fromTextAndUrl($this->t('Criar verbete'), $createUrl)->toRenderable();
             }
           }
+        }
+      }
+    }
+
+    $moderationUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_wiki.moderation_home');
+    if ($moderationUrl !== NULL) {
+      $moderationRouteAccess = $this->siteManagers->runInSite(SiteKey::Wiki,
+        static fn () => $moderationUrl->access($account, TRUE));
+      if ($moderationRouteAccess instanceof AccessResultInterface) {
+        $cacheability->addCacheableDependency($moderationRouteAccess);
+        if ($moderationRouteAccess->isAllowed()) {
+          $build['moderation_navigation'] = Link::fromTextAndUrl(
+            $this->t('Moderação editorial e denúncias da Wiki'), $moderationUrl,
+          )->toRenderable();
         }
       }
     }
@@ -401,12 +448,12 @@ final class WikiContributorWorkspace {
         continue;
       }
       $build['continue'] = [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'content-section',
         '#props' => ['title' => (string) $this->t('Continuar de onde parou')],
         '#slots' => [
           'body' => [
-            '#theme' => 'aculta_portal_component',
+            '#theme' => 'portal_component',
             '#name' => 'card',
             '#slots' => [
               'header' => Link::fromTextAndUrl($this->t('Continuar: @title', ['@title' => $draft->label()]), $editUrl)->toRenderable(),
@@ -430,12 +477,12 @@ final class WikiContributorWorkspace {
     }
 
     $build['guide'] = [
-      '#theme' => 'aculta_portal_component',
+      '#theme' => 'portal_component',
       '#name' => 'content-section',
       '#props' => ['title' => (string) $this->t('Contribua com cuidado')],
       '#slots' => [
         'body' => [
-          '#theme' => 'aculta_portal_component',
+          '#theme' => 'portal_component',
           '#name' => 'card',
           '#slots' => [
             'header' => ['#plain_text' => $this->t('Use fontes que outras pessoas possam conferir')],
@@ -596,6 +643,9 @@ final class WikiContributorWorkspace {
 
   /**
    * Gets a changed timestamp from a content entity candidate.
+   *
+   * @param EntityInterface $entity
+   *   Value used for $entity.
    */
   private function changedTimestamp(EntityInterface $entity): int {
     return $entity instanceof ContentEntityInterface ? (int) $entity->get('changed')->value : 0;
@@ -603,6 +653,9 @@ final class WikiContributorWorkspace {
 
   /**
    * Reads a scalar pagination cursor from the active request.
+   *
+   * @param string $key
+   *   Value used for $key.
    */
   private function requestCursor(string $key): ?string {
     $value = $this->requestStack->getCurrentRequest()?->query->all()[$key] ?? NULL;
@@ -619,6 +672,12 @@ final class WikiContributorWorkspace {
 
   /**
    * Builds account-domain filter links and marks the active filter accessibly.
+   *
+   * @param string $active
+   *   Value used for $active.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   private function entryFilters(string $active): array {
     $links = [];
@@ -647,7 +706,7 @@ final class WikiContributorWorkspace {
       $links[] = Link::fromTextAndUrl($label, $url)->toRenderable();
     }
     return [
-      '#theme' => 'aculta_portal_component',
+      '#theme' => 'portal_component',
       '#name' => 'context-tabs',
       '#props' => ['label' => (string) $this->t('Filtrar meus verbetes')],
       '#slots' => ['items' => ['#theme' => 'item_list', '#items' => $links]],
@@ -752,12 +811,12 @@ final class WikiContributorWorkspace {
   private function listSection(\Stringable|string $title, array $items, \Stringable|string $emptyMessage, ?array $nextPage = NULL): array {
     $bodyItems = $items === []
       ? [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'empty-state',
         '#slots' => ['message' => ['#plain_text' => $emptyMessage]],
       ]
       : [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'content-grid',
         '#props' => ['columns' => 2],
         '#slots' => ['items' => $items],
@@ -770,7 +829,7 @@ final class WikiContributorWorkspace {
       $body['next_page'] = $nextPage;
     }
     return [
-      '#theme' => 'aculta_portal_component',
+      '#theme' => 'portal_component',
       '#name' => 'content-section',
       '#props' => ['title' => (string) $title],
       '#slots' => ['body' => $body],

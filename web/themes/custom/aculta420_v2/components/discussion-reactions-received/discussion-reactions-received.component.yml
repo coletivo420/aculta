@@ -18,6 +18,23 @@ props:
       title: Mapa de reações recebidas com contagem
       default: {}
       description: Mapa indexado pelo identificador da reação, com a contagem recebida por cada opção ativa.
+    entity_type:
+      type: string
+      title: Tipo da mensagem
+      default: ''
+    entity_id:
+      type: string
+      title: Identificador da mensagem
+      default: ''
+    total_count:
+      type: integer
+      title: Saldo total de curtidas
+      default: 0
+      description: Reações positivas somadas menos descurtidas, mínimo zero.
+    positive_count:
+      type: integer
+      title: Quantidade positiva antes das descurtidas
+      default: 0
     allowed_reactions:
       type: object
       title: Catálogo de reações permitidas (rótulo e ícone)

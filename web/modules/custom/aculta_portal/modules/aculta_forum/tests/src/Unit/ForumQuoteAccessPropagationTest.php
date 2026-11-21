@@ -4,14 +4,20 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Unit;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\aculta_forum\Context\DiscussionContext;
 use Drupal\aculta_forum\Context\DiscussionContextProviderInterface;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Hook\ForumQuoteHooks;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_forum\Service\ForumQuoteBuilder;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\Core\StringTranslation\TranslationInterface;
@@ -21,24 +27,30 @@ use PHPUnit\Framework\Attributes\Group;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Tests COM-09: Citação must consult getWriteAccess (not just getReadAccess).
- * When write access is denied or discussion is closed, quote action must not be exposed.
+ * Tests that quote actions honor write access and discussion state.
+ *
+ * A closed discussion or denied write access must hide the quote action.
  */
 #[Group('aculta_forum')]
 final class ForumQuoteAccessPropagationTest extends UnitTestCase {
 
+  /**
+   * Initializes the quote access test fixture.
+   */
   protected function setUp(): void {
     parent::setUp();
-    $generator = $this->createMock(\Drupal\Core\Routing\UrlGeneratorInterface::class);
+    $generator = $this->createMock(UrlGeneratorInterface::class);
     $generator->method('generateFromRoute')->willReturn('/resposta/comentar/node/1/field_aculta_discussion/10?quote=10#comment-form');
-    $container = new \Symfony\Component\DependencyInjection\ContainerBuilder();
+    $container = new ContainerBuilder();
     $container->set('url_generator', $generator);
     $container->set('string_translation', $this->getStringTranslationStub());
     \Drupal::setContainer($container);
   }
 
   /**
-   * Tests that when getWriteAccess is forbidden, quote link is not exposed even if read access is allowed.
+   * Tests that denied write access hides quote actions.
+   *
+   * Read access alone does not allow quoting.
    */
   public function testWriteAccessForbiddenDeniesQuoteLink(): void {
     $host = $this->createMock(EntityInterface::class);
@@ -75,6 +87,7 @@ final class ForumQuoteAccessPropagationTest extends UnitTestCase {
       new ForumQuoteBuilder(),
       new RequestStack(),
       $translation,
+      $this->originResolver(),
     );
 
     $comment = $this->createMock(CommentInterface::class);
@@ -94,9 +107,17 @@ final class ForumQuoteAccessPropagationTest extends UnitTestCase {
 
     $hooks->commentLinksAlter($links, $comment, $hookContext);
 
-    // Reproduces COM-09: Currently ForumQuoteHooks only checks $discussion->getReadAccess(),
-    // so in the buggy code this assertion will FAIL (because it mistakenly generated the quote link).
+    // COM-09 verifies that write access is checked before creating quote links.
     self::assertEmpty($links, 'Quote link must not be generated when write access is denied or discussion is closed.');
+  }
+
+  /**
+   * Creates an origin resolver fixture.
+   */
+  private function originResolver(): DiscussionOriginResolverInterface {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturn(DiscussionOriginClassification::from(DiscussionOrigin::CONTEXTUAL, new CacheableMetadata()));
+    return $resolver;
   }
 
 }

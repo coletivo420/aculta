@@ -20,7 +20,7 @@ final class PortalButtonThemeHooks {
   #[Hook('theme')]
   public function theme(): array {
     return [
-      'aculta_portal_button' => [
+      'portal_button' => [
         'variables' => [
           'props' => [],
           'attributes' => NULL,

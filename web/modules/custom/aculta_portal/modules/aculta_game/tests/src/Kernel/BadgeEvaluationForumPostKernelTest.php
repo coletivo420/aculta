@@ -7,6 +7,9 @@ namespace Drupal\Tests\aculta_game\Kernel;
 use Drupal\aculta_game\ForumParticipationPolicy;
 use Drupal\aculta_game\Hook\BadgeEvaluationHooks;
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Origin\CoreDiscussionOriginClassifier;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolver;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Badge\AchievementDefinitions;
 use Drupal\aculta_user\Badge\BadgeCatalog;
@@ -90,8 +93,6 @@ final class BadgeEvaluationForumPostKernelTest extends KernelTestBase {
       'field_name' => 'field_domain_source',
       'label' => 'Domain',
     ])->save();
-    $this->addLegacyAuthorField('node', 'aculta_forum_topic');
-    $this->addLegacyAuthorField('aculta_forum_post', 'aculta_forum_post');
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
   }
 
@@ -171,32 +172,18 @@ final class BadgeEvaluationForumPostKernelTest extends KernelTestBase {
       $configFactory,
       new RequestStack(),
     );
-    $hook = new BadgeEvaluationHooks($badges, new ForumParticipationPolicy($purpose));
+    $originResolver = new DiscussionOriginResolver([
+      new CoreDiscussionOriginClassifier(new DiscussionContextResolver([])),
+    ]);
+    $hook = new BadgeEvaluationHooks($badges, new ForumParticipationPolicy($originResolver, $purpose));
 
-    self::assertTrue((new ForumParticipationPolicy($purpose))->isEligiblePost($post));
+    self::assertTrue((new ForumParticipationPolicy($originResolver, $purpose))->isEligiblePost($post));
     $hook->forumPostSave($post);
     $hook->forumPostSave($post);
 
     self::assertCount(1, $createdValues);
     self::assertSame((int) $author->id(), $createdValues[0]['uid']);
     self::assertSame(BadgeCatalog::PRIMEIRO_COMENTARIO, $createdValues[0]['badge']);
-  }
-
-  /**
-   * Declares the historical author marker used by the production policy.
-   */
-  private function addLegacyAuthorField(string $entityType, string $bundle): void {
-    FieldStorageConfig::create([
-      'entity_type' => $entityType,
-      'field_name' => 'field_autor_legado',
-      'type' => 'string',
-    ])->save();
-    FieldConfig::create([
-      'entity_type' => $entityType,
-      'bundle' => $bundle,
-      'field_name' => 'field_autor_legado',
-      'label' => 'Autor legado',
-    ])->save();
   }
 
 }

@@ -60,7 +60,7 @@ final class EditorialCategoryColorFormatter extends EntityReferenceLabelFormatte
   /**
    * Composes a Drupal reference link inside the editorial-category SDC.
    *
-   * @param array<string, mixed> $element
+   * @param array<array-key, mixed> $element
    *   Render array for a category reference.
    * @param mixed $value
    *   Stored color token.
@@ -74,8 +74,8 @@ final class EditorialCategoryColorFormatter extends EntityReferenceLabelFormatte
       return NULL;
     }
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:editorial-category',
+      '#theme' => 'portal_component',
+      '#name' => 'editorial-category',
       '#props' => ['color' => $color],
       '#slots' => ['label' => $element],
     ];

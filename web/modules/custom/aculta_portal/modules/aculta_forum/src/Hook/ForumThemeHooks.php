@@ -94,6 +94,14 @@ class ForumThemeHooks {
   #[Hook('theme')]
   public function theme(mixed $existing, string $type, string $theme, string $path): array {
     return [
+      'discussion_topic_composer' => [
+        'variables' => [
+          'target_id' => 'discussion-topic-composer',
+          'status' => 'aberto',
+          'host_title' => NULL,
+          'messages' => NULL,
+        ],
+      ],
       'discussion_reply_composer' => [
         'variables' => [
           'status' => 'fechado',

@@ -85,7 +85,8 @@ final class SupportForm extends FormBase {
     // Os valores sugeridos ficam no bloco de doação rápida (aculta_donation), a única fonte da lista de valores.
     if (!$gateway_ready) {
       $form['status'] = [
-        '#component' => 'aculta420_v2:status-messages',
+        '#theme' => 'portal_component',
+        '#name' => 'status-messages',
         '#props' => [
           'type' => 'warning',
           'messages' => [$this->t('O apoio financeiro está temporariamente indisponível. Nenhuma cobrança será iniciada por esta página.')],
@@ -102,7 +103,7 @@ final class SupportForm extends FormBase {
         '#value' => $this->t('Parcerias institucionais, apoio cultural e patrocínio de projetos também fortalecem nossas iniciativas.'),
       ],
       'contact' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Fale com a Associação'),
           'url' => Url::fromUri('internal:/contato')->toString(),
@@ -116,8 +117,10 @@ final class SupportForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Form render array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // There is intentionally no payment submission until the Commerce flow is

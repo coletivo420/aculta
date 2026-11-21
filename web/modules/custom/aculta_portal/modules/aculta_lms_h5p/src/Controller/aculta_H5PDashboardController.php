@@ -32,6 +32,9 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
 
   /**
    * Creates the controller using Drupal's service container.
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -43,7 +46,11 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
   }
 
   /**
-   * Administrative library and configuration hub. */
+   * Administrative library and configuration hub.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
+   */
   public function administrator(): array {
     return [
       '#plain_text' => $this->translation->translate('Gerencie os recursos H5P do LMS usando as abas acima.'),
@@ -107,15 +114,15 @@ final class aculta_H5PDashboardController implements ContainerInjectionInterface
       }
 
       $courseBuild = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:lms-h5p-course',
+        '#theme' => 'portal_component',
+        '#name' => 'lms-h5p-course',
         '#props' => [],
         '#slots' => [
           'title' => [
-          '#type' => 'html_tag',
-          '#tag' => 'h2',
-          '#value' => (string) $entity->label(),
-        ],
+            '#type' => 'html_tag',
+            '#tag' => 'h2',
+            '#value' => (string) $entity->label(),
+          ],
           'course_link' => Link::fromTextAndUrl(
           $educator ? $this->translation->translate('Abrir sala do curso') : $this->translation->translate('Acessar curso'),
           $courseUrl,

@@ -88,21 +88,22 @@ final class ForumModerationMetricsProvider implements MetricProviderInterface {
     $query->condition('r.purpose', 'forum');
     $query->condition('r.status', self::OPEN_STATUSES, 'IN');
     $query->distinct();
-    return count($query->execute()->fetchAll());
+    $statement = $query->execute();
+    return $statement === NULL ? 0 : count($statement->fetchAll());
   }
 
   /**
    * Denúncias decididas cuja decisão ocorreu na janela.
    */
   private function countResolved(int $from, int $to): int {
-    return (int) $this->database->select(self::TABLE, 'r')
+    $statement = $this->database->select(self::TABLE, 'r')
       ->condition('r.purpose', 'forum')
       ->condition('r.status', self::RESOLVED_STATUSES, 'IN')
       ->condition('r.decided_at', $from, '>=')
       ->condition('r.decided_at', $to, '<')
       ->countQuery()
-      ->execute()
-      ->fetchField();
+      ->execute();
+    return $statement === NULL ? 0 : (int) $statement->fetchField();
   }
 
   /**
@@ -117,7 +118,11 @@ final class ForumModerationMetricsProvider implements MetricProviderInterface {
       ->condition('r.decided_at', $to, '<')
       ->condition('r.decided_at', 0, '>');
     $minutes = [];
-    foreach ($query->execute() as $row) {
+    $statement = $query->execute();
+    if ($statement === NULL) {
+      return NULL;
+    }
+    foreach ($statement as $row) {
       $diff = (int) $row->decided_at - (int) $row->created;
       if ($diff >= 0) {
         $minutes[] = intdiv($diff, 60);

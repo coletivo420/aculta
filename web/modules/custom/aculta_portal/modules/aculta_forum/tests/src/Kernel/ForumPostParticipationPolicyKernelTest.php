@@ -5,9 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Origin\CoreDiscussionOriginClassifier;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolver;
+use Drupal\aculta_forum_legacy\Origin\LegacyDiscussionOriginClassifier;
 use Drupal\aculta_game\ForumParticipationPolicy;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
-use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\RevisionableStorageInterface;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
@@ -87,7 +90,6 @@ final class ForumPostParticipationPolicyKernelTest extends KernelTestBase {
       'label' => 'Domain',
     ])->save();
     $this->legacyAuthorField('node', 'aculta_forum_topic');
-    $this->legacyAuthorField('aculta_forum_post', 'aculta_forum_post');
     $this->container->get('entity_field.manager')->clearCachedFieldDefinitions();
 
     $this->author = User::create(['name' => 'autora', 'status' => 1]);
@@ -101,12 +103,17 @@ final class ForumPostParticipationPolicyKernelTest extends KernelTestBase {
     ]);
     $this->topic->save();
 
-    $this->policy = new ForumParticipationPolicy(new DomainSiteManager(
+    $siteManager = new DomainSiteManager(
       $this->container->get('entity_type.manager'),
       $this->container->get('domain.negotiator'),
       $this->container->get('config.factory'),
       new RequestStack(),
-    ));
+    );
+    $originResolver = new DiscussionOriginResolver([
+      new CoreDiscussionOriginClassifier(new DiscussionContextResolver([])),
+      new LegacyDiscussionOriginClassifier(),
+    ]);
+    $this->policy = new ForumParticipationPolicy($originResolver, $siteManager);
   }
 
   /**
@@ -170,13 +177,9 @@ final class ForumPostParticipationPolicyKernelTest extends KernelTestBase {
   }
 
   /**
-   * Historical authorship on the post or its topic blocks the trigger.
+   * A legacy topic cannot generate current participation from a ForumPost.
    */
-  public function testLegacyAuthorExcludesPostAndTopic(): void {
-    $post = $this->post();
-    $post->set('field_autor_legado', 'Autor antigo');
-    self::assertFalse($this->policy->isEligiblePost($post));
-
+  public function testLegacyTopicExcludesCurrentPost(): void {
     $this->topic->set('field_autor_legado', 'Autor antigo');
     $this->topic->save();
     self::assertFalse($this->policy->isEligiblePost($this->post()));

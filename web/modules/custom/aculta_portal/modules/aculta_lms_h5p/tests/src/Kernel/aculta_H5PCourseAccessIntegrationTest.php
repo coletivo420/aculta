@@ -19,7 +19,6 @@ use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\group\Entity\Group;
 use Drupal\group\Entity\GroupRole;
 use Drupal\group\Entity\GroupType;
-use Drupal\group\Entity\GroupInterface;
 use Drupal\group\Entity\Storage\GroupRelationshipTypeStorageInterface;
 use Drupal\group\Entity\GroupTypeInterface;
 use Drupal\media\Entity\Media;
@@ -490,8 +489,8 @@ final class aculta_H5PCourseAccessIntegrationTest extends KernelTestBase {
       $this->requireArray($contentIntegration['styles'] ?? NULL)[0],
     );
     self::assertSame(
-      'aculta420_v2:layout-section',
-      $courseDocuments['#component'],
+      'layout-section',
+      $courseDocuments['#name'],
     );
     self::assertSame(
       [$pdfViewerBuild],

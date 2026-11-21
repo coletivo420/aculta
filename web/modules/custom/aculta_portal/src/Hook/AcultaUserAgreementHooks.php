@@ -62,7 +62,11 @@ final class AcultaUserAgreementHooks {
   ) {}
 
   /**
- * Adiciona o popup de aceite à região page_bottom quando o usuário logado ainda não aceitou a versão atual. */
+ * Adiciona o popup de aceite à região page_bottom quando o usuário logado ainda não aceitou a versão atual.
+ *
+ * @param array<array-key, mixed> $page_bottom
+ *   Value used for $page_bottom.
+ */
   #[Hook('page_bottom')]
   public function pageBottom(array &$page_bottom): void {
     $routeName = (string) $this->routeMatch->getRouteName();
@@ -74,8 +78,8 @@ final class AcultaUserAgreementHooks {
     }
     $form = $this->formBuilder->getForm(AcultaUserAgreementAcceptForm::class);
     $page_bottom['aculta_user_agreement_terms'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:account-terms-modal',
+      '#theme' => 'portal_component',
+      '#name' => 'account-terms-modal',
       '#props' => [
         'title' => (string) $this->translation->translate('Aceite dos termos'),
       ],

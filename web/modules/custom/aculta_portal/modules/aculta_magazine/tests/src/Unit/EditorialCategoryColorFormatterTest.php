@@ -40,8 +40,8 @@ final class EditorialCategoryColorFormatterTest extends UnitTestCase {
     $result = EditorialCategoryColorFormatter::buildComponent($element, 'green-dark');
 
     self::assertNotNull($result);
-    self::assertSame('component', self::valueAt($result, '#type'));
-    self::assertSame('aculta420_v2:editorial-category', self::valueAt($result, '#component'));
+    self::assertSame('portal_component', self::valueAt($result, '#theme'));
+    self::assertSame('editorial-category', self::valueAt($result, '#name'));
     self::assertSame(['color' => 'green-dark'], self::valueAt($result, '#props'));
     self::assertSame(['label' => $element], self::valueAt($result, '#slots'));
     self::assertNull(EditorialCategoryColorFormatter::buildComponent($element, 'invalid'));

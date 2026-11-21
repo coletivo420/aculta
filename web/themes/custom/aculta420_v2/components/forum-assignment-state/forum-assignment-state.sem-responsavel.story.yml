@@ -1,0 +1,8 @@
+name: Tópico sem atribuição
+description: Exemplo estático sem responsável; não oferece ação de atribuir.
+component: aculta420_v2:forum-assignment-state
+props:
+  title: Responsável pelo tópico
+  assigned: false
+  status_label: Não atribuído
+  description: Este tópico ainda não possui responsável designado no exemplo.

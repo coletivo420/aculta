@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Hook;
 
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_forum\Service\DiscussionReplyUrlBuilder;
 use Drupal\aculta_forum\Service\ForumQuoteBuilder;
 use Drupal\comment\CommentInterface;
@@ -32,6 +34,8 @@ final class ForumQuoteHooks {
     private readonly ForumQuoteBuilder $quoteBuilder,
     private readonly RequestStack $requestStack,
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'aculta_forum.discussion_origin_resolver')]
+    private readonly DiscussionOriginResolverInterface $originResolver,
     #[Autowire(service: 'aculta_forum.discussion_reply_url_builder')]
     private readonly ?DiscussionReplyUrlBuilder $urlBuilder = NULL,
   ) {}
@@ -40,7 +44,11 @@ final class ForumQuoteHooks {
    * Adds a reply action that passes the source ID as a validated quote hint.
    *
    * @param array<mixed> $links
+   *   Comment links render array.
+   * @param \Drupal\comment\CommentInterface $comment
+   *   Comment whose links are being altered.
    * @param array<mixed> $context
+   *   Comment link rendering context.
    */
   #[Hook('comment_links_alter')]
   public function commentLinksAlter(array &$links, CommentInterface $comment, array &$context): void {
@@ -79,8 +87,8 @@ final class ForumQuoteHooks {
     ]);
 
     $commentIdStr = (string) $comment->id();
-    // COM-08/COM-10/COM-11: Estrutura neutra de links Drupal, com atributos semânticos,
-    // inserida no grupo 'comment' para ser coletada por Link::preRenderLinks.
+    // COM-08/COM-10/COM-11: Estrutura neutra com atributos semânticos,
+    // inserida no grupo 'comment' para Link::preRenderLinks.
     $quoteLink = [
       'title' => $this->translation->translate('Citar'),
       'url' => $fallbackUrl,
@@ -124,6 +132,11 @@ final class ForumQuoteHooks {
    * Prefills only the exact published parent comment reached by the link.
    *
    * @param array<mixed> $form
+   *   Comment form render array.
+   * @param \Drupal\Core\Form\FormStateInterface $formState
+   *   Current form state.
+   * @param string $formId
+   *   Form identifier.
    */
   #[Hook('form_comment_form_alter')]
   public function commentFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
@@ -157,7 +170,7 @@ final class ForumQuoteHooks {
     }
     $discussion = $this->contextResolver->resolve($host, $this->currentUser);
     $sourceAccess = $parent->access('view', $this->currentUser, TRUE);
-    // COM-09: Revalida também escrita no formulário
+    // COM-09: Revalida também escrita no formulário.
     if ($discussion === NULL
       || !$discussion->getReadAccess()->isAllowed()
       || !$discussion->getWriteAccess()->isAllowed()
@@ -175,7 +188,7 @@ final class ForumQuoteHooks {
     }
     $processedBody = $bodyItem->get('processed');
     $bodyValue = $processedBody->getValue();
-    $quote = $this->quoteBuilder->build(is_scalar($bodyValue) ? (string) $bodyValue : '', $parent->getAuthorName());
+    $quote = $this->quoteBuilder->build(is_scalar($bodyValue) ? (string) $bodyValue : '', $parent->getAuthorName(), (int) $parent->id(), (int) $parent->getOwnerId());
     if ($quote === NULL) {
       return;
     }
@@ -236,7 +249,7 @@ final class ForumQuoteHooks {
       || !$comment->isPublished()) {
       return FALSE;
     }
-    return $comment->getCommentedEntity() instanceof EntityInterface;
+    return $this->originResolver->classify($comment)->origin === DiscussionOrigin::CONTEXTUAL;
   }
 
 }

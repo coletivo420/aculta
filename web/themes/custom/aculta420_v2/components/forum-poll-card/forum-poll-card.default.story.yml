@@ -1,0 +1,9 @@
+name: Enquete - voto único
+description: Prévia estática; formulário real pertence ao aculta_forum.
+component: aculta420_v2:forum-poll-card
+props:
+  label: Enquete do tópico
+slots:
+  form:
+    type: inline_template
+    template: '<fieldset><legend>Qual tema debater no próximo encontro?</legend><p><label><input type="radio" name="poll-demo" /> Cultura</label></p><p><label><input type="radio" name="poll-demo" /> Educação</label></p><p>Votação disponível apenas no formulário real autenticado.</p></fieldset>'

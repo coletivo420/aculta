@@ -108,7 +108,7 @@ final class CoAuthorAdminController extends ControllerBase {
             '#type' => 'link',
             '#title' => $this->t('Gerenciar'),
             '#url' => $manageUrl,
-            '#attributes' => ['class' => ['button', 'button--small']],
+            '#attributes' => ['data-portal-ui' => 'button-small'],
           ],
         ];
 

@@ -59,7 +59,7 @@ final class CourseDocumentController {
     // rebuilds must serialize the form while an UploadedFile is in the request.
     $build = $this->entityFormBuilder->getForm($document, 'add');
     $build['contextual_return'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar aos materiais do curso'),
         'url' => Url::fromRoute('aculta_lms.course_materials_edit', ['course' => $course->id()])->toString(),
@@ -73,7 +73,9 @@ final class CourseDocumentController {
    * Form API callback, resolved through the registered service ID.
    *
    * @param array<array-key, mixed> $form
-   *   The current form render array.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitDocumentToCourse(array &$form, FormStateInterface $form_state): void {
     $this->attachDocumentToCourse($form, $form_state);
@@ -83,7 +85,9 @@ final class CourseDocumentController {
    * Rechecks course access and attaches the saved Media after its owner form.
    *
    * @param array<array-key, mixed> $form
-   *   The current form render array.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function attachDocumentToCourse(array &$form, FormStateInterface $form_state): void {
     $course = $this->routeMatcher->getParameter('course');
@@ -129,7 +133,7 @@ final class CourseDocumentController {
 
     $build = $this->entityFormBuilder->getForm($media, 'edit');
     $build['contextual_return'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar aos materiais do curso'),
         'url' => Url::fromRoute('aculta_lms.course_materials_edit', ['course' => $course->id()])->toString(),

@@ -1,0 +1,10 @@
+# Memorial coletivo do Fórum legado; não cria perfis individuais.
+aculta_forum_legacy.memorial:
+  path: '/u/lendashistoricas'
+  defaults:
+    _controller: '\Drupal\aculta_forum_legacy\Controller\LegacyMemorialController::view'
+    _title: 'Memorial coletivo do Growroom'
+  requirements:
+    _access: 'TRUE'
+  options:
+    _aculta_site_key: 'main'

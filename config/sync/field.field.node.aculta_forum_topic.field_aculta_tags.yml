@@ -1,0 +1,29 @@
+uuid: 5b17e23d-2396-4e26-b4ac-37ded7b99169
+langcode: pt-br
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_aculta_tags
+    - node.type.aculta_forum_topic
+    - taxonomy.vocabulary.aculta_forum_tags
+id: node.aculta_forum_topic.field_aculta_tags
+field_name: field_aculta_tags
+entity_type: node
+bundle: aculta_forum_topic
+label: Tags
+description: 'Tags públicas do tópico (opcional).'
+required: false
+translatable: true
+default_value: {}
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      aculta_forum_tags: aculta_forum_tags
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+    auto_create_bundle: aculta_forum_tags
+field_type: entity_reference

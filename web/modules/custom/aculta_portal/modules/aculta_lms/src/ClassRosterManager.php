@@ -101,8 +101,8 @@ class ClassRosterManager {
     }
 
     $build = $classLists === [] ? [] : [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:layout-section',
+      '#theme' => 'portal_component',
+      '#name' => 'layout-section',
       '#props' => [],
       '#slots' => [
         'header' => ['#type' => 'html_tag', '#tag' => 'h2', '#value' => $this->t('Participantes')],
@@ -139,7 +139,14 @@ class ClassRosterManager {
   }
 
   /**
-   * Loads class Groups through their course relationship records. */
+   * Loads class Groups through their course relationship records.
+   *
+   * @param GroupInterface $course
+   *   Value used for $course.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
+   */
   private function classesForCourse(GroupInterface $course): array {
     $relationships = $this->entityTypeManager->getStorage('group_relationship')->loadByProperties([
       'gid' => $course->id(),

@@ -1,0 +1,47 @@
+> **ATENÇÃO, ESCOPO AMPLIADO:** Este handoff é SOMENTE o subpacote de reações. Para concluir **todo o ACULTA Fórum / clone funcional Discourse**, use [HANDOFF-AGENTE-CLI-FORUM-COMPLETO-2026-11-20.md](HANDOFF-AGENTE-CLI-FORUM-COMPLETO-2026-11-20.md) como **prompt principal vigente**, que inclui R0-R13 e T01-57. Este documento continua como referência de DV01-19 e detalhes da descurtida, sem substituir a missão global. A curtida padrão fixa é `broccoli`, a mão parda é botão externo ao popin e o popin inclui só emojis positivos + Undo. O retorno fallback não-JS usa `ReactionReturnUrl` local + HTTP 303 (commit `2eb08c16`).
+
+# Handoff de continuidade - descurtidas e score geral
+
+**Data:** 2026-11-20. **Branch:** `feat/forum-paridade-discourse`. Origem: patch `d9f57922a4c81ccee0c515a4dbfff9c50330de11` e documentação subsequente.
+
+Copiar o texto abaixo integralmente para o agente CLI no Homelab. O agente deve executar em ciclos (não somente planejar), sem forçar merge em dev ou mudanças estruturais sem autorização.
+
+```text
+Você é um agente CLI trabalhando no Homelab do ACULTA Drupal 11/12. Sua missão é **CONCLUIR** o sistema de descurtidas e score geral já iniciado na PR #394, incluindo correções, regressão, dados, UI, Statistics, Game e docs. **Não pare após planejar nem peça confirmação para etapas usuais de código/testes**, continue em ciclos de implementação, teste, correção, commit e push até atingir os gates possíveis no ambiente. Não alegue PASS sem executar; para operações estruturais/Runtime que exijam autorização existente, siga AGENTS.md e procedimentos oficiais, documentando DEFERRED se necessário.
+
+REPOSITÓRIO: https://github.com/coletivo420/aculta
+BRANCH ALVO: feat/forum-paridade-discourse - PR #394.
+BASE INICIAL: commit d9f57922a4c81ccee0c515a4dbfff9c50330de11 (ou HEAD posterior após docs). Buscar origin e revalidar HEAD antes de editar; NUNCA trabalhar direto em dev. Se outros agentes mudaram remoto, conciliar sem force push e sem sobrescrever alterações. Ler AGENTS.md na raiz e do aculta_forum/aculta_statistics/aculta_studio; skills nativas, ADR-054/055/057 e guardrails.
+
+DECISÃO DE PRODUTO: todas as reações positivas atualmente existentes, quaisquer emojis, contam +1 para a contagem geral do alvo; descurtir é um único botão negativo COM EMOJI MICROSOFT FLUENT (reaction-emoji/thumbs-down.svg) junto ao botão positivo, valor -1; cada UID possui no máximo uma reação por entidade (UNIQUE existente), alternando positivo/dislike; repetir clique na reação ativa REMOVE essa reação SEM botão Undo separado; público vê max(0, positivas - descurtidas). Não apagar positivas anteriores. Em troca positivo->dislike, o bruto cai 2; dislike->positivo sobe 2. Descurtida não conta como reação positiva, badge de popularidade nem cria privilégio. Um alvo nunca exibe saldo negativo. Documentação vigente: web/modules/custom/aculta_portal/modules/aculta_forum/docs/IMPLEMENTACAO-DESCURTIDAS-2026-11-20.md (e referências/aceites nele).
+
+JÁ IMPLEMENTADO NO REMOTO: ReactionScore.php, ReactionScoreTest.php, DiscussionReactionManager/Builder/Controller, Twig+SDC+CSS de barra e contadores, ForumMetricsProvider, MetricCatalog com snapshots net/dislikes. Pode haver defeitos: não confiar na descrição, ler diffs e código efetivo.
+
+EXECUTE SEQUENCIALMENTE, SEM PARAR NA PRIMEIRA FALHA:
+0. INVENTÁRIO: git status, branch, origin/HEAD, PHP 8.5/Drush e DB aculta_simpletest, configurações, schema, testes e módulos. Nunca misturar alterações alheias ao commit. Check do schema e Config Sync install/sync; não assumir Runtime com patch aplicado.
+1. VALIDAR IMEDIATAMENTE: php -l de todos os PHP alterados; PHPCS Drupal/DrupalPractice; PHPStan nível 10 com baseline sem ampliar dívida; Twig lint, validação SDC/YAML e scripts de gates do repositório. Corrigir breakages em commits pequenos.
+2. SEGURANÇA/CONCORRÊNCIA: inserir lock por (entity_type,id,uid) antes do SELECT em DiscussionReactionManager, com transação, commit seguro, revalidação de acesso antes de persistir (POST/CSRF), UNIQUE existente e 409/retry controlado. Testar cliques simultâneos, idempotência, sem duplicação/deadlocks, read-after-write; todas trocas positivo->dislike, dislike->positivo, negativo->segundo clique (remoção), positivo->positivo, sem alteração positiva de agregados na remoção de negativo. Corrigir redirects externos possíveis e invalidar cache de autor/Stats; não criar tabela de voto nova.
+3. ABRANGÊNCIA: todos alvos suportados Node Topic, ForumPost, Comment CURRENT/CONTEXTUAL; arquivos ARCHIVE/UNKNOWN não recebem voto; LMS pedagógico fechado por Group, sem misturar com moderação CGU; contagens públicas não revelam privado; excluir autoria própria. Testar módulos habilitados/desabilitados e domínio incorreto.
+4. UI: um botão Descurtir usando o SVG original Microsoft Fluent Emoji thumbs-down em aculta420_v2:reaction-emoji ao lado de curtir padrão e paleta positiva, estado pressed; segundo clique remove reação selecionada sem Undo extra, contador geral ao alcance; SDC/UI Patterns Library/manifest strict, CSS claro/escuro responsivo 320/390/768/1440, keyboard/ARIA/reduced motion, no-JS e HTMX fragment/focus; nenhum botão negativo na paleta. Sem página administrativa para não admin, frontends do Studio. Comprovar contagem existente no banco.
+5. ESTATÍSTICAS: aculta_statistics MetricCatalog e ForumMetricsProvider com forum.reactions.active (só positivo), forum.reactions.dislikes_current, forum.reactions.net_current; reconciliador snapshots e semanticamente distinto de soma por item; sem eventos de dislike no contador positivo forum.reactions.added; avaliar evento de mudança para métricas negativas, manter privacidade. Dry-run + Kernel com MariaDB aculta_simpletest, EXPLAIN e índices se justificáveis.
+6. GAME: preservar BadgeCatalog, BadgeService e aculta_badge_award. Não adicionar XP/ranking/nivel/cargo, não conceder Game por reação negativa. Prosseguir com G8-G11 planejadas, incluindo contadores de tópicos/respostas/likes, marcos Nice/Good/Great por score de UM item conforme documentação, sem backfill do arquivo; se escopo exceder essa entrega, registrar backlog executável e priorizar integridade P0. A mudança de score tem precedência sobre proposta antiga de mapear Like só a broccoli. Awards automáticas seguem política vigente (históricas), não resetar conquistas.
+7. TESTES: executar e completar DV-01..DV-15 em IMPLEMENTACAO-DESCURTIDAS, Unit/Kernel/Functional/Browser. Em ambiente de Runtime autorizado: banco, config drift, backup/rollback e ambiente; verificar ACL matricula, perfil/autor, Data Store, UI real, Count/Stats; não executar updates destrutivos sem autorização. Desabilitar Game e conferir Fórum/Stats. Não declarar PASS sem evidência.
+8. DOC E CI: atualizar ROADMAP Fórum, aculta_game, aculta_statistics, aculta_studio, matriz de aceite, status, CHANGELOG, AGENTS/skills se afetados e instruções do cliente. Não apagar decisões anteriores, registrar supersessão da semântica antiga de like parcial. Registrar comando, commit, banco, resultado e DEFERRED. 
+9. COMMITS/PUSH: fazer commits atômicos diretamente em feat/forum-paridade-discourse, git push origin feat/forum-paridade-discourse, sem force. Verificar HEAD remoto e CI, refazer gates afetados. Trabalhar até concluir implementação, sem perguntas repetitivas. Entregar relatório final com commits, arquivos, testes PASS/FAIL/DEFERRED, diff, riscos residuais e o que requer Runtime/homologação. Não tocar produção.
+
+```
+
+
+## Instrução adicional obrigatória (2026-11-20)
+
+- O botão negativo usa **mão parda** Microsoft Fluent Emoji Medium `thumbs-down-medium` (👎🏽), não a versão Default. Usar `aculta420_v2:reaction-emoji`, existente no tema.
+- O popin contém **somente reações positivas**, nunca `dislike`, `thumbs-down` ou `thumbs-down-medium`, nem como ID nem como `icon` de configuração. O catálogo `aculta_editor` pode oferecer 👎🏽 em texto, mas isso **não é uma reação votável** na paleta do fórum.
+- Verificar proteção dupla `DiscussionReactionManager::getAllowedReactions()` + `discussion-reaction-bar.twig`; clicar na reação ativa remove o voto, sem botão de desfazer adicional. Preservar `allowed_reactions` no banco/config só com emojis positivos. Acrescentar Unit/Kernel simulando configuração adversarial e Browser mobile/desktop com o popin aberto.
+
+## Revisão normativa final: popin com Undo, sem descurtida
+
+O popin de seleção de reações contém **somente os emojis positivos e a ação "Desfazer" (Undo)**. O botão negativo com mão parda 👎🏽 continua fixo na barra, **fora do popin**. A curtida rápida é sempre o **brócolis 🥦**. Implementações anteriores diziam que não haveria Undo: esta decisão posterior corrige isso, mantendo o segundo clique como outra forma de remoção.
+
+O formulário Undo envia `reaction=undo` via POST/CSRF/HTMX (ou fallback), e o manager o interpreta como **comando de exclusão da reação atual**, sem persistir `undo`. Sem reação, o comando é no-op e a opção fica desabilitada. É permitido desfazer a curtida positiva e a descurtida. Não misturar Undo com `allowed_reactions` nem com `dislike`; um popin que contenha o emoji 👎🏽 como opção viola o contrato.
+
+Validar DV-16..DV-19 no guia IMPLEMENTACAO-DESCURTIDAS, além de DV-01..DV-15: sem duplo voto, acesso e origem, User Stats e Statistics/CGU/Game, comportamento em HTMX e sem JS, popin aberto com positivos + Undo, bloqueio correto da opção para não votantes. O CI e o Runtime não foram executados nesta rodada de edição remota; usar evidência real antes de declarar pronto.

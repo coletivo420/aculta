@@ -61,6 +61,7 @@ final class RoleHierarchyForm extends ConfigFormBase {
    * {@inheritdoc}
    *
    * @return list<string>
+   *   Value returned by the method.
    */
   protected function getEditableConfigNames(): array {
     return [self::ESTADO];
@@ -69,10 +70,13 @@ final class RoleHierarchyForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Value used for $form_state.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $papeis = $this->papeis();
@@ -168,8 +172,13 @@ final class RoleHierarchyForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $papeis = $this->papeis();
@@ -182,8 +191,13 @@ final class RoleHierarchyForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $this->config(self::ESTADO)->set('cadeia', $this->ordemDoEnvio($form_state))->save();

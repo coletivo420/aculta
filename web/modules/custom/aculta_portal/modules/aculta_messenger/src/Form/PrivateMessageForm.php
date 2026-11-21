@@ -90,7 +90,7 @@ class PrivateMessageForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O array do formulário.
    * @param FormStateInterface $form_state
    *   O estado atual do formulário.
@@ -378,7 +378,7 @@ class PrivateMessageForm extends ContentEntityForm {
    *
    * Re-render form after submission, so user could write new message.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O array do formulário.
    * @param FormStateInterface $formState
    *   O estado atual do formulário.
@@ -468,7 +468,7 @@ class PrivateMessageForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O array do formulário.
    * @param FormStateInterface $form_state
    *   O estado atual do formulário.

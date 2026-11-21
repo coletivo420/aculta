@@ -1,0 +1,21 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: WE Sativa - Filtros de denúncias
+description: Navegação GET para estados da fila CGU da Wiki, com links previamente autorizados pelo backend.
+status: experimental
+group: Studio
+props:
+  type: object
+  additionalProperties: false
+  properties:
+    title:
+      type: string
+      title: Nome acessível dos filtros
+      default: Filtrar denúncias por situação
+slots:
+  options:
+    title: Opções autorizadas
+    description: Links de situação gerados pela Wiki, com aria-current no estado ativo.
+assets:
+  css:
+    component:
+      wiki-moderation-filters.css: {}

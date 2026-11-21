@@ -36,16 +36,41 @@ final class DiscussionContextResolver {
    * Multiple matches are configuration errors and fail explicitly.
    */
   public function resolve(EntityInterface $entity, AccountInterface $account): ?DiscussionContextInterface {
+    $matches = $this->matchingProviders($entity);
+    if (count($matches) > 1) {
+      throw new \LogicException(sprintf('More than one discussion context provider supports %s:%s.', $entity->getEntityTypeId(), (string) $entity->id()));
+    }
+    return $matches === [] ? NULL : $matches[0]->getContext($entity, $account);
+  }
+
+  /**
+   * Determines whether exactly one registered provider owns the host.
+   *
+   * This method performs host recognition only; it does not evaluate user
+   * access or construct a context for the account.
+   */
+  public function supports(EntityInterface $entity): bool {
+    $matches = $this->matchingProviders($entity);
+    if (count($matches) > 1) {
+      throw new \LogicException(sprintf('More than one discussion context provider supports %s:%s.', $entity->getEntityTypeId(), (string) $entity->id()));
+    }
+    return $matches !== [];
+  }
+
+  /**
+   * Returns providers matching the host entity.
+   *
+   * @return list<\Drupal\aculta_forum\Context\DiscussionContextProviderInterface>
+   *   Matching providers.
+   */
+  private function matchingProviders(EntityInterface $entity): array {
     $matches = [];
     foreach ($this->providers as $provider) {
       if ($provider->supports($entity)) {
         $matches[] = $provider;
       }
     }
-    if (count($matches) > 1) {
-      throw new \LogicException(sprintf('More than one discussion context provider supports %s:%s.', $entity->getEntityTypeId(), (string) $entity->id()));
-    }
-    return $matches === [] ? NULL : $matches[0]->getContext($entity, $account);
+    return $matches;
   }
 
 }

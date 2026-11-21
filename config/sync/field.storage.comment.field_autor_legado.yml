@@ -3,13 +3,14 @@ langcode: pt-br
 status: true
 dependencies:
   module:
+    - aculta_forum_legacy
     - comment
 id: comment.field_autor_legado
 field_name: field_autor_legado
 entity_type: comment
 type: entity_reference
 settings:
-  target_type: aculta_legado_autor
+  target_type: aculta_forum_legacy_user
 module: core
 locked: false
 cardinality: 1

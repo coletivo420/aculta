@@ -41,10 +41,13 @@ final class AccountAddressFormTest extends UnitTestCase {
   }
 
   /**
-   * Tests the shared CEP widget adapter for external address formats.
+   * Creates a nested address render array with a precise Form API shape.
+   *
+   * @return array{review: array{address: array<string, mixed>}}
+   *   Address wrapper used by the adapter tests.
    */
-  public function testExternalAdapterCanUseSharedCepWidgetWithoutAccountNumberRule(): void {
-    $tree = [
+  private static function addressTree(): array {
+    return [
       'review' => [
         'address' => [
           '#type' => 'address',
@@ -52,9 +55,16 @@ final class AccountAddressFormTest extends UnitTestCase {
         ],
       ],
     ];
+  }
 
+  /**
+   * Tests the shared CEP widget adapter for external address formats.
+   */
+  public function testExternalAdapterCanUseSharedCepWidgetWithoutAccountNumberRule(): void {
+    $tree = self::addressTree();
+
+    $element = &$tree['review']['address'];
     $this->assertTrue(AccountAddressForm::apply($tree, '', FALSE, FALSE));
-    $element = $tree['review']['address'];
 
     $this->assertSame('BR', $element['#default_value']['country_code']);
     $this->assertContains([Address::class, 'processAddress'], $element['#process']);
@@ -73,7 +83,7 @@ final class AccountAddressFormTest extends UnitTestCase {
     $this->assertContains([StreetNumberField::class, 'processStreetNumber'], $element['#process']);
     $this->assertContains([AccountAddressForm::class, 'validateAddressElement'], $element['#element_validate']);
     $this->assertContains(AccountAddressForm::LIBRARY, $element['#attached']['library']);
-    $this->assertContains('aculta420_v2/address-fields', $element['#attached']['library']);
+    $this->assertNotContains('aculta420_v2/address-fields', $element['#attached']['library']);
     $this->assertSame(['BR'], $element['#available_countries']);
   }
 

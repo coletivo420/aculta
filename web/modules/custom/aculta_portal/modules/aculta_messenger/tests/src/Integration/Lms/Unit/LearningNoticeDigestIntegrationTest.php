@@ -6,6 +6,7 @@ namespace Drupal\Tests\aculta_messenger\Integration\Lms\Unit;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -26,6 +27,9 @@ use Drupal\aculta_messenger\Aviso\AvisoDigestProviderInterface;
 use Drupal\aculta_messenger\Aviso\AvisoPreferencias;
 use Drupal\aculta_messenger\Aviso\AvisoService;
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_messenger\Aviso\AvisosResumo;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
 use Drupal\user\UserDataInterface;
@@ -809,6 +813,20 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
    *
    * @param AvisoDigestProviderInterface|list<AvisoDigestProviderInterface> $provider
    *   One or more digest providers.
+   * @param AcultaMailerInterface $mailer
+   *   The mailer used to deliver each message.
+   * @param bool $optIn
+   *   Whether the account opted into daily delivery.
+   * @param \Drupal\Core\Lock\LockBackendInterface|null $lock
+   *   Optional lock backend.
+   * @param \Drupal\Core\Database\Connection|null $database
+   *   Optional test database connection.
+   * @param \Drupal\user\UserDataInterface|null $userDataOverride
+   *   Optional stored preference provider.
+   * @param \Drupal\Component\Datetime\TimeInterface|null $time
+   *   Optional time service.
+   * @param string|null $categoryMode
+   *   Optional digest category preference.
    */
   private function createSummary(AvisoDigestProviderInterface|array $provider, AcultaMailerInterface $mailer, bool $optIn, ?LockBackendInterface $lock = NULL, ?Connection $database = NULL, ?UserDataInterface $userDataOverride = NULL, ?TimeInterface $time = NULL, ?string $categoryMode = NULL): AvisosResumo {
     $query = $this->createMock(QueryInterface::class);
@@ -882,6 +900,7 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
             $this->createMock(ConfigFactoryInterface::class),
             new RequestStack(),
           ),
+          $this->currentOriginResolver(),
         ),
       ),
       new Settings(['hash_salt' => 'unit-test-hash-salt']),
@@ -889,6 +908,17 @@ final class LearningNoticeDigestIntegrationTest extends UnitTestCase {
       $lock ?? $this->createConfiguredMock(LockBackendInterface::class, ['acquire' => TRUE]),
       is_array($provider) ? $provider : [$provider],
     );
+  }
+
+  /**
+   * Creates the currentOriginResolver fixture.
+   */
+  private function currentOriginResolver(): DiscussionOriginResolverInterface {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from(DiscussionOrigin::CURRENT, new CacheableMetadata()),
+    );
+    return $resolver;
   }
 
   /**
@@ -921,6 +951,9 @@ final class DigestUserDataValues {
  */
 final class DigestSnapshotState {
 
+  /**
+   * The value currently stored by the fake UserData callback.
+   */
   public mixed $value = NULL;
 
 }
@@ -1095,6 +1128,8 @@ final class LegacyTestLearningDigestProvider implements AvisoDigestProviderInter
   private readonly TestLearningDigestProvider $provider;
 
   /**
+   * Creates the compatibility provider.
+   *
    * @param int[] $recipients
    *   Accounts with pending digest rows.
    */

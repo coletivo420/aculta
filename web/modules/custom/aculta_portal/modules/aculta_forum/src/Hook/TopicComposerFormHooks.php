@@ -14,6 +14,12 @@ use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\aculta_forum\Form\TopicPopupLayout;
+use Drupal\aculta_forum\Poll\ForumPollManager;
+use Drupal\aculta_forum\Poll\PollDefinition;
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
+use Drupal\Core\Messenger\MessengerInterface;
+use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
@@ -34,6 +40,12 @@ final class TopicComposerFormHooks {
     private readonly RequestStack $requestStack,
     #[Autowire(service: 'string_translation')]
     private readonly TranslationInterface $translation,
+    #[Autowire(service: 'aculta_forum.poll_manager')]
+    private readonly ForumPollManager $pollManager,
+    #[Autowire(service: 'messenger')]
+    private readonly MessengerInterface $messenger,
+    #[Autowire(service: 'datetime.time')]
+    private readonly TimeInterface $time,
   ) {}
 
   /**
@@ -74,6 +86,8 @@ final class TopicComposerFormHooks {
         }
       }
     }
+
+    $this->addPollComposer($form, $formState);
 
     // Popup: o formulário envia por HTMX para o próprio endpoint e troca o corpo do diálogo.
     if ($this->routeMatch->getRouteName() !== self::POPUP_ROUTE) {
@@ -131,6 +145,251 @@ final class TopicComposerFormHooks {
       return;
     }
     $formState->setRedirectUrl(Url::fromUri($url));
+  }
+
+  /**
+   * Adiciona "Adicionar enquete" ao compositor de tópico novo.
+   *
+   * A enquete é criada uma única vez, depois que o tópico é salvo. Em edição, o
+   * bloco não aparece. A validação reutiliza PollDefinition, a mesma regra do domínio.
+   *
+   * @param array<mixed> $form
+   *   Render array do formulário, alterado por referência.
+   * @param FormStateInterface $formState
+   *   Estado atual do formulário.
+   */
+  private function addPollComposer(array &$form, FormStateInterface $formState): void {
+    $formObject = $formState->getFormObject();
+    if (!$formObject instanceof EntityFormInterface || !$formObject->getEntity()->isNew()) {
+      return;
+    }
+
+    // Keep all inputs in the Form API tree until validation. Only the
+    // rendering phase moves the already-processed controls to SDC slots.
+    $form['poll_builder'] = [
+      '#type' => 'container',
+      // Preserve flat Form API input names and getValue('poll_enabled').
+      '#tree' => FALSE,
+      '#weight' => 5,
+      '#after_build' => [[self::class, 'afterBuildPollBuilder']],
+    ];
+    $form['poll_builder']['poll_enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->translation->translate('Adicionar enquete'),
+      '#default_value' => FALSE,
+      '#weight' => 0,
+    ];
+    $enabled = [':input[name="poll_enabled"]' => ['checked' => TRUE]];
+    $multiple = [':input[name="poll_type"]' => ['value' => 'multiple']];
+    $form['poll_builder']['poll'] = [
+      '#type' => 'container',
+      '#tree' => FALSE,
+      '#weight' => 1,
+      '#states' => ['visible' => $enabled],
+      'poll_question' => [
+        '#type' => 'textfield',
+        '#title' => $this->translation->translate('Pergunta da enquete'),
+        '#maxlength' => 255,
+      ],
+      'poll_options' => [
+        '#type' => 'textarea',
+        '#title' => $this->translation->translate('Opções (uma por linha, de 2 a 20)'),
+        '#rows' => 5,
+      ],
+      'poll_type' => [
+        '#type' => 'select',
+        '#title' => $this->translation->translate('Tipo de votação'),
+        '#options' => [
+          'single' => $this->translation->translate('Escolha única'),
+          'multiple' => $this->translation->translate('Múltipla escolha'),
+        ],
+        '#default_value' => 'single',
+      ],
+      'poll_min_choices' => [
+        '#type' => 'number',
+        '#title' => $this->translation->translate('Mínimo de escolhas'),
+        '#default_value' => 1,
+        '#min' => 1,
+        '#states' => ['visible' => $multiple],
+      ],
+      'poll_max_choices' => [
+        '#type' => 'number',
+        '#title' => $this->translation->translate('Máximo de escolhas'),
+        '#default_value' => 1,
+        '#min' => 1,
+        '#states' => ['visible' => $multiple],
+      ],
+      'poll_results_visibility' => [
+        '#type' => 'select',
+        '#title' => $this->translation->translate('Mostrar resultados'),
+        '#options' => [
+          'after_vote' => $this->translation->translate('Depois de votar'),
+          'always' => $this->translation->translate('Sempre'),
+          'after_close' => $this->translation->translate('Depois de encerrar'),
+        ],
+        '#default_value' => 'after_vote',
+      ],
+      'poll_close_at' => [
+        '#type' => 'datetime',
+        '#title' => $this->translation->translate('Encerrar automaticamente em (opcional)'),
+        '#description' => $this->translation->translate('Deixe em branco para encerrar só manualmente.'),
+      ],
+    ];
+
+    if (!isset($form['#validate']) || !is_array($form['#validate'])) {
+      $form['#validate'] = [];
+    }
+    $form['#validate'][] = self::class . ':validatePoll';
+    if (isset($form['actions']) && is_array($form['actions'])) {
+      $actions = &$form['actions'];
+      if (isset($actions['submit']) && is_array($actions['submit'])) {
+        if (!isset($actions['submit']['#submit']) || !is_array($actions['submit']['#submit'])) {
+          $actions['submit']['#submit'] = [];
+        }
+        $actions['submit']['#submit'][] = self::class . ':createPoll';
+      }
+    }
+  }
+
+  /**
+   * Attaches the SDC transform after Form API has processed input names.
+   *
+   * @param array<string, mixed> $element
+   *   The native container containing the processed input elements.
+   *
+   * @return array<string, mixed>
+   *   Container with an additional render-only callback.
+   */
+  public static function afterBuildPollBuilder(array $element, FormStateInterface $formState): array {
+    $callbacks = is_array($element['#pre_render'] ?? NULL) ? $element['#pre_render'] : [];
+    $callbacks[] = [self::class, 'preRenderPollBuilder'];
+    $element['#pre_render'] = $callbacks;
+    return $element;
+  }
+
+  /**
+   * Presents the already-processed Form API fields inside UI Patterns slots.
+   *
+   * This callback runs at render time, after Form API has assigned #parents,
+   * #name, #value and validation. It must never rebuild or rename inputs.
+   *
+   * @param array<string, mixed> $element
+   *   Processed poll builder container.
+   *
+   * @return array<string, mixed>
+   *   SDC render array retaining the original processed form children.
+   */
+  public static function preRenderPollBuilder(array $element): array {
+    $toggle = is_array($element['poll_enabled'] ?? NULL) ? $element['poll_enabled'] : [];
+    $fields = is_array($element['poll'] ?? NULL) ? $element['poll'] : [];
+    unset($element['poll_enabled'], $element['poll'], $element['#theme_wrappers']);
+    $element['#theme'] = 'portal_component';
+    $element['#name'] = 'forum-poll-builder';
+    $element['#props'] = [
+      'title' => (string) t('Configuração da enquete'),
+    ];
+    $element['#slots'] = [
+      'toggle' => $toggle,
+      'fields' => $fields,
+    ];
+    return $element;
+  }
+
+  /**
+   * Valida a enquete opcional com as mesmas regras do domínio.
+   *
+   * @param array<mixed> $form
+   *   Render array do formulário.
+   * @param FormStateInterface $formState
+   *   Estado atual do formulário.
+   */
+  public function validatePoll(array &$form, FormStateInterface $formState): void {
+    if (!$formState->getValue('poll_enabled')) {
+      return;
+    }
+    try {
+      $this->buildPollDefinition($formState);
+    }
+    catch (\InvalidArgumentException) {
+      $formState->setErrorByName('poll_options', $this->translation->translate('Revise a pergunta, as opções (de 2 a 20) e os limites de escolha da enquete.'));
+    }
+    $closeAt = $this->closeAtTimestamp($formState);
+    if ($closeAt !== NULL && $closeAt <= $this->time->getRequestTime()) {
+      $formState->setErrorByName('poll_close_at', $this->translation->translate('A data de encerramento da enquete precisa estar no futuro.'));
+    }
+  }
+
+  /**
+   * Cria a enquete do tópico recém-salvo.
+   *
+   * @param array<mixed> $form
+   *   Render array do formulário.
+   * @param FormStateInterface $formState
+   *   Estado atual do formulário.
+   */
+  public function createPoll(array &$form, FormStateInterface $formState): void {
+    if (!$formState->getValue('poll_enabled')) {
+      return;
+    }
+    $formObject = $formState->getFormObject();
+    if (!$formObject instanceof EntityFormInterface) {
+      return;
+    }
+    $entity = $formObject->getEntity();
+    if (!$entity instanceof NodeInterface || $entity->isNew()) {
+      return;
+    }
+    try {
+      $this->pollManager->createPoll($entity, $this->buildPollDefinition($formState));
+    }
+    catch (\Throwable) {
+      $this->messenger->addError($this->translation->translate('O tópico foi salvo, mas a enquete não foi criada. Tente novamente ou encaminhe a operação à equipe técnica.'));
+    }
+  }
+
+  /**
+   * Monta a definição da enquete a partir dos valores do formulário.
+   *
+   * @throws \InvalidArgumentException
+   *   Quando as opções ou os limites não atendem ao domínio.
+   */
+  private function buildPollDefinition(FormStateInterface $formState): PollDefinition {
+    $isMultiple = $formState->getValue('poll_type') === 'multiple';
+    $options = preg_split('/\R/u', $this->stringValue($formState, 'poll_options')) ?: [];
+
+    return new PollDefinition(
+      title: trim($this->stringValue($formState, 'poll_question')),
+      options: $options,
+      pollType: $isMultiple ? 'multiple' : 'single',
+      minChoices: $isMultiple ? $this->intValue($formState, 'poll_min_choices') : 1,
+      maxChoices: $isMultiple ? $this->intValue($formState, 'poll_max_choices') : 1,
+      resultsVisibility: $this->stringValue($formState, 'poll_results_visibility'),
+      closeAt: $this->closeAtTimestamp($formState),
+    );
+  }
+
+  /**
+   * Lê a data de encerramento opcional da enquete como timestamp, ou NULL se vazia.
+   */
+  private function closeAtTimestamp(FormStateInterface $formState): ?int {
+    $value = $formState->getValue('poll_close_at');
+    return $value instanceof DrupalDateTime ? $value->getTimestamp() : NULL;
+  }
+
+  /**
+   * Lê um valor de texto do formulário; valores ausentes ou não textuais viram vazio.
+   */
+  private function stringValue(FormStateInterface $formState, string $key): string {
+    $value = $formState->getValue($key);
+    return is_string($value) ? $value : '';
+  }
+
+  /**
+   * Lê um valor numérico do formulário; valores ausentes ou não numéricos viram zero.
+   */
+  private function intValue(FormStateInterface $formState, string $key): int {
+    $value = $formState->getValue($key);
+    return is_numeric($value) ? (int) $value : 0;
   }
 
 }

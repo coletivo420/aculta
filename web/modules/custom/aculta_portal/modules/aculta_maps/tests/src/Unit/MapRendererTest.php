@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_maps\Unit;
 
+use Drupal\Core\Url;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -102,7 +103,7 @@ final class MapRendererTest extends UnitTestCase {
     $iconContext = $iconTemplate['#context'] ?? [];
     /** @var array<string, mixed> $iconContextIcon */
     $iconContextIcon = $iconContext['icon'] ?? [];
-    $this->assertSame('aculta420_v2:icon', $iconContextIcon['#component'] ?? NULL);
+    $this->assertSame('icon', $iconContextIcon['#name'] ?? NULL);
     /** @var array<string, mixed> $iconProps */
     $iconProps = $iconContextIcon['#props'] ?? [];
     $this->assertSame('map-pin', $iconProps['name'] ?? NULL);
@@ -232,7 +233,7 @@ final class MapRendererTest extends UnitTestCase {
     /** @var array<string, mixed> $licenseElem */
     $licenseElem = $attribution['license'] ?? [];
     $urlObj = $licenseElem['#url'] ?? NULL;
-    $this->assertInstanceOf(\Drupal\Core\Url::class, $urlObj);
+    $this->assertInstanceOf(Url::class, $urlObj);
     $this->assertSame('https://www.openstreetmap.org/copyright', $urlObj->getUri());
   }
 

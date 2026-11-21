@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_qrcode\Form;
 
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\aculta_qrcode\Entity\QrCode;
 use Drupal\aculta_qrcode\Exception\InvalidQrCodeException;
 use Drupal\aculta_qrcode\Service\QrCodeManager;
 use Drupal\aculta_qrcode\Service\QrCodePresetRegistry;
@@ -44,8 +46,14 @@ final class QrCodeForm extends ContentEntityForm {
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return QrCode
+   *   Value returned by the method.
    */
-  public function buildEntity(array $form, FormStateInterface $form_state): \Drupal\aculta_qrcode\Entity\QrCode {
+  public function buildEntity(array $form, FormStateInterface $form_state): QrCode {
     /** @var \Drupal\aculta_qrcode\Entity\QrCode $entity */
     $entity = parent::buildEntity($form, $form_state);
     if ($entity->isNew() && $entity->get('code')->isEmpty()) {
@@ -58,8 +66,14 @@ final class QrCodeForm extends ContentEntityForm {
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return ContentEntityInterface
+   *   Value returned by the method.
    */
-  public function validateForm(array &$form, FormStateInterface $form_state): \Drupal\Core\Entity\ContentEntityInterface {
+  public function validateForm(array &$form, FormStateInterface $form_state): ContentEntityInterface {
     /** @var \Drupal\Core\Entity\ContentEntityInterface $parentResult */
     $parentResult = parent::validateForm($form, $form_state);
     $entity = $this->buildEntity($form, $form_state);
@@ -81,7 +95,13 @@ final class QrCodeForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return int
+   *   Value returned by the method.
    */
   public function save(array $form, FormStateInterface $form_state): int {
     $this->entity->setNewRevision();

@@ -1,0 +1,11 @@
+name: Leitura - publicações novas
+description: Valores sintéticos. A contagem real vem do Drupal History e os links exigem ACL.
+component: aculta420_v2:forum-reading-timeline
+props:
+  label: Acompanhamento de leitura
+  percent: 25
+  progress_text: 5 de 20 publicações anteriores à última visita
+slots:
+  navigation:
+    type: inline_template
+    template: '<span>Início · Primeira não lida · Última página (prévia)</span>'

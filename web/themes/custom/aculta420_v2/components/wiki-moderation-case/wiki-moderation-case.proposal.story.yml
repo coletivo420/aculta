@@ -1,0 +1,14 @@
+name: "WE Sativa - Proposta editorial"
+description: "Exemplo com conteúdo fictício. Botões em stories não executam decisões."
+props:
+  kind: proposal
+  title: Melhorar referências do verbete
+  status: pending
+  status_label: Aguardando revisão
+  summary: "Uma pessoa colaboradora sugeriu adicionar fontes verificáveis."
+  meta: "Proposta ilustrativa - sem dados de autoria."
+slots:
+  actions:
+    type: inline_template
+    template: |
+      <span>Decisão disponível na interface autenticada da Wiki.</span>

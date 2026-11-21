@@ -1,0 +1,43 @@
+.forum-solution-state {
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.forum-solution-state__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.forum-solution-state__heading {
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.forum-solution-state__description {
+  margin: var(--spacing-sm) 0 0;
+  color: var(--color-text-secondary);
+}
+
+.forum-solution-state__excerpt {
+  margin-block-start: var(--spacing-base);
+  padding-inline-start: var(--spacing-base);
+  color: var(--color-text-primary);
+  border-inline-start: .25rem solid var(--color-brand-primary);
+  overflow-wrap: anywhere;
+}
+
+.forum-solution-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  margin-block-start: var(--spacing-base);
+  gap: var(--spacing-sm);
+}
+
+.forum-solution-state__actions :focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}

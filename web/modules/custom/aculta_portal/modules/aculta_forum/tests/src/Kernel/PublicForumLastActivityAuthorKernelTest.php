@@ -9,7 +9,6 @@ use Drupal\aculta_forum\Hook\PublicForumLastActivityAuthorHooks;
 use Drupal\aculta_forum\Service\ForumPublicPostStatistics;
 use Drupal\aculta_image\ImageCatalog;
 use Drupal\aculta_image\ImageRenderer;
-use Drupal\aculta_user\Entity\LegacyAuthor;
 use Drupal\aculta_user\Identity\AuthorCardBuilder;
 use Drupal\aculta_user\Identity\AuthorIdentityResolver;
 use Drupal\aculta_user\PublicProfileLinkInterface;
@@ -17,7 +16,6 @@ use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\aculta_user\Social\SocialNetworks;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Tests\CommentTestTrait;
-use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -55,7 +53,6 @@ final class PublicForumLastActivityAuthorKernelTest extends KernelTestBase {
     'comment',
     'views',
     'aculta_forum_post_test',
-    'aculta_forum_last_activity_test',
   ];
 
   /**
@@ -64,7 +61,6 @@ final class PublicForumLastActivityAuthorKernelTest extends KernelTestBase {
   protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
-    $this->installEntitySchema('aculta_legado_autor');
     $this->installEntitySchema('node');
     $this->installEntitySchema('aculta_forum_post');
     $this->installSchema('node', ['node_access']);
@@ -78,14 +74,9 @@ final class PublicForumLastActivityAuthorKernelTest extends KernelTestBase {
   }
 
   /**
-   * Uses the immutable historical identity card for the latest public post.
+   * Uses only the Drupal account owner for current ForumPost activity.
    */
-  public function testLatestPostUsesHistoricalAuthorCard(): void {
-    $legacyAuthor = LegacyAuthor::create([
-      'origem_id' => 'growroom-user-42',
-      'nome' => 'Autora do Growroom',
-    ]);
-    $legacyAuthor->save();
+  public function testLatestPostUsesCurrentAuthorWhenNoPublicCardExists(): void {
     $account = User::create(['name' => 'forum-owner', 'status' => 1]);
     $account->save();
     $topicId = 7001;
@@ -93,8 +84,7 @@ final class PublicForumLastActivityAuthorKernelTest extends KernelTestBase {
     $post = ForumPost::create([
       'uid' => $account->id(),
       'topic' => $topicId,
-      'legacy_author' => $legacyAuthor->id(),
-      'body' => ['value' => 'Resposta histórica', 'format' => 'plain_text'],
+      'body' => ['value' => 'Resposta corrente', 'format' => 'plain_text'],
       'status' => 1,
       'created' => $timestamp,
       'changed' => $timestamp,
@@ -106,11 +96,6 @@ final class PublicForumLastActivityAuthorKernelTest extends KernelTestBase {
       ->method('loadMultiple')
       ->with([(int) $post->id()])
       ->willReturn([(int) $post->id() => $post]);
-    $legacyStorage = $this->createMock(EntityStorageInterface::class);
-    $legacyStorage->expects(self::once())
-      ->method('loadMultiple')
-      ->with([(int) $legacyAuthor->id()])
-      ->willReturn([(int) $legacyAuthor->id() => $legacyAuthor]);
     $userStorage = $this->createMock(EntityStorageInterface::class);
     $userStorage->expects(self::once())
       ->method('loadMultiple')
@@ -121,7 +106,6 @@ final class PublicForumLastActivityAuthorKernelTest extends KernelTestBase {
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
     $entityTypeManager->method('getStorage')->willReturnMap([
       ['aculta_forum_post', $postStorage],
-      ['aculta_legado_autor', $legacyStorage],
       ['user', $userStorage],
       ['profile', $profileStorage],
     ]);
@@ -153,51 +137,12 @@ final class PublicForumLastActivityAuthorKernelTest extends KernelTestBase {
 
     $hooks->preprocessViewsViewFields($variables);
 
-    $authorCard = $variables['last_comment_author'] ?? NULL;
-    self::assertIsArray($authorCard);
-    self::assertSame('aculta_user_author_card', $authorCard['#theme'] ?? NULL);
-    self::assertSame('author_growroom_historico', $authorCard['#variant'] ?? NULL);
-    self::assertSame('Autora do Growroom-gr', $authorCard['#display_name'] ?? NULL);
-    self::assertSame('Acervo histórico Growroom', $authorCard['#source_label'] ?? NULL);
-    $cache = $authorCard['#cache'] ?? NULL;
-    self::assertIsArray($cache);
-    $tags = $cache['tags'] ?? NULL;
-    self::assertIsArray($tags);
-    self::assertContains('aculta_legado_autor:' . $legacyAuthor->id(), $tags);
+    self::assertArrayNotHasKey('last_comment_author', $variables);
+    self::assertIsArray($variables['last_comment_author_cache'] ?? NULL);
 
     $invalidViewVariables = ['view' => new \stdClass()];
     $hooks->preprocessViewsViewFields($invalidViewVariables);
     self::assertArrayNotHasKey('last_comment_author', $invalidViewVariables);
-
-    $commentRow = new ResultRow([
-      'topic_id' => $topicId,
-      'comment_uid' => (int) $account->id(),
-      'comment_timestamp' => $timestamp + 100,
-      'comment_count' => 1,
-      'last_updated' => $timestamp + 100,
-    ]);
-    $commentView = $this->getMockBuilder(ViewExecutable::class)->disableOriginalConstructor()->getMock();
-    $commentView->method('id')->willReturn('aculta_forum_public_topics');
-    $commentView->result = [$commentRow];
-    $commentView->field = [
-      'nid' => $this->fieldValue('topic_id'),
-      'last_comment_uid' => $this->fieldValue('comment_uid'),
-      'last_comment_timestamp' => $this->fieldValue('comment_timestamp'),
-      'last_comment_count' => $this->fieldValue('comment_count'),
-      'last_updated' => $this->fieldValue('last_updated'),
-    ];
-    $noCardVariables = ['view' => $commentView, 'row' => $commentRow];
-
-    $hooks->preprocessViewsViewFields($noCardVariables);
-
-    $placeholder = $noCardVariables['last_comment_author_cache'] ?? NULL;
-    self::assertIsArray($placeholder);
-    $placeholderCache = $placeholder['#cache'] ?? NULL;
-    self::assertIsArray($placeholderCache);
-    $accountMetadata = CacheableMetadata::createFromObject($account);
-    self::assertSame($accountMetadata->getCacheContexts(), $placeholderCache['contexts'] ?? NULL);
-    self::assertSame($accountMetadata->getCacheTags(), $placeholderCache['tags'] ?? NULL);
-    self::assertSame(0, $placeholderCache['max-age'] ?? NULL);
   }
 
   /**

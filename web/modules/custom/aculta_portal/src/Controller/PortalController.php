@@ -32,7 +32,6 @@ use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\address\AddressInterface;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\profile\Entity\ProfileInterface;
 use Drupal\profile\ProfileStorageInterface;
 use Drupal\social_auth\Entity\SocialAuth;
@@ -107,6 +106,9 @@ final class PortalController extends ControllerBase {
 
   /**
    * Resolves the shared avatar service when the ACULTA User submodule is active.
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   private static function avatarResolver(ContainerInterface $container): ?AvatarResolver {
     return $container->has('aculta_user.avatar_resolver')
@@ -128,6 +130,7 @@ final class PortalController extends ControllerBase {
    * Visão geral da conta: identidade, foto e caixas extras do submódulo de usuário.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function dashboard(): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
@@ -176,14 +179,14 @@ final class PortalController extends ControllerBase {
       'form' => $this->buildPortalAccountForm($account),
     ];
     $accountContext = $account;
-    $this->modules->alter('aculta_portal_photo_editor', $photoForm, $accountContext);
+    $this->modules->alter('portal_photo_editor', $photoForm, $accountContext);
 
     $build = [
       'identity' => [
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'account-identity'],
         'photo_editor' => [
-          '#theme' => 'aculta_portal_photo_editor',
+          '#theme' => 'portal_photo_editor',
           // Avatar em <span> (válido dentro do botão) com atributo de alvo: o sorteio (aculta_user) troca todas as
           // ocorrências por AJAX. A visualização no popup mostra o mesmo avatar antes do envio do formulário.
           '#photo' => [
@@ -214,6 +217,7 @@ final class PortalController extends ControllerBase {
    * Aba de informações básicas de Meus Dados.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function myData(): array {
     return $this->buildDataSection('basics');
@@ -223,6 +227,7 @@ final class PortalController extends ControllerBase {
    * Aba de endereço de Meus Dados.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function address(): array {
     return $this->buildDataSection('address');
@@ -232,6 +237,7 @@ final class PortalController extends ControllerBase {
    * Outros Dados (CPF ou CNPJ). Sem o submódulo que implementa o documento, o caminho responde 404.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function otherData(): array {
     if ($this->accountDocument === NULL) {
@@ -253,6 +259,9 @@ final class PortalController extends ControllerBase {
 
   /**
    * Situação do pedido em português (os rótulos do workflow vêm em inglês).
+   *
+   * @param OrderInterface $order
+   *   Value used for $order.
    */
   private function orderStateLabel(OrderInterface $order): string {
     return match ($order->getState()->getId()) {
@@ -264,20 +273,17 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * Caixa da Mercado Pago em "Meus pedidos".
-   *
-   * Os pagamentos são processados pelo Mercado Pago, e o portal não guarda
-   * meios de pagamento. O texto e o link vêm da configuração
-   * aculta_portal.settings (mercado_pago_account_url).
+   * Caixa da Mercado Pago em "Meus pedidos". Os pagamentos são processados pelo Mercado Pago, e o portal não guarda meios de pagamento. O texto e o link vêm da configuração aculta_portal.settings (mercado_pago_account_url).
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function paymentNotice(): array {
     $paymentUrl = $this->safeMercadoPagoAccountUrl();
 
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:payment-notice',
+      '#theme' => 'portal_component',
+      '#name' => 'payment-notice',
       '#props' => [
         'intro' => (string) $this->t('Todos os nossos pagamentos são processados pelo Mercado Pago.'),
         'link_label' => (string) $this->t('Acesse sua conta Mercado Pago'),
@@ -316,6 +322,7 @@ final class PortalController extends ControllerBase {
    * Meus pedidos: listagem das compras da pessoa logada.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function orders(): array {
     $storage = $this->entities->getStorage('commerce_order');
@@ -373,6 +380,7 @@ final class PortalController extends ControllerBase {
    *   Texto já traduzido; aceita <strong> apenas em textos de desenvolvimento.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function googleBox(?Url $url, string $label): array {
     $markup = Markup::create('<span>' . $label . '</span>');
@@ -380,14 +388,14 @@ final class PortalController extends ControllerBase {
       return [
         '#type' => 'html_tag',
         '#tag' => 'a',
-        '#attributes' => ['href' => $url->toString(), 'class' => ['portal-account__google-auth']],
+        '#attributes' => ['href' => $url->toString(), 'data-portal-ui' => 'login-dialog-google-button'],
         '#value' => $markup,
       ];
     }
     return [
       '#type' => 'html_tag',
       '#tag' => 'div',
-      '#attributes' => ['class' => ['portal-account__google-auth-status']],
+      '#attributes' => ['data-portal-ui' => 'account-google-auth-status'],
       '#value' => $markup,
     ];
   }
@@ -396,6 +404,7 @@ final class PortalController extends ControllerBase {
    * Contas externas conectadas à conta do portal (Google).
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function connections(): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
@@ -435,7 +444,7 @@ final class PortalController extends ControllerBase {
           '#attributes' => ['data-portal-ui' => 'google-account'],
           'text' => ['#plain_text' => $this->t('O endereço da conta Google ainda não está disponível nesta conexão.')],
           'reconnect' => [
-            '#type' => 'aculta_portal_button',
+            '#type' => 'portal_button',
             '#props' => [
               'text' => (string) $this->t('Atualizar conexão Google'),
               'url' => Url::fromRoute('social_auth.network.redirect', ['network' => 'google'])->toString(),
@@ -446,7 +455,7 @@ final class PortalController extends ControllerBase {
       }
       if ($social_auth instanceof SocialAuth && $this->hasUserChosenPassword($account)) {
         $items['disconnect'] = [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => (string) $this->t('Desconectar Google'),
             'url' => Url::fromRoute('entity.social_auth.delete_form', ['social_auth' => $social_auth->id()])->toString(),
@@ -479,6 +488,7 @@ final class PortalController extends ControllerBase {
    * Segurança, aba E-mail (/seguranca): e-mail atual e troca do endereço (com confirmação).
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function security(): array {
     return $this->buildSecuritySection('email');
@@ -488,19 +498,20 @@ final class PortalController extends ControllerBase {
    * Segurança, aba Senha (/seguranca/senha): troca da senha (exige a senha atual).
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function securityPassword(): array {
     return $this->buildSecuritySection('password');
   }
 
   /**
-   * Abas internas da Segurança.
+   * Abas internas da Segurança. No mesmo padrão de Meus Dados: E-mail e Senha, cada uma com URL própria. O conteúdo fica no shell da conta; os formulários salvam por AJAX (mensagens em português).
    *
-   * No mesmo padrão de Meus Dados: E-mail e Senha, cada uma com URL própria.
-   * O conteúdo fica no shell da conta; os formulários salvam por AJAX
-   * (mensagens em português).
+   * @param string $section
+   *   Value used for $section.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function buildSecuritySection(string $section): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
@@ -547,7 +558,13 @@ final class PortalController extends ControllerBase {
   /**
    * Conteúdo de cada aba de Segurança (e-mail ou senha).
    *
+   * @param UserInterface $account
+   *   Account to evaluate.
+   * @param string $section
+   *   Value used for $section.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function securitySectionContent(UserInterface $account, string $section): array {
     if ($section === 'password') {
@@ -650,7 +667,11 @@ final class PortalController extends ControllerBase {
   /**
    * Monta uma seção de Meus Dados conforme a aba pedida.
    *
+   * @param string $section
+   *   Value used for $section.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function buildDataSection(string $section): array {
     $account = $this->entities->getStorage('user')->load($this->account->id());
@@ -724,13 +745,15 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * Formulário do perfil.
+   * Formulário do perfil. No endereço, o número e a marca S/N saem do logradouro para os campos próprios (StreetNumberField), logo depois da rua; ao gravar, são juntados de novo (PortalHooks, entity builder).
    *
-   * No endereço, o número e a marca S/N saem do logradouro para os campos
-   * próprios (StreetNumberField), logo depois da rua; ao gravar, são juntados
-   * de novo (PortalHooks, entity builder).
+   * @param string $section
+   *   Value used for $section.
+   * @param ?ProfileInterface $profile
+   *   Value used for $profile.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function profileForm(string $section, ?ProfileInterface $profile): array {
     if (!$profile instanceof ProfileInterface) {
@@ -746,7 +769,7 @@ final class PortalController extends ControllerBase {
     if (($parts['number'] !== '' || $parts['sn']) && $profile->hasField('field_address') && !$profile->get('field_address')->isEmpty()) {
       $display = clone $profile;
       $address = $display->get('field_address')->first();
-      if ($address !== null) {
+      if ($address !== NULL) {
         $value = $address->getValue();
         if (is_array($value)) {
           $value['address_line1'] = $parts['street'];
@@ -763,7 +786,11 @@ final class PortalController extends ControllerBase {
   /**
    * Rua, número e S/N salvos no logradouro.
    *
+   * @param ?ProfileInterface $profile
+   *   Value used for $profile.
+   *
    * @return array{street: string, number: string, sn: bool}
+   *   Render array returned by the method.
    */
   private function savedParts(?ProfileInterface $profile): array {
     if (!$profile || !$profile->hasField('field_address') || $profile->get('field_address')->isEmpty()) {
@@ -839,14 +866,13 @@ final class PortalController extends ControllerBase {
   }
 
   /**
-   * Builds Core's user form safely inside the Portal route.
+   * Builds Core's user form safely inside the Portal route. Social Auth's generic user-form alter expects a `user` route parameter, which account pages do not have. Temporarily supply the current account during form construction, then remove Social Auth's separate account management section because the Portal has a dedicated Connections page.
    *
-   * Social Auth's generic user-form alter expects a `user` route parameter,
-   * which account pages do not have. Temporarily supply the current account
-   * during form construction, then remove Social Auth's separate account
-   * management section because the Portal has a dedicated Connections page.
+   * @param UserInterface $account
+   *   Account to evaluate.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   private function buildPortalAccountForm(UserInterface $account): array {
     $parameters = $this->routeMatch->getParameters();

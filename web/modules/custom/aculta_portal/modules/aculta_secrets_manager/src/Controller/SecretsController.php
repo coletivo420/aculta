@@ -57,7 +57,7 @@ final class SecretsController {
       $is_active = $environment === $active;
       $tab_id = 'credenciais-tab-' . $environment;
       $buttons[$environment] = [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->tabLabel($environment),
           'variant' => 'ghost',
@@ -114,7 +114,8 @@ final class SecretsController {
     ];
     if (!$this->secrets->canSaveHere()) {
       $page['storage_notice'] = [
-        '#component' => 'aculta420_v2:status-messages',
+        '#theme' => 'portal_component',
+        '#name' => 'status-messages',
         '#props' => [
           'type' => 'warning',
           'messages' => [(string) $this->t(
@@ -143,8 +144,8 @@ final class SecretsController {
     }
     $this->secrets->logReveal($name, (string) $this->account->getAccountName());
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:secret-reveal',
+      '#theme' => 'portal_component',
+      '#name' => 'secret-reveal',
       '#slots' => ['content' => [
         'value' => [
           '#type' => 'container',
@@ -178,7 +179,11 @@ final class SecretsController {
   /**
    * Builds the edit form for an active-environment credential.
    *
+   * @param string $name
+   *   Value used for $name.
+   *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function edit(string $name): array {
     $this->assertInActiveScope($name);
@@ -188,7 +193,11 @@ final class SecretsController {
   /**
    * Builds a confirmation form to clear an active-environment credential.
    *
+   * @param string $name
+   *   Value used for $name.
+   *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function clear(string $name): array {
     $this->assertInActiveScope($name);

@@ -1,0 +1,44 @@
+.forum-tracking-level {
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.forum-tracking-level__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--spacing-base);
+}
+
+.forum-tracking-level__identity {
+  flex: 1;
+  min-inline-size: 0;
+}
+
+.forum-tracking-level__title {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+}
+
+.forum-tracking-level__description {
+  margin: var(--spacing-xs) 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  overflow-wrap: anywhere;
+}
+
+.forum-tracking-level__actions {
+  display: flex;
+  flex-wrap: wrap;
+  margin-block-start: var(--spacing-base);
+  gap: var(--spacing-sm);
+}
+
+.forum-tracking-level__actions :focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}

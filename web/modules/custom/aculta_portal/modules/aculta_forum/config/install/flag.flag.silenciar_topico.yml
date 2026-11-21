@@ -1,0 +1,29 @@
+uuid: 49c67199-3a42-4768-b3a2-334fe8ac97e6
+langcode: pt-br
+status: true
+dependencies:
+  module:
+    - node
+id: silenciar_topico
+label: 'Silenciar tópico'
+bundles:
+  - aculta_forum_topic
+entity_type: node
+global: false
+flag_short: 'Silenciar tópico'
+flag_long: ''
+flag_message: ''
+unflag_short: 'Silenciado'
+unflag_long: ''
+unflag_message: ''
+unflag_denied_text: ''
+weight: 0
+flag_type: 'entity:node'
+link_type: reload
+flagTypeConfig:
+  show_in_links: {}
+  show_as_field: true
+  show_on_form: false
+  show_contextual_link: false
+  extra_permissions: {}
+linkTypeConfig: {}

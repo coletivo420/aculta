@@ -46,9 +46,16 @@ class ThankYouPane extends CheckoutPaneBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $configuration
+   * @param ContainerInterface $container
+   *   Dependency injection container.
+   * @param array<array-key, mixed> $configuration
+   *   Plugin configuration.
    * @param string $plugin_id
+   *   Plugin ID.
    * @param mixed $plugin_definition
+   *   Plugin definition.
+   * @param ?CheckoutFlowInterface $checkout_flow
+   *   Value used for $checkout_flow.
    */
   public static function create(
     ContainerInterface $container,
@@ -100,8 +107,14 @@ class ThankYouPane extends CheckoutPaneBase {
    * {@inheritdoc}
    *
    * @param array<mixed> $pane_form
+   *   Value used for $pane_form.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    * @param array<mixed> $complete_form
+   *   Value used for $complete_form.
+   *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function buildPaneForm(
     array $pane_form,
@@ -148,37 +161,37 @@ class ThankYouPane extends CheckoutPaneBase {
     }
 
     $pane_form['thanks'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:donation-presentation',
+      '#theme' => 'portal_component',
+      '#name' => 'donation-presentation',
       '#props' => ['variant' => 'thanks'],
       '#slots' => ['content' => [
         'name' => [
-        '#type' => 'html_tag',
-        '#tag' => 'p',
-        '#value' => $firstName,
-        '#attributes' => ['class' => ['donation-presentation__donor']],
-      ],
-      'donation_clause' => [
-        '#type' => 'html_tag',
-        '#tag' => 'p',
-        '#value' => $this->t('thank you for donating'),
-        '#attributes' => ['class' => ['donation-presentation__clause']],
-      ],
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => $firstName,
+          '#attributes' => ['data-portal-ui' => 'donation-presentation-donor'],
+        ],
+        'donation_clause' => [
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => $this->t('thank you for donating'),
+          '#attributes' => ['data-portal-ui' => 'donation-presentation-clause'],
+        ],
       ]],
     ];
 
     $pane_form['amount'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:donation-presentation',
+      '#theme' => 'portal_component',
+      '#name' => 'donation-presentation',
       '#props' => ['variant' => 'amount'],
       '#slots' => ['content' => [
         'donation_amount' => [
-        '#type' => 'html_tag',
-        '#tag' => 'p',
-        '#weight' => 1,
-        '#value' => $donationAmount,
-        '#attributes' => ['class' => ['donation-presentation__amount']],
-      ],
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#weight' => 1,
+          '#value' => $donationAmount,
+          '#attributes' => ['data-portal-ui' => 'donation-presentation-amount'],
+        ],
       ]],
     ];
     $gift_type = '';
@@ -194,7 +207,7 @@ class ThankYouPane extends CheckoutPaneBase {
         '#weight' => 2,
         '#tag' => 'p',
         '#value' => $this->t('every month'),
-        '#attributes' => ['class' => ['donation-presentation__monthly']],
+        '#attributes' => ['data-portal-ui' => 'donation-presentation-monthly'],
       ];
     }
     if (
@@ -213,7 +226,7 @@ class ThankYouPane extends CheckoutPaneBase {
         '#weight' => 4,
         '#tag' => 'p',
         '#value' => $this->t('in honor of @name', ['@name' => $honoree]),
-        '#attributes' => ['class' => ['donation-presentation__honor']],
+        '#attributes' => ['data-portal-ui' => 'donation-presentation-honor'],
       ];
     }
     // Successfully built. Remove the order id from the session.

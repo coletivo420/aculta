@@ -75,6 +75,7 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
     'entity',
     'profile',
     'aculta_user',
+    'aculta_cgu',
     'aculta_forum',
     'ui_patterns',
     'ui_patterns_views',
@@ -94,9 +95,20 @@ final class LmsDiscussionContextIsolationKernelTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
+  /**
+   * Stub de DomainSiteManager sem construtor: as dependências de domínio não são usadas por estes casos.
+   */
+  public static function createDomainSiteStub(): \Drupal\aculta_portal\Domain\DomainSiteManager {
+    return (new \ReflectionClass(\Drupal\aculta_portal\Domain\DomainSiteManager::class))->newInstanceWithoutConstructor();
+  }
+
   public function register(ContainerBuilder $container): void {
     parent::register($container);
     $this->registerLmsDependencyServices($container);
+    // Referência do controller Marley do CGU; não é instanciado neste teste.
+    $container->register('aculta_portal.domain_site', \Drupal\aculta_portal\Domain\DomainSiteManager::class)
+      ->setFactory([self::class, 'createDomainSiteStub'])
+      ->setPublic(TRUE);
     $container->setDefinition(
       'entity_usage.usage',
       (new Definition(EntityUsage::class, ['entity_usage']))->setPublic(TRUE),

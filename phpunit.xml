@@ -31,6 +31,7 @@
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_events/tests/src/Unit</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_file_uploader/tests/src/Unit</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Unit</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_forum_legacy/tests/src/Unit</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_gallery/tests/src/Unit/ContentIndex</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_gallery/tests/src/Unit/ListBuilder</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_game/tests/src/Unit</directory>
@@ -78,6 +79,7 @@
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_events_openstreetmap/tests/src/Kernel</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_faq/tests/src/Kernel</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_forum/tests/src/Kernel</directory>
+      <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_forum_legacy/tests/src/Kernel</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_game/tests/src/Kernel</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_id_cpf/tests/src/Kernel</directory>
       <directory suffix="Test.php">web/modules/custom/aculta_portal/modules/aculta_image/tests/src/Kernel</directory>

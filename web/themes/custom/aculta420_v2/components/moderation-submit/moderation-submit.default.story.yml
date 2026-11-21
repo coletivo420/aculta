@@ -1,0 +1,6 @@
+name: Botão de envio de moderação
+props:
+  label: Despublicar
+  icon: eye-slash
+  variant: regular
+  tone: neutral

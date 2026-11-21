@@ -12,6 +12,17 @@ props:
   additionalProperties: false
   required: [author_name]
   properties:
+    kind:
+      type: string
+      title: Tipo de alvo
+      enum: [comentario, topico]
+      default: comentario
+      description: Define o gatilho e o título do popup. comentario mantém o comportamento atual; topico abre as ações do tópico no mesmo popup.
+    title:
+      type: [string, 'null']
+      title: Título do popup
+      description: Título exibido no popup. Quando vazio, usa o título do tipo de alvo.
+      default: null
     url:
       type: [string, 'null']
       title: URL dos controles (página real)

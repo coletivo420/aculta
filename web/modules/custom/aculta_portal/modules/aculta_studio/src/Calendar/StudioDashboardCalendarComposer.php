@@ -7,7 +7,6 @@ namespace Drupal\aculta_studio\Calendar;
 use Drupal\aculta_calendar\Agenda\CalendarAgenda;
 use Drupal\aculta_calendar\Agenda\MonthGrid;
 use Drupal\aculta_calendar\Item\CalendarQuery;
-use Drupal\Core\Routing\UrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
@@ -26,7 +25,6 @@ final class StudioDashboardCalendarComposer {
     private readonly ?CalendarAgenda $agenda,
     private readonly MonthGrid $monthGrid,
     private readonly AccountInterface $currentUser,
-    private readonly ?UrlGeneratorInterface $urlGenerator = NULL,
   ) {}
 
   /**
@@ -205,8 +203,8 @@ final class StudioDashboardCalendarComposer {
     }
 
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:studio-calendar',
+      '#theme' => 'portal_component',
+      '#name' => 'studio-calendar',
       '#props' => [
         'title' => (string) $this->t('Calendário'),
         'current_month_label' => $grid['rotulo'],

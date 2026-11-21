@@ -16,6 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Renders download links enriched with human-readable MIME and size metadata.
+   *
+ * @extends FormatterBase<\Drupal\Core\Field\FieldItemListInterface>
  */
 #[FieldFormatter(
   id: 'aculta_download_with_meta',
@@ -76,8 +78,8 @@ final class DownloadWithMetaFormatter extends FormatterBase implements Container
       $url = $file->createFileUrl(FALSE);
 
       $elements[$delta] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:document-download',
+        '#theme' => 'portal_component',
+        '#name' => 'document-download',
         '#props' => [
           'format' => $formatBadge,
           'size' => $sizeFormatted,
@@ -85,15 +87,15 @@ final class DownloadWithMetaFormatter extends FormatterBase implements Container
         ],
         '#slots' => [
           'link' => [
-          '#type' => 'link',
-          '#title' => $filename,
-          '#url' => Url::fromUri($url, [
-            'attributes' => [
-              'download' => '',
-              'aria-label' => $accessibleLabel,
-              'class' => ['document-download__link'],
-            ],
-          ]),
+            '#type' => 'link',
+            '#title' => $filename,
+            '#url' => Url::fromUri($url, [
+              'attributes' => [
+                'download' => '',
+                'aria-label' => $accessibleLabel,
+                'data-portal-ui' => 'document-download-link',
+              ],
+            ]),
           ],
         ],
       ];

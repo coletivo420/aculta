@@ -131,3 +131,24 @@ function aculta_cgu_post_update_migrate_moderator_role(): string {
 
   return "Permissão movida em {$permissionsMoved} papéis; {$usersMoved} usuários migrados de {$oldRole} para {$newRole}.";
 }
+
+
+/**
+ * Installs the optional confidential description on existing CGU report tables.
+ *
+ * New installations receive the field directly from CguReport::baseFieldDefinitions().
+ * This post-update is intentionally additive and preserves every legacy report.
+ */
+function aculta_cgu_post_update_add_report_description(): string {
+  $updates = \Drupal::entityDefinitionUpdateManager();
+  if ($updates->getFieldStorageDefinition('description', 'aculta_cgu_report') !== NULL) {
+    return 'O campo description já estava instalado na entidade aculta_cgu_report.';
+  }
+  $definitions = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('aculta_cgu_report');
+  $definition = $definitions['description'] ?? NULL;
+  if (!$definition instanceof \Drupal\Core\Field\FieldStorageDefinitionInterface) {
+    throw new \RuntimeException('Definição do campo CGU description não encontrada.');
+  }
+  $updates->installFieldStorageDefinition('description', 'aculta_cgu_report', 'aculta_cgu', $definition);
+  return 'Campo sigiloso de descrição de denúncias CGU instalado, sem alterar relatos anteriores.';
+}

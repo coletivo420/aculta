@@ -1,0 +1,8 @@
+name: Votação de tópico - sem voto da conta
+description: Contrato visual de Topic Voting, distinto de forum-poll-results e sem formulário de voto.
+component: aculta420_v2:forum-topic-vote-summary
+props:
+  title: Votos no tópico
+  votes: 17
+  voted: false
+  status_label: Você ainda não votou

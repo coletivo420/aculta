@@ -1,0 +1,8 @@
+name: Acompanhamento - Silenciado
+description: Prévia visual fictícia do nível Silenciado. Não modifica notificações ou preferências reais.
+component: aculta420_v2:forum-tracking-level
+props:
+  title: Acompanhamento do tópico
+  level: muted
+  level_label: Silenciado
+  description: O owner poderá reduzir avisos quando a preferência estiver implementada.

@@ -34,6 +34,13 @@ services:
       - '@logger.channel.aculta_cgu'
       - '@?aculta_mailer.mailer'
 
+  # Escopo por alvo para purposes restritos (ex.: LMS por Group). Adaptadores entram pela tag.
+  aculta_cgu.report_target_scope:
+    class: Drupal\aculta_cgu\Scope\ReportTargetScope
+    arguments:
+      - !tagged_iterator aculta_cgu.report_target_scope_provider
+      - '@entity_type.manager'
+
   aculta_cgu.report_service:
     class: Drupal\aculta_cgu\Service\ReportService
     arguments:
@@ -42,6 +49,7 @@ services:
       - '@aculta_cgu.moderation_notifier'
       - '@lock'
       - '@logger.channel.aculta_cgu'
+      - '@aculta_cgu.report_target_scope'
 
   aculta_cgu.report_queue:
     class: Drupal\aculta_cgu\Service\CguReportQueue
@@ -49,6 +57,7 @@ services:
       - '@entity_type.manager'
       - '@current_user'
       - '@database'
+      - '@aculta_cgu.report_target_scope'
 
   aculta_cgu.mail_type.report_notice:
     class: Drupal\aculta_cgu\Mail\CguReportNoticeMailType
@@ -63,3 +72,28 @@ services:
     arguments: ['@database']
     tags:
       - { name: aculta_statistics.metric_provider }
+
+  # Frontend Marley: composition only. CGU owns queue, decisions and scope;
+  # the Forum owns target access, never the Studio shell.
+  aculta_cgu.forum_marley_controller:
+    class: Drupal\aculta_cgu\Controller\CguForumMarleyController
+    arguments:
+      - '@aculta_cgu.report_queue'
+      - '@aculta_cgu.report_service'
+      - '@entity_type.manager'
+      - '@current_user'
+      - '@date.formatter'
+      - '@form_builder'
+      - '@aculta_portal.domain_site'
+      - '@?aculta_forum.marley_topic_actions'
+
+  # Public report action/route: CGU remains the sole writer and access owner.
+  aculta_cgu.report_target_resolver:
+    class: Drupal\aculta_cgu\Service\ReportTargetResolver
+    arguments: ['@entity_type.manager', '@?aculta_forum.discussion_origin_resolver']
+  aculta_cgu.report_create_access:
+    class: Drupal\aculta_cgu\Access\CguReportCreateAccess
+    arguments: ['@aculta_cgu.report_target_resolver', '@aculta_cgu.report_service']
+  Drupal\aculta_cgu\Hook\CguReportActionHooks:
+    class: Drupal\aculta_cgu\Hook\CguReportActionHooks
+    arguments: ['@aculta_cgu.report_service', '@current_user', '@aculta_cgu.report_target_resolver']

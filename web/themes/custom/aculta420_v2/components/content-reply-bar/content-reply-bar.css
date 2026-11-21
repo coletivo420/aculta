@@ -1,7 +1,7 @@
 /* Barra de Respostas de Conteúdo: ícones Phosphor coloridos com tokens do tema.
    Os tokens mudam sozinhos entre o modo claro e o escuro (data-theme). */
 .content-reply-bar {
-  --content-reply-size: 2.25rem;
+  --content-reply-size: var(--tap-target-min);
 
   display: inline-flex;
   flex-wrap: wrap;
@@ -58,3 +58,11 @@
 [data-theme="dark"] .content-reply-bar__action--edit { --content-reply-color: var(--accent-yellow-stripe); }
 .content-reply-bar__action--delete { --content-reply-color: var(--accent-red-stripe); }
 .content-reply-bar__action--admin { --content-reply-color: var(--color-brand-primary); }
+.content-reply-bar__action--report { --content-reply-color: var(--accent-red-stripe, var(--color-brand-primary)); }
+
+.content-reply-bar__label,
+.discussion-reaction-bar__label,
+.comment-admin-trigger__label {
+  font-size: .875rem;
+  line-height: 1.2;
+}

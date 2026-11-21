@@ -106,3 +106,68 @@ aculta_wiki.proposal_decide:
     parameters:
       proposal:
         type: wiki_proposal
+
+
+# Wiki editorial moderation belongs to WE Sativa, not Marley or the Forum.
+aculta_wiki.moderation_home:
+  path: '/we-sativa/moderacao'
+  defaults:
+    _controller: 'aculta_wiki.moderation_controller:overview'
+    _title: 'WE Sativa - moderação da Wiki'
+  requirements:
+    _custom_access: 'aculta_wiki.moderation_access:overviewAccess'
+  options:
+    _aculta_site_key: wiki
+    no_cache: true
+  methods: [GET, HEAD]
+
+aculta_wiki.moderation_proposals:
+  path: '/we-sativa/moderacao/propostas'
+  defaults:
+    _controller: 'aculta_wiki.moderation_controller:proposals'
+    _title: 'WE Sativa - propostas'
+  requirements:
+    _custom_access: 'aculta_wiki.moderation_access:proposalsAccess'
+  options:
+    _aculta_site_key: wiki
+    no_cache: true
+  methods: [GET, HEAD]
+
+aculta_wiki.moderation_revisions:
+  path: '/we-sativa/moderacao/verbetes'
+  defaults:
+    _controller: 'aculta_wiki.moderation_controller:revisions'
+    _title: 'WE Sativa - verbetes em revisão'
+  requirements:
+    _custom_access: 'aculta_wiki.moderation_access:revisionsAccess'
+  options:
+    _aculta_site_key: wiki
+    no_cache: true
+  methods: [GET, HEAD]
+
+aculta_wiki.moderation_reports:
+  path: '/we-sativa/moderacao/denuncias'
+  defaults:
+    _controller: 'aculta_wiki.moderation_controller:reports'
+    _title: 'WE Sativa - denúncias da Wiki'
+  requirements:
+    _custom_access: 'aculta_wiki.moderation_access:reportsAccess'
+  options:
+    _aculta_site_key: wiki
+    no_cache: true
+  methods: [GET, HEAD]
+
+aculta_wiki.moderation_report_decide:
+  path: '/we-sativa/moderacao/denuncias/{aculta_cgu_report}/decidir'
+  defaults:
+    _controller: 'aculta_wiki.moderation_controller:decision'
+    _title: 'WE Sativa - avaliar denúncia da Wiki'
+  requirements:
+    _custom_access: 'aculta_wiki.moderation_access:reportAccess'
+  options:
+    _aculta_site_key: wiki
+    no_cache: true
+    parameters:
+      aculta_cgu_report:
+        type: entity:aculta_cgu_report
+  methods: [GET, HEAD, POST]

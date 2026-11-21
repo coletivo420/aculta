@@ -26,6 +26,7 @@ final class AccountBioCard {
 
   /**
    * Monta a caixa da conta informada.
+   *
    * @return array<array-key, mixed>
    *   Render array do cartão.
    */
@@ -35,8 +36,8 @@ final class AccountBioCard {
 
     $editUrl = Url::fromRoute('aculta_user.bio_form');
     $dialog = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:dialog',
+      '#theme' => 'portal_component',
+      '#name' => 'dialog',
       '#props' => [
         'id' => 'aculta-account-bio-dialog',
         'title' => (string) $this->t('Editar bio'),
@@ -67,8 +68,8 @@ final class AccountBioCard {
       ->applyTo($dialog);
 
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:surface-panel',
+      '#theme' => 'portal_component',
+      '#name' => 'surface-panel',
       '#props' => ['tone' => 'raised', 'radius' => 'md', 'spacing' => 'compact', 'elevation' => 'none'],
       '#attributes' => ['id' => 'aculta-account-bio-card'],
       '#slots' => [

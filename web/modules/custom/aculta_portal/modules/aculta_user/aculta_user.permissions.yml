@@ -23,10 +23,6 @@ moderar denuncias do forum:
   title: 'Moderar denúncias do Fórum'
   restrict access: true
 
-administer aculta legado:
-  title: 'Administrar autorias históricas do Fórum'
-  restrict access: true
-
 administer aculta claims:
   title: 'Administrar e moderar reivindicações de posse e organizações'
   restrict access: true

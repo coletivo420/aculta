@@ -1,3 +1,7 @@
+> **COMPLEMENTO DE PAPÉIS 2026-11-20:** `aculta_studio` orquestra interfaces operacionais em Marley, WE Sativa, GanjaLab, Green Stash e Culturas. Novo `moderador` terá só a área Fórum de Marley quando o acesso for implementado; `content_editor` atua na editoria frontend; Educador no GanjaLab; backend exclusivamente `administrator`. [Plano Studio](../../web/modules/custom/aculta_portal/modules/aculta_studio/docs/PLANO-FRONTEND-OPERACIONAL-2026-11-20.md).
+
+> **NOVO CONTRATO DE PAPÉIS (2026-11-20):** somente `administrator` acessará backend em qualquer suíte; novo `moderador` abaixo de `content_editor` modera a comunidade por popup/frontend, sem direitos editoriais herdados; `content_editor` trabalha no frontend Wiki/Revista; Educador opera e modera pedagogia no frontend GanjaLab com ACL própria. Concessões antigas em `content_editor` e `lms_teacher` ainda precisam de migração/retirada segura - não considerar esta política já aplicada. [Política transversal](FRONTEND-OPERACIONAL-BACKEND-EXCLUSIVO-ADMIN-2026-11-20.md) e [plano Fórum](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/PLANO-PARIDADE-DISCOURSE-FRONTEND-MODERADOR-ENQUETES-2026-11-20.md).
+
 # Papéis e hierarquia
 
 As permissões e hooks listados abaixo descrevem o sistema ACULTA Forum atual e
@@ -36,13 +40,13 @@ Um usuário pode ter mais de um papel. `estudante` é concedido na matrícula me
   2026-10-16.
 - Como moderador do Fórum, pode **ocultar, despublicar ou excluir** tópicos e comentários.
 - Pode mover tópicos novos do Growroom entre categorias pela permissão `move aculta forum topics`; isso não concede edição do bundle. A permissão efetiva continua condicionada à confirmação de e-mail pela hierarquia vigente.
-- Conteúdo ativo novo segue a fila de moderação e exige e-mail confirmado. Conteúdo Growroom histórico marcado com `field_autor_legado` não entra em denúncia/moderação e não pode ser reaberto ou alterado, inclusive por `content_editor`.
+- Conteúdo ativo novo segue a fila de moderação e exige e-mail confirmado. Conteúdo classificado `ARCHIVE` do Growroom não entra na denúncia/moderação corrente e não pode ser reaberto ou alterado, inclusive por `content_editor`. A implementação atual detecta parte desse conteúdo por `field_autor_legado`; F-D48 prevê substituir a leitura direta por um contrato genérico de origem, provido pelo addon opcional.
 - Concedido somente pelo administrador.
 
 ## 3. Papel `administrator`
 
 - Concedido somente pelo administrador.
-- Tem bypass administrativo geral, exceto os guards explícitos do acervo Growroom histórico, que também vedam operações de conteúdo para administrador. O Runtime de desenvolvimento está sem dados do Forum contrib após F-D33/dev.50; a estrutura de autoria histórica fica preparada para futura restauração controlada.
+- Tem bypass administrativo geral, exceto os guards do conteúdo `ARCHIVE` do Growroom, que vedam operações de conteúdo também para administrador. O registro de F-D33/dev.50 dizia que o Runtime de desenvolvimento estava sem Nodes `forum` e Comments `comment_forum` naquele momento; F-D43 posteriormente definiu a preparação do acervo curado para Runtime de testes, sujeita a pipeline idempotente, validação isolada, prévia, backup e rollback. Nenhuma importação atual é presumida ou autorizada por esta descrição.
 - É o único que atribui papéis administrativos, edita contas e confirma e-mail manualmente. Essas ações não ficam com
   nenhum outro papel.
 
@@ -106,8 +110,12 @@ homologação funcional.
   Fórum público.
 - Os bundles do Forum contrib foram desinstalados em dev.50. As políticas de
   participação atuais só se aplicam a Comments compartilhados em contextos
-  ACULTA; conteúdos Growroom importados com autoria histórica ficam isentos da
-  moderação inicial e fora da fila de denúncias.
+  ACULTA; conteúdo histórico classificado `ARCHIVE` fica isento da moderação
+  inicial e fora da fila ordinária de denúncias, conforme F-D49. Importação ou
+  reconstrução não deve gerar participação, avisos, XP ou conquistas. A regra
+  normativa vem de [DECISOES.md](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/DECISOES.md);
+  detalhes de ownership e extração ficam no
+  [plano FDC-11](../../web/modules/custom/aculta_portal/modules/aculta_forum/docs/PLANO-CLONE-DISCOURSE-UI-SUITE-CGU-2026-11-19.md).
   O Comment compartilhado está instalado em `article` e
   `blog` no Runtime de desenvolvimento; formulário foi renderizado em memória para a
   conta de teste, mas HTTP/envio de comentário segue sem homologação.
@@ -134,9 +142,19 @@ Não envia nenhum e-mail. Cada confirmação é registrada no log do canal `acul
 ## 8. Autores históricos do Fórum (acervo do Growroom)
 
 Autores legados **não são usuários do Drupal**. Não têm conta, login, perfil nem aparecem na lista de usuários do
-administrador. A autoria fica na entidade própria `aculta_legado_autor`, acessível só pela permissão
+administrador. A autoria fica na entidade própria `aculta_forum_legacy_user`, acessível só pela permissão
 **administer aculta legado**. Tópicos e comentários históricos têm uid 0 e apontam para a autoria pelo campo
-`field_autor_legado`. O responsável determinou F-D33 e o Runtime de desenvolvimento não contém mais Nodes `forum`, Comments `comment_forum`, termos `forums` nem referências editoriais antigas. A extensão contrib ainda fornece estruturas vazias até o uninstall seguro. Nenhum conteúdo legado será importado para o novo fórum; autores históricos continuam distintos de contas Drupal e não são convertidos em usuários ativos.
+`field_autor_legado` na implementação atual. O registro de F-D33/dev.50 sobre ausência de Nodes `forum`, Comments
+`comment_forum`, termos `forums` e referências editoriais antigas descreve o Runtime de desenvolvimento naquele
+momento; não afirma que o acervo histórico ou a autoria devam ser apagados.
+
+F-D43 substitui a frase anterior “Nenhum conteúdo legado será importado para o novo fórum”: o acervo Growroom
+curado deve ser preparado para importação no Runtime de testes, depois de pipeline idempotente, validação isolada,
+prévia, backup e rollback. Isso não registra que a importação ocorreu nem autoriza executá-la agora. A extração
+planejada em F-D48 transfere para o opcional `aculta_forum_legacy` a propriedade da entidade, dos fields e das
+regras específicas do acervo, preservando autores, tópicos, comentários, referências e URLs históricos. F-D44
+continua definindo a identidade: sem User/Profile nem página individual pública; memorial coletivo único
+`/u/lendashistoricas`, com a apresentação individual legada restrita a tópicos e comentários do Fórum legado.
 
 ## 9. Mudanças em relação à versão anterior e pendências
 

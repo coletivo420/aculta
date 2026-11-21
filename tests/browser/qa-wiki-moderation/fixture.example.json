@@ -1,0 +1,21 @@
+{
+  "isolated": true,
+  "wikiOrigin": "https://wiki.aculta.test",
+  "forumOrigin": "https://forum.aculta.test",
+  "states": {
+    "forumModerator": "/private/qa/forum-moderator.json",
+    "wikiProposalModerator": "/private/qa/wiki-proposals.json",
+    "wikiEditor": "/private/qa/wiki-editor.json",
+    "wikiCguModerator": "/private/qa/wiki-cgu.json",
+    "mixedModerator": "/private/qa/wiki-forum-cgu.json"
+  },
+  "ids": {
+    "forumReportId": 301,
+    "privateWikiReportId": 302,
+    "visibleWikiReportId": 303
+  },
+  "markers": {
+    "privateWikiTitle": "QA_RESTRICTED_WIKI",
+    "forumCguNotes": "QA_FORUM_CONFIDENTIAL"
+  }
+}

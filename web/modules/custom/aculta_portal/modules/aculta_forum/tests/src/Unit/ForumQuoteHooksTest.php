@@ -8,10 +8,14 @@ use Drupal\aculta_forum\Context\DiscussionContext;
 use Drupal\aculta_forum\Context\DiscussionContextProviderInterface;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Hook\ForumQuoteHooks;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_forum\Service\ForumQuoteBuilder;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Field\FieldItemInterface;
@@ -147,7 +151,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
     self::assertIsArray($form['comment_body']['widget'][0]);
     self::assertIsArray($form['comment_body']['widget'][0]['value']);
     self::assertSame(
-      '<blockquote><p>Original mensagem.</p><cite>Pessoa autora</cite></blockquote><p></p>',
+      '<blockquote data-aculta-quote-cid="42"><p>Original mensagem.</p><cite>Pessoa autora</cite></blockquote><p></p>',
       $form['comment_body']['widget'][0]['value']['#default_value'],
     );
     self::assertIsArray($form['#cache']);
@@ -174,7 +178,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
     self::assertIsArray($form['comment_body']['widget']);
     self::assertIsArray($form['comment_body']['widget'][0]);
     self::assertSame(
-      '<blockquote><p>Original mensagem.</p><cite>Pessoa autora</cite></blockquote><p></p>',
+      '<blockquote data-aculta-quote-cid="42"><p>Original mensagem.</p><cite>Pessoa autora</cite></blockquote><p></p>',
       $form['comment_body']['widget'][0]['#default_value'],
     );
     self::assertArrayNotHasKey('value', $form['comment_body']['widget'][0]);
@@ -221,7 +225,7 @@ final class ForumQuoteHooksTest extends UnitTestCase {
     $host = $this->createMock(EntityInterface::class);
     $this->makeCacheable($host);
     $parent = $this->comment(AccessResult::allowed());
-    $parent->method('hasField')->with('comment_body')->willReturn(TRUE);
+    $parent->method('hasField')->willReturnCallback(static fn (string $name): bool => $name === 'comment_body');
     $processed = new class('<p>Original <strong>mensagem</strong>.</p>') implements CacheableDependencyInterface {
 
       /**
@@ -325,7 +329,17 @@ final class ForumQuoteHooksTest extends UnitTestCase {
       new ForumQuoteBuilder(),
       $requestStack ?? new RequestStack(),
       $translation,
+      $this->originResolver(),
     );
+  }
+
+  /**
+   * Creates an origin resolver fixture.
+   */
+  private function originResolver(): DiscussionOriginResolverInterface {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturn(DiscussionOriginClassification::from(DiscussionOrigin::CONTEXTUAL, new CacheableMetadata()));
+    return $resolver;
   }
 
   /**

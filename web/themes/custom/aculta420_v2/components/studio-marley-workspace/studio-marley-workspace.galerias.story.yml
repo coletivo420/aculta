@@ -1,0 +1,45 @@
+name: "Marley - Galerias: catálogo e revisão"
+description: "Listagem de galerias e mídias contextual com componentes do Studio e Phosphor, sem criar painéis paralelos."
+component: aculta420_v2:studio-marley-workspace
+props:
+  dom_id: marley-galerias
+  area: galerias
+  title: "Galerias - catálogo"
+  description: "Organização de mídias e álbuns com acesso do módulo proprietário."
+  preview_note: "Prévia ilustrativa - ações desativadas, sem casos ou permissões reais."
+slots:
+  navigation:
+    type: inline_template
+    template: |
+      <a href="#marley-story-galerias" aria-current="page">{{ include('aculta420_v2:icon', { name: 'images-square', variant: 'regular', size: 'sm' }, with_context = false) }} Galerias</a>
+      <span class="studio-marley-workspace__item-meta" aria-label="Outras áreas ilustrativas">Revista · Fórum</span>
+  actions:
+    type: inline_template
+    template: |
+      {{ include('aculta420_v2:button', { text: 'Criar galeria', icon_before: 'plus', variant: 'primary', disabled: true }, with_context = false) }}
+  summary:
+    type: inline_template
+    template: |
+      {{ include('aculta420_v2:statistics-moderation-summary', { title: 'Resumo de galerias', note: 'Exemplo de dados agregados, não conectados ao Runtime.', rows: [{label: 'Álbuns de exemplo', value: '3', description: 'Demonstração sem dados reais'}, {label: 'Revisões de mídia', value: '1', description: 'Aguardando ação autorizada'}] }, with_context = false) }}
+  primary:
+    type: inline_template
+    template: |
+      {% set marley_panel_header %}<h2>Galerias acessíveis</h2>{% endset %}
+      {% set marley_panel_content %}{% set marley_table %}
+      <div class="studio__listing-wrap"><table class="studio__listing">
+      <caption>Dados ilustrativos para revisão visual da listagem</caption>
+      <thead><tr><th scope="col">Álbum</th><th scope="col">Estado</th><th scope="col">Conteúdo</th><th scope="col">Ação de prévia</th></tr></thead>
+      <tbody>
+      <tr><th scope='row'>Memória do bairro</th><td>Publicado</td><td>12 imagens</td><td>{{ include('aculta420_v2:button', { text: 'Abrir', icon_before: 'images-square', variant: 'secondary', disabled: true }, with_context = false) }}</td></tr>
+      <tr><th scope='row'>Oficina cultural</th><td>Rascunho</td><td>8 imagens</td><td>{{ include('aculta420_v2:button', { text: 'Editar', icon_before: 'pencil-simple', variant: 'secondary', disabled: true }, with_context = false) }}</td></tr>
+      <tr><th scope='row'>Mostra de fotografias</th><td>Em revisão</td><td>5 imagens</td><td>{{ include('aculta420_v2:button', { text: 'Revisar', icon_before: 'shield-check', variant: 'secondary', disabled: true }, with_context = false) }}</td></tr>
+      </tbody></table></div>
+      {% endset %}
+      {{ include('aculta420_v2:studio-listing-table', { content: marley_table }, with_context = false) }}{% endset %}
+      {{ include('aculta420_v2:surface-panel', { tone: 'raised', radius: 'md', spacing: 'normal', elevation: 'subtle', header_variant: 'subtle', header: marley_panel_header, content: marley_panel_content }, with_context = false) }}
+  aside:
+    type: inline_template
+    template: |
+      {% set marley_panel_header %}<h2>Operação contextual</h2>{% endset %}
+      {% set marley_panel_content %}<p>Galerias e mídias seguem a política do módulo aculta_gallery; esta superfície apenas compõe conteúdos autorizados.</p>{{ include('aculta420_v2:badge', { label: 'Frontend Marley', icon_name: 'images-square', variant: 'neutral' }, with_context = false) }}<div class="studio-marley-workspace__control-row">{{ include('aculta420_v2:button', { text: 'Organizar mídia', icon_before: 'list-checks', variant: 'secondary', disabled: true }, with_context = false) }}{{ include('aculta420_v2:button', { text: 'Revisar publicação', icon_before: 'shield-check', variant: 'secondary', disabled: true }, with_context = false) }}</div>{% endset %}
+      {{ include('aculta420_v2:surface-panel', { tone: 'raised', radius: 'md', spacing: 'normal', elevation: 'subtle', header_variant: 'subtle', header: marley_panel_header, content: marley_panel_content }, with_context = false) }}

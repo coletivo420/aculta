@@ -271,7 +271,7 @@ final class WikiControllerTest extends UnitTestCase {
     $this->assertContains(['type', 'wiki_entry', NULL], $conditions);
     $this->assertContains(['field_domain_source.target_id', 'wiki420_aculta_org', NULL], $conditions);
     $this->assertContains(['status', 1, NULL], $conditions);
-    $this->assertSame('aculta_portal_component', $build['empty']['#theme']);
+    $this->assertSame('portal_component', $build['empty']['#theme']);
     $this->assertSame('empty-state', $build['empty']['#name']);
     $this->assertSame('Nenhum verbete publicado corresponde a essa busca.', (string) $build['empty']['#slots']['message']['#plain_text']);
     $this->assertArrayNotHasKey('results', $build);
@@ -303,7 +303,7 @@ final class WikiControllerTest extends UnitTestCase {
     $build = $this->controller($this->domain(), $nodeStorage, account: $account, database: $database)
       ->search(Request::create('/busca-wiki', 'GET', ['q' => $term]));
 
-    self::assertSame('aculta_portal_component', $build['empty']['#theme']);
+    self::assertSame('portal_component', $build['empty']['#theme']);
     self::assertSame('empty-state', $build['empty']['#name']);
     self::assertArrayNotHasKey('results', $build);
   }
@@ -318,7 +318,9 @@ final class WikiControllerTest extends UnitTestCase {
     $this->assertSame('no-store, private', $response->headers->get('Cache-Control'));
     $this->assertSame('<p>prévia</p>', $response->getContent());
     $this->assertArrayHasKey('hint', $this->lastPreviewedBuild);
-    $this->assertSame('aculta420_v2:hint', $this->lastPreviewedBuild['hint']['#component']);
+    $previewHint = $this->lastPreviewedBuild['hint'];
+    $this->assertIsArray($previewHint);
+    $this->assertSame('hint', $previewHint['#name'] ?? NULL);
     $this->assertArrayNotHasKey('empty', $this->lastPreviewedBuild);
   }
 
@@ -332,7 +334,9 @@ final class WikiControllerTest extends UnitTestCase {
     self::assertSame('no-store, private', $response->headers->get('Cache-Control'));
     self::assertSame('<p>prévia</p>', $response->getContent());
     self::assertArrayHasKey('hint', $this->lastPreviewedBuild);
-    self::assertSame('aculta420_v2:hint', $this->lastPreviewedBuild['hint']['#component']);
+    $previewHint = $this->lastPreviewedBuild['hint'];
+    self::assertIsArray($previewHint);
+    self::assertSame('hint', $previewHint['#name'] ?? NULL);
     self::assertArrayNotHasKey('empty', $this->lastPreviewedBuild);
   }
 

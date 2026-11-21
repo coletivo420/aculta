@@ -82,6 +82,7 @@ final class CheckoutCommonForm extends ConfigFormBase {
    * {@inheritdoc}
    *
    * @return list<string>
+   *   Value returned by the method.
    */
   protected function getEditableConfigNames(): array {
     return [CheckoutSettings::CONFIG];
@@ -90,10 +91,13 @@ final class CheckoutCommonForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Value used for $form_state.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $habilitado = (new CheckoutSettings($this->configFactory()))->commonCheckoutEnabled();
@@ -155,8 +159,13 @@ final class CheckoutCommonForm extends ConfigFormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $novo = (bool) $form_state->getValue('common_checkout_enabled');

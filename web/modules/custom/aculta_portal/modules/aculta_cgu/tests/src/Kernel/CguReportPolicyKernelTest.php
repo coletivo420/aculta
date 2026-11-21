@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_cgu\Kernel;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Drupal\comment\CommentInterface;
 use Drupal\KernelTests\KernelTestBase;
-use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\Exception\ReportNotAllowedException;
 use Drupal\aculta_cgu\ModerationScope;
 use Drupal\aculta_cgu\Service\ReportService;
@@ -14,6 +14,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
+use Composer\Autoload\ClassLoader;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -78,7 +79,15 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
+    // O controller Marley referencia aculta_portal.domain_site sem habilitar o aculta_portal
+    // inteiro; o serviço sintético satisfaz a referência e não é usado pelas decisões de denúncia.
+    $container->register('aculta_portal.domain_site', \Drupal\aculta_portal\Domain\DomainSiteManager::class)
+      ->setFactory([CguDomainSiteStub::class, 'create'])
+      ->setPublic(TRUE);
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
+    if (!$loader instanceof ClassLoader) {
+      throw new \LogicException('O autoloader Composer não está disponível no Kernel.');
+    }
     $loader->addPsr4('Drupal\\aculta_cgu\\', dirname(__DIR__, 3) . '/src', TRUE);
   }
 
@@ -95,6 +104,9 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
 
     NodeType::create(['type' => 'article', 'name' => 'Article'])->save();
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Topic'])->save();
+    NodeType::create(['type' => 'revista', 'name' => 'Revista'])->save();
+    NodeType::create(['type' => 'wiki_entry', 'name' => 'Wiki'])->save();
+    NodeType::create(['type' => 'aculta_lms_topic', 'name' => 'LMS'])->save();
 
     Role::load('authenticated')?->grantPermission('access content')->save();
     $this->makeRole('mod_portal', [ModerationScope::permissionFor('portal')]);
@@ -191,11 +203,11 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
         $this->fail('Motivo inválido aceito: ' . $invalid);
       }
       catch (ReportNotAllowedException) {
-        $this->assertTrue(TRUE);
+        // The exception is the expected result for this invalid reason.
       }
     }
     $report = $this->service->createReport($node, $this->reporter, '  SPAM ');
-    $this->assertSame('spam', $report->get('motivo')->value);
+    $this->assertSame('spam', $this->valueOf($report, 'motivo'));
   }
 
   /**
@@ -208,12 +220,39 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
       $this->fail('Purpose forjado aceito.');
     }
     catch (ReportNotAllowedException) {
-      $this->assertTrue(TRUE);
+      // A mismatched caller-supplied purpose must be rejected.
     }
     $this->assertSame([], $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report')->loadMultiple());
 
     $report = $this->service->createReport($topic, $this->reporter, 'spam', 'forum');
-    $this->assertSame('forum', $report->get('purpose')->value);
+    $this->assertSame('forum', $this->valueOf($report, 'purpose'));
+  }
+
+  /**
+   * Shared Comment bundles inherit their actual host's moderation purpose.
+   */
+  public function testCommentPurposeFollowsHost(): void {
+    foreach ([
+      'aculta_forum_topic' => 'forum',
+      'revista' => 'revista',
+      'wiki_entry' => 'wiki',
+    ] as $bundle => $purpose) {
+      $host = $this->makeNode($bundle);
+      $comment = $this->createMock(CommentInterface::class);
+      $comment->method('getCommentedEntity')->willReturn($host);
+      self::assertSame($purpose, $this->service->resolvePurpose($comment));
+    }
+  }
+
+  /**
+   * LMS feedback must never fall into the public Forum moderation queue.
+   */
+  public function testUnsupportedLmsCommentContextFailsClosed(): void {
+    $host = $this->makeNode('aculta_lms_topic');
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('getCommentedEntity')->willReturn($host);
+    $this->expectException(ReportNotAllowedException::class);
+    $this->service->resolvePurpose($comment);
   }
 
   /**
@@ -271,13 +310,13 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
       $this->fail('Conta sem permissão decidiu.');
     }
     catch (AccessDeniedHttpException) {
-      $this->assertTrue(TRUE);
+      // An account outside the moderation scope cannot decide the report.
     }
 
     $this->service->decideReport($portalReport, $this->portalModerator, 'procedente', 'ok');
     $this->service->decideReport($forumReport, $this->forumModerator, 'improcedente', 'ok');
-    $this->assertSame('procedente', $portalReport->get('status')->value);
-    $this->assertSame('improcedente', $forumReport->get('status')->value);
+    $this->assertSame('procedente', $this->statusOf($portalReport));
+    $this->assertSame('improcedente', $this->statusOf($forumReport));
   }
 
   /**
@@ -303,17 +342,21 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
         $this->fail('Status inválido aceito: ' . $invalid);
       }
       catch (ReportNotAllowedException) {
-        $this->assertSame('pendente', $report->get('status')->value);
+        $this->assertSame('pendente', $this->valueOf($report, 'status'));
       }
     }
 
     $this->service->decideReport($report, $this->globalModerator, 'em_analise', 'Em apuração');
-    $this->assertSame('em_analise', $report->get('status')->value);
-    $this->assertEmpty($report->get('decided_at')->value, 'Análise não é decisão final.');
+    $this->assertSame('em_analise', $this->statusOf($report));
+    $this->assertEmpty($this->valueOf($report, 'decided_at'), 'Análise não é decisão final.');
 
     $this->service->decideReport($report, $this->globalModerator, 'procedente', 'Confirmada');
-    $this->assertNotEmpty($report->get('decided_at')->value);
-    $this->assertSame((int) $this->globalModerator->id(), (int) $report->get('decided_by')->value);
+    $this->assertNotEmpty($this->valueOf($report, 'decided_at'));
+    $moderatorId = $this->globalModerator->id();
+    $decidedBy = $this->valueOf($report, 'decided_by');
+    self::assertIsNumeric($moderatorId);
+    self::assertIsNumeric($decidedBy);
+    self::assertSame((int) $moderatorId, (int) $decidedBy);
 
     // Decisão final não é reaberta nem trocada.
     foreach (['em_analise', 'improcedente', 'procedente'] as $next) {
@@ -322,10 +365,10 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
         $this->fail('Redecisão aceita: ' . $next);
       }
       catch (ReportNotAllowedException) {
-        $this->assertSame('procedente', $report->get('status')->value);
+        $this->assertSame('procedente', $this->valueOf($report, 'status'));
       }
     }
-    $this->assertSame('Confirmada', $report->get('decision_notes')->value);
+    $this->assertSame('Confirmada', $this->valueOf($report, 'decision_notes'));
   }
 
   /**
@@ -342,7 +385,6 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
    */
   public function testEntityAccessHandlerScoping(): void {
     $forumReport = $this->service->createReport($this->makeNode('aculta_forum_topic'), $this->reporter, 'spam');
-    $this->assertInstanceOf(CguReport::class, $forumReport);
 
     $this->assertTrue($forumReport->access('view', $this->forumModerator));
     $this->assertTrue($forumReport->access('update', $this->forumModerator));
@@ -364,9 +406,128 @@ final class CguReportPolicyKernelTest extends KernelTestBase {
     $permissions = $this->container->get('user.permissions')->getPermissions();
     $this->assertArrayHasKey(ModerationScope::GLOBAL_PERMISSION, $permissions);
     foreach (ModerationScope::PURPOSES as $purpose) {
-      $this->assertArrayHasKey(ModerationScope::permissionFor($purpose), $permissions);
-      $this->assertTrue($permissions[ModerationScope::permissionFor($purpose)]['restrict access']);
+      $permission = $permissions[ModerationScope::permissionFor($purpose)] ?? NULL;
+      self::assertIsArray($permission);
+      self::assertTrue($permission['restrict access'] ?? FALSE);
     }
+  }
+
+
+  /**
+   * The CGU form validates an explanation and stores it as private data.
+   */
+  public function testReportedDescriptionAndCreateForm(): void {
+    $node = $this->makeNode();
+    $this->container->get('current_user')->setAccount($this->reporter);
+
+    $resolver = $this->container->get('aculta_cgu.report_target_resolver');
+    $access = new \Drupal\aculta_cgu\Access\CguReportCreateAccess($resolver, $this->service);
+    self::assertNull($resolver->load('user', (string) $this->reporter->id()));
+    self::assertNull($resolver->load('node', '0'));
+    self::assertTrue($resolver->canViewContext($node, $this->reporter));
+    self::assertFalse($resolver->canViewContext($node, User::getAnonymousUser()));
+    self::assertTrue($access->access('node', (string) $node->id(), $this->reporter)->isAllowed());
+    self::assertFalse($access->access('node', (string) $node->id(), User::getAnonymousUser())->isAllowed());
+    self::assertFalse($access->access('user', (string) $this->reporter->id(), $this->reporter)->isAllowed());
+    $restricted = $this->makeNode('article', FALSE);
+    self::assertFalse($resolver->canViewContext($restricted, $this->reporter));
+    self::assertFalse($access->access('node', (string) $restricted->id(), $this->reporter)->isAllowed());
+    $forumTopic = $this->makeNode('aculta_forum_topic');
+    // The isolated CGU Kernel has no Forum origin service: fail closed.
+    self::assertNull($resolver->load('node', (string) $forumTopic->id()));
+    self::assertFalse($access->access('node', (string) $forumTopic->id(), $this->reporter)->isAllowed());
+
+    $form = \Drupal\aculta_cgu\Form\CguReportCreateForm::create($this->container);
+    $state = new \Drupal\Core\Form\FormState();
+    $build = $form->buildForm([], $state, 'node', (string) $node->id());
+    self::assertArrayHasKey('reason', $build);
+    self::assertArrayHasKey('description', $build);
+    self::assertTrue(self::at($build, 'description', '#required'));
+    self::assertSame(ReportService::DESCRIPTION_MAX_LENGTH, self::at($build, 'description', '#maxlength'));
+    self::assertSame('', self::at($build, '#attributes', 'data-aculta-cgu-report-form'));
+
+    $state->setValues(['reason' => 'spam', 'description' => 'curto']);
+    $form->validateForm($build, $state);
+    self::assertArrayHasKey('description', $state->getErrors());
+
+    $description = 'Mensagem com detalhes suficientes para a moderação avaliar o caso.';
+    $report = $this->service->createReport($node, $this->reporter, 'spam', NULL, $description);
+    self::assertSame($description, $this->valueOf($report, 'description'));
+    $dispatched = $this->container->get('aculta_cgu.moderation_notifier')->getDispatchedNotifications();
+    foreach ($dispatched as $notice) {
+      self::assertArrayNotHasKey('description', $notice);
+      self::assertArrayNotHasKey('uid', $notice);
+    }
+    self::assertFalse($access->access('node', (string) $node->id(), $this->reporter)->isAllowed());
+    // Another account cannot see the reporter's private case.
+    self::assertFalse($report->access('view', $this->outsider));
+  }
+
+  /**
+   * The service rejects oversized descriptions, even outside the Form API.
+   */
+  public function testReportDescriptionServiceLengthLimit(): void {
+    $this->expectException(ReportNotAllowedException::class);
+    $this->service->createReport(
+      $this->makeNode(),
+      $this->reporter,
+      'outro',
+      NULL,
+      str_repeat('x', ReportService::DESCRIPTION_MAX_LENGTH + 1),
+    );
+  }
+
+  /**
+   * Even a publicly readable comment cannot be reported through a hidden host.
+   */
+  public function testNewReportActionRequiresVisibleCommentHost(): void {
+    $resolver = $this->container->get('aculta_cgu.report_target_resolver');
+
+    $publishedHost = $this->makeNode('revista');
+    $visible = $this->createMock(CommentInterface::class);
+    $visible->method('getEntityTypeId')->willReturn('comment');
+    $visible->method('getCommentedEntity')->willReturn($publishedHost);
+    $visible->method('isPublished')->willReturn(TRUE);
+    $visible->method('access')->willReturn(TRUE);
+    self::assertTrue($resolver->canViewContext($visible, $this->reporter));
+
+    $unpublishedHost = $this->makeNode('revista', FALSE);
+    $hidden = $this->createMock(CommentInterface::class);
+    $hidden->method('getEntityTypeId')->willReturn('comment');
+    $hidden->method('getCommentedEntity')->willReturn($unpublishedHost);
+    $hidden->method('isPublished')->willReturn(TRUE);
+    $hidden->method('access')->willReturn(TRUE);
+    self::assertFalse($resolver->canViewContext($hidden, $this->reporter));
+    self::assertFalse($resolver->canViewContext($visible, User::getAnonymousUser()));
+  }
+
+  /**
+   * Valor atual de um campo da denúncia, lido do banco. O decideReport trabalha sobre uma cópia recarregada.
+   */
+  private function valueOf(\Drupal\aculta_cgu\Entity\CguReport $report, string $field): mixed {
+    $fresh = $this->container->get('entity_type.manager')->getStorage('aculta_cgu_report')->loadUnchanged((int) $report->id());
+    return $fresh instanceof \Drupal\aculta_cgu\Entity\CguReport ? $fresh->get($field)->value : NULL;
+  }
+
+  /**
+   * Status atual da denúncia no banco.
+   */
+  private function statusOf(\Drupal\aculta_cgu\Entity\CguReport $report): string {
+    $status = $this->valueOf($report, 'status');
+    return is_string($status) ? $status : '';
+  }
+
+  /**
+   * Lê um caminho aninhado de um render array sem acessar offsets de mixed.
+   */
+  private static function at(mixed $value, string|int ...$keys): mixed {
+    foreach ($keys as $key) {
+      if (!is_array($value)) {
+        return NULL;
+      }
+      $value = $value[$key] ?? NULL;
+    }
+    return $value;
   }
 
 }

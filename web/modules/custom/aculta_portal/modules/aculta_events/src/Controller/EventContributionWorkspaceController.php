@@ -25,7 +25,11 @@ final class EventContributionWorkspaceController extends ControllerBase {
   ) {}
 
   /**
-   * Lists only proposals owned by the current account. */
+   * Lists only proposals owned by the current account.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
+   */
   public function overview(): array {
     $account = $this->currentUser();
     $storage = $this->entities->getStorage('aculta_contribution');
@@ -106,7 +110,7 @@ final class EventContributionWorkspaceController extends ControllerBase {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'event-contribution-status'],
       'back' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Voltar às minhas propostas'),
           'url' => Url::fromRoute('aculta_events.organizer_contributions')->toString(),
@@ -139,7 +143,7 @@ final class EventContributionWorkspaceController extends ControllerBase {
     ];
     if ($proposal->get('state')->value === 'needs_changes') {
       $build['revise'] = [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Revisar e reenviar proposta'),
           'url' => Url::fromRoute('aculta_events.organizer_contribution_revise', [

@@ -1,5 +1,13 @@
 > Nota de 2026-11-02: os caminhos `/studio/we-sativa`, `/studio/green-stash`, `/wesativa`, `/greenstash`, `/wiki/busca`, `/wiki/verbetes` e `/wiki/propostas` citados abaixo foram substituídos por `/we-sativa`, `/green-stash`, `/busca-wiki`, `/verbetes` e `/propostas`. Registro histórico preservado; veja a retificação no ADR-038.
 
+## 0.1.0-dev.140 - moderação própria no WE Sativa (21/11/2026)
+
+- Três novos SDCs e Stories UI Patterns para workspace, caso e inspeção/decisão de moderação Wiki.
+- `WikiModerationAccess` e `WikiModerationController` expõem filas próprias no propósito Wiki, usando os providers existentes.
+- Denúncias CGU filtradas por purpose, host e Entity Access; parecer não altera Node.
+- Navegação WE Sativa atualizada; decisões de propostas e CGU voltam para fila Wiki em vez do Marley.
+- Matriz Unit de permissões e suite Browser opt-in com fixture sintética. Execução/Homelab pendentes; sem Runtime alterado.
+
 ## 0.1.0-dev.137 — Rotas da Wiki na raiz e WE SATIVA em /we-sativa
 
 - Subrotas da Wiki sobem para a raiz de wiki420: `/busca-wiki`, `/verbetes` e `/propostas`.

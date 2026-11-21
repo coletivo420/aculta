@@ -175,7 +175,14 @@ final class FiscalIdentityPaneKernelTest extends OrderKernelTestBase {
   private function build(FiscalIdentityPane $pane): array {
     $state = new FormState();
     $form = [];
-    return $pane->buildPaneForm([], $state, $form);
+    $elements = $pane->buildPaneForm([], $state, $form);
+    $render_array = [];
+    foreach ($elements as $key => $element) {
+      if (is_string($key)) {
+        $render_array[$key] = $element;
+      }
+    }
+    return $render_array;
   }
 
   /**

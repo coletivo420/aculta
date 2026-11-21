@@ -16,17 +16,30 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class TopicOpeningEditForm extends FormBase {
 
+  /**
+   * The topic whose opening ForumPost is being edited.
+   */
   protected ?NodeInterface $topic = NULL;
 
+  /**
+   * Returns the unique form ID.
+   */
   public function getFormId(): string {
     return 'aculta_forum_topic_opening_edit_form';
   }
 
   /**
-   * {@inheritdoc}
+   * Builds the form.
    *
    * @param array<string, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   * @param ?NodeInterface $node
+   *   Value used for $node.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $node = NULL): array {
     $this->topic = $node;
@@ -113,14 +126,21 @@ class TopicOpeningEditForm extends FormBase {
       ],
     ];
 
-    /** @var array<string, mixed> $form */
+    /**
+   * @var array<string, mixed> $form */
     return $form;
   }
 
   /**
-   * {@inheritdoc}
+   * Submits the form.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     if (!$this->topic instanceof NodeInterface) {

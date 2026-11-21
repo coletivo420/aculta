@@ -7,11 +7,14 @@ namespace Drupal\Tests\aculta_forum\Unit;
 use Drupal\aculta_forum\Context\DiscussionContextInterface;
 use Drupal\aculta_forum\Context\DiscussionContextProviderInterface;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
-use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_forum\Service\DiscussionReactionAccess;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentingStatus;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -22,10 +25,16 @@ use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
 
+/**
+ * Tests DiscussionReactionAccess behavior.
+ */
 #[CoversClass(DiscussionReactionAccess::class)]
 #[Group('aculta_forum')]
 final class DiscussionReactionAccessTest extends UnitTestCase {
 
+  /**
+   * Tests that check access forbidden when reactions disabled.
+   */
   public function testCheckAccessForbiddenWhenReactionsDisabled(): void {
     $config = $this->createMock(ImmutableConfig::class);
     $config->method('get')->with('reactions_enabled')->willReturn(FALSE);
@@ -39,7 +48,7 @@ final class DiscussionReactionAccessTest extends UnitTestCase {
     $resolver = new DiscussionContextResolver([]);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
 
-    $access = new DiscussionReactionAccess($resolver, $entityTypeManager, $configFactory);
+    $access = new DiscussionReactionAccess($resolver, $entityTypeManager, $configFactory, $this->originResolver());
 
     $comment = $this->createMock(CommentInterface::class);
     $account = $this->createMock(AccountInterface::class);
@@ -48,6 +57,9 @@ final class DiscussionReactionAccessTest extends UnitTestCase {
     $this->assertFalse($result->isAllowed());
   }
 
+  /**
+   * Tests that check access forbidden for anonymous.
+   */
   public function testCheckAccessForbiddenForAnonymous(): void {
     $config = $this->createMock(ImmutableConfig::class);
     $config->method('get')->with('reactions_enabled')->willReturn(TRUE);
@@ -61,7 +73,7 @@ final class DiscussionReactionAccessTest extends UnitTestCase {
     $resolver = new DiscussionContextResolver([]);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
 
-    $access = new DiscussionReactionAccess($resolver, $entityTypeManager, $configFactory);
+    $access = new DiscussionReactionAccess($resolver, $entityTypeManager, $configFactory, $this->originResolver());
 
     $comment = $this->createMock(CommentInterface::class);
     $account = $this->createMock(AccountInterface::class);
@@ -71,6 +83,9 @@ final class DiscussionReactionAccessTest extends UnitTestCase {
     $this->assertFalse($result->isAllowed());
   }
 
+  /**
+   * Tests that check access forbidden without permission.
+   */
   public function testCheckAccessForbiddenWithoutPermission(): void {
     $config = $this->createMock(ImmutableConfig::class);
     $config->method('get')->with('reactions_enabled')->willReturn(TRUE);
@@ -84,7 +99,7 @@ final class DiscussionReactionAccessTest extends UnitTestCase {
     $resolver = new DiscussionContextResolver([]);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
 
-    $access = new DiscussionReactionAccess($resolver, $entityTypeManager, $configFactory);
+    $access = new DiscussionReactionAccess($resolver, $entityTypeManager, $configFactory, $this->originResolver());
 
     $comment = $this->createMock(CommentInterface::class);
     $account = $this->createMock(AccountInterface::class);
@@ -95,6 +110,9 @@ final class DiscussionReactionAccessTest extends UnitTestCase {
     $this->assertFalse($result->isAllowed());
   }
 
+  /**
+   * Tests that check access forbidden on self content.
+   */
   public function testCheckAccessForbiddenOnSelfContent(): void {
     $config = $this->createMock(ImmutableConfig::class);
     $config->method('get')->with('reactions_enabled')->willReturn(TRUE);
@@ -108,7 +126,7 @@ final class DiscussionReactionAccessTest extends UnitTestCase {
     $resolver = new DiscussionContextResolver([]);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
 
-    $access = new DiscussionReactionAccess($resolver, $entityTypeManager, $configFactory);
+    $access = new DiscussionReactionAccess($resolver, $entityTypeManager, $configFactory, $this->originResolver());
 
     $comment = $this->createMock(CommentInterface::class);
     $comment->method('getOwnerId')->willReturn(42);
@@ -125,6 +143,57 @@ final class DiscussionReactionAccessTest extends UnitTestCase {
     $this->assertFalse($result->isAllowed());
   }
 
+  /**
+   * Tests that archive origin cannot receive reactions.
+   */
+  public function testArchiveOriginCannotReceiveReactions(): void {
+    $config = $this->createMock(ImmutableConfig::class);
+    $config->method('get')->with('reactions_enabled')->willReturn(TRUE);
+    $config->method('getCacheContexts')->willReturn([]);
+    $config->method('getCacheTags')->willReturn([]);
+    $config->method('getCacheMaxAge')->willReturn(-1);
+    $configFactory = $this->createMock(ConfigFactoryInterface::class);
+    $configFactory->method('get')->willReturn($config);
+
+    $host = $this->createMock(ContentEntityInterface::class);
+    $host->method('getCacheContexts')->willReturn([]);
+    $host->method('getCacheTags')->willReturn([]);
+    $host->method('getCacheMaxAge')->willReturn(-1);
+    $host->method('hasField')->willReturn(FALSE);
+
+    $comment = $this->createMock(CommentInterface::class);
+    $comment->method('isPublished')->willReturn(TRUE);
+    $comment->method('getCommentedEntity')->willReturn($host);
+    $comment->method('getOwnerId')->willReturn(42);
+    $comment->method('getCacheContexts')->willReturn([]);
+    $comment->method('getCacheTags')->willReturn([]);
+    $comment->method('getCacheMaxAge')->willReturn(-1);
+
+    $account = $this->createMock(AccountInterface::class);
+    $account->method('isAuthenticated')->willReturn(TRUE);
+    $account->method('hasPermission')->with('react to aculta discussions')->willReturn(TRUE);
+    $account->method('id')->willReturn(99);
+
+    $contextProvider = $this->createMock(DiscussionContextProviderInterface::class);
+    $contextProvider->expects(self::never())->method('supports');
+    $originResolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $originResolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from(DiscussionOrigin::ARCHIVE, new CacheableMetadata()),
+    );
+
+    $access = new DiscussionReactionAccess(
+      new DiscussionContextResolver([$contextProvider]),
+      $this->createMock(EntityTypeManagerInterface::class),
+      $configFactory,
+      $originResolver,
+    );
+
+    self::assertFalse($access->checkAccess($comment, $account)->isAllowed());
+  }
+
+  /**
+   * Tests that check access allowed when all conditions met.
+   */
   public function testCheckAccessAllowedWhenAllConditionsMet(): void {
     $config = $this->createMock(ImmutableConfig::class);
     $config->method('get')->with('reactions_enabled')->willReturn(TRUE);
@@ -173,10 +242,19 @@ final class DiscussionReactionAccessTest extends UnitTestCase {
     $resolver = new DiscussionContextResolver([$provider]);
     $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
 
-    $access = new DiscussionReactionAccess($resolver, $entityTypeManager, $configFactory);
+    $access = new DiscussionReactionAccess($resolver, $entityTypeManager, $configFactory, $this->originResolver());
     $result = $access->checkAccess($comment, $account);
 
     $this->assertTrue($result->isAllowed());
+  }
+
+  /**
+   * Creates an origin resolver fixture.
+   */
+  private function originResolver(): DiscussionOriginResolverInterface {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturn(DiscussionOriginClassification::from(DiscussionOrigin::CONTEXTUAL, new CacheableMetadata()));
+    return $resolver;
   }
 
 }

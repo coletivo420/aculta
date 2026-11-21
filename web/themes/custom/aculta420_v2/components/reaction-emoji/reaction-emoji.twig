@@ -6,7 +6,7 @@
 #}
 {% set variant = variant|default('flat') %}
 {% set size = size|default('sm') %}
-{% set reaction_names = ['broccoli', 'heart', 'thumbs-up', 'seedling', 'herb', 'fire', 'clapping-hands', 'grinning-squinting-face', 'folded-hands', 'rocket', 'bomb', 'dashing-away'] %}
+{% set reaction_names = ['broccoli', 'heart', 'thumbs-up', 'thumbs-down', 'thumbs-down-medium', 'seedling', 'herb', 'fire', 'clapping-hands', 'grinning-squinting-face', 'folded-hands', 'rocket', 'bomb', 'dashing-away'] %}
 <span class="reaction-emoji reaction-emoji--{{ variant }} reaction-emoji--{{ size }}" aria-hidden="{{ label ? 'false' : 'true' }}"{% if label %} role="img" aria-label="{{ label }}"{% endif %}>
   {% if name in reaction_names %}
     <img class="reaction-emoji__img" src="/themes/custom/aculta420_v2/assets/icons/reacoes/{{ name }}.svg" alt="" width="20" height="20" loading="lazy">

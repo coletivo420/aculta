@@ -10,8 +10,8 @@ Histórico de versões e rodadas (dev.12 a dev.117): `docs/history/modules/acult
 
 - Rotas são contrato público pelos IDs `aculta_portal.wiki_home` (caminho interno `/wiki`), `aculta_portal.wiki_search` (`/busca-wiki`) e `aculta_portal.wiki_search_preview` (`/busca-wiki/previa`). No domínio `wiki420`, a entrada pública é `/` e `/wiki` responde 404. O prefixo `aculta_portal.` permanece.
 - Domínio e purpose ficam no Portal (`DomainPurposeManager`, `ContentPurposeResolver`, `PurposeFrontPathProcessor`, `DomainRouteSubscriber`). A Wiki não define purpose nem host.
-- Wiki é dona de verbetes, propostas e permissões. Rotas de moderação que pertencem à Marley continuam em `account:/marley/...`; não mova rotas automaticamente.
-- Não crie segunda fila, aba ou camada de autorização no Studio. Moderadores de propostas não recebem grants de Node por causa de gate de seção.
+- Wiki é dona de verbetes, propostas, filas e permissões. Desde 21/11/2026, a moderação própria da Wiki é hospedada em `wiki:/we-sativa/moderacao/*`; Marley continua apenas com suas filas próprias de Fórum/Revista. Não criar segundo motor CGU ou portar a fila Wiki ao Fórum.
+- Não crie segunda fila ou motor de decisão: `WikiEditorialQueue` e `CguReportQueue(purpose=wiki)` são os providers existentes consumidos pelo WE Sativa. `WikiModerationAccess` só verifica rotas e conteúdo do purpose Wiki; moderadores de propostas não recebem grants de Node.
 - Acesso ao CTA usa `createAccess('wiki_entry')`, com acesso efetivo e confirmação compartilhada de e-mail (`EmailConfirmationPolicy`). Não crie bypass para conta não confirmada.
 - Nenhuma propriedade de Entity Access ou de purpose é concedida por papel de nome. Use `view`, `update`, `view revision` e permissões reais.
 
@@ -39,7 +39,7 @@ Histórico de versões e rodadas (dev.12 a dev.117): `docs/history/modules/acult
 - Messenger: a Wiki publica eventos editoriais versionados em fila persistente (Queue API). O núcleo Messenger controla avisos, preferências e e-mail. Não crie notificador ou transporte paralelo na Wiki. Contrato: `docs/MESSENGER-EVENT-CONTRACT.md`.
 - Status: sem subscriber do Messenger não há aviso de site funcional, e os e-mails continuam. Não declare aviso Messenger funcional antes do subscriber. Notificação em caixas editoriais é decisão de produto separada, ainda em análise.
 - Estatística: não importe classes de `aculta_statistics`. A integração de métricas é feita por eventos e pelo `WikiProvider` do lado da estatística. Conteúdo sincronizado ou importado não gera métrica de publicação.
-- GanjaLab: use a `WikiTab` existente. Revisões consomem `entryRevisions()`; edição segue o formulário Node/Content Moderation; propostas consomem `proposals()` e `WikiProposalDecisionForm`.
+- WE Sativa: use `WikiModerationController` + SDCs `wiki-moderation-*`; revisões consomem `entryRevisions()` e usam Node/Content Moderation; propostas consomem `proposals()` e `WikiProposalDecisionForm`; denúncias Wiki usam CGU sem herdar UI/permissões do Fórum. Referências GanjaLab/Marley anteriores são histórico superado.
 
 ## Testes e Runtime
 

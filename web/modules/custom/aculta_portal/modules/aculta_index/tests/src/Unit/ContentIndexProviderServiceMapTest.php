@@ -14,6 +14,8 @@ use Drupal\group\Plugin\Group\Relation\GroupRelationTypeManagerInterface;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\Argument\TaggedIteratorArgument;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolver;
+use Drupal\Core\StringTranslation\TranslationInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -82,7 +84,7 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
       ->setSynthetic(TRUE)
       ->setPublic(TRUE));
     $stringTranslationServiceId = 'string_translation';
-    $container->setDefinition($stringTranslationServiceId, (new Definition(\Drupal\Core\StringTranslation\TranslationInterface::class))
+    $container->setDefinition($stringTranslationServiceId, (new Definition(TranslationInterface::class))
       ->setSynthetic(TRUE)
       ->setPublic(TRUE));
 
@@ -113,6 +115,10 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
     $this->assertGreaterThanOrEqual(count(self::EXPECTED_PROVIDER_IDS), $contributed, 'Há menos definições de provider que o contrato.');
 
     $container->setDefinition(
+      'aculta_forum.discussion_origin_resolver',
+      (new Definition(DiscussionOriginResolver::class, [[]]))->setPublic(TRUE),
+    );
+    $container->setDefinition(
       'aculta_index.provider_registry',
       (new Definition(ContentIndexProviderRegistry::class, [new TaggedIteratorArgument('aculta_index.provider')]))
         ->setPublic(TRUE),
@@ -129,7 +135,7 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
     $relationTypeManager = $this->createMock(GroupRelationTypeManagerInterface::class);
     $relationTypeManager->method('hasDefinition')->willReturn(FALSE);
     $container->set($relationTypeManagerServiceId, $relationTypeManager);
-    $container->set($stringTranslationServiceId, $this->createMock(\Drupal\Core\StringTranslation\TranslationInterface::class));
+    $container->set($stringTranslationServiceId, $this->createMock(TranslationInterface::class));
 
     $registry = $container->get('aculta_index.provider_registry');
     self::assertInstanceOf(ContentIndexProviderRegistry::class, $registry);
@@ -167,14 +173,15 @@ final class ContentIndexProviderServiceMapTest extends UnitTestCase {
       new \RecursiveDirectoryIterator($moduleDirectory, \FilesystemIterator::SKIP_DOTS),
     );
     foreach ($iterator as $file) {
-      if (!$file->isFile() || !str_ends_with($file->getFilename(), '.services.yml')) {
+      if (!$file instanceof \SplFileInfo || !$file->isFile() || !str_ends_with($file->getFilename(), '.services.yml')) {
         continue;
       }
       $path = $file->getPathname();
       if (str_contains($path, '/tests/')) {
         continue;
       }
-      if (!str_contains((string) file_get_contents($path), 'aculta_index.provider')) {
+      $contents = file_get_contents($path);
+      if (!is_string($contents) || !str_contains($contents, 'aculta_index.provider')) {
         continue;
       }
       $files[] = $path;

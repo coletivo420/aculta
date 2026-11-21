@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Hook;
 
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Block\BlockPluginInterface;
+use Drupal\commerce_order\Entity\OrderInterface;
+use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
+use Drupal\taxonomy\TermInterface;
 use Drupal\aculta_portal\Account\StreetNumberField;
 use Drupal\node\NodeInterface;
 use Drupal\Core\Menu\MenuLinkInterface;
@@ -115,11 +120,13 @@ final class PortalHooks {
   ) {}
 
   /**
-   * Implements hook_contextual_links_view_alter().
-   *
-   * @param array<string, mixed> $element
-   * @param array<string, mixed> $items
-   */
+ * Implements hook_contextual_links_view_alter().
+ *
+ * @param array<array-key, mixed> $element
+ *   Field element.
+ * @param array<array-key, mixed> $items
+ *   Field item list.
+ */
   #[Hook('contextual_links_view_alter')]
   public function contextualLinksViewAlter(array &$element, array $items): void {
     // A interface administrativa vive no MAIN; nos subdomínios não há links
@@ -131,10 +138,11 @@ final class PortalHooks {
   }
 
   /**
-   * Implements hook_preprocess_page().
-   *
-   * @param array<mixed> $variables
-   */
+ * Implements hook_preprocess_page().
+ *
+ * @param array<mixed> $variables
+ *   Template variables.
+ */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $domainPresentation = $this->domainPresentationBuilder->buildCurrent();
@@ -176,9 +184,9 @@ final class PortalHooks {
     $rawVars = &$variables;
     $this->accountShellBuilder->build($rawVars);
 
-    $page = is_array($variables['page'] ?? null) ? $variables['page'] : [];
-    $pageContent = is_array($page['content'] ?? null) ? $page['content'] : [];
-    if (($pageContent['#theme'] ?? NULL) === 'aculta_portal_shell'
+    $page = is_array($variables['page'] ?? NULL) ? $variables['page'] : [];
+    $pageContent = is_array($page['content'] ?? NULL) ? $page['content'] : [];
+    if (($pageContent['#theme'] ?? NULL) === 'portal_shell'
       && isset($page['header'])
       && is_array($page['header'])) {
       /** @var array<string, mixed> $header */
@@ -222,6 +230,9 @@ final class PortalHooks {
    * Removes a header block owned by the Portal shell before theme preprocess.
    *
    * @param array<mixed> $header
+   *   Value used for $header.
+   * @param string $pluginId
+   *   Value used for $pluginId.
    */
   private function removeHeaderBlockByPlugin(array &$header, string $pluginId): void {
     foreach (Element::children($header) as $key) {
@@ -229,13 +240,13 @@ final class PortalHooks {
       if ($childKey === '') {
         continue;
       }
-      $block = is_array($header[$childKey] ?? null) ? $header[$childKey] : [];
+      $block = is_array($header[$childKey] ?? NULL) ? $header[$childKey] : [];
       $candidate = isset($block['#plugin_id']) && is_scalar($block['#plugin_id']) ? (string) $block['#plugin_id'] : '';
-      $lazyBuilder = is_array($block['#lazy_builder'] ?? null) ? $block['#lazy_builder'] : [];
+      $lazyBuilder = is_array($block['#lazy_builder'] ?? NULL) ? $block['#lazy_builder'] : [];
       if ($candidate === ''
         && ($lazyBuilder[0] ?? '') === 'Drupal\\block\\BlockViewBuilder::lazyBuilder') {
-        $lazyArgs = is_array($lazyBuilder[1] ?? null) ? $lazyBuilder[1] : [];
-        $blockId = is_scalar($lazyArgs[0] ?? null) ? (string) $lazyArgs[0] : '';
+        $lazyArgs = is_array($lazyBuilder[1] ?? NULL) ? $lazyBuilder[1] : [];
+        $blockId = is_scalar($lazyArgs[0] ?? NULL) ? (string) $lazyArgs[0] : '';
         if ($blockId !== '') {
           $pluginCfg = $this->configFactory->get('block.block.' . $blockId)->get('plugin');
           $candidate = is_scalar($pluginCfg) ? (string) $pluginCfg : '';
@@ -252,14 +263,11 @@ final class PortalHooks {
    */
 
   /**
-   * Implements hook_preprocess_aculta_portal_element().
-   *
-   * Os elementos de presentation (ex.: busca da Wiki) chegam ao tema como
-   * array, sem objetos. O atributo é montado aqui, no último passo antes do
-   * template, que espera um Attribute.
-   *
-   * @param array<string, mixed> $variables
-   */
+ * Implements hook_preprocess_aculta_portal_element(). Os elementos de presentation (ex.: busca da Wiki) chegam ao tema como array, sem objetos. O atributo é montado aqui, no último passo antes do template, que espera um Attribute.
+ *
+ * @param array<array-key, mixed> $variables
+ *   Template variables.
+ */
   #[Hook('preprocess_aculta_portal_element')]
   public function preprocessPortalElement(array &$variables): void {
     if (is_array($variables['element_attributes'] ?? NULL)) {
@@ -268,14 +276,15 @@ final class PortalHooks {
   }
 
   /**
-   * Adds institution content to the block template variables.
-   *
-   * @param array<string, mixed> $variables
-   */
+ * Adds institution content to the block template variables.
+ *
+ * @param array<array-key, mixed> $variables
+ *   Template variables.
+ */
   #[Hook('preprocess_block')]
   public function preprocessBlock(array &$variables): void {
-    $elements = is_array($variables['elements'] ?? null) ? $variables['elements'] : [];
-    $content = is_array($elements['content'] ?? null) ? $elements['content'] : [];
+    $elements = is_array($variables['elements'] ?? NULL) ? $variables['elements'] : [];
+    $content = is_array($elements['content'] ?? NULL) ? $elements['content'] : [];
     $entity = $content['#block_content'] ?? NULL;
     if (!$entity instanceof BlockContentInterface
       || $entity->bundle() !== 'aculta_institution') {
@@ -283,7 +292,7 @@ final class PortalHooks {
     }
 
     $variables['institution_entity'] = $entity;
-    $variables['view_mode'] = is_scalar($content['#view_mode'] ?? null) ? (string) $content['#view_mode'] : 'full';
+    $variables['view_mode'] = is_scalar($content['#view_mode'] ?? NULL) ? (string) $content['#view_mode'] : 'full';
 
     $nidVal = $this->configFactory
       ->get('aculta_portal.settings')
@@ -295,10 +304,11 @@ final class PortalHooks {
   }
 
   /**
-   * Supplies the current-page label consumed by the public breadcrumb template.
-   *
-   * @param array<string, mixed> $variables
-   */
+ * Supplies the current-page label consumed by the public breadcrumb template.
+ *
+ * @param array<array-key, mixed> $variables
+ *   Template variables.
+ */
   #[Hook('preprocess_breadcrumb')]
   public function preprocessBreadcrumb(array &$variables): void {
     $variables['aculta_current_breadcrumb'] = $this->breadcrumbBuilder
@@ -310,24 +320,26 @@ final class PortalHooks {
   }
 
   /**
-   * Implements hook_menu_links_discovered_alter().
-   *
-   * @param array<string, mixed> $links
-   */
+ * Implements hook_menu_links_discovered_alter().
+ *
+ * @param array<array-key, mixed> $links
+ *   Value used for $links.
+ */
   #[Hook('menu_links_discovered_alter')]
   public function menuLinksDiscoveredAlter(array &$links): void {
     // The portal owns the account landing page, not the generic user profile.
-    $userPage = is_array($links['user.page'] ?? null) ? $links['user.page'] : [];
+    $userPage = is_array($links['user.page'] ?? NULL) ? $links['user.page'] : [];
     if (($userPage['menu_name'] ?? NULL) === 'account') {
       unset($links['user.page']);
     }
   }
 
   /**
-   * Sends identity, support and editorial links to their canonical domains.
-   *
-   * @param array<string, mixed> $variables
-   */
+ * Sends identity, support and editorial links to their canonical domains.
+ *
+ * @param array<array-key, mixed> $variables
+ *   Template variables.
+ */
   #[Hook('preprocess_menu')]
   public function preprocessMenu(array &$variables): void {
     if (empty($variables['items']) || !is_array($variables['items'])) {
@@ -340,7 +352,7 @@ final class PortalHooks {
     $variables['items'] = $items;
     if (isset($variables['#cache']) && is_array($variables['#cache'])) {
       /** @var array<array-key, string> $existingContexts */
-      $existingContexts = is_array($variables['#cache']['contexts'] ?? null) ? $variables['#cache']['contexts'] : [];
+      $existingContexts = is_array($variables['#cache']['contexts'] ?? NULL) ? $variables['#cache']['contexts'] : [];
       $variables['#cache']['contexts'] = array_values(array_unique(array_merge(
         $existingContexts,
         ['domain', 'url.path', 'url.query_args', 'user.roles'],
@@ -349,10 +361,11 @@ final class PortalHooks {
   }
 
   /**
-   * Sends editorial author and category links to MAGAZINE.
-   *
-   * @param array<string, mixed> $variables
-   */
+ * Sends editorial author and category links to MAGAZINE.
+ *
+ * @param array<array-key, mixed> $variables
+ *   Template variables.
+ */
   #[Hook('preprocess_links')]
   public function preprocessLinks(array &$variables): void {
     if (!isset($variables['links']) || !is_array($variables['links'])) {
@@ -393,7 +406,7 @@ final class PortalHooks {
       $params = $url->getRouteParameters();
       $term_id = $params['taxonomy_term'] ?? NULL;
       $term = is_numeric($term_id) ? $this->entityTypeManager->getStorage('taxonomy_term')->load((int) $term_id) : NULL;
-      if ($term instanceof \Drupal\taxonomy\TermInterface && in_array($term->bundle(), ['editorial_author', 'editorial_category'], TRUE)) {
+      if ($term instanceof TermInterface && in_array($term->bundle(), ['editorial_author', 'editorial_category'], TRUE)) {
         /** @var array<string, mixed> $routeParams */
         $routeParams = ['taxonomy_term' => $term->id()];
         $link['url'] = $resolver->routeUrl(SiteKey::Magazine, 'entity.taxonomy_term.canonical', $routeParams) ?? $url;
@@ -403,12 +416,10 @@ final class PortalHooks {
   }
 
   /**
-   * Marks the "Minha conta" link with a semantic token.
-   *
-   * A domain rewrite does not affect identification by menu link. Highlighting
-   * remains a theme decision based on the domain_presentation contract.
+   * Marks the "Minha conta" link with a semantic token. A domain rewrite does not affect identification by menu link. Highlighting remains a theme decision based on the domain_presentation contract.
    *
    * @param array<array-key, mixed> $items
+   *   Field item list.
    */
   private function markAccountHomeItems(array &$items): void {
     foreach ($items as &$item) {
@@ -430,11 +441,10 @@ final class PortalHooks {
   }
 
   /**
-   * Decorates anonymous login links to open the same-host modal popup.
-   *
-   * The /entrar route remains available when JavaScript is disabled.
+   * Decorates anonymous login links to open the same-host modal popup. The /entrar route remains available when JavaScript is disabled.
    *
    * @param array<array-key, mixed> $items
+   *   Field item list.
    */
   private function decorateLoginPopupItems(array &$items): void {
     if ($this->currentUser->isAuthenticated()) {
@@ -467,6 +477,9 @@ final class PortalHooks {
    * Rewrites only known cross-domain links while preserving menu structure.
    *
    * @param array<array-key, mixed> $items
+   *   Field item list.
+   * @param DomainSiteManagerInterface $resolver
+   *   Value used for $resolver.
    */
   private function rewriteDomainMenuItems(array &$items, DomainSiteManagerInterface $resolver): void {
     foreach ($items as &$item) {
@@ -517,7 +530,7 @@ final class PortalHooks {
             : (is_numeric($node_parameter) ? $this->entityTypeManager->getStorage('node')->load((int) $node_parameter) : NULL);
           if ($node instanceof NodeInterface && $node->hasField('field_domain_source') && !$node->get('field_domain_source')->isEmpty()) {
             $sourceField = $node->get('field_domain_source');
-            $sourceVal = $sourceField instanceof \Drupal\Core\Field\EntityReferenceFieldItemListInterface ? (string) $sourceField->target_id : '';
+            $sourceVal = $sourceField instanceof EntityReferenceFieldItemListInterface ? (string) $sourceField->target_id : '';
             $siteKey = $resolver->getSiteKeyForDomainId($sourceVal);
             if ($siteKey !== NULL) {
               $target = $resolver->routeUrl($siteKey, 'entity.node.canonical', ['node' => $node->id()]);
@@ -542,17 +555,18 @@ final class PortalHooks {
   }
 
   /**
-   * Replaces the workflow state with its translated Portal label.
-   *
-   * The order detail does not expose Commerce's English workflow label.
-   *
-   * @param array<string, mixed> $build
-   * @param mixed $entity
-   * @param mixed $display
-   */
+ * Replaces the workflow state with its translated Portal label. The order detail does not expose Commerce's English workflow label.
+ *
+ * @param array<array-key, mixed> $build
+ *   Render array to modify.
+ * @param mixed $entity
+ *   Value used for $entity.
+ * @param mixed $display
+ *   Value used for $display.
+ */
   #[Hook('entity_view_alter')]
   public function commerceOrderUserView(array &$build, $entity, $display): void {
-    if (!$entity instanceof \Drupal\commerce_order\Entity\OrderInterface) {
+    if (!$entity instanceof OrderInterface) {
       return;
     }
     if (!is_object($display) || !method_exists($display, 'id') || $display->id() !== 'commerce_order.default.user' || !isset($build['state']) || !is_array($build['state'])) {
@@ -569,15 +583,16 @@ final class PortalHooks {
   }
 
   /**
-   * Implements hook_page_attachments().
-   *
-   * @param array<string, mixed> $attachments
-   */
+ * Implements hook_page_attachments().
+ *
+ * @param array<array-key, mixed> $attachments
+ *   Value used for $attachments.
+ */
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     $route = $this->routeMatch->getRouteName();
-    $attached = is_array($attachments['#attached'] ?? null) ? $attachments['#attached'] : [];
-    $library = is_array($attached['library'] ?? null) ? $attached['library'] : [];
+    $attached = is_array($attachments['#attached'] ?? NULL) ? $attachments['#attached'] : [];
+    $library = is_array($attached['library'] ?? NULL) ? $attached['library'] : [];
     // Anonymous popup links keep their fallback for V1; ACULTA420 V2 enhances
     // the login route with HTMX.
     if (!$this->currentUser->isAuthenticated()) {
@@ -602,14 +617,19 @@ final class PortalHooks {
   }
 
   /**
-   * Adapts login and Profile forms to the Portal's focused workflows.
-   *
-   * @param array<string, mixed> $form
-   */
+ * Adapts login and Profile forms to the Portal's focused workflows.
+ *
+ * @param array<array-key, mixed> $form
+ *   Form render array.
+ * @param FormStateInterface $form_state
+ *   Current form state.
+ * @param string $form_id
+ *   Value used for $form_id.
+ */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $form_state, string $form_id): void {
     if ($form_id === 'user_login_form') {
-      $nameField = is_array($form['name'] ?? null) ? $form['name'] : [];
+      $nameField = is_array($form['name'] ?? NULL) ? $form['name'] : [];
       $nameField['#title'] = $this->translation->translate('Nome de usuário, e-mail ou CPF');
       $nameField['#description'] = $this->translation->translate('Informe seu e-mail, nome de usuário ou CPF.');
       $form['name'] = $nameField;
@@ -625,7 +645,7 @@ final class PortalHooks {
         '#attributes' => ['data-portal-ui' => 'login-registration'],
         'text' => ['#plain_text' => $this->translation->translate('Ainda não tem uma conta?')],
         'link' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => (string) $this->translation->translate('Ver informações sobre o cadastro'),
             'url' => Url::fromRoute('user.register')->toString(),
@@ -657,10 +677,10 @@ final class PortalHooks {
         '#weight' => 20,
       ];
       $socialBlock = $this->blockManager->createInstance('social_auth_login', []);
-      $providerBuild = $socialBlock instanceof \Drupal\Core\Block\BlockPluginInterface ? $socialBlock->build() : [];
+      $providerBuild = $socialBlock instanceof BlockPluginInterface ? $socialBlock->build() : [];
       $form['social_auth'] = [
         '#type' => 'container',
-        '#attributes' => ['class' => ['aculta-auth-provider']],
+        '#attributes' => ['data-portal-ui' => 'auth-provider'],
         'provider' => $providerBuild,
         '#weight' => 21,
       ];
@@ -671,7 +691,7 @@ final class PortalHooks {
       return;
     }
     $entity = $form_object->getEntity();
-    if (!$entity instanceof \Drupal\Core\Entity\EntityInterface) {
+    if (!$entity instanceof EntityInterface) {
       return;
     }
 
@@ -716,7 +736,7 @@ final class PortalHooks {
       }
       if (($path === '/dados' || $isStudioDataRoute) && isset($form['actions']) && is_array($form['actions']) && isset($form['actions']['submit']) && is_array($form['actions']['submit'])) {
         $submit = $form['actions']['submit'];
-        $submitHooks = is_array($submit['#submit'] ?? null) ? $submit['#submit'] : [];
+        $submitHooks = is_array($submit['#submit'] ?? NULL) ? $submit['#submit'] : [];
         $submitHooks[] = 'aculta_portal.form_callbacks:syncCustomerAddressNames';
         if ($isStudioDataRoute) {
           $submitHooks[] = 'aculta_portal.form_callbacks:accountDataRedirect';
@@ -740,13 +760,13 @@ final class PortalHooks {
         }
       }
       if (isset($form['field_address']) && is_array($form['field_address'])) {
-        $widget = is_array($form['field_address']['widget'] ?? null) ? $form['field_address']['widget'] : [];
-        $firstWidget = is_array($widget[0] ?? null) ? $widget[0] : [];
+        $widget = is_array($form['field_address']['widget'] ?? NULL) ? $form['field_address']['widget'] : [];
+        $firstWidget = is_array($widget[0] ?? NULL) ? $widget[0] : [];
         if (isset($firstWidget['address']) && is_array($firstWidget['address'])) {
           $address_element = &$firstWidget['address'];
           $participant = PerfilDoPapel::principal($this->entityTypeManager->getStorage('profile'), $this->currentUser);
           if ($participant instanceof ProfileInterface) {
-            $defVal = is_array($address_element['#default_value'] ?? null) ? $address_element['#default_value'] : [];
+            $defVal = is_array($address_element['#default_value'] ?? NULL) ? $address_element['#default_value'] : [];
             $firstNameVal = $participant->get('field_first_name')->value;
             $defVal['given_name'] ??= is_scalar($firstNameVal) ? (string) $firstNameVal : '';
             $lastNameVal = $participant->get('field_last_name')->value;
@@ -777,28 +797,28 @@ final class PortalHooks {
           }
         }
       }
-      $fieldAddressForm = is_array($form['field_address'] ?? null) ? $form['field_address'] : [];
-      $widgetForm = is_array($fieldAddressForm['widget'] ?? null) ? $fieldAddressForm['widget'] : [];
-      $firstWidgetForm = is_array($widgetForm[0] ?? null) ? $widgetForm[0] : [];
+      $fieldAddressForm = is_array($form['field_address'] ?? NULL) ? $form['field_address'] : [];
+      $widgetForm = is_array($fieldAddressForm['widget'] ?? NULL) ? $fieldAddressForm['widget'] : [];
+      $firstWidgetForm = is_array($widgetForm[0] ?? NULL) ? $widgetForm[0] : [];
       if (isset($firstWidgetForm['address']) && is_array($firstWidgetForm['address'])) {
         $numStr = is_scalar($parts['number']) ? (string) $parts['number'] : '';
         AccountAddressForm::apply($firstWidgetForm['address'], $numStr, (bool) $parts['sn']);
         $widgetForm[0] = $firstWidgetForm;
         $fieldAddressForm['widget'] = $widgetForm;
         $form['field_address'] = $fieldAddressForm;
-        $attached = is_array($form['#attached'] ?? null) ? $form['#attached'] : [];
-        $lib = is_array($attached['library'] ?? null) ? $attached['library'] : [];
+        $attached = is_array($form['#attached'] ?? NULL) ? $form['#attached'] : [];
+        $lib = is_array($attached['library'] ?? NULL) ? $attached['library'] : [];
         $lib[] = AccountAddressForm::LIBRARY;
         $attached['library'] = $lib;
         $form['#attached'] = $attached;
       }
       // Junta rua e número antes do save em buildStreetNumber().
-      $builders = is_array($form['#entity_builders'] ?? null) ? $form['#entity_builders'] : [];
+      $builders = is_array($form['#entity_builders'] ?? NULL) ? $form['#entity_builders'] : [];
       $builders[] = 'aculta_portal.form_callbacks:buildStreetNumber';
       $form['#entity_builders'] = $builders;
       if (isset($form['actions']) && is_array($form['actions']) && isset($form['actions']['submit']) && is_array($form['actions']['submit'])) {
         $form['actions']['submit']['#value'] = $this->translation->translate('Salvar endereço');
-        $submitHooks = is_array($form['actions']['submit']['#submit'] ?? null) ? $form['actions']['submit']['#submit'] : [];
+        $submitHooks = is_array($form['actions']['submit']['#submit'] ?? NULL) ? $form['actions']['submit']['#submit'] : [];
         $submitHooks[] = 'aculta_portal.form_callbacks:addressRedirect';
         $form['actions']['submit']['#submit'] = $submitHooks;
       }
@@ -815,7 +835,7 @@ final class PortalHooks {
       }
       if (isset($form['actions']) && is_array($form['actions']) && isset($form['actions']['submit']) && is_array($form['actions']['submit'])) {
         $form['actions']['submit']['#value'] = $this->translation->translate('Salvar foto do perfil');
-        $submitHooks = is_array($form['actions']['submit']['#submit'] ?? null) ? $form['actions']['submit']['#submit'] : [];
+        $submitHooks = is_array($form['actions']['submit']['#submit'] ?? NULL) ? $form['actions']['submit']['#submit'] : [];
         $submitHooks[] = 'aculta_portal.form_callbacks:accountPhotoRedirect';
         $form['actions']['submit']['#submit'] = $submitHooks;
       }
@@ -823,21 +843,22 @@ final class PortalHooks {
   }
 
   /**
-   * Implements hook_page_attachments_alter().
-   *
-   * @param array<string, mixed> $attachments
-   */
+ * Implements hook_page_attachments_alter().
+ *
+ * @param array<array-key, mixed> $attachments
+ *   Value used for $attachments.
+ */
   #[Hook('page_attachments_alter')]
   public function pageAttachmentsAlter(array &$attachments): void {
-    $attached = is_array($attachments['#attached'] ?? null) ? $attachments['#attached'] : [];
-    $htmlHead = is_array($attached['html_head'] ?? null) ? $attached['html_head'] : [];
+    $attached = is_array($attachments['#attached'] ?? NULL) ? $attachments['#attached'] : [];
+    $htmlHead = is_array($attached['html_head'] ?? NULL) ? $attached['html_head'] : [];
     foreach ($htmlHead as $delta => $item) {
       if (!is_array($item)) {
         continue;
       }
-      $element = is_array($item[0] ?? null) ? $item[0] : [];
-      $attrs = is_array($element['#attributes'] ?? null) ? $element['#attributes'] : [];
-      $nameAttr = is_scalar($attrs['name'] ?? null) ? (string) $attrs['name'] : '';
+      $element = is_array($item[0] ?? NULL) ? $item[0] : [];
+      $attrs = is_array($element['#attributes'] ?? NULL) ? $element['#attributes'] : [];
+      $nameAttr = is_scalar($attrs['name'] ?? NULL) ? (string) $attrs['name'] : '';
       if (($element['#tag'] ?? NULL) === 'meta' && strtolower($nameAttr) === 'generator') {
         unset($htmlHead[$delta]);
       }
@@ -847,10 +868,11 @@ final class PortalHooks {
   }
 
   /**
-   * Implements hook_theme().
-   *
-   * @return array<string, mixed>
-   */
+ * Implements hook_theme().
+ *
+ * @return array<string, mixed>
+ *   Render array returned by the method.
+ */
   #[Hook('theme')]
   public function theme(): array {
     return [
@@ -864,7 +886,7 @@ final class PortalHooks {
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
       // O módulo pede pelo nome; o tema monta o componente SDC.
-      'aculta_portal_component' => [
+      'portal_component' => [
         'variables' => [
           'name' => NULL,
           'props' => [],
@@ -875,7 +897,7 @@ final class PortalHooks {
         'template' => 'portal-component',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
-      'aculta_portal_shell' => [
+      'portal_shell' => [
         'variables' => [
           'section_title' => NULL,
           'menu_items' => [],
@@ -899,7 +921,7 @@ final class PortalHooks {
         'template' => 'aculta-section',
         'path' => $this->moduleList->getPath('aculta_portal') . '/templates',
       ],
-      'aculta_portal_photo_editor' => [
+      'portal_photo_editor' => [
         'variables' => [
           'photo' => NULL,
           'photo_form' => NULL,
@@ -913,11 +935,13 @@ final class PortalHooks {
   }
 
   /**
-   * Supplies metadata for the public support page and private result routes.
-   *
-   * @param array<string, mixed> $tags
-   * @param array<string, mixed> $context
-   */
+ * Supplies metadata for the public support page and private result routes.
+ *
+ * @param array<array-key, mixed> $tags
+ *   Value used for $tags.
+ * @param array<array-key, mixed> $context
+ *   Value used for $context.
+ */
   #[Hook('metatags_alter')]
   public function metatagsAlter(array &$tags, array $context): void {
     $route = $this->routeMatch->getRouteName();

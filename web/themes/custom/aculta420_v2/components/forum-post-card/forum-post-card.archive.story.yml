@@ -1,0 +1,11 @@
+name: Cartão de Post do Fórum (acervo, somente leitura)
+props:
+  stripe: brand
+  author_name: Autora histórica
+  timestamp: Acervo Growroom
+  density: compact
+  read_only: true
+slots:
+  body:
+    type: inline_template
+    template: '<p>Texto preservado do acervo histórico.</p>'

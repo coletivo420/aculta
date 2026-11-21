@@ -10,6 +10,7 @@ use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\aculta_cgu\ModerationScope;
 
 /**
  * Aba de moderação do fórum na Marley.
@@ -28,14 +29,16 @@ final class ForumTab extends MarleyTabBase {
    * {@inheritdoc}
    */
   public function isAvailable(): bool {
-    return $this->moduleHandler->moduleExists('aculta_forum');
+    return $this->moduleHandler->moduleExists('aculta_forum')
+      && $this->moduleHandler->moduleExists('aculta_cgu');
   }
 
   /**
    * {@inheritdoc}
    */
   public function access(AccountInterface $account): AccessResultInterface {
-    return AccessResult::allowedIfHasPermission($account, 'moderar denuncias do forum');
+    return AccessResult::allowedIf($account->isAuthenticated() && ModerationScope::allows($account, 'forum'))
+      ->cachePerPermissions()->cachePerUser();
   }
 
   /**
@@ -51,7 +54,7 @@ final class ForumTab extends MarleyTabBase {
             'label' => $this->t('Denúncias'),
             'weight' => 0,
             'actions' => [
-              $this->routeAction($this->t('Denúncias do fórum'), 'aculta_user.denuncias_forum', [], $account, 'main'),
+              $this->routeAction($this->t('Abrir fila de revisão'), 'aculta_cgu.forum_marley_queue', [], $account),
             ],
           ],
         ],

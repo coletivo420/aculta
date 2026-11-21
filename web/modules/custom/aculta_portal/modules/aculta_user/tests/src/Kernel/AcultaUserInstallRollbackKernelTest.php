@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_user\Kernel;
 
+use Composer\Autoload\ClassLoader;
 use Drupal\aculta_image\FileRemover;
 use Drupal\aculta_image\ImageCatalog;
 use Drupal\aculta_image\ImageRenderer;
 use Drupal\aculta_portal\Account\EmailConfirmationPolicy;
-use Drupal\aculta_user\Account\NicknameRegistry;
-use Drupal\aculta_user\PublicProfilePolicy;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\profile\Entity\ProfileType;
@@ -50,7 +49,6 @@ final class AcultaUserInstallRollbackKernelTest extends KernelTestBase {
     'aculta_badge_award',
     'aculta_friendship',
     'aculta_associado',
-    'aculta_legado_autor',
   ];
 
   /**
@@ -109,7 +107,7 @@ final class AcultaUserInstallRollbackKernelTest extends KernelTestBase {
     parent::setUp();
 
     $loader = require dirname(DRUPAL_ROOT) . '/vendor/autoload.php';
-    if (!$loader instanceof \Composer\Autoload\ClassLoader) {
+    if (!$loader instanceof ClassLoader) {
       throw new \RuntimeException('Autoloader do Composer indisponível.');
     }
     $loader->addPsr4('Drupal\\aculta_user\\', dirname(__DIR__, 3) . '/src', TRUE);
@@ -160,7 +158,7 @@ final class AcultaUserInstallRollbackKernelTest extends KernelTestBase {
     $this->assertTrue($schema->fieldExists('aculta_user_agreement', 'record_hash'));
 
     $entity_type_manager = $container->get('entity_type.manager');
-    foreach (['aculta_badge_award', 'aculta_friendship', 'aculta_associado', 'aculta_legado_autor'] as $entity_type_id) {
+    foreach (['aculta_badge_award', 'aculta_friendship', 'aculta_associado'] as $entity_type_id) {
       $this->assertTrue($entity_type_manager->hasDefinition($entity_type_id), "Missing entity type $entity_type_id.");
     }
 
@@ -175,8 +173,6 @@ final class AcultaUserInstallRollbackKernelTest extends KernelTestBase {
     $this->assertNotNull(ProfileType::load('estudante'));
     $this->assertNotNull(FieldStorageConfig::load('profile.field_nickname'));
     $this->assertNotNull(FieldStorageConfig::load('profile.field_perfil_publico'));
-    $this->assertNotNull(FieldStorageConfig::load('node.field_autor_legado'));
-    $this->assertNotNull(FieldStorageConfig::load('comment.field_autor_legado'));
 
     // Services and public aliases.
     $this->assertSame(
@@ -256,7 +252,7 @@ final class AcultaUserInstallRollbackKernelTest extends KernelTestBase {
       $this->assertFalse($schema->tableExists($table), "Rollback left table $table behind.");
     }
     $entity_type_manager = $container->get('entity_type.manager');
-    foreach (['aculta_badge_award', 'aculta_friendship', 'aculta_associado', 'aculta_legado_autor'] as $entity_type_id) {
+    foreach (['aculta_badge_award', 'aculta_friendship', 'aculta_associado'] as $entity_type_id) {
       $this->assertFalse($entity_type_manager->hasDefinition($entity_type_id), "Rollback left entity type $entity_type_id behind.");
     }
     $this->assertNull($container->get('config.factory')->get('aculta_user.settings')->get('topico_limite_ativo'));

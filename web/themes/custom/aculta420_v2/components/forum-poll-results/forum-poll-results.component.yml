@@ -1,0 +1,46 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Resultados da enquete do Fórum
+description: Resultados preparados por PollResults somente após autorização de visibilidade; distingue pessoas votantes de seleções.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [title, voters, selections, multiple, options]
+  properties:
+    title:
+      title: Título da seção de resultados
+      type: string
+      minLength: 1
+    voters:
+      title: Pessoas votantes
+      type: integer
+      minimum: 0
+    selections:
+      title: Seleções registradas
+      type: integer
+      minimum: 0
+    multiple:
+      title: Múltipla escolha
+      type: boolean
+    options:
+      title: Opções e distribuição
+      type: array
+      items:
+        type: object
+        additionalProperties: false
+        required: [label, votes, percentage]
+        properties:
+          label:
+            type: string
+          votes:
+            type: integer
+            minimum: 0
+          percentage:
+            type: number
+            minimum: 0
+            maximum: 100
+assets:
+  css:
+    component:
+      forum-poll-results.css: {}

@@ -228,6 +228,180 @@ function aculta_forum_schema(): array {
     ],
   ];
 
+  // Enquetes nativas do Fórum (Discourse parity FDC-R5).
+  $schema['aculta_forum_poll'] = [
+    'description' => 'Enquetes nativas vinculadas a tópicos públicos do Fórum.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: ID da enquete.',
+      ],
+      'nid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'ID do tópico (Node) proprietário.',
+      ],
+      'title' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Pergunta ou título da enquete.',
+      ],
+      'poll_type' => [
+        'type' => 'varchar',
+        'length' => 16,
+        'not null' => TRUE,
+        'default' => 'single',
+        'description' => 'Tipo de escolha: single ou multiple.',
+      ],
+      'min_choices' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 1,
+        'description' => 'Mínimo de opções para escolha múltipla.',
+      ],
+      'max_choices' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 1,
+        'description' => 'Máximo de opções para escolha múltipla.',
+      ],
+      'results_visibility' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'default' => 'after_vote',
+        'description' => 'Visibilidade dos resultados: always, after_vote, after_close.',
+      ],
+      'status' => [
+        'type' => 'varchar',
+        'length' => 16,
+        'not null' => TRUE,
+        'default' => 'open',
+        'description' => 'Estado da enquete: open ou closed.',
+      ],
+      'close_at' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Timestamp previsto de encerramento automático.',
+      ],
+      'closed_by' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'UID de quem encerrou a enquete manualmente.',
+      ],
+      'closed_at' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => FALSE,
+        'default' => NULL,
+        'description' => 'Timestamp do encerramento real.',
+      ],
+      'created' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Timestamp de criação.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'topic_poll' => ['nid'],
+    ],
+    'indexes' => [
+      'status_close' => ['status', 'close_at'],
+    ],
+  ];
+
+  $schema['aculta_forum_poll_option'] = [
+    'description' => 'Opções de resposta de uma enquete nativa.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: ID da opção.',
+      ],
+      'poll_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'ID da enquete proprietária.',
+      ],
+      'label' => [
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => TRUE,
+        'default' => '',
+        'description' => 'Texto da opção de resposta.',
+      ],
+      'weight' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'Posição/ordenação de exibição.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'poll_weight' => ['poll_id', 'weight'],
+    ],
+  ];
+
+  $schema['aculta_forum_poll_vote'] = [
+    'description' => 'Cédulas de votação de uma enquete nativa. Sem IP/UA.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: ID da cédula/voto.',
+      ],
+      'poll_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'ID da enquete.',
+      ],
+      'option_id' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'ID da opção selecionada.',
+      ],
+      'uid' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'UID do votante autenticado.',
+      ],
+      'created' => [
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Timestamp de envio do voto.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'unique keys' => [
+      'user_poll_option' => ['poll_id', 'option_id', 'uid'],
+    ],
+    'indexes' => [
+      'poll_user' => ['poll_id', 'uid'],
+      'option_votes' => ['option_id'],
+    ],
+  ];
+
   return $schema;
 }
 
@@ -557,5 +731,48 @@ function aculta_forum_update_9008(): void {
 
   if (!$schema->tableExists('aculta_forum_analytics_ledger')) {
     $schema->createTable('aculta_forum_analytics_ledger', $tables['aculta_forum_analytics_ledger']);
+  }
+}
+
+/**
+ * Creates the public Forum tags vocabulary and the topic tags field (Discourse parity).
+ */
+function aculta_forum_update_9009(): void {
+  $vocabulary_storage = \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary');
+  if ($vocabulary_storage->load('aculta_forum_tags') === NULL) {
+    $vocabulary_storage->create([
+      'vid' => 'aculta_forum_tags',
+      'name' => 'Tags do ACULTA Forum',
+      'description' => 'Tags públicas de tópicos do Growroom420 (paridade Discourse).',
+    ])->save();
+  }
+  $field_storage = \Drupal::entityTypeManager()->getStorage('field_storage_config');
+  if ($field_storage->load('node.field_aculta_tags') === NULL) {
+    $field_storage->create([
+      'field_name' => 'field_aculta_tags',
+      'entity_type' => 'node',
+      'type' => 'entity_reference',
+      'settings' => ['target_type' => 'taxonomy_term'],
+      'cardinality' => -1,
+    ])->save();
+  }
+  $field = \Drupal::entityTypeManager()->getStorage('field_config');
+  if ($field->load('node.aculta_forum_topic.field_aculta_tags') === NULL) {
+    $field->create([
+      'field_name' => 'field_aculta_tags',
+      'entity_type' => 'node',
+      'bundle' => 'aculta_forum_topic',
+      'label' => 'Tags',
+      'description' => 'Tags públicas do tópico (opcional).',
+      'required' => FALSE,
+      'settings' => [
+        'handler' => 'default:taxonomy_term',
+        'handler_settings' => [
+          'target_bundles' => ['aculta_forum_tags' => 'aculta_forum_tags'],
+          'auto_create' => TRUE,
+          'auto_create_bundle' => 'aculta_forum_tags',
+        ],
+      ],
+    ])->save();
   }
 }

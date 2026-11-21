@@ -698,7 +698,7 @@ final class MessagesController extends ControllerBase {
   private function newConversationAction(): array {
     return [
       'new_conversation' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->translation->translate('Iniciar nova conversa'),
           'url' => Url::fromRoute('aculta_messenger.new_conversation')->toString(),
@@ -1734,7 +1734,14 @@ final class MessagesController extends ControllerBase {
         '#alert' => [
           'severity' => $site_alert->getSeverity(),
           'label' => $site_alert->getLabel(),
-          'message' => ['#type' => 'markup', '#markup' => Xss::filter(is_scalar($site_alert->getMessage()) || $site_alert->getMessage() instanceof \Stringable ? (string) $site_alert->getMessage() : '')],
+          'message' => [
+            '#type' => 'markup',
+            '#markup' => Xss::filter(
+              is_scalar($site_alert->getMessage()) || $site_alert->getMessage() instanceof \Stringable
+                ? (string) $site_alert->getMessage()
+                : '',
+            ),
+          ],
         ],
       ],
     ];

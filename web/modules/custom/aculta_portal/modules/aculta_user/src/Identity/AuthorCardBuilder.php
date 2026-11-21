@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_user\Identity;
 
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\aculta_user\Entity\LegacyAuthor;
 use Drupal\user\UserInterface;
 
 /**
@@ -18,70 +17,22 @@ final class AuthorCardBuilder {
   ) {}
 
   /**
-   * Builds a historical card without creating or exposing a User account.
-   *
-   * @return array<array-key, mixed>
-   *   Render array do cartão histórico.
-   */
-  public function buildLegacy(LegacyAuthor $author): array {
-    return $this->buildLegacyWithDisplayName($author, (string) $author->label());
-  }
-
-  /**
-   * Builds a historical author card for Forum content.
-   */
-  /**
-   * Cartão histórico do Fórum.
-   *
-   * @return array<array-key, mixed>
-   *   Render array do cartão.
-   */
-  public function buildLegacyForum(LegacyAuthor $author): array {
-    return $this->buildLegacyWithDisplayName(
-      $author,
-      LegacyAuthorDisplayName::forForum((string) $author->label()),
-    );
-  }
-
-  /**
-   * Builds the shared historical card with an explicitly selected display name.
-   */
-  /**
-   * Cartão histórico com o nome de exibição informado.
-   *
-   * @return array<array-key, mixed>
-   *   Render array do cartão.
-   */
-  private function buildLegacyWithDisplayName(LegacyAuthor $author, string $displayName): array {
-    $build = [
-      '#theme' => 'aculta_user_author_card',
-      '#variant' => 'author_growroom_historico',
-      '#display_name' => $displayName,
-      '#profile_url' => NULL,
-      '#avatar' => NULL,
-      '#has_avatar' => FALSE,
-      '#member_since' => NULL,
-      '#bio' => NULL,
-      '#social_links' => [],
-      '#designation' => NULL,
-      '#actions' => [],
-      '#reactions_received' => 0,
-      '#reactions_given' => 0,
-      '#source_label' => 'Acervo histórico Growroom',
-    ];
-    CacheableMetadata::createFromObject($author)->applyTo($build);
-    return $build;
-  }
-
-  /**
    * Builds an author card render array for a supported user variant.
    *
    * Actions remain caller-provided render arrays, so this service never grants
    * access or invents social actions. Only identity and the avatar permitted
    * by PublicProfilePolicy enter the card.
    *
+   * @param \Drupal\user\UserInterface $account
+   *   Conta cuja identidade será apresentada.
+   * @param string $variant
+   *   Variante visual aprovada para o contexto.
    * @param array<array-key, mixed> $actions
    *   Ações renderizáveis fornecidas pelo chamador.
+   * @param string|null $designation
+   *   Identificação opcional da conta.
+   * @param string $size
+   *   Tamanho do cartão.
    *
    * @return array<string, mixed>|null
    *   Cacheable theme-hook array, or NULL if no public identity is available.
@@ -117,8 +68,14 @@ final class AuthorCardBuilder {
   /**
    * Renders a resolved identity into the theme-neutral card contract.
    *
+   * @param \Drupal\aculta_user\Identity\AuthorIdentity $identity
+   *   Dados públicos resolvidos da identidade.
    * @param array<array-key, mixed> $actions
    *   Ações renderizáveis fornecidas pelo chamador.
+   * @param string|null $designation
+   *   Identificação opcional da conta.
+   * @param string $size
+   *   Tamanho do cartão.
    *
    * @return array<string, mixed>
    *   Render array do cartão.

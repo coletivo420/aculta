@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Hook;
 
+use Symfony\Component\HttpFoundation\Response;
 use Drupal\Core\Hook\Order\Order;
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Form\DiscussionReplyPopupLayout;
@@ -52,6 +53,14 @@ final class DiscussionReplyFormHooks {
    * Alters comment forms for discussion reply handling.
    *
    * @param array<mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $formState
+   *   Value used for $formState.
+   * @param string $formId
+   *   Value used for $formId.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   #[Hook('form_comment_form_alter', order: Order::Last)]
   public function commentFormAlter(array &$form, FormStateInterface $formState, string $formId): void {
@@ -126,7 +135,6 @@ final class DiscussionReplyFormHooks {
     // Prevent destination manipulation.
     $formState->setIgnoreDestination(TRUE);
 
-
     // Apply native HTMX submission to the form element.
     $htmx = new Htmx();
     $htmx->post($targetUrl)
@@ -156,7 +164,17 @@ final class DiscussionReplyFormHooks {
   /**
    * Entity builder that assigns normalized parent ID to new comment entities.
    *
-   * @param array<string, mixed> $form
+   * @param string $entityType
+   *   Value used for $entityType.
+   * @param EntityInterface $entity
+   *   Value used for $entity.
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $formState
+   *   Value used for $formState.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function buildCommentEntityWithPid(string $entityType, EntityInterface $entity, array &$form, FormStateInterface $formState): void {
     if (!$entity instanceof CommentInterface || !$entity->isNew()) {
@@ -179,7 +197,13 @@ final class DiscussionReplyFormHooks {
   /**
    * Validates duplicate submission within idempotency window.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $formState
+   *   Value used for $formState.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function validateIdempotency(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();
@@ -217,7 +241,13 @@ final class DiscussionReplyFormHooks {
   /**
    * Ensures submission redirects back to host on non-HTMX requests and avoids standalone comment URLs.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $formState
+   *   Value used for $formState.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function postSubmitRedirect(array &$form, FormStateInterface $formState): void {
     $formObject = $formState->getFormObject();
@@ -239,7 +269,7 @@ final class DiscussionReplyFormHooks {
       $permalink = $permalinkUrl->toString();
       // Envio pelo HTMX (popup): o HX-Redirect leva o navegador ao permalink do comentário novo.
       if ($this->requestStack->getCurrentRequest()?->headers->has('HX-Request')) {
-        $formState->setResponse(new \Symfony\Component\HttpFoundation\Response('', 200, ['HX-Redirect' => $permalink]));
+        $formState->setResponse(new Response('', 200, ['HX-Redirect' => $permalink]));
         return;
       }
       $formState->setRedirectUrl($permalinkUrl);

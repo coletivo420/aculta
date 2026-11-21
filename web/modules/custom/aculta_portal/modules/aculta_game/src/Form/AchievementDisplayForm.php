@@ -139,7 +139,7 @@ final class AchievementDisplayForm extends FormBase {
   /**
    * Save the current account achievement display preferences.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.

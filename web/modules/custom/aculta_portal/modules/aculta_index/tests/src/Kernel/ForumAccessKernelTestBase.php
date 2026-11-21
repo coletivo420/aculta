@@ -25,6 +25,10 @@ use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
+use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Origin\CoreDiscussionOriginClassifier;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolver;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -99,12 +103,29 @@ abstract class ForumAccessKernelTestBase extends KernelTestBase {
       DRUPAL_ROOT . '/modules/custom/aculta_portal/modules/aculta_forum/aculta_forum.services.yml',
       Yaml::PARSE_CUSTOM_TAGS,
     )['services'];
+    // The origin resolver is the Forum's own rule for topics and comments:
+    // CURRENT topics are indexable, archive and unknown origins fail closed.
+    $container->setDefinition(
+      'aculta_forum.discussion_origin_classifier.core',
+      new Definition(CoreDiscussionOriginClassifier::class, [new Definition(DiscussionContextResolver::class, [[]])]),
+    );
+    $container->setDefinition(
+      'aculta_forum.discussion_origin_resolver',
+      new Definition(DiscussionOriginResolver::class, [[new Reference('aculta_forum.discussion_origin_classifier.core')]]),
+    );
     foreach ([
       'aculta_forum.content_index_provider',
       'aculta_forum.attachment_content_index_provider',
     ] as $serviceId) {
       $service = $ownerServices[$serviceId];
-      $definition = (new Definition($service['class'], $service['arguments'] ?? []))->setPublic(TRUE);
+      $rawArguments = $service['arguments'] ?? [];
+      $arguments = array_map(
+        static fn (mixed $argument): mixed => is_string($argument) && str_starts_with($argument, '@')
+          ? new Reference(substr($argument, 1))
+          : $argument,
+        is_array($rawArguments) ? $rawArguments : [],
+      );
+      $definition = (new Definition($service['class'], $arguments))->setPublic(TRUE);
       foreach ($service['tags'] as $tag) {
         $definition->addTag($tag['name'], array_diff_key($tag, ['name' => TRUE]));
       }

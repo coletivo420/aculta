@@ -1,0 +1,11 @@
+name: Linha de Tópico do Fórum (não fixado)
+props:
+  pinned: false
+  badges: []
+  replies: 7
+  views: null
+  last_activity: '1 dia atrás'
+slots:
+  title:
+    type: inline_template
+    template: '<a href="#">Tópico comum da comunidade</a>'

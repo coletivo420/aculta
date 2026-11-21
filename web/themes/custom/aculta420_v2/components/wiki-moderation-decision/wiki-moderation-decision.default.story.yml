@@ -1,0 +1,14 @@
+name: "WE Sativa - Análise com formulário"
+description: "Somente representação visual; decisões reais dependem de Form API e autorização no aculta_wiki/CGU."
+props:
+  title: Analisar denúncia
+  note: "Avalie as evidências. A decisão do CGU não despublica automaticamente o verbete."
+slots:
+  context:
+    type: inline_template
+    template: |
+      <p>Verbete de exemplo: História da cultura popular.</p>
+  form:
+    type: inline_template
+    template: |
+      <p>O formulário autenticado do Drupal aparece aqui após a verificação de permissões.</p>

@@ -1,3 +1,7 @@
+> **G8-G11 - REGRA ATUALIZADA 2026-11-20:** [descurtidas e score geral implementados parcialmente no Fórum](../../aculta_forum/docs/IMPLEMENTACAO-DESCURTIDAS-2026-11-20.md). Todas as reações positivas de qualquer emoji contam +1 e descurtida -1 no saldo do objeto; troféus de 10/25/50 devem usar o **score do tópico ou resposta**, não likes brutos nem somatório do usuário. Não há concessão Game nova neste patch; manter critérios antiabuso, privacidade, sem ranking/XP.
+
+> **AMPLIAÇÃO G8-G11 (2026-11-20, PLANNED):** [estudo Fórum/Discourse, Game e métricas](../../aculta_forum/docs/ESTUDO-DISCOURSE-GAME-METRICAS-INTEGRACOES-2026-11-20.md). Manter `aculta_badge_award` no User e `BadgeService` único; adicionar candidatas First Like, Welcome, Nice/Good/Great Topic e Reply (10/25/50 likes no mesmo alvo), Appreciated (1 like em 20 posts distintos) e primeiro tópico próprio. Medir separadamente tópicos criados, tópicos abertos para leitura, Comments/ForumPosts e likes no Growroom `CURRENT`; **não** usar `getUserStats` genérico como likes, nem `ForumReactionEvent` atual para atribuição individual. **Preservar decisões G-D02/03/04: sem XP, ranking, níveis competitivos, recompensas financeiras ou papel derivado de troféus.**
+
 # Roadmap — ACULTA Game
 
 **Ciclo vigente:** seguir [Dev → RC → deploy/validação Alpha → produção](../../../../../../../docs/operations/RELEASE-LIFECYCLE.md). Concluir implementação, gates, testes e revisão visual aplicável antes de RC; validar o deploy Alpha no servidor de desenvolvimento antes da migração a produção.
@@ -126,3 +130,14 @@ Para operações de Runtime: confirmar host, diretório, branch, Drush, URI e ba
 inspecionar config drift e efeitos; aplicar incremento coerente no Homelab durante
 a implementação. Registrar `RUNTIME STATUS: DEFERRED` para casos não executados,
 sem chamar metadata de compatibilidade de teste em PHP 8.5 ou Drupal 12.
+
+## G8-G11 - trabalho novo (2026-11-20)
+
+| Fase | Trabalho | Gate |
+| --- | --- | --- |
+| **G8 - fontes reais** | Contrato `ForumMemberActivitySummary` por UID/escopo; separar likes/emoji e tópicos/posts/read, integrar `aculta_statistics` e Count/Origin | Cálculos iguais à origem, sem dados Wiki/LMS/Revista/ARCHIVE, sem duplicação de snapshot/evento |
+| **G9 - motor de troféus** | Adicionar triggers enumerados em `AchievementDefinitions`, avaliador por objeto e critérios 10/25/50, garantir locks, antiabuso e licenças de arte | Nice/Good/Great por objeto, Appreciated por objetos distintos, sem autocurtida/badge dupla |
+| **G10 - apresentação Studio/User** | Conquistas e contadores na área Atividade/Conquistas da Conta e cartões/perfil autorizados; SDC UI Patterns com opt-out | Cache/privacidade, somente cifras permitidas, sem leaderboard e sem backend para moderador |
+| **G11 - reconciliação e gates** | Dry-run de conquistas e estatísticas, importação e Game ausente/presente, Unit/Kernel/Browser/Runtime | T-43..T-57, reprocessamento não concede legado, desempenho e logs adequados |
+
+Conquistas automáticas existentes são fatos históricos não revogáveis pela API; mudanças de critérios precisam versão, decisão administrativa e prova de reprocessamento. Não executar backfill no acervo Growroom. Nenhuma destas fases está implementada nesta rodada.

@@ -1,0 +1,14 @@
+{#
+  Linha da fila do educador. Textos e datas chegam prontos do servidor;
+  o link é o único controle e leva à análise deste conteúdo.
+#}
+<article class="studio-report-item" data-aculta-studio="educator-report-item">
+  <h2 class="studio-report-item__label">{{ label }}</h2>
+  <p class="studio-report-item__meta">
+    <span class="studio-report-item__total">{{ total }} denúncia(s) pendente(s)</span>
+    {% if last_at %}
+      <span class="studio-report-item__last">Última em {{ last_at }}</span>
+    {% endif %}
+  </p>
+  <a class="studio-report-item__action" href="{{ url }}">Analisar denúncias</a>
+</article>

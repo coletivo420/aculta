@@ -62,7 +62,11 @@ final class DonationReportController implements ContainerInjectionInterface {
   /**
    * Página do relatório de doações.
    *
+   * @param Request $request
+   *   Current HTTP request.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function report(Request $request): array {
     $timezoneConfig = $this->configFactory->get('system.date')->get('timezone.default');
@@ -133,8 +137,8 @@ final class DonationReportController implements ContainerInjectionInterface {
       ];
     }
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:sales-panel',
+      '#theme' => 'portal_component',
+      '#name' => 'sales-panel',
       '#slots' => ['content' => $conteudo],
       '#cache' => ['max-age' => 0, 'contexts' => ['url.query_args']],
     ];

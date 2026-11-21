@@ -1,0 +1,37 @@
+{#
+/**
+ * @file
+ * Organiza o frontend Marley dentro da casca compartilhada do Studio.
+ *
+ * Somente apresentação: permissões, URLs, dados, Form API e comandos vêm
+ * de aculta_studio, aculta_forum, aculta_cgu e demais módulos proprietários.
+ */
+#}
+{% set marley_content %}
+  <section class="studio studio-marley-workspace studio-marley-workspace--{{ area }}" aria-labelledby="{{ dom_id|default('studio-marley-workspace') }}-title">
+    <header class="studio-marley-workspace__heading">
+      <div class="studio-marley-workspace__heading-text">
+        <p class="studio-marley-workspace__eyebrow">{{ eyebrow|default('ACULTA Studio Marley') }}</p>
+        <h1 id="{{ dom_id|default('studio-marley-workspace') }}-title">{{ title }}</h1>
+        {% if description %}<p class="studio-marley-workspace__description">{{ description }}</p>{% endif %}
+        {% if preview_note %}<p class="studio-marley-workspace__preview" role="note">{{ preview_note }}</p>{% endif %}
+      </div>
+      {% if actions %}<div class="studio-marley-workspace__actions">{{ actions }}</div>{% endif %}
+    </header>
+    {% if navigation %}
+      <nav class="studio-marley-workspace__navigation" aria-label="{{ navigation_label|default('Áreas do Studio Marley') }}">
+        {{ navigation }}
+      </nav>
+    {% endif %}
+    {% if summary %}
+      <section class="studio-marley-workspace__summary" aria-label="{{ 'Resumo da seção'|t }}">{{ summary }}</section>
+    {% endif %}
+    {% if filters %}<div class="studio-marley-workspace__filters">{{ filters }}</div>{% endif %}
+    <div class="studio-marley-workspace__columns{% if not aside %} studio-marley-workspace__columns--single{% endif %}">
+      <section class="studio-marley-workspace__primary" id="{{ dom_id|default('studio-marley-workspace') }}-content" aria-label="{{ primary_label|default('Conteúdo de trabalho') }}">{{ primary }}</section>
+      {% if aside %}<aside class="studio-marley-workspace__aside" aria-label="{{ aside_label|default('Detalhes e ações') }}">{{ aside }}</aside>{% endif %}
+    </div>
+    {% if footer %}<footer class="studio-marley-workspace__footer">{{ footer }}</footer>{% endif %}
+  </section>
+{% endset %}
+{{ include('aculta420_v2:studio-shell', { content: marley_content }, with_context = false) }}

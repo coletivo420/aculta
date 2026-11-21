@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Unit\ContentIndex;
 
+use Drupal\aculta_forum\Origin\DiscussionOriginResolver;
 use Drupal\aculta_forum\ContentIndex\ForumContentIndexProvider;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_portal\ContentIndex\ContentIndexAccessContextProviderInterface;
@@ -24,7 +25,7 @@ final class ForumContentIndexProviderTest extends UnitTestCase {
    * Tests coexistence sources and canonical access purpose.
    */
   public function testDeclaresBothDiscussionSystemsAndForumPurpose(): void {
-    $provider = new ForumContentIndexProvider();
+    $provider = new ForumContentIndexProvider(new DiscussionOriginResolver([]));
     $topic = $this->createMock(NodeInterface::class);
     $topic->method('bundle')->willReturn('aculta_forum_topic');
     $otherNode = $this->createMock(NodeInterface::class);
@@ -45,7 +46,7 @@ final class ForumContentIndexProviderTest extends UnitTestCase {
    * Tests both legacy and revisionable replies use the canonical Forum purpose.
    */
   public function testRepliesUseTheCanonicalForumPurpose(): void {
-    $provider = new ForumContentIndexProvider();
+    $provider = new ForumContentIndexProvider(new DiscussionOriginResolver([]));
     $forumPost = (new \ReflectionClass(ForumPost::class))->newInstanceWithoutConstructor();
     $legacyComment = $this->createMock(CommentInterface::class);
     $legacyComment->method('bundle')->willReturn('aculta_discussion_post');

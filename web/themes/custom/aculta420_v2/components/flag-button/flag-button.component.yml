@@ -1,0 +1,29 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Botão de marcação (seguir/salvar)
+status: experimental
+description: Botão de alternância do tópico do Fórum (seguir ou salvar) com ícone Phosphor. Mostra estado marcado ou não marcado com aria-pressed.
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [label, icon]
+  properties:
+    label:
+      type: string
+      title: Rótulo
+      description: Texto do botão, por exemplo Seguir ou Salvar.
+    icon:
+      type: string
+      title: Ícone Phosphor
+      description: Nome base do arquivo Phosphor.
+      pattern: '^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$'
+    attributes:
+      type: Drupal\Core\Template\Attribute
+      title: Atributos HTML opcionais
+      default: null
+      description: Atributos do Flag (href, classes e dados da ação) aplicados ao elemento raiz.
+    pressed:
+      type: boolean
+      title: Marcado
+      description: Verdadeiro quando o usuário já segue ou salvou o tópico.
+      default: false

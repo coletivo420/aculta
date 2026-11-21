@@ -23,19 +23,22 @@ final class ForumSettingsForm extends ConfigFormBase {
    * {@inheritdoc}
    *
    * @return list<string>
+   *   Value returned by the method.
    */
   protected function getEditableConfigNames(): array {
     return ['aculta_forum.settings'];
   }
 
   /**
-   * {@inheritdoc}
+   * Builds the form.
    *
    * @param array<string, mixed> $form
-   *   The form structure.
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
    *
    * @return array<string, mixed>
-   *   The completed form structure.
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['introduction'] = [
@@ -114,19 +117,11 @@ final class ForumSettingsForm extends ConfigFormBase {
     ];
 
     $allowedReactions = $this->allowedReactions($config->get('allowed_reactions'));
-    $defaultReaction = $this->stringValue($config->get('default_reaction'), 'broccoli');
-
-    $options = [];
-    foreach ($allowedReactions as $reaction) {
-      $options[$reaction['id']] = $reaction['label'] . ' (' . $reaction['id'] . ')';
-    }
-
     $form['reactions_fieldset']['default_reaction'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Reação padrão de clique rápido'),
-      '#options' => $options,
-      '#default_value' => $defaultReaction,
-      '#description' => $this->t('Reação aplicada diretamente ao clicar no botão principal de curtir.'),
+      '#type' => 'item',
+      '#title' => $this->t('Curtida rápida padrão'),
+      '#markup' => $this->t('Brócolis (broccoli) - fixo. A paleta positiva permanece editável.'),
+      '#description' => $this->t('A curtida rápida é sempre o emoji Brócolis; este valor não é alterável pelo formulário.'),
     ];
 
     $form['reactions_fieldset']['reactions_table'] = [
@@ -172,10 +167,15 @@ final class ForumSettingsForm extends ConfigFormBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Submits the form.
    *
-   * @param array<string, mixed> $form
-   *   The form structure.
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $config = $this->config('aculta_forum.settings');
@@ -217,20 +217,9 @@ final class ForumSettingsForm extends ConfigFormBase {
       return;
     }
 
-    $defaultReactionValue = $form_state->getValue('default_reaction');
-    if ($defaultReactionValue === NULL) {
-      $defaultReactionValue = $this->stringValue($config->get('default_reaction'), 'broccoli');
-    }
-    if (!is_string($defaultReactionValue)) {
-      $form_state->setErrorByName('default_reaction', $this->t('Selecione uma reação padrão válida.'));
-      return;
-    }
-
+    // Ignore submitted/legacy values: the primary Like is always broccoli.
+    $defaultReactionValue = 'broccoli';
     $existing = $this->allowedReactions($config->get('allowed_reactions'));
-    if ($existing !== [] && !in_array($defaultReactionValue, array_column($existing, 'id'), TRUE)) {
-      $form_state->setErrorByName('default_reaction', $this->t('A reação padrão deve estar na lista de reações permitidas.'));
-      return;
-    }
 
     $rawSubmittedTable = $form_state->getValue('reactions_table');
     $submittedTable = is_array($rawSubmittedTable) ? $rawSubmittedTable : [];
@@ -261,6 +250,12 @@ final class ForumSettingsForm extends ConfigFormBase {
       if ($enabled === NULL) {
         $form_state->setErrorByName('reactions_table][' . $index . '][enabled', $this->t('Informe um estado válido para a reação.'));
         return;
+      }
+
+      if ($item['id'] === 'broccoli') {
+        $icon = 'broccoli';
+        $label = 'Curtir';
+        $enabled = TRUE;
       }
 
       $updatedReactions[] = [
@@ -309,15 +304,19 @@ final class ForumSettingsForm extends ConfigFormBase {
       }
       $id = $reaction['id'] ?? NULL;
       $label = $reaction['label'] ?? NULL;
-      if (!is_string($id) || $id === '' || !is_string($label)) {
+      if (!is_string($id) || $id === '' || !is_string($label)
+        || in_array($id, ['dislike', 'undo', 'thumbs-down', 'thumbs-down-medium', 'thumbs_down', 'thumbs_down_medium'], TRUE)) {
         continue;
       }
 
       $icon = $reaction['icon'] ?? $id;
+      if (!is_string($icon) || in_array($icon, ['thumbs-down', 'thumbs-down-medium'], TRUE)) {
+        continue;
+      }
       $enabled = $this->booleanValue($reaction['enabled'] ?? TRUE) ?? TRUE;
       $reactions[] = [
         'id' => $id,
-        'icon' => is_string($icon) ? $icon : $id,
+        'icon' => $icon,
         'label' => $label,
         'enabled' => $enabled,
       ];
@@ -370,6 +369,5 @@ final class ForumSettingsForm extends ConfigFormBase {
   private function stringValue(mixed $value, string $default): string {
     return is_string($value) ? $value : $default;
   }
-
 
 }

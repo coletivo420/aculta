@@ -1,3 +1,5 @@
+> **ADENDO DE PLANEJAMENTO 2026-11-20 - G-D10 (proposta de extensão coerente com G-D02/03/04):** ampliar marcos de fórum com likes 10/25/50 (Nice/Good/Great Topic/Reply), primeira curtida dada/recebida e métricas de tópicos/comentários, preferindo Game/User/Stats já existentes. **Sem rankings, XP, status de confiança ou moderação por troféus.** Valores e regras são propostas técnicas, dependem de aceite e testes. [Estudo comparativo](../../aculta_forum/docs/ESTUDO-DISCOURSE-GAME-METRICAS-INTEGRACOES-2026-11-20.md).
+
 # Decisões — ACULTA Game
 
 Data: 2026-10-15. Fonte: respostas explícitas do responsável.

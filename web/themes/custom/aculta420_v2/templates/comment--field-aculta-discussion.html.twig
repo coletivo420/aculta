@@ -2,7 +2,8 @@
 <div id="aculta-comment-{{ comment.id }}" class="aculta-comment-item">
 {% set author_card = content.author_card|default(null) %}
 {% set reaction_bar_val = reaction_bar|default(content.reaction_bar|default(null)) %}
-{% set comment_body = content|without('author_card', 'reaction_bar', 'links') %}
+{% set report_action = content.aculta_cgu_report_action|default(null) %}
+{% set comment_body = content|without('author_card', 'reaction_bar', 'links', 'aculta_cgu_report_action') %}
 {% set actions_markup %}
   {{ permalink }}
   {{ content.links }}
@@ -11,7 +12,7 @@
 {% set author_posts_val = author_posts is defined ? author_posts : null %}
 {% set composer_target_id = 'discussion-composer-' ~ commented_entity_type ~ '-' ~ commented_entity_id ~ '-' ~ comment.id %}
 
-{% if publication_comment|default(false) %}
+{% if publication_comment|default(false) or consumer_comment|default(false) %}
   {% set author_avatar = author_card and author_card['#avatar'] is defined ? render_var(author_card['#avatar']) : null %}
   {% set removed_label = comment_removed_by_moderation|default(false) ? 'Conteúdo removido pela moderação'|t : 'Comentário excluído'|t %}
   {% set revista_content = comment_deleted|default(false) ? '<p class="forum-reply-compact__deleted">' ~ removed_label ~ '</p>' : comment_body %}
@@ -25,7 +26,8 @@
       delete_target: delete_allowed|default(false) ? 'delete-confirm-' ~ comment.id : null,
       target_id: 'aculta-reply-dialog-body',
       admin_url: admin_url|default(null),
-      admin_author_name: author_name_val|default('Participante'|t)
+      admin_author_name: author_name_val|default('Participante'|t),
+      report_action: report_action
     }, with_context = false) }}
     {% if delete_allowed|default(false) %}
       {{ include('aculta420_v2:delete-confirm', {
@@ -54,15 +56,19 @@
     }, with_context = false) }}
     </article>
   {% endset %}
-  {{ attach_library('aculta_forum/revista-comment-order') }}
-  <div class="revista-comment-sort" data-sort-total="{{ sort_total|default(0) }}" data-sort-created="{{ sort_created|default(0) }}">
+  {% if publication_comment|default(false) %}
+    {{ attach_library('aculta_forum/revista-comment-order') }}
+    <div class="revista-comment-sort" data-sort-total="{{ sort_total|default(0) }}" data-sort-created="{{ sort_created|default(0) }}">
+      {{ include('aculta420_v2:reply-indent', { depth: reply_depth|default(0), first: reply_first|default(false), content: reply_card }, with_context = false) }}
+    </div>
+  {% else %}
     {{ include('aculta420_v2:reply-indent', { depth: reply_depth|default(0), first: reply_first|default(false), content: reply_card }, with_context = false) }}
-  </div>
+  {% endif %}
 {% else %}
 {% set admin_markup = null %}
 {% set forum_delete_markup %}
   {% if delete_allowed|default(false) %}
-    {{ include('aculta420_v2:content-reply-bar', { delete_target: 'delete-confirm-' ~ comment.id, target_id: 'aculta-reply-dialog-body', admin_url: admin_url|default(null), admin_author_name: author_name_val|default('Participante'|t) }, with_context = false) }}
+    {{ include('aculta420_v2:content-reply-bar', { delete_target: 'delete-confirm-' ~ comment.id, target_id: 'aculta-reply-dialog-body', admin_url: admin_url|default(null), admin_author_name: author_name_val|default('Participante'|t), report_action: report_action }, with_context = false) }}
     {{ include('aculta420_v2:delete-confirm', {
       target_id: 'delete-confirm-' ~ comment.id,
       title: 'Excluir resposta?'|t,
@@ -73,6 +79,9 @@
       confirm_url: delete_url|default('')
     }, with_context = false) }}
   {% endif %}
+  {% if not delete_allowed|default(false) and report_action %}
+    {{ include('aculta420_v2:content-reply-bar', { report_action: report_action }, with_context = false) }}
+  {% endif %}
 {% endset %}
 {% embed 'aculta420_v2:forum-comment' with {
   attributes: attributes,
@@ -80,8 +89,11 @@
   composer_target_id: composer_target_id,
   author_name: author_name_val|default('Participante'|t),
   author_posts: author_posts_val,
+  author_reactions_received: author_reactions_received|default(0),
   timestamp: created|default(null),
   accent_side: accent_side|default('start'),
+  author_position: accent_side|default('start') == 'end' ? 'side' : 'top',
+  edited_by_moderation: edited_by_moderation|default(false),
   reply_depth: reply_depth|default(0),
   reply_first: reply_first|default(false)
 } %}

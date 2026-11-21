@@ -70,7 +70,7 @@ final class EditorialWorkspaceAccessTest extends UnitTestCase {
 
     $build = $workspace->createPopup();
 
-    self::assertSame('aculta420_v2:discussion-content-composer', self::valueAt($build, '#component'));
+    self::assertSame('discussion-content-composer', self::valueAt($build, '#name'));
     self::assertFalse(self::valueAt($build, '#props', 'standalone_popup'));
     self::assertSame($form, self::valueAt($build, '#slots', 'form'));
   }

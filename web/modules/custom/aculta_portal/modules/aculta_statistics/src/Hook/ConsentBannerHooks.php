@@ -44,18 +44,34 @@ final class ConsentBannerHooks {
   #[Hook('page_attachments')]
   public function pageAttachments(array &$attachments): void {
     // Ligar ou desligar o banner invalida as páginas em cache.
-    $attachments['#cache']['tags'][] = 'config:aculta_statistics.settings';
+    $cache = $attachments['#cache'] ?? [];
+    $cache = is_array($cache) ? $cache : [];
+    $tags = $cache['tags'] ?? [];
+    $cache['tags'] = is_array($tags) ? $tags : [];
+    $cache['tags'][] = 'config:aculta_statistics.settings';
+    $attachments['#cache'] = $cache;
     if (!$this->isEnabledForVisitor()) {
       return;
     }
 
-    $attachments['#attached']['library'][] = 'aculta_statistics/consent';
-    $attachments['#attached']['drupalSettings']['acultaStatistics']['consent'] = [
+    $attached = $attachments['#attached'] ?? [];
+    $attached = is_array($attached) ? $attached : [];
+    $libraries = $attached['library'] ?? [];
+    $attached['library'] = is_array($libraries) ? $libraries : [];
+    $attached['library'][] = 'aculta_statistics/consent';
+    $settings = $attached['drupalSettings'] ?? [];
+    $settings = is_array($settings) ? $settings : [];
+    $statisticsSettings = $settings['acultaStatistics'] ?? [];
+    $statisticsSettings = is_array($statisticsSettings) ? $statisticsSettings : [];
+    $statisticsSettings['consent'] = [
       'cookieName' => self::COOKIE_NAME,
       'version' => self::COOKIE_VERSION,
       // Caminho relativo: o host vem do ambiente, nunca fixo no código (AGENTS, endereços dependentes de ambiente).
       'privacyUrl' => Url::fromUserInput('/sobre/politica-de-privacidade', ['absolute' => FALSE])->toString(),
     ];
+    $settings['acultaStatistics'] = $statisticsSettings;
+    $attached['drupalSettings'] = $settings;
+    $attachments['#attached'] = $attached;
   }
 
   /**
@@ -71,8 +87,8 @@ final class ConsentBannerHooks {
     }
 
     $page_bottom['aculta_statistics_consent_banner'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:consent-banner',
+      '#theme' => 'portal_component',
+      '#name' => 'consent-banner',
       '#props' => [
         'privacy_url' => Url::fromUserInput('/sobre/politica-de-privacidade', ['absolute' => FALSE])->toString(),
       ],

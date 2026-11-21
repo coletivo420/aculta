@@ -28,6 +28,9 @@ final class SecretClearForm extends FormBase implements ContainerInjectionInterf
 
   /**
    * Creates the form from the service container.
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -46,10 +49,14 @@ final class SecretClearForm extends FormBase implements ContainerInjectionInterf
    * Builds the credential removal confirmation form.
    *
    * @param array<mixed> $form
+   *   Form render array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
    * @param string $name
+   *   Value used for $name.
    *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, string $name = ''): array {
     if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
@@ -65,8 +72,14 @@ final class SecretClearForm extends FormBase implements ContainerInjectionInterf
     $form['#suffix'] = '</div>';
     $form['variable'] = ['#type' => 'item', '#title' => $this->t('Variável'), '#plain_text' => $name];
     $form['warning'] = [
-      '#component' => 'aculta420_v2:status-messages',
-      '#props' => ['type' => 'warning', 'messages' => [(string) $this->t('Apagar o valor remove a variável do arquivo de credenciais deste ambiente. Para usar a credencial de novo, será preciso cadastrar o valor outra vez.')]],
+      '#theme' => 'portal_component',
+      '#name' => 'status-messages',
+      '#props' => [
+        'type' => 'warning',
+        'messages' => [
+          (string) $this->t('Apagar o valor remove a variável do arquivo de credenciais deste ambiente. Para usar a credencial de novo, será preciso cadastrar o valor outra vez.'),
+        ],
+      ],
     ];
     $form['actions'] = ['#type' => 'actions'];
     if (!$this->secrets->canSaveHere()) {
@@ -93,7 +106,9 @@ final class SecretClearForm extends FormBase implements ContainerInjectionInterf
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Form render array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $rawName = $form_state->get('name');

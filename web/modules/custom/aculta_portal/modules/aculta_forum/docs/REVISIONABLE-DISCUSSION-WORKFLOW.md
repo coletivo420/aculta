@@ -8,6 +8,11 @@ que fazem parte da migração devem ser copiados e conferidos na nova entidade;
 somente então os Comments correspondentes do Fórum serão removidos. Comments da
 Revista, Wiki, LMS e outros hosts não pertencem a esta migração.
 
+> **Decisão superseded em 2026-11-19:** o texto histórico acima não rege a
+> implementação atual. Comments históricos Growroom permanecem separados e não
+> são convertidos para `ForumPost`; somente novas respostas Growroom usam a
+> entidade revisionável. Ver [política vigente](POLITICA-ACERVO-HISTORICO-GROWROOM-2026-11-19.md).
+
 ## Evidência e escolha arquitetural
 
 O Drupal instalado é Core 11.4.10. `Drupal\comment\Entity\Comment` declara
@@ -143,8 +148,8 @@ testes de workflow; a configuração da política inicial continua sendo a de
    Comments sem proprietário (`uid=0`), timestamps, embeds e referências pai
    ausentes/externas/cruzadas. Como ForumPost não armazena nome de autor
    anônimo e o Comment Core pode guardar dados de contato próprios, a dev.200
-   bloqueou inicialmente todos os `uid=0`. A dev.201 preserva casos com
-   referência existente a `aculta_legado_autor` por `ForumPost.legacy_author`;
+   bloqueou inicialmente todos os `uid=0`. A decisão atual mantém Comments históricos em seu armazenamento; não os converte
+   para ForumPost. Novas publicações correntes usam ForumPost;
    casos sem referência válida seguem bloqueados e nenhum contato pessoal é
    copiado. A elegibilidade dos casos restantes exige decisão de produto. A dev.161
    pagina os CIDs por lotes com limite inicial, sem carregar antecipadamente

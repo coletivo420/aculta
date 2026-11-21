@@ -1,0 +1,6 @@
+name: Rascunho - editando
+description: Apenas demonstração; não indica autosave ativo.
+component: aculta420_v2:forum-draft-status
+props:
+  state: editing
+  message: Editando seu texto. O salvamento automático ainda não está habilitado.

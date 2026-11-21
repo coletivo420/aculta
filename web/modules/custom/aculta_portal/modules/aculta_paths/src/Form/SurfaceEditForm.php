@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Drupal\aculta_paths\Form;
 
 use Drupal\aculta_portal\Domain\DomainSiteManager;
-use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_portal\Domain\DomainSurfaceMap;
 use Drupal\aculta_portal\Domain\SurfaceConfigReader;
 use Drupal\aculta_paths\Validation\EnderecoValidator;
@@ -179,7 +178,7 @@ final class SurfaceEditForm extends FormBase {
   /**
    * Callback do seletor de modo: devolve só o bloco do caminho.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
@@ -199,7 +198,7 @@ final class SurfaceEditForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
@@ -264,7 +263,7 @@ final class SurfaceEditForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.

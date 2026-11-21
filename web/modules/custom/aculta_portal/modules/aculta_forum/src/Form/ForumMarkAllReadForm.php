@@ -68,7 +68,7 @@ final class ForumMarkAllReadForm extends ConfirmFormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Formulário renderizado.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado do formulário.

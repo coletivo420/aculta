@@ -2,6 +2,7 @@
 
 namespace Drupal\aculta_lms_h5p\Plugin\Field\FieldFormatter;
 
+use Drupal\aculta_lms_h5p\Plugin\Field\FieldType\aculta_H5PItem;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
@@ -9,7 +10,6 @@ use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Field\FormatterBase;
 use Drupal\Core\Field\Attribute\FieldFormatter;
 use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Session\AccountProxyInterface;
@@ -43,22 +43,40 @@ final class aculta_H5PDefaultFormatter extends FormatterBase {
   protected $config;
 
   /**
-   * Constructor.
+   * Constructs this service or plugin.
    *
-   * @param array<mixed> $settings
-   *   Formatter settings.
-   * @param array<mixed> $third_party_settings
-   *   Third party settings.
+   * @param string $plugin_id
+   *   Value used for $plugin_id.
+   * @param mixed $plugin_definition
+   *   Value used for $plugin_definition.
+   * @param FieldDefinitionInterface $field_definition
+   *   Value used for $field_definition.
+   * @param array<string, mixed> $settings
+   *   Value used for $settings.
+   * @param string $label
+   *   Value used for $label.
+   * @param string $view_mode
+   *   Value used for $view_mode.
+   * @param array<string, mixed> $third_party_settings
+   *   Value used for $third_party_settings.
+   * @param ModuleHandlerInterface $moduleHandler
+   *   Value used for $moduleHandler.
+   * @param ConfigFactoryInterface $config_factory
+   *   Value used for $config_factory.
+   * @param AccountProxyInterface $currentUser
+   *   Value used for $currentUser.
+   * @param aculta_H5PDrupal $framework
+   *   Value used for $framework.
+   * @param PdfViewerBuilderInterface $pdfViewerBuilder
+   *   Value used for $pdfViewerBuilder.
    */
   public function __construct(
-    $plugin_id,
+    string $plugin_id,
     $plugin_definition,
     FieldDefinitionInterface $field_definition,
-    /** @var array<string, mixed> $settings */
     array $settings,
-    $label,
-    $view_mode,
-    /** @var array<string, mixed> $third_party_settings */
+    string $label,
+    string $view_mode,
     array $third_party_settings,
     protected ModuleHandlerInterface $moduleHandler,
     ConfigFactoryInterface $config_factory,
@@ -73,8 +91,14 @@ final class aculta_H5PDefaultFormatter extends FormatterBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $configuration
-   *   Formatter configuration.
+   * @param ContainerInterface $container
+   *   Dependency injection container.
+   * @param array<array-key, mixed> $configuration
+   *   Plugin configuration.
+   * @param mixed $plugin_id
+   *   Plugin ID.
+   * @param mixed $plugin_definition
+   *   Plugin definition.
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition): static {
     $fieldDefinition = $configuration['field_definition'] ?? NULL;
@@ -86,16 +110,31 @@ final class aculta_H5PDefaultFormatter extends FormatterBase {
       || !is_array($settings)
       || !is_string($label)
       || !is_string($viewMode)
-      || !is_array($thirdPartySettings)) {
+      || !is_array($thirdPartySettings)
+      || !is_string($plugin_id)) {
       throw new \InvalidArgumentException('The H5P formatter configuration is invalid.');
+    }
+    $typedSettings = [];
+    foreach ($settings as $key => $value) {
+      if (!is_string($key)) {
+        throw new \InvalidArgumentException('The H5P formatter settings keys must be strings.');
+      }
+      $typedSettings[$key] = $value;
+    }
+    $typedThirdPartySettings = [];
+    foreach ($thirdPartySettings as $key => $value) {
+      if (!is_string($key)) {
+        throw new \InvalidArgumentException('The H5P third-party settings keys must be strings.');
+      }
+      $typedThirdPartySettings[$key] = $value;
     }
     return new static($plugin_id,
       $plugin_definition,
       $fieldDefinition,
-      $settings,
+      $typedSettings,
       $label,
       $viewMode,
-      $thirdPartySettings,
+      $typedThirdPartySettings,
       $container->get('module_handler'),
       $container->get('config.factory'),
       $container->get('current_user'),
@@ -118,6 +157,7 @@ final class aculta_H5PDefaultFormatter extends FormatterBase {
   /**
    * {@inheritdoc}
    */
+
   /**
    * {@inheritdoc}
    *
@@ -146,7 +186,7 @@ final class aculta_H5PDefaultFormatter extends FormatterBase {
     }
 
     foreach ($items as $delta => $item) {
-      if (!$item instanceof \Drupal\aculta_lms_h5p\Plugin\Field\FieldType\aculta_H5PItem) {
+      if (!$item instanceof aculta_H5PItem) {
         continue;
       }
       /** @var array{h5p_content_id?: mixed} $value */
@@ -344,8 +384,8 @@ final class aculta_H5PDefaultFormatter extends FormatterBase {
         }
         if ($documents) {
           $element[$delta]['course_documents'] = [
-            '#type' => 'component',
-            '#component' => 'aculta420_v2:layout-section',
+            '#theme' => 'portal_component',
+            '#name' => 'layout-section',
             '#slots' => ['content' => $documents],
           ];
           $cacheability->applyTo($element[$delta]['course_documents']);

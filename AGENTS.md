@@ -25,6 +25,14 @@ Regra compartilhada de Claude, Codex e demais agentes. Politica de revisao: `doc
 - Preservar permissoes, ownership, isolamento multidominio, caches privados, escape, consentimento, contratos de pagamento e integridade de dados. Nao trocar `system.theme` para testar.
 - Evitar caminhos absolutos de maquina e URLs fixas de ambiente em codigo versionado; usar configuracao e variaveis.
 
+## Identidade de usuário (nome pode mudar)
+
+- O nome de exibição e o nome de usuário podem ser alterados pelo próprio usuário. Nunca grave nome em texto persistente: citação, menção, cabeçalho de aviso, log, relatório, campo de conteúdo.
+- Grave o ID da conta (`uid`) e renderize o nome atual na exibição, em todo o portal (Fórum, LMS, Wiki, Revista, Loja, CGU, avisos e e-mails).
+- Em texto livre que referencia pessoas (menções e citações), use um token estável (ex.: `{uid:N}`) e resolva o nome no momento da renderização. Veja `ForumIdentityTokens` e `ForumMentionTokenHooks` no Fórum.
+- Componentes e templates recebem o nome já resolvido pelo código a partir do ID. Não copie nome salvo para props de componente.
+- Testes de renomeação devem provar que o conteúdo antigo mostra o nome novo.
+
 ## Implementacao
 
 - Drupal 11 efetivo e compatibilidade Drupal 12 quando aplicavel. Preferir HTML nativo/Form API; HTMX para fragmentos onde agrega valor. Drupal AJAX e legado: migrar com justificativa e regressao, nao por obrigacao cega. jQuery local sob demanda conforme regra da area, sem carga global desnecessaria.

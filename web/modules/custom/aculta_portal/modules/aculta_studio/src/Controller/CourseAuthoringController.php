@@ -91,7 +91,7 @@ final class CourseAuthoringController {
         '#weight' => -90,
       ],
       'create' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Novo curso'),
           'url' => Url::fromRoute('aculta_lms.course_create')->toString(),
@@ -118,6 +118,19 @@ final class CourseAuthoringController {
         ],
       );
       $build['student_workspace']['#weight'] = -70;
+    }
+
+    // Denúncias das discussões dos cursos: só para quem tem a permissão do escopo LMS.
+    if ($this->account->hasPermission(EducatorReportController::PERMISSION)) {
+      $build['report_queue'] = PortalLinkElement::build(
+        $this->t('Denúncias das discussões'),
+        Url::fromRoute('aculta_studio.educator_report_queue'),
+        [
+          'data-aculta-studio' => 'educator-report-link',
+          'data-portal-ui' => 'studio-action',
+        ],
+      );
+      $build['report_queue']['#weight'] = -60;
     }
 
     return $build;

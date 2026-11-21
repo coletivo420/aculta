@@ -17,3 +17,49 @@ aculta_cgu.report_decide:
     _custom_access: '\Drupal\aculta_cgu\Form\CguReportDecisionForm::access'
   options:
     _admin_route: true
+
+# Purpose-scoped COMMUNITY frontend. These routes are intentionally NOT
+# admin routes, and are NOT generic gateways into the CGU global queue.
+aculta_cgu.forum_marley_queue:
+  path: '/marley/forum/moderacao/denuncias'
+  defaults:
+    _controller: 'aculta_cgu.forum_marley_controller:queue'
+    _title: 'Marley - fila de denúncias do Fórum'
+  requirements:
+    _custom_access: 'aculta_cgu.forum_marley_controller:access'
+  options:
+    _aculta_site_key: account
+    no_cache: true
+  methods: [GET, HEAD]
+
+aculta_cgu.forum_marley_decide:
+  path: '/marley/forum/moderacao/denuncias/{aculta_cgu_report}/decidir'
+  defaults:
+    _controller: 'aculta_cgu.forum_marley_controller:report'
+    _title: 'Marley - decidir denúncia do Fórum'
+  requirements:
+    _custom_access: 'aculta_cgu.forum_marley_controller:reportAccess'
+  options:
+    _aculta_site_key: account
+    no_cache: true
+    parameters:
+      aculta_cgu_report:
+        type: entity:aculta_cgu_report
+  methods: [GET, HEAD, POST]
+
+
+# Public CGU reporting form. The route checks entity view access, duplicate
+# reports and rate limits through ReportService on every request.
+aculta_cgu.report_create:
+  path: '/denunciar/{entity_type}/{entity_id}'
+  defaults:
+    _form: '\Drupal\aculta_cgu\Form\CguReportCreateForm'
+    _title: 'Denunciar conteúdo'
+  requirements:
+    _custom_access: 'aculta_cgu.report_create_access:access'
+    entity_type: '[a-z][a-z0-9_]*'
+    entity_id: '\d+'
+  options:
+    no_cache: true
+    _aculta_site_keys: [main, forum, magazine, wiki, courses, eventos, account, support]
+  methods: [GET, POST]

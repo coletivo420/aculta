@@ -6,7 +6,10 @@ namespace Drupal\Tests\aculta_forum\Kernel;
 
 use Drupal\aculta_forum\Form\ForumTopicMoveForm;
 use Drupal\aculta_forum\Plugin\Action\MoveForumTopicsAction;
+use Drupal\aculta_forum\Origin\CoreDiscussionOriginClassifier;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolver;
 use Drupal\aculta_forum\Service\ForumTopicMover;
+use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentingStatus;
 use Drupal\comment\Entity\Comment;
@@ -25,6 +28,7 @@ use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\taxonomy\Entity\Term;
 use Drupal\taxonomy\Entity\Vocabulary;
+use Drupal\user\Entity\User;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Psr\Log\LoggerInterface;
@@ -39,6 +43,11 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class ForumTopicMoverKernelTest extends KernelTestBase {
 
   use CommentTestTrait;
+
+  /**
+   * The persisted Drupal user used as the current content owner.
+   */
+  private int $ownerId;
 
   /**
    * {@inheritdoc}
@@ -81,6 +90,9 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     $this->installSchema('node', ['node_access']);
     $this->installSchema('comment', ['comment_entity_statistics']);
     $this->installConfig(['system', 'filter', 'node', 'taxonomy', 'comment', 'domain', 'path', 'path_alias']);
+    $owner = User::create(['name' => 'forum-move-owner', 'status' => 1]);
+    $owner->save();
+    $this->ownerId = (int) $owner->id();
     $this->container->get('state')->set('comment.maintain_entity_statistics', TRUE);
 
     Domain::create([
@@ -95,7 +107,6 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Forum topic', 'new_revision' => TRUE])->save();
 
     $this->addField('entity_reference', 'field_domain_source', ['target_type' => 'domain'], 'node', 'aculta_forum_topic');
-    $this->addField('string', 'field_autor_legado', [], 'node', 'aculta_forum_topic');
     $this->addField('entity_reference', 'field_aculta_categories', [
       'target_type' => 'taxonomy_term',
       'handler' => 'default:taxonomy_term',
@@ -111,7 +122,7 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
         'administer nodes',
       ], TRUE),
     );
-    $this->account->method('id')->willReturn(42);
+    $this->account->method('id')->willReturn($this->ownerId);
     $this->account->method('isAnonymous')->willReturn(FALSE);
     $this->account->method('isAuthenticated')->willReturn(TRUE);
     $manager = $this->container->get('entity_type.manager');
@@ -124,6 +135,9 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
     $this->mover = new ForumTopicMover(
       $manager,
       $purposes,
+      new DiscussionOriginResolver([
+        new CoreDiscussionOriginClassifier(new DiscussionContextResolver([])),
+      ]),
       $this->createMock(LoggerInterface::class),
     );
   }
@@ -140,10 +154,10 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
       'type' => 'aculta_forum_topic',
       'title' => 'Movable test topic',
       'status' => 1,
+      'uid' => $this->ownerId,
       'field_domain_source' => ['target_id' => 'forum_aculta_org'],
       'field_aculta_categories' => ['target_id' => $source->id()],
       'field_aculta_discussion' => ['status' => CommentingStatus::Open->value],
-      'field_autor_legado' => [],
       'path' => ['alias' => '/topico-movivel-teste'],
     ]);
     $node->save();
@@ -185,10 +199,10 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
       'type' => 'aculta_forum_topic',
       'title' => 'Second movable test topic',
       'status' => 1,
+      'uid' => $this->ownerId,
       'field_domain_source' => ['target_id' => 'forum_aculta_org'],
       'field_aculta_categories' => ['target_id' => $source->id()],
       'field_aculta_discussion' => ['status' => CommentingStatus::Open->value],
-      'field_autor_legado' => [],
     ]);
     $second_node->save();
     $selection = [
@@ -246,10 +260,10 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
       'type' => 'aculta_forum_topic',
       'title' => 'Oversized selection test topic',
       'status' => 1,
+      'uid' => $this->ownerId,
       'field_domain_source' => ['target_id' => 'forum_aculta_org'],
       'field_aculta_categories' => ['target_id' => $source->id()],
       'field_aculta_discussion' => ['status' => CommentingStatus::Open->value],
-      'field_autor_legado' => [],
     ]);
     $oversized_node->save();
     $oversized_selection = [
@@ -329,9 +343,9 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
       'type' => 'aculta_forum_topic',
       'title' => 'Tópico com formulário',
       'status' => 1,
+      'uid' => $this->ownerId,
       'field_domain_source' => ['target_id' => 'forum_aculta_org'],
       'field_aculta_categories' => ['target_id' => $source->id()],
-      'field_autor_legado' => [],
     ]);
     $node->save();
 
@@ -383,16 +397,15 @@ final class ForumTopicMoverKernelTest extends KernelTestBase {
   /**
    * Historical topics cannot be moved even with the operation permission.
    */
-  public function testHistoricalTopicCannotBeMoved(): void {
+  public function testUnclassifiedTopicCannotBeMoved(): void {
     $category = Term::create(['vid' => 'aculta_forum_categories', 'name' => 'Historic']);
     $category->save();
     $node = Node::create([
       'type' => 'aculta_forum_topic',
-      'title' => 'Historical test topic',
+      'title' => 'Unclassified test topic',
       'status' => 1,
       'field_domain_source' => ['target_id' => 'forum_aculta_org'],
       'field_aculta_categories' => ['target_id' => $category->id()],
-      'field_autor_legado' => ['value' => 'historical-author-reference'],
     ]);
     $node->save();
     $destination = Term::create(['vid' => 'aculta_forum_categories', 'name' => 'Another']);

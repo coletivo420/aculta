@@ -47,3 +47,13 @@ comment-admin-popup:
   dependencies:
     - core/drupal
     - core/once
+
+# The server remains the source of truth for vote and user totals. After HTMX
+# replaces the clicked bar, synchronize other rendered cards without a GET.
+reaction-counter-sync:
+  version: 1.0.0
+  js:
+    js/reaction-counter-sync.js: {}
+  dependencies:
+    - core/drupal
+    - core/drupal.htmx

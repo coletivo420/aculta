@@ -4,13 +4,23 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Unit;
 
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
+use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Queue\QueueFactory;
 use Drupal\Core\Queue\QueueInterface;
+use Drupal\Core\Cache\CacheableMetadata;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\aculta_messenger\Hook\MessageSubscribeEventHooks;
+use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\domain\DomainNegotiatorInterface;
 use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\Group;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Tests which public topic events enter the Messenger notice queue.
@@ -72,11 +82,33 @@ final class MessageSubscribeEventHooksTest extends UnitTestCase {
     return new MessageSubscribeEventHooks(
       $queueFactory,
       $this->createMock(LoggerChannelFactoryInterface::class),
+      $this->noticeAccessPolicy(),
     );
   }
 
   /**
-   * Creates a public Forum topic entity double.
+   * Creates the forum notice access policy fixture.
+   */
+  private function noticeAccessPolicy(): ForumNoticeAccessPolicy {
+    $entityTypeManager = $this->createMock(EntityTypeManagerInterface::class);
+    $siteManager = new DomainSiteManager(
+      $entityTypeManager,
+      $this->createMock(DomainNegotiatorInterface::class),
+      $this->createMock(ConfigFactoryInterface::class),
+      new RequestStack(),
+    );
+    $originResolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $originResolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from(DiscussionOrigin::CURRENT, new CacheableMetadata()),
+    );
+    return new ForumNoticeAccessPolicy($entityTypeManager, $siteManager, $originResolver);
+  }
+
+  /**
+   * Creates a mutable mock topic.
+   *
+   * @return \Drupal\node\NodeInterface&\PHPUnit\Framework\MockObject\MockObject
+   *   A mocked Forum topic.
    */
   private function topic(int $id, int $revisionId, bool $published): NodeInterface {
     $node = $this->createMock(NodeInterface::class);

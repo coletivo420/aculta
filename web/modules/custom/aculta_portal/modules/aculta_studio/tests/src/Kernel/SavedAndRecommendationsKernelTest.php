@@ -51,8 +51,10 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     'node',
     'taxonomy',
     'flag',
+    'options',
     'aculta_studio',
     'aculta_calendar',
+    'aculta_cgu',
   ];
 
   /**
@@ -337,8 +339,8 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
     $controller = $this->container->get('aculta_studio.saved_controller');
     $build = $controller->page();
 
-    $this->assertSame('component', $build['#type']);
-    $this->assertSame('aculta420_v2:saved-content-page', $build['#component']);
+    $this->assertSame('portal_component', $build['#theme']);
+    $this->assertSame('saved-content-page', $build['#name']);
     $this->assertArrayHasKey('content', $build['#slots']);
     $this->assertContains('user', $build['#cache']['contexts']);
     $this->assertContains('url.query_args:tab', $build['#cache']['contexts']);
@@ -395,9 +397,14 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
 
     $build0 = $controller->page();
     $content0 = $this->getPageContentSlot($build0);
-    $this->assertNotEmpty($content0['list']['#items']);
-    $this->assertCount(15, $content0['list']['#items']);
-    $this->assertNotEmpty($content0['pager']['links']);
+    $list0 = $content0['list'] ?? NULL;
+    $this->assertIsArray($list0);
+    $items0 = $list0['#items'] ?? NULL;
+    $this->assertIsArray($items0);
+    $this->assertCount(15, $items0);
+    $pager0 = $content0['pager'] ?? NULL;
+    $this->assertIsArray($pager0);
+    $this->assertNotEmpty($pager0['links'] ?? NULL);
 
     // Page 1 (items 16 to 20).
     $request1 = Request::create('/salvos', 'GET', ['tab' => 'salvos', 'page' => '1']);
@@ -566,8 +573,8 @@ final class SavedAndRecommendationsKernelTest extends KernelTestBase {
    *   Content slot render array.
    */
   private function getPageContentSlot(array $build): array {
-    self::assertSame('component', $build['#type'] ?? NULL);
-    self::assertSame('aculta420_v2:saved-content-page', $build['#component'] ?? NULL);
+    self::assertSame('portal_component', $build['#theme'] ?? NULL);
+    self::assertSame('saved-content-page', $build['#name'] ?? NULL);
     $componentSlots = $build['#slots'] ?? NULL;
     if (!is_array($componentSlots)) {
       throw new \UnexpectedValueException('A página de salvos deve expor slots.');

@@ -1,0 +1,6 @@
+name: Item de denúncia (muitas denúncias)
+props:
+  label: Tópico sobre reação em grupo
+  total: 12
+  last_at: 20/11/2026 18:05
+  url: '#'

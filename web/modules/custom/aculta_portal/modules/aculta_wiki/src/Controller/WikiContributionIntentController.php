@@ -96,7 +96,7 @@ final class WikiContributionIntentController extends ControllerBase {
       '#type' => 'container',
       '#attributes' => ['data-portal-ui' => 'we-sativa-intent'],
       'header' => [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'context-header',
         '#props' => [
           'eyebrow' => 'WE SATIVA · Wiki420',
@@ -158,12 +158,12 @@ final class WikiContributionIntentController extends ControllerBase {
       ? ['#plain_text' => $this->t('Nenhuma forma de contribuição está disponível para este verbete.')]
       : $cards;
     $build['choices'] = [
-      '#theme' => 'aculta_portal_component',
+      '#theme' => 'portal_component',
       '#name' => 'content-section',
       '#props' => ['title' => (string) $this->t('Escolha uma forma de contribuir')],
       '#slots' => [
         'body' => [
-          '#theme' => 'aculta_portal_component',
+          '#theme' => 'portal_component',
           '#name' => 'content-grid',
           '#props' => ['columns' => 2],
           '#slots' => ['items' => $cardItems],
@@ -176,10 +176,20 @@ final class WikiContributionIntentController extends ControllerBase {
 
   /**
    * Builds one intention card with its real, authorized destination.
+   *
+   * @param \Stringable|string $title
+   *   Component title.
+   * @param \Stringable|string $description
+   *   Value used for $description.
+   * @param array<array-key, mixed> $link
+   *   Value used for $link.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   private function intentCard(\Stringable|string $title, \Stringable|string $description, array $link): array {
     return [
-      '#theme' => 'aculta_portal_component',
+      '#theme' => 'portal_component',
       '#name' => 'card',
       '#slots' => [
         'header' => ['#plain_text' => $title],

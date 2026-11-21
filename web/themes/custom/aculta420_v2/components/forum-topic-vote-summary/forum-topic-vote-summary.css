@@ -1,0 +1,33 @@
+.forum-topic-vote-summary {
+  max-inline-size: 100%;
+  min-inline-size: 0;
+}
+
+.forum-topic-vote-summary__summary,
+.forum-topic-vote-summary__count {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.forum-topic-vote-summary__summary {
+  justify-content: space-between;
+}
+
+.forum-topic-vote-summary__count {
+  color: var(--color-text-primary);
+  font-family: var(--font-family-heading);
+}
+
+.forum-topic-vote-summary__number {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+}
+
+.forum-topic-vote-summary__actions {
+  display: flex;
+  flex-wrap: wrap;
+  margin-block-start: var(--spacing-sm);
+  gap: var(--spacing-sm);
+}

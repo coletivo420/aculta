@@ -68,6 +68,8 @@ final class AvisosResumoMailType implements MailTypeInterface {
   public static function formatLinhas(array $linhas): string {
     $rotulos = [
       Aviso::TIPO_RESPOSTA => 'Respostas novas',
+      Aviso::TIPO_MENCAO => 'Menções novas',
+      Aviso::TIPO_CITACAO => 'Citações novas',
       Aviso::TIPO_ATUALIZACAO => 'Atualizações',
     ];
     $texto = [];

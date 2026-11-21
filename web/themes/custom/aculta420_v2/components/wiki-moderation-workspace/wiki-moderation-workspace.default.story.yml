@@ -1,0 +1,22 @@
+name: "WE Sativa - Espaço de moderação"
+description: "Navegação Wiki com fila editorial, propostas e denúncias separadas do Fórum."
+props:
+  eyebrow: WE SATIVA
+  title: Moderação da Wiki
+  description: "Acompanhe verbetes, propostas e denúncias sem misturar pareceres e publicações."
+slots:
+  tabs:
+    type: inline_template
+    template: |
+      <a href="#" aria-current="page">Visão geral</a>
+      <a href="#">Verbetes</a>
+      <a href="#">Propostas</a>
+      <a href="#">Denúncias</a>
+  summary:
+    type: inline_template
+    template: |
+      <p>Prévia com dados ilustrativos. A autorização é responsabilidade do aculta_wiki.</p>
+  content:
+    type: inline_template
+    template: |
+      {{ include('aculta420_v2:wiki-moderation-case', {kind: 'proposal', title: 'Revisão de referências', status: 'pending', summary: 'Uma sugestão de fonte aguarda análise.'}, with_context=false) }}

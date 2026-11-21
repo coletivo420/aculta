@@ -5,12 +5,14 @@ declare(strict_types=1);
 namespace Drupal\aculta_forum\Service;
 
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
+use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\comment\CommentInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\node\NodeInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -61,6 +63,10 @@ class DiscussionReplyFormBuilder {
       ];
     }
 
+    if ($host instanceof NodeInterface && $host->bundle() === 'aculta_forum_topic') {
+      return $this->buildForumPostReplyForm($host, $parentId, $quote);
+    }
+
     $commentField = 'field_aculta_discussion';
 
     $commentStorage = $this->entityTypeManager->getStorage('comment');
@@ -104,7 +110,7 @@ class DiscussionReplyFormBuilder {
             }
             if (is_array($body) && empty($body['#default_value']) && empty($body['#value'])) {
               $body['#default_value'] = $quote;
-              // Processed text_format renders #value; without it the quote is lost.
+              // Processed text fields render #value, so set both values.
               $body['#value'] = $quote;
             }
             unset($body);
@@ -113,13 +119,11 @@ class DiscussionReplyFormBuilder {
       }
     }
 
-    // The composer posts back to the host page, which returns the whole main
-    // content. Swapping only the discussion thread keeps the topic aside (which
-    // lives at the end of the main column) out of the replaced fragment, so it
-    // is not rendered twice after posting a reply.
-    // O compositor vive no diálogo modal. O envio troca só o corpo do diálogo e busca o
-    // próprio compositor: se a resposta trouxer o compositor (erro de validação), ele
-    // aparece no diálogo; se não trouxer, a postagem foi publicada (ver forum-quote.js).
+    // The composer posts back to the host page, which returns the full main
+    // content. Swap only the discussion thread to avoid rendering the topic
+    // aside twice after a reply.
+    // O compositor vive no diálogo modal. O envio troca só o corpo e busca o
+    // mesmo compositor para exibir erros de validação.
     $dialogBodyId = 'aculta-reply-dialog-body';
     if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
       $form['#attributes'] = [];
@@ -162,11 +166,99 @@ class DiscussionReplyFormBuilder {
   }
 
   /**
-   * Builds the composer that edits an existing discussion comment inside the popup.
-   *
-   * O formulário salva na rota de edição do próprio comentário; o envio redireciona ao permalink.
+   * Builds a revisionable ForumPost form for a current Growroom topic.
    *
    * @return array<string, mixed>
+   *   A composer wrapping the ForumPost submission form.
+   */
+  private function buildForumPostReplyForm(NodeInterface $topic, ?int $parentId, ?string $quote): array {
+    $parent = NULL;
+    if ($parentId !== NULL && $parentId > 0) {
+      $loadedParent = $this->entityTypeManager->getStorage('aculta_forum_post')->load($parentId);
+      if (!$loadedParent instanceof ForumPost) {
+        return [
+          '#theme' => 'discussion_reply_composer',
+          '#status' => 'acesso_revogado',
+          '#target_id' => 'discussion-composer-node-' . $topic->id() . '-' . $parentId,
+          '#cache' => ['contexts' => ['user.permissions']],
+        ];
+      }
+      $parent = $loadedParent;
+    }
+
+    $post = $this->entityTypeManager->getStorage('aculta_forum_post')->create([
+      'topic' => $topic->id(),
+      'parent' => $parent?->id(),
+    ]);
+    $form = $this->entityFormBuilder->getForm($post, 'public_submission');
+    if ($quote !== NULL && $quote !== '') {
+      $this->applyQuoteToField($form, 'body', $quote);
+    }
+    if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
+      $form['#attributes'] = [];
+    }
+    $form['#attributes']['data-hx-target'] = '#aculta-reply-dialog-body';
+    $form['#attributes']['data-hx-select'] = '[data-discussion-reply-composer]';
+    $form['#attributes']['data-hx-swap'] = 'innerHTML';
+
+    $parentSubject = $parent instanceof ForumPost ? trim((string) $parent->label()) : NULL;
+    $parentAuthor = $parent instanceof ForumPost ? $parent->getOwner()->getDisplayName() : NULL;
+    return [
+      '#theme' => 'discussion_reply_composer',
+      '#status' => 'editando',
+      '#target_id' => 'discussion-composer-node-' . $topic->id() . ($parentId ? '-' . $parentId : ''),
+      '#parent_id' => $parentId,
+      '#parent_author' => $parentAuthor,
+      '#parent_subject' => $parentSubject,
+      '#host_title' => $topic->label(),
+      '#form' => $form,
+      '#cache' => [
+        'contexts' => ['user.permissions', 'url.query_args'],
+        'tags' => $parent?->getCacheTags() ?? [],
+      ],
+    ];
+  }
+
+  /**
+   * Prefills a body widget with a sanitized quote.
+   *
+   * @param array<array-key, mixed> $form
+   *   The processed entity form render array.
+   * @param string $fieldName
+   *   The body field machine name.
+   * @param string $quote
+   *   The quote text.
+   */
+  private function applyQuoteToField(array &$form, string $fieldName, string $quote): void {
+    if (!isset($form[$fieldName]) || !is_array($form[$fieldName])) {
+      return;
+    }
+    $field = &$form[$fieldName];
+    if (!isset($field['widget']) || !is_array($field['widget'])
+      || !isset($field['widget'][0]) || !is_array($field['widget'][0])) {
+      return;
+    }
+    $widget = &$field['widget'][0];
+    $body = NULL;
+    if (isset($widget['value']) && is_array($widget['value'])) {
+      $body = &$widget['value'];
+    }
+    elseif (array_key_exists('#default_value', $widget)) {
+      $body = &$widget;
+    }
+    if (is_array($body) && empty($body['#default_value']) && empty($body['#value'])) {
+      $body['#default_value'] = $quote;
+      $body['#value'] = $quote;
+    }
+  }
+
+  /**
+   * Builds an edit composer for a discussion comment inside the popup.
+   *
+   * Saves through the comment edit route and redirects to its permalink.
+   *
+   * @return array<string, mixed>
+   *   A composer render array containing the edit form.
    */
   public function buildEditForm(CommentInterface $comment, AccountInterface $account): array {
     $host = $comment->getCommentedEntity();
@@ -187,7 +279,7 @@ class DiscussionReplyFormBuilder {
     }
 
     $form = $this->entityFormBuilder->getForm($comment);
-    // Mesmo destino de envio do compositor de resposta: o popup troca o corpo do diálogo.
+    // The popup replaces its dialog body after form submission.
     if (!isset($form['#attributes']) || !is_array($form['#attributes'])) {
       $form['#attributes'] = [];
     }

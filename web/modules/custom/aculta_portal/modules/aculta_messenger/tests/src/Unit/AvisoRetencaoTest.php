@@ -34,8 +34,10 @@ class AvisoRetencaoTest extends UnitTestCase {
     sort($types);
     self::assertContains(Aviso::TIPO_RESPOSTA, $types);
     self::assertContains(Aviso::TIPO_ATUALIZACAO, $types);
+    self::assertContains(Aviso::TIPO_MENCAO, $types);
+    self::assertContains(Aviso::TIPO_CITACAO, $types);
     self::assertSame(
-      [Aviso::TIPO_ATUALIZACAO, Aviso::TIPO_RESPOSTA],
+      [Aviso::TIPO_ATUALIZACAO, Aviso::TIPO_CITACAO, Aviso::TIPO_MENCAO, Aviso::TIPO_RESPOSTA],
       $types,
     );
   }

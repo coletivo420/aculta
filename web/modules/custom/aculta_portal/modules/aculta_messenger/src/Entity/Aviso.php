@@ -48,6 +48,16 @@ final class Aviso extends ContentEntityBase implements EntityChangedInterface {
   public const TIPO_ATUALIZACAO = 'forum_atualizacao';
 
   /**
+   * Mention (@handle) in a Forum comment; in-app notice.
+   */
+  public const TIPO_MENCAO = 'forum_mencao';
+
+  /**
+   * Quote of a Forum comment; notifies the quoted author.
+   */
+  public const TIPO_CITACAO = 'forum_citacao';
+
+  /**
    * Defines fields for personal notices.
    *
    * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type

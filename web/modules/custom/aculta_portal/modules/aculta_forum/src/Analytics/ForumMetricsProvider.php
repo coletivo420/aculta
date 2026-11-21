@@ -51,6 +51,8 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       'forum.response.first_p90_minutes',
       'forum.response.unanswered_over_72h',
       'forum.reactions.active',
+      'forum.reactions.dislikes_current',
+      'forum.reactions.net_current',
       'forum.moderation.posts_pending',
     ];
   }
@@ -74,6 +76,8 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       'forum.response.first_median_minutes' => $this->responseDistribution($windowEnd - self::RESPONSE_COHORT_DAYS * 86400, $windowEnd, 50),
       'forum.response.first_p90_minutes' => $this->responseDistribution($windowEnd - self::RESPONSE_COHORT_DAYS * 86400, $windowEnd, 90),
       'forum.reactions.active' => $this->countActiveReactions(),
+      'forum.reactions.dislikes_current' => $this->countActiveReactions(DiscussionReactionManager::DISLIKE_REACTION),
+      'forum.reactions.net_current' => $this->countNetActiveReactions(),
       'forum.moderation.posts_pending' => $this->countPendingPosts(),
       default => NULL,
     };
@@ -84,7 +88,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
    */
   private function countPublicTopics(): ?int {
     $query = $this->database->select('node_field_data', 'n');
-    if (!$this->scopeResolver->applyPublicTopicConditions($query, 'n')) {
+    if (!$this->applyCurrentTopicScope($query)) {
       return NULL;
     }
     return $this->countResult($query->countQuery());
@@ -103,7 +107,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $comments->condition('c.status', 1);
       $comments->condition('c.comment_type', 'aculta_discussion_post');
       $comments->condition('c.default_langcode', 1);
-      if (!$this->scopeResolver->applyPublicTopicConditions($comments, 'n')) {
+      if (!$this->applyCurrentCommentScope($comments)) {
         return NULL;
       }
       $count = $this->countResult($comments->countQuery());
@@ -118,7 +122,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $posts->join('node_field_data', 'n', 'n.nid = p.topic');
       $posts->condition('p.status', 1);
       $posts->condition('p.default_langcode', 1);
-      if (!$this->scopeResolver->applyPublicTopicConditions($posts, 'n')) {
+      if (!$this->applyCurrentTopicScope($posts)) {
         return NULL;
       }
       $count = $this->countResult($posts->countQuery());
@@ -143,7 +147,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     $query->join('node_field_data', 'n', 'n.nid = nc.entity_id');
     $query->addField('nc', 'field_aculta_categories_target_id', 'tid');
     $query->distinct();
-    if (!$this->scopeResolver->applyPublicTopicConditions($query, 'n')) {
+    if (!$this->applyCurrentTopicScope($query)) {
       return NULL;
     }
     $restricted = $this->scopeResolver->restrictedCategoryIds();
@@ -168,7 +172,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
    */
   private function countUnanswered(?int $createdBefore): ?int {
     $query = $this->database->select('node_field_data', 'n');
-    if (!$this->scopeResolver->applyPublicTopicConditions($query, 'n')) {
+    if (!$this->applyCurrentTopicScope($query)) {
       return NULL;
     }
     if ($createdBefore !== NULL) {
@@ -267,7 +271,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     $topics->fields('n', ['nid', 'created']);
     $topics->condition('n.created', $from, '>=');
     $topics->condition('n.created', $to, '<');
-    if (!$this->scopeResolver->applyPublicTopicConditions($topics, 'n')) {
+    if (!$this->applyCurrentTopicScope($topics)) {
       return NULL;
     }
     $topicRows = [];
@@ -334,7 +338,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
   /**
    * Reações vigentes em conteúdo comprovadamente público.
    */
-  private function countActiveReactions(): ?int {
+  private function countActiveReactions(?string $reaction = NULL): ?int {
     $schema = $this->database->schema();
     if (!$schema->tableExists(DiscussionReactionManager::TABLE_REACTIONS)) {
       return NULL;
@@ -345,7 +349,8 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     $nodes->join('node_field_data', 'n', 'n.nid = r.entity_id');
     $nodes->condition('r.entity_type', 'node');
     $nodes->condition('r.is_public_context', 1);
-    if (!$this->scopeResolver->applyPublicTopicConditions($nodes, 'n')) {
+    $nodes->condition('r.reaction', $reaction ?? DiscussionReactionManager::DISLIKE_REACTION, $reaction === NULL ? '<>' : '=');
+    if (!$this->applyCurrentTopicScope($nodes)) {
       return NULL;
     }
     $count = $this->countResult($nodes->countQuery());
@@ -360,9 +365,10 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $comments->join('node_field_data', 'n', 'n.nid = c.entity_id');
       $comments->condition('r.entity_type', 'comment');
       $comments->condition('r.is_public_context', 1);
+      $comments->condition('r.reaction', $reaction ?? DiscussionReactionManager::DISLIKE_REACTION, $reaction === NULL ? '<>' : '=');
       $comments->condition('c.status', 1);
       $comments->condition('c.default_langcode', 1);
-      if (!$this->scopeResolver->applyPublicTopicConditions($comments, 'n')) {
+      if (!$this->applyCurrentCommentScope($comments)) {
         return NULL;
       }
       $count = $this->countResult($comments->countQuery());
@@ -378,9 +384,10 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $posts->join('node_field_data', 'n', 'n.nid = p.topic');
       $posts->condition('r.entity_type', 'aculta_forum_post');
       $posts->condition('r.is_public_context', 1);
+      $posts->condition('r.reaction', $reaction ?? DiscussionReactionManager::DISLIKE_REACTION, $reaction === NULL ? '<>' : '=');
       $posts->condition('p.status', 1);
       $posts->condition('p.default_langcode', 1);
-      if (!$this->scopeResolver->applyPublicTopicConditions($posts, 'n')) {
+      if (!$this->applyCurrentTopicScope($posts)) {
         return NULL;
       }
       $count = $this->countResult($posts->countQuery());
@@ -391,6 +398,18 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     }
 
     return $total;
+  }
+
+  /**
+   * Snapshot of the aggregate public score, with no negative displayed value.
+   */
+  private function countNetActiveReactions(): ?int {
+    $positives = $this->countActiveReactions();
+    $dislikes = $this->countActiveReactions(DiscussionReactionManager::DISLIKE_REACTION);
+    if ($positives === NULL || $dislikes === NULL) {
+      return NULL;
+    }
+    return max(0, $positives - $dislikes);
   }
 
   /**
@@ -446,7 +465,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     $topics->distinct();
     $topics->condition('n.created', $from, '>=');
     $topics->condition('n.created', $to, '<');
-    $queries[] = $this->scopeResolver->applyPublicTopicConditions($topics, 'n') ? $topics : NULL;
+    $queries[] = $this->applyCurrentTopicScope($topics) ? $topics : NULL;
 
     if ($schema->tableExists('comment_field_data')) {
       $comments = $this->database->select('comment_field_data', 'c');
@@ -458,7 +477,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $comments->condition('c.default_langcode', 1);
       $comments->condition('c.created', $from, '>=');
       $comments->condition('c.created', $to, '<');
-      $queries[] = $this->scopeResolver->applyPublicTopicConditions($comments, 'n') ? $comments : NULL;
+      $queries[] = $this->applyCurrentCommentScope($comments) ? $comments : NULL;
     }
 
     if ($schema->tableExists('aculta_forum_post_field_data')) {
@@ -470,7 +489,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $posts->condition('p.default_langcode', 1);
       $posts->condition('p.created', $from, '>=');
       $posts->condition('p.created', $to, '<');
-      $queries[] = $this->scopeResolver->applyPublicTopicConditions($posts, 'n') ? $posts : NULL;
+      $queries[] = $this->applyCurrentTopicScope($posts) ? $posts : NULL;
     }
 
     return $queries;
@@ -490,7 +509,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
     $topics->addField('n', 'uid');
     $topics->addExpression('MIN(n.created)', 'first_created');
     $topics->groupBy('n.uid');
-    $queries[] = $this->scopeResolver->applyPublicTopicConditions($topics, 'n') ? $topics : NULL;
+    $queries[] = $this->applyCurrentTopicScope($topics) ? $topics : NULL;
 
     if ($schema->tableExists('comment_field_data')) {
       $comments = $this->database->select('comment_field_data', 'c');
@@ -501,7 +520,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $comments->condition('c.comment_type', 'aculta_discussion_post');
       $comments->condition('c.default_langcode', 1);
       $comments->groupBy('c.uid');
-      $queries[] = $this->scopeResolver->applyPublicTopicConditions($comments, 'n') ? $comments : NULL;
+      $queries[] = $this->applyCurrentCommentScope($comments) ? $comments : NULL;
     }
 
     if ($schema->tableExists('aculta_forum_post_field_data')) {
@@ -512,7 +531,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $posts->condition('p.status', 1);
       $posts->condition('p.default_langcode', 1);
       $posts->groupBy('p.uid');
-      $queries[] = $this->scopeResolver->applyPublicTopicConditions($posts, 'n') ? $posts : NULL;
+      $queries[] = $this->applyCurrentTopicScope($posts) ? $posts : NULL;
     }
 
     return $queries;
@@ -540,7 +559,7 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $comments->condition('n.created', $to, '<');
       $comments->where('c.uid <> n.uid');
       $comments->groupBy('c.entity_id');
-      $queries[] = $this->scopeResolver->applyPublicTopicConditions($comments, 'n') ? $comments : NULL;
+      $queries[] = $this->applyCurrentCommentScope($comments) ? $comments : NULL;
     }
 
     if ($schema->tableExists('aculta_forum_post_field_data')) {
@@ -554,10 +573,73 @@ final class ForumMetricsProvider implements MetricProviderInterface {
       $posts->condition('n.created', $to, '<');
       $posts->where('p.uid <> n.uid');
       $posts->groupBy('p.topic');
-      $queries[] = $this->scopeResolver->applyPublicTopicConditions($posts, 'n') ? $posts : NULL;
+      $queries[] = $this->applyCurrentTopicScope($posts) ? $posts : NULL;
     }
 
     return $queries;
+  }
+
+  /**
+   * Excludes Comments whose host topic belongs to the historic archive.
+   *
+   * A topic with a legacy author is the archive boundary (see
+   * LegacyDiscussionOriginClassifier). Its Comments stay read-only in the
+   * archive and must not be counted as current public replies.
+   *
+   * @param \Drupal\Core\Database\Query\SelectInterface $comments
+   *   Comment query already joined to node_field_data as "n".
+   */
+  private function excludeArchiveHosts(SelectInterface $comments): void {
+    if (!$this->database->schema()->tableExists('node__field_autor_legado')) {
+      return;
+    }
+    $legacy = $this->database->select('node__field_autor_legado', 'la');
+    $legacy->addExpression('1');
+    $legacy->where('la.entity_id = n.nid');
+    $legacy->condition('la.deleted', 0);
+    $legacy->isNotNull('la.field_autor_legado_target_id');
+    $comments->notExists($legacy);
+  }
+
+  /**
+   * Applies the public topic scope and excludes archive Comments.
+   *
+   * @param \Drupal\Core\Database\Query\SelectInterface $comments
+   *   Comment query joined to node_field_data as "n".
+   *
+   * @return bool
+   *   FALSE when the public scope cannot be applied to the query.
+   */
+  private function applyCurrentCommentScope(SelectInterface $comments): bool {
+    if (!$this->applyCurrentTopicScope($comments)) {
+      return FALSE;
+    }
+    $this->excludeArchiveHosts($comments);
+    return TRUE;
+  }
+
+  /**
+   * Applies the public topic scope and excludes historic archive topics.
+   *
+   * @param \Drupal\Core\Database\Query\SelectInterface $query
+   *   Query over node_field_data aliased as "n".
+   *
+   * @return bool
+   *   FALSE when the public scope cannot be applied to the query.
+   */
+  private function applyCurrentTopicScope(SelectInterface $query): bool {
+    if (!$this->scopeResolver->applyPublicTopicConditions($query, 'n')) {
+      return FALSE;
+    }
+    if ($this->database->schema()->tableExists('node__field_autor_legado')) {
+      $legacy = $this->database->select('node__field_autor_legado', 'la');
+      $legacy->addExpression('1');
+      $legacy->where('la.entity_id = n.nid');
+      $legacy->condition('la.deleted', 0);
+      $legacy->isNotNull('la.field_autor_legado_target_id');
+      $query->notExists($legacy);
+    }
+    return TRUE;
   }
 
 }

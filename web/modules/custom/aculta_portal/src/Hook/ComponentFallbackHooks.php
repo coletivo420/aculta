@@ -23,7 +23,7 @@ final class ComponentFallbackHooks {
    * @param array<mixed> $variables
    *   Dados de entrada (variables).
    */
-  #[Hook('preprocess_aculta_portal_component')]
+  #[Hook('preprocess_portal_component')]
   public function preprocessPortalComponent(array &$variables): void {
     if (!empty($variables['component'])) {
       return;
@@ -84,6 +84,16 @@ final class ComponentFallbackHooks {
       case 'empty-state':
         if (!empty($slots['message'])) {
           $build['message'] = $slots['message'];
+        }
+        break;
+
+      case 'cgu-report-button':
+        if (!empty($props['url'])) {
+          $build['report_link'] = [
+            '#type' => 'link',
+            '#title' => $props['label'] ?? new \Drupal\Core\StringTranslation\TranslatableMarkup('Denunciar'),
+            '#url' => \Drupal\Core\Url::fromUserInput((string) $props['url']),
+          ];
         }
         break;
 

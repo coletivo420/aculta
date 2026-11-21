@@ -120,7 +120,7 @@ usar apenas `comment_type` para autorizar ou listar conteúdo contextual.
 | `aculta_discussion_post` | bundle Comment compartilhado | Configuração de Comment em Node preparada na dev.4; suporte reutilizável em outros bundles Node ainda requer prova Kernel na dev.7/integrações. |
 | `aculta_forum_categories` | vocabulário Taxonomy de categorias públicas | 12 categorias novas no Runtime de teste; as 8 categorias antigas `forums` foram apagadas conforme F-D33. |
 | `field_aculta_discussion` | campo Comment em Nodes hospedeiros suportados | Configuração do tópico público e fields de `article`/`blog` estão em Config Sync; as duas instâncias editoriais e os displays full foram aplicados no Runtime de teste. Teste Kernel em dev.5 provou o storage compartilhado nos três bundles. |
-| `field_autor_legado` | referência a `aculta_legado_autor` em autoria histórica validada | Storage pertence ao `aculta_user`; instâncias previstas em bundles ACULTA só entram com futura importação explicitamente aprovada. O Runtime atual não contém conteúdo legado. |
+| `field_autor_legado` | referência a `aculta_forum_legacy_user` em autoria histórica validada | Storage e instâncias de instalação pertencem ao `aculta_forum_legacy`; instâncias previstas em bundles ACULTA só entram com futura importação explicitamente aprovada. O Runtime atual não contém conteúdo legado. |
 
 Todos os machine names ficam abaixo do limite local de 32 caracteres, mas isso
 deve ser validado automaticamente antes de registrar configuração. Esta tabela

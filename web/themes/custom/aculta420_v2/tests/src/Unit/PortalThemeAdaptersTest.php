@@ -19,7 +19,7 @@ final class PortalThemeAdaptersTest extends UnitTestCase {
     $repoRoot = dirname(__DIR__, 7);
     $controller = (string) file_get_contents($repoRoot . '/web/modules/custom/aculta_portal/src/Controller/PortalController.php');
 
-    self::assertStringContainsString("'#component' => 'aculta420_v2:payment-notice'", $controller);
+    self::assertStringContainsString("'#name' => 'payment-notice'", $controller);
     self::assertFileDoesNotExist(
       $themeDir . '/templates/portal-payment-notice.html.twig',
     );

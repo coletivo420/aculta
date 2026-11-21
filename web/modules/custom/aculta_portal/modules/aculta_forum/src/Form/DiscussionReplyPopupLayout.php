@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Form;
 
+use Drupal\Core\Template\Attribute;
+
 /**
  * Layout do popup de resposta e edição (Compositor de Resposta da Discussão).
  *
@@ -20,6 +22,9 @@ final class DiscussionReplyPopupLayout {
    * Aplica o layout do popup ao formulário de comentário.
    *
    * @param array<mixed> $form
+   *   Form render array.
+   * @param bool $isNew
+   *   Value used for $isNew.
    */
   public static function apply(array &$form, bool $isNew): void {
     // Resposta e edição não têm Assunto nem a marca "Rejeitado".
@@ -39,23 +44,23 @@ final class DiscussionReplyPopupLayout {
       }
       // "Limpar" zera o formulário (reset nativo, sem JavaScript).
       $form['actions']['clear'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#theme' => 'portal_component',
+        '#name' => 'button',
         '#props' => [
           'text' => (string) t('Limpar'),
           'variant' => 'secondary',
-          'attributes' => new \Drupal\Core\Template\Attribute(['data-aculta-reply-clear' => '']),
+          'attributes' => new Attribute(['data-aculta-reply-clear' => '']),
         ],
         '#weight' => 50,
       ];
       // "Cancelar" (secundário, como Limpar) fecha o popup.
       $form['actions']['cancel'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:button',
+        '#theme' => 'portal_component',
+        '#name' => 'button',
         '#props' => [
           'text' => (string) t('Cancelar'),
           'variant' => 'secondary',
-          'attributes' => new \Drupal\Core\Template\Attribute(['data-aculta-dialog-close' => '']),
+          'attributes' => new Attribute(['data-aculta-dialog-close' => '']),
         ],
         '#weight' => 51,
       ];

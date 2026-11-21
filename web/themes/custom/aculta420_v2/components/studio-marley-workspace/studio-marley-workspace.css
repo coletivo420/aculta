@@ -1,0 +1,178 @@
+/* A composição Marley consome superfícies, tabelas, filtros e botões já existentes. */
+.studio-marley-workspace {
+  display: grid;
+  gap: var(--spacing-lg);
+  color: var(--color-text-primary);
+  min-inline-size: 0;
+}
+
+.studio-marley-workspace__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--spacing-md);
+}
+
+.studio-marley-workspace__heading h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2.25rem);
+}
+
+.studio-marley-workspace__eyebrow {
+  margin: 0 0 var(--spacing-xs);
+  color: var(--color-brand-primary);
+  font-weight: 700;
+}
+
+.studio-marley-workspace__description,
+.studio-marley-workspace__preview {
+  margin: var(--spacing-xs) 0 0;
+  color: var(--color-text-secondary);
+}
+
+.studio-marley-workspace__preview {
+  font-size: var(--font-size-sm);
+}
+
+.studio-marley-workspace__actions,
+.studio-marley-workspace__navigation,
+.studio-marley-workspace__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm);
+}
+
+.studio-marley-workspace__navigation {
+  padding-block-end: var(--spacing-sm);
+  border-block-end: 1px solid var(--color-border);
+}
+
+.studio-marley-workspace__navigation a {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  text-decoration: none;
+  color: var(--color-text-primary);
+  border-radius: var(--border-radius-md);
+  min-block-size: 2.75rem;
+  padding-inline: var(--spacing-sm);
+}
+
+.studio-marley-workspace__navigation a[aria-current="page"] {
+  color: var(--color-on-highlight);
+  background: var(--color-brand-highlight);
+  font-weight: 700;
+}
+
+.studio-marley-workspace__navigation a:focus-visible {
+  outline: 2px solid var(--button-focus-ring);
+  outline-offset: 2px;
+}
+
+.studio-marley-workspace__summary > * {
+  flex: 1 1 12rem;
+  min-inline-size: 0;
+}
+
+.studio-marley-workspace__columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--spacing-lg);
+  align-items: start;
+}
+
+.studio-marley-workspace__primary,
+.studio-marley-workspace__aside {
+  min-inline-size: 0;
+}
+
+.studio-marley-workspace__aside {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+.studio-marley-workspace__toolbar,
+.studio-marley-workspace__control-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  align-items: center;
+}
+
+.studio-marley-workspace__control-row {
+  margin-block-start: var(--spacing-md);
+}
+
+.studio-marley-workspace__item-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  align-items: center;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.studio-marley-workspace__item-meta > span + span::before {
+  margin-inline-end: var(--spacing-xs);
+  content: "·";
+}
+
+.studio-marley-workspace__case-list {
+  display: grid;
+  gap: var(--spacing-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.studio-marley-workspace__case {
+  padding: var(--spacing-md);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius-lg);
+  background: var(--color-surface-raised);
+}
+
+.studio-marley-workspace__case[aria-current="true"] {
+  border-inline-start: 4px solid var(--color-brand-primary);
+}
+
+.studio-marley-workspace__case p {
+  margin-block: var(--spacing-xs);
+}
+
+.studio-marley-workspace__case-title {
+  margin: 0;
+  font-weight: 700;
+}
+
+.studio-marley-workspace__case-title .aculta-icon,
+.studio-marley-workspace__control-row .aculta-icon {
+  vertical-align: middle;
+}
+
+.studio-marley-workspace__case-excerpt {
+  padding: var(--spacing-md);
+  border-inline-start: 3px solid var(--color-border);
+  background: var(--color-surface-subtle);
+}
+
+.studio-marley-workspace__timeline {
+  margin: 0;
+  padding-inline-start: var(--spacing-lg);
+}
+
+.studio-marley-workspace__timeline li {
+  margin-block-end: var(--spacing-sm);
+}
+
+.studio-marley-workspace__footer {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+@media (min-width: 60rem) {
+  .studio-marley-workspace__columns:not(.studio-marley-workspace__columns--single) {
+    grid-template-columns: minmax(0, 2fr) minmax(16rem, 1fr);
+  }
+}

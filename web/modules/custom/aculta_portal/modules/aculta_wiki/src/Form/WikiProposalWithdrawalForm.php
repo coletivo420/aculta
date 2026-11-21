@@ -33,6 +33,9 @@ final class WikiProposalWithdrawalForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -52,6 +55,16 @@ final class WikiProposalWithdrawalForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param WikiProposal|Contribution|null $proposal
+   *   Value used for $proposal.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, WikiProposal|Contribution|null $proposal = NULL): array {
     if ((!$proposal instanceof WikiProposal && !$proposal instanceof Contribution)
@@ -81,7 +94,7 @@ final class WikiProposalWithdrawalForm extends FormBase {
       '#value' => $this->t('Retirar proposta'),
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar ao status da proposta'),
         'url' => Url::fromRoute('aculta_wiki.proposal_status', ['proposal' => $proposal->id()])->toString(),

@@ -52,10 +52,12 @@ final class ClassActivityDeadlineForm extends FormBase {
    * Builds the deadline editor for the activity in the requested class.
    *
    * @param array<array-key, mixed> $form
-   *   The form render array being built.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    *
    * @return array<array-key, mixed>
-   *   The completed deadline form render array.
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     [$course, $class, $activity, $relationship] = $this->routeEntities();
@@ -112,7 +114,7 @@ final class ClassActivityDeadlineForm extends FormBase {
       ];
     }
     $form['actions']['cancel'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar ao painel da turma'),
         'url' => Url::fromRoute('aculta_lms.class_dashboard', ['course' => $course->id(), 'group' => $class->id()])->toString(),
@@ -126,7 +128,9 @@ final class ClassActivityDeadlineForm extends FormBase {
    * Rejects invalid dates and dates that have already passed.
    *
    * @param array<array-key, mixed> $form
-   *   The form render array being validated.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $date = $form_state->getValue(['due_at', 'object']);
@@ -146,7 +150,9 @@ final class ClassActivityDeadlineForm extends FormBase {
    * Persists the date on the Group relationship for this class and activity.
    *
    * @param array<array-key, mixed> $form
-   *   The submitted form render array.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     [$course, $class, $activity, $relationship] = $this->routeEntities();
@@ -173,7 +179,9 @@ final class ClassActivityDeadlineForm extends FormBase {
    * Clears the deadline relation while preserving the LMS activity.
    *
    * @param array<array-key, mixed> $form
-   *   The submitted form render array.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function clearDeadline(array &$form, FormStateInterface $form_state): void {
     [$course, $class, , $relationship] = $this->routeEntities();

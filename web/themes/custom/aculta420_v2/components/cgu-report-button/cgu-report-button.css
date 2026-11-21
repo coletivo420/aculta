@@ -1,0 +1,54 @@
+.cgu-report-button {
+  --content-reply-color: var(--color-status-error-text);
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: var(--spacing-base);
+  text-decoration: none;
+  color: var(--content-reply-color);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-surface);
+  gap: var(--spacing-xs);
+  min-inline-size: var(--tap-target-min);
+  min-block-size: var(--tap-target-min);
+}
+
+.cgu-report-button:hover {
+  border-color: var(--content-reply-color);
+  background: var(--color-surface-subtle);
+}
+
+.cgu-report-button:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.cgu-report-button__label {
+  font-size: var(--font-size-sm);
+}
+
+.content-reply-bar .cgu-report-button {
+  padding-inline: 0;
+  inline-size: var(--content-reply-size);
+  min-inline-size: var(--content-reply-size);
+}
+
+.content-reply-bar .cgu-report-button__label {
+  display: none;
+}
+
+.cgu-report-button__dialog-body {
+  min-inline-size: 0;
+}
+
+.cgu-report-button__dialog-body form {
+  display: grid;
+  gap: var(--spacing-base);
+}
+
+.cgu-report-button__dialog-body textarea {
+  max-inline-size: 100%;
+  inline-size: 100%;
+}

@@ -47,10 +47,12 @@ final class ClassRosterVisibilityForm extends FormBase {
    * Builds the per-class setting form.
    *
    * @param array<array-key, mixed> $form
-   *   The form render array being built.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    *
    * @return array<array-key, mixed>
-   *   The completed form render array.
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     [$course, $class] = $this->routeEntities();
@@ -76,7 +78,7 @@ final class ClassRosterVisibilityForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) $this->t('Voltar ao painel da turma'),
         'url' => Url::fromRoute('aculta_lms.class_dashboard', [
@@ -93,7 +95,9 @@ final class ClassRosterVisibilityForm extends FormBase {
    * Saves the visibility preference after rechecking contextual access.
    *
    * @param array<array-key, mixed> $form
-   *   The submitted form render array.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     [$course, $class] = $this->routeEntities();

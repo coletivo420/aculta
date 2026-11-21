@@ -7,11 +7,13 @@ namespace Drupal\aculta_cgu\Service;
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\comment\CommentInterface;
+use Drupal\node\NodeInterface;
 use Drupal\Core\Lock\LockBackendInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\Exception\ReportNotAllowedException;
-use Drupal\aculta_cgu\ModerationScope;
+use Drupal\aculta_cgu\Scope\ReportTargetScope;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -63,12 +65,18 @@ final class ReportService {
    */
   public const NOTES_MAX_LENGTH = 2000;
 
+  /**
+   * Maximum length of the confidential description supplied by the reporter.
+   */
+  public const DESCRIPTION_MAX_LENGTH = 2000;
+
   public function __construct(
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly TimeInterface $time,
     private readonly ModerationNotifier $notifier,
     private readonly LockBackendInterface $lock,
     private readonly LoggerInterface $logger,
+    private readonly ReportTargetScope $targetScope,
   ) {}
 
   /**
@@ -92,6 +100,14 @@ final class ReportService {
       return 'anonimo';
     }
     if ($entity instanceof CguReport || $entity->isNew()) {
+      return 'alvo_invalido';
+    }
+    // Unsupported discussion hosts must never be silently assigned to
+    // the public Forum moderation queue.
+    try {
+      $this->resolvePurpose($entity);
+    }
+    catch (ReportNotAllowedException) {
       return 'alvo_invalido';
     }
     // Só denuncia o que a própria conta pode ler.
@@ -136,7 +152,11 @@ final class ReportService {
    *
    * @throws \Drupal\aculta_cgu\Exception\ReportNotAllowedException
    */
-  public function createReport(EntityInterface $entity, AccountInterface $account, string $motivo, ?string $purpose = NULL): CguReport {
+  public function createReport(EntityInterface $entity, AccountInterface $account, string $motivo, ?string $purpose = NULL, string $description = ''): CguReport {
+    $description = trim($description);
+    if (mb_strlen($description) > self::DESCRIPTION_MAX_LENGTH) {
+      throw new ReportNotAllowedException('Descrição da denúncia muito longa.');
+    }
     $motivo = strtolower(trim($motivo));
     if (!in_array($motivo, self::REASONS, TRUE)) {
       throw new ReportNotAllowedException('Motivo de denúncia inválido.');
@@ -161,6 +181,7 @@ final class ReportService {
         'target_id' => (int) $entity->id(),
         'uid' => (int) $account->id(),
         'motivo' => $motivo,
+        'description' => $description,
         'purpose' => $resolvedPurpose,
         'status' => self::STATUS_PENDING,
       ]);
@@ -193,63 +214,108 @@ final class ReportService {
    *   Status ou transição inválidos, ou parecer longo demais.
    */
   public function decideReport(CguReport $report, AccountInterface $moderator, string $status, string $notes): void {
-    $purposeVal = $report->get('purpose')->value;
-    $purpose = is_scalar($purposeVal) ? (string) $purposeVal : '';
-    if (!ModerationScope::allows($moderator, $purpose)) {
+    if (!$this->targetScope->allowsReport($report, $moderator)) {
       throw new AccessDeniedHttpException('Usuário sem permissão para moderar denúncias deste purpose.');
     }
 
-    $currentVal = $report->get('status')->value;
-    $current = is_scalar($currentVal) ? (string) $currentVal : '';
-    if (!in_array($status, self::TRANSITIONS[$current] ?? [], TRUE)) {
-      throw new ReportNotAllowedException(sprintf('Transição de status inválida: %s para %s.', $current, $status));
-    }
     $notes = trim($notes);
     if (mb_strlen($notes) > self::NOTES_MAX_LENGTH) {
       throw new ReportNotAllowedException('Parecer da moderação excede o tamanho máximo.');
     }
 
-    $report->set('status', $status);
-    $report->set('decision_notes', $notes);
-    if ($status !== self::STATUS_REVIEW) {
-      $report->set('decided_by', (int) $moderator->id());
-      $report->set('decided_at', $this->time->getRequestTime());
+    $reportId = (int) $report->id();
+    if ($reportId <= 0) {
+      throw new ReportNotAllowedException('Denúncia inválida para decisão.');
     }
-    $report->save();
+    // A lock plus fresh reload prevents two frontend/admin moderators from
+    // deciding a stale report concurrently and overwriting a final decision.
+    $lockName = 'aculta_cgu:report_decision:' . $reportId;
+    if (!$this->lock->acquire($lockName, 15.0)) {
+      throw new ReportNotAllowedException('Esta denúncia está sendo avaliada em outra sessão.');
+    }
 
-    // Auditoria sem dado do denunciante.
-    $this->logger->info('Denúncia @id (purpose @purpose): @from para @to por moderador @uid.', [
-      '@id' => (int) $report->id(),
-      '@purpose' => $purpose,
-      '@from' => $current,
-      '@to' => $status,
-      '@uid' => (int) $moderator->id(),
-    ]);
+    try {
+      $fresh = $this->entityTypeManager->getStorage('aculta_cgu_report')->loadUnchanged($reportId);
+      if (!$fresh instanceof CguReport) {
+        throw new ReportNotAllowedException('Denúncia não encontrada.');
+      }
+      $freshPurpose = $fresh->get('purpose')->value;
+      $purpose = is_scalar($freshPurpose) ? (string) $freshPurpose : '';
+      if (!$this->targetScope->allowsReport($fresh, $moderator)) {
+        throw new AccessDeniedHttpException('Usuário sem permissão para moderar denúncias deste purpose.');
+      }
+
+      $currentVal = $fresh->get('status')->value;
+      $current = is_scalar($currentVal) ? (string) $currentVal : '';
+      if (!in_array($status, self::TRANSITIONS[$current] ?? [], TRUE)) {
+        throw new ReportNotAllowedException(sprintf('Transição de status inválida: %s para %s.', $current, $status));
+      }
+
+      $fresh->set('status', $status);
+      $fresh->set('decision_notes', $notes);
+      if ($status !== self::STATUS_REVIEW) {
+        $fresh->set('decided_by', (int) $moderator->id());
+        $fresh->set('decided_at', $this->time->getRequestTime());
+      }
+      $fresh->save();
+
+      // Audit never reveals the reporting user's identity.
+      $this->logger->info('Denúncia @id (purpose @purpose): @from para @to por moderador @uid.', [
+        '@id' => $reportId,
+        '@purpose' => $purpose,
+        '@from' => $current,
+        '@to' => $status,
+        '@uid' => (int) $moderator->id(),
+      ]);
+    }
+    finally {
+      $this->lock->release($lockName);
+    }
   }
 
   /**
-   * Infere o purpose com base no tipo da entidade.
+   * Purpose LMS só existe quando um adaptador de Group está registrado (fail closed).
+   */
+  private function lmsPurpose(): string {
+    if (!$this->targetScope->supports('lms')) {
+      throw new ReportNotAllowedException('Contexto de moderação LMS ainda não habilitado.');
+    }
+    return 'lms';
+  }
+
+  /**
+   * Resolves the authoritative reporting scope from the actual host.
+   *
+   * A Comment bundle is shared by multiple purposes. LMS discussions require
+   * a dedicated Group-aware moderation adapter before CGU can accept reports;
+   * unsupported hosts fail closed rather than enter the public Forum queue.
    */
   public function resolvePurpose(EntityInterface $entity): string {
-    $type = $entity->getEntityTypeId();
-    if (str_contains($type, 'event')) {
-      return 'eventos';
+    if ($entity instanceof CommentInterface) {
+      $host = $entity->getCommentedEntity();
+      if (!$host instanceof EntityInterface || $host instanceof CommentInterface) {
+        throw new ReportNotAllowedException('Contexto do comentário não reconhecido.');
+      }
+      $purpose = $this->resolvePurpose($host);
+      if (!in_array($purpose, ['forum', 'revista', 'wiki', 'lms'], TRUE)) {
+        throw new ReportNotAllowedException('Contexto de moderação do comentário ainda não habilitado.');
+      }
+      return $purpose;
     }
-    if (str_contains($type, 'forum') || str_contains($type, 'comment')) {
+    if ($entity->getEntityTypeId() === 'aculta_forum_post') {
       return 'forum';
     }
-    if ($type === 'node') {
-      /** @var \Drupal\node\NodeInterface $entity */
-      $bundle = $entity->bundle();
-      if ($bundle === 'revista') {
-        return 'revista';
-      }
-      if ($bundle === 'wiki_entry') {
-        return 'wiki';
-      }
-      if ($bundle === 'aculta_forum_topic') {
-        return 'forum';
-      }
+    if ($entity instanceof NodeInterface) {
+      return match ($entity->bundle()) {
+        'aculta_forum_topic' => 'forum',
+        'revista' => 'revista',
+        'wiki_entry' => 'wiki',
+        'aculta_lms_topic' => $this->lmsPurpose(),
+        default => 'portal',
+      };
+    }
+    if (str_contains($entity->getEntityTypeId(), 'event')) {
+      return 'eventos';
     }
     return 'portal';
   }

@@ -18,7 +18,13 @@ final class CpfLoginFormCallbacks {
   /**
    * Temporarily replaces a CPF with its account name for native authentication.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $formState
+   *   Value used for $formState.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function resolveIdentifier(array &$form, FormStateInterface $formState): void {
     $identifier = $formState->getValue('name');
@@ -40,7 +46,13 @@ final class CpfLoginFormCallbacks {
   /**
    * Restores the submitted identifier after native authentication validation.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $formState
+   *   Value used for $formState.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function restoreIdentifier(array &$form, FormStateInterface $formState): void {
     $input = $formState->getUserInput();

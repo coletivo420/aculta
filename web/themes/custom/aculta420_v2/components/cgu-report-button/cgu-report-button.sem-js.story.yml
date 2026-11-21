@@ -1,0 +1,9 @@
+name: Denúncia - fallback sem JavaScript
+description: Demonstração visual sem requisição real; em produção, o link sem modal leva ao formulário CGU.
+component: aculta420_v2:cgu-report-button
+props:
+  url: '#'
+  dialog_id: cgu-report-fallback-demo
+  label: Denunciar conteúdo
+  with_dialog: false
+  load_on_open: false

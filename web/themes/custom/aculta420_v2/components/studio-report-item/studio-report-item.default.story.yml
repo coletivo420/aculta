@@ -1,0 +1,6 @@
+name: Item de denúncia
+props:
+  label: Comentário sobre o cultivo indoor
+  total: 3
+  last_at: 21/11/2026 10:40
+  url: '#'

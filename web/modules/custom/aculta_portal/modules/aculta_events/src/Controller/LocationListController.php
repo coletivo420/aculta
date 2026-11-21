@@ -21,6 +21,13 @@ final class LocationListController extends ControllerBase {
 
   /**
    * Construtor.
+   *
+   * @param LocationCatalogue $locais
+   *   Value used for $locais.
+   * @param RequestStack $pilha
+   *   Value used for $pilha.
+   * @param PagerManagerInterface $pagerManager
+   *   Value used for $pagerManager.
    */
   public function __construct(
     private readonly LocationCatalogue $locais,
@@ -30,6 +37,9 @@ final class LocationListController extends ControllerBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -41,6 +51,9 @@ final class LocationListController extends ControllerBase {
 
   /**
    * Página da lista de locais.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function page(): array {
     $request = $this->pilha->getCurrentRequest();
@@ -94,7 +107,7 @@ final class LocationListController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-location-actions-bar'],
         'add_btn' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => (string) $this->t('+ Cadastrar local'),
             'url' => Url::fromRoute('aculta_events.location_add')->toString(),

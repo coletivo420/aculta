@@ -14,6 +14,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Database\Database;
 use Drupal\Core\Lock\DatabaseLockBackend;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\user\Entity\Role;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
@@ -26,12 +27,22 @@ use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
 #[RunTestsInSeparateProcesses]
 final class ContributionLifecycleKernelTest extends KernelTestBase {
 
+  use \Drupal\Tests\aculta_cgu\Kernel\CguPortalStubTrait;
+
   /**
    * {@inheritdoc} */
   protected static $modules = ['system', 'user', 'options', 'views', 'aculta_cgu'];
 
   /**
    * {@inheritdoc} */
+  /**
+   * Registra o stub do domínio do portal (ver CguPortalStubTrait).
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    $this->registerDomainSiteStub($container);
+  }
+
   protected function setUp(): void {
     parent::setUp();
     $this->container->set('lock', new DatabaseLockBackend($this->container->get('database')));
@@ -560,6 +571,11 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
       }
 
       /** Allows only a non-empty account name payload. */
+      /**
+       * @param array<string, mixed> $payload
+       *
+       * @return array<string, mixed>
+       */
       public function validatePayload(string $intent, array $payload, ?EntityInterface $target = NULL): array {
         if ($intent !== 'update' || array_keys($payload) !== ['name'] || !is_string($payload['name']) || trim($payload['name']) === '') {
           throw new \InvalidArgumentException('Only a non-empty account name is allowed.');
@@ -608,7 +624,12 @@ final class ContributionLifecycleKernelTest extends KernelTestBase {
         }
       }
 
-      /** Applies the selected name after checking the expected version. */
+      /**
+       * Applies the selected name after checking the expected version.
+       *
+       * @param array<string, mixed> $selectedPayload
+       * @param array<string, mixed> $decisionData
+       */
       public function apply(string $intent, ?EntityInterface $target, string $expectedVersion, array $selectedPayload, AccountInterface $reviewer, array $decisionData = []): EntityInterface {
         if (!$target || !hash_equals($expectedVersion, $this->currentVersion($intent, $target)) || array_keys($selectedPayload) !== ['name']) {
           throw new \RuntimeException('The source changed or the selected field is invalid.');

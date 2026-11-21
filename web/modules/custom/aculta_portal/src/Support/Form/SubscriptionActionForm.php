@@ -92,17 +92,21 @@ final class SubscriptionActionForm extends ConfirmFormBase {
   }
 
   /**
-   * {@inheritdoc}
+   * Builds the form.
    *
    * @param array<string, mixed> $form
+   *   Value used for $form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Value used for $form_state.
    * @param \Drupal\commerce_order\Entity\OrderInterface|null $commerce_order
+   *   Value used for $commerce_order.
    * @param string $acao
+   *   Value used for $acao.
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    *
    * @throws \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
-   *   Pedido de outra conta, ou ação não permitida para o status atual.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?OrderInterface $commerce_order = NULL, string $acao = ''): array {
     $acao = $this->acao($acao);
@@ -122,8 +126,13 @@ final class SubscriptionActionForm extends ConfirmFormBase {
   /**
    * Performs the submit form operation.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $rawId = $form_state->get('pedido_id');

@@ -58,10 +58,12 @@ final class CourseStructureOrderForm extends FormBase implements ContainerInject
    * Form API's buildForm() contract accepts only the form and form state.
    *
    * @param array<array-key, mixed> $form
-   *   The form render array being built.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    *
    * @return array<array-key, mixed>
-   *   The completed form render array.
+   *   Render array returned by the method.
    */
   public function buildForm(
     array $form,
@@ -86,7 +88,7 @@ final class CourseStructureOrderForm extends FormBase implements ContainerInject
 
     $form['#attributes'] = [
       'id' => 'aculta-course-order-' . $collection . '-' . $parent_id,
-      'class' => ['aculta-lms-course-sort-form'],
+      'data-portal-ui' => 'lms-course-sort-form',
       'data-aculta-sort-form' => $collection,
       'data-aculta-unsaved-changes' => TRUE,
     ];
@@ -108,7 +110,9 @@ final class CourseStructureOrderForm extends FormBase implements ContainerInject
    * Saves a validated exact permutation after rechecking educator access.
    *
    * @param array<array-key, mixed> $form
-   *   The submitted form render array.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $course = $this->course();

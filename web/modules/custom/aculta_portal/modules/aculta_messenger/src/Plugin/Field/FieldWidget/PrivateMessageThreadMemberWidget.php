@@ -146,7 +146,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O array do formulário.
    * @param FormStateInterface $form_state
    *   O estado atual do formulário.
@@ -275,7 +275,7 @@ class PrivateMessageThreadMemberWidget extends EntityReferenceAutocompleteWidget
    *
    * @param array<string, mixed> $values
    *   Os valores enviados.
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   O array do formulário.
    * @param FormStateInterface $form_state
    *   O estado atual do formulário.

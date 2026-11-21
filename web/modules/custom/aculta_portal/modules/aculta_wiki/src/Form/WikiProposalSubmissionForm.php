@@ -29,6 +29,9 @@ final class WikiProposalSubmissionForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -47,6 +50,16 @@ final class WikiProposalSubmissionForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param ?NodeInterface $node
+   *   Node being rendered.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $node = NULL): array {
     $this->submission->assertCanSubmit();
@@ -423,7 +436,7 @@ final class WikiProposalSubmissionForm extends FormBase {
     }
     $sourceUris = $this->getSourceUris((string) ($values['source_uris'] ?? ''));
     $items = [
-      '#theme' => 'aculta_portal_component',
+      '#theme' => 'portal_component',
       '#name' => 'content-section',
       '#props' => ['title' => (string) $this->t('Revise antes de enviar')],
       '#slots' => [

@@ -192,7 +192,7 @@
   }
 
   async function persist(mode) {
-    const settings = drupalSettings.acultaPortal?.colorMode;
+    const settings = drupalSettings.portalUi?.colorMode;
     if (settings?.authenticated !== true || !settings.updateUrl) {
       throw new Error('persist');
     }
@@ -234,7 +234,7 @@
     applySiteMode(mode);
     syncSiteInstances(mode);
     closePopover(root, true);
-    const settings = drupalSettings.acultaPortal?.colorMode;
+    const settings = drupalSettings.portalUi?.colorMode;
     if (settings?.authenticated === true) {
       const sequence = ++latestSave;
       announce(root, 'Salvando preferência de modo de cor…');
@@ -267,7 +267,7 @@
       once('color-mode-switcher', SELECTOR, context).forEach((root) => {
         let mode = validMode(root.dataset.mode) ?? 'auto';
         if (root.dataset.context === 'site') {
-          const settings = drupalSettings.acultaPortal?.colorMode;
+          const settings = drupalSettings.portalUi?.colorMode;
           if (settings?.authenticated !== true) {
             mode = localMode() ?? mode;
           }

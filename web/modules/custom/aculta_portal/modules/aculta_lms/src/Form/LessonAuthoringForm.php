@@ -52,10 +52,12 @@ final class LessonAuthoringForm extends FormBase {
    * Builds the lesson authoring form.
    *
    * @param array<array-key, mixed> $form
-   *   The form render array being built.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    *
    * @return array<array-key, mixed>
-   *   The completed form render array.
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     [$course, $lesson] = $this->routeEntities();
@@ -105,7 +107,7 @@ final class LessonAuthoringForm extends FormBase {
         '#button_type' => 'primary',
       ],
       'cancel' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Voltar à estrutura do curso'),
           'url' => Url::fromRoute('aculta_lms.course_structure', ['course' => $course->id()])->toString(),
@@ -120,7 +122,9 @@ final class LessonAuthoringForm extends FormBase {
    * Validates lesson fields before save.
    *
    * @param array<array-key, mixed> $form
-   *   The form render array being validated.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     if (trim(self::stringValue($form_state->getValue('title'))) === '') {
@@ -145,7 +149,9 @@ final class LessonAuthoringForm extends FormBase {
    * Saves the lesson and returns to course structure.
    *
    * @param array<array-key, mixed> $form
-   *   The submitted form render array.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     [$course, $lesson] = $this->routeEntities();

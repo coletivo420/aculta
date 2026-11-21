@@ -26,6 +26,13 @@ final class OwnershipClaimDecisionForm extends FormBase {
 
   /**
    * Construtor do formulário.
+   *
+   * @param OwnershipClaimService $claimService
+   *   Value used for $claimService.
+   * @param EntityTypeManagerInterface $entityTypeMgr
+   *   Value used for $entityTypeMgr.
+   * @param DateFormatterInterface $dateFormatter
+   *   Value used for $dateFormatter.
    */
   public function __construct(
     protected readonly OwnershipClaimService $claimService,
@@ -35,6 +42,9 @@ final class OwnershipClaimDecisionForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): self {
     return new self(
@@ -55,10 +65,14 @@ final class OwnershipClaimDecisionForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
-   *   Estrutura do formulário.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param ?OwnershipClaim $aculta_ownership_claim
+   *   Value used for $aculta_ownership_claim.
    *
    * @return array<string, mixed>
-   *   Estrutura do formulário.
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?OwnershipClaim $aculta_ownership_claim = NULL): array {
     if ($aculta_ownership_claim === NULL) {
@@ -125,7 +139,7 @@ final class OwnershipClaimDecisionForm extends FormBase {
       $form['actions'] = [
         '#type' => 'actions',
         'back' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => $this->t('Voltar para a lista'),
             'url' => Url::fromRoute('aculta_user.ownership_claims')->toString(),
@@ -163,7 +177,7 @@ final class OwnershipClaimDecisionForm extends FormBase {
         '#button_type' => 'primary',
       ],
       'cancel' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => $this->t('Cancelar'),
           'url' => Url::fromRoute('aculta_user.ownership_claims')->toString(),
@@ -179,7 +193,9 @@ final class OwnershipClaimDecisionForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
-   *   Estrutura do formulário.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     if ($this->claim === NULL) {

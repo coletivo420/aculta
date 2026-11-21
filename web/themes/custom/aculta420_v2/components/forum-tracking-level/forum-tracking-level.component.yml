@@ -1,0 +1,34 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Nível de acompanhamento do tópico
+description: Indica o nível fornecido pelo owner, sem criar preferências, notificações ou ações automáticas.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [title, level, level_label, description]
+  properties:
+    title:
+      type: string
+      title: Nome da área de acompanhamento
+      minLength: 1
+    level:
+      type: string
+      title: Nível confirmado
+      enum: [normal, tracking, watching, muted]
+    level_label:
+      type: string
+      title: Texto do nível
+      minLength: 1
+    description:
+      type: string
+      title: Explicação do acompanhamento
+      minLength: 1
+slots:
+  actions:
+    title: Formulário ou links autorizados
+    description: Ações reais do owner de preferências; não inferir serviço a partir de uma story.
+assets:
+  css:
+    component:
+      forum-tracking-level.css: {}

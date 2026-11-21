@@ -1,0 +1,25 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Construtor de enquete do Fórum
+description: Superfície de edição de enquete, preservando elementos Form API processados e seus estados.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [title]
+  properties:
+    title:
+      type: string
+      title: Título acessível do construtor
+      minLength: 1
+slots:
+  toggle:
+    title: Ativar enquete
+    description: Checkbox Form API original, com o mesmo nome de submissão.
+  fields:
+    title: Configuração da enquete
+    description: Campos Form API originais com #states, erros e callbacks intactos.
+assets:
+  css:
+    component:
+      forum-poll-builder.css: {}

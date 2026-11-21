@@ -168,14 +168,15 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
   /**
    * The field display does not expose comment settings or legacy author data.
    */
-  public function testFormDoesNotExposeCommentStatusOrCoAuthorWidget(): void {
+  public function testFormDoesNotExposeLegacyAuthorFieldOrCoAuthorWidget(): void {
     $config = self::parseConfigFile(
       dirname(__DIR__, 3) . '/config/install/core.entity_form_display.node.aculta_forum_topic.default.yml',
     );
 
-    self::assertSame(['body', 'field_aculta_categories', 'title'], array_keys(self::configArray($config, 'content')));
+    self::assertSame(['body', 'field_aculta_categories', 'field_aculta_tags', 'title'], array_keys(self::configArray($config, 'content')));
     self::assertArrayHasKey('field_aculta_discussion', self::configArray($config, 'hidden'));
-    self::assertArrayHasKey('field_autor_legado', self::configArray($config, 'hidden'));
+    self::assertArrayNotHasKey('field_autor_legado', self::configArray($config, 'content'));
+    self::assertArrayNotHasKey('field_autor_legado', self::configArray($config, 'hidden'));
     self::assertArrayNotHasKey('co_authors', self::configArray($config, 'hidden'));
     self::assertTrue(self::configValue($config, 'hidden', 'aculta_coauthors'));
     foreach (['moderation_state', 'path', 'simple_sitemap', 'url_redirects'] as $field) {
@@ -194,7 +195,8 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     self::assertSame('comment_default', self::configValue($full, 'content', 'field_aculta_discussion', 'type'));
     self::assertContains('comment', self::configArray($full, 'dependencies', 'module'));
     self::assertArrayHasKey('field_aculta_discussion', self::configArray($teaser, 'hidden'));
-    self::assertArrayHasKey('field_autor_legado', self::configArray($teaser, 'hidden'));
+    self::assertArrayNotHasKey('field_autor_legado', self::configArray($teaser, 'content'));
+    self::assertArrayNotHasKey('field_autor_legado', self::configArray($teaser, 'hidden'));
   }
 
   /**
@@ -724,9 +726,16 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
    *
    * Drupal configuration is a mapping; only YAML lists have meaningful order.
    */
+
   /**
+   * Asserts that two configuration maps match after key normalization.
+   *
    * @param array<array-key, mixed> $expected
+   *   Expected configuration.
    * @param array<array-key, mixed> $actual
+   *   Actual configuration.
+   * @param string $message
+   *   Optional assertion message.
    */
   private static function assertConfigSame(array $expected, array $actual, string $message = ''): void {
     self::assertSame(self::normalizeConfigMap($expected), self::normalizeConfigMap($actual), $message);
@@ -734,11 +743,12 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
 
   /**
    * Recursively sorts associative maps while preserving sequence order.
-   */
-  /**
+   *
    * @param array<array-key, mixed> $value
+   *   Configuration value to normalize.
    *
    * @return array<array-key, mixed>
+   *   The normalized configuration value.
    */
   private static function normalizeConfigMap(array $value): array {
     foreach ($value as &$item) {
@@ -753,7 +763,15 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     return $value;
   }
 
-  /** @return array<array-key, mixed> */
+  /**
+   * Parses a YAML configuration file into a map.
+   *
+   * @param string $path
+   *   Absolute path to the YAML file.
+   *
+   * @return array<array-key, mixed>
+   *   The parsed configuration map.
+   */
   private static function parseConfigFile(string $path): array {
     $config = Yaml::parseFile($path);
     if (!is_array($config)) {
@@ -762,7 +780,17 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     return $config;
   }
 
-  /** @param array-key ...$path */
+  /**
+   * Reads a value from nested configuration keys.
+   *
+   * @param mixed $value
+   *   Configuration root.
+   * @param array-key ...$path
+   *   Keys to traverse.
+   *
+   * @return mixed
+   *   The configuration value found at the path.
+   */
   private static function configValue(mixed $value, int|string ...$path): mixed {
     foreach ($path as $key) {
       if (!is_array($value) || !array_key_exists($key, $value)) {
@@ -772,10 +800,17 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     }
     return $value;
   }
+
   /**
+   * Reads an array from nested configuration keys.
+   *
+   * @param mixed $value
+   *   Configuration root.
    * @param array-key ...$path
+   *   Keys to traverse.
    *
    * @return array<array-key, mixed>
+   *   The array found at the path.
    */
   private static function configArray(mixed $value, int|string ...$path): array {
     $value = self::configValue($value, ...$path);
@@ -785,7 +820,17 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     return $value;
   }
 
-  /** @param array-key ...$path */
+  /**
+   * Reads a boolean from nested configuration keys.
+   *
+   * @param mixed $value
+   *   Configuration root.
+   * @param array-key ...$path
+   *   Keys to traverse.
+   *
+   * @return bool
+   *   The boolean configuration value.
+   */
   private static function configBoolean(mixed $value, int|string ...$path): bool {
     $value = self::configValue($value, ...$path);
     if (is_bool($value)) {
@@ -794,6 +839,15 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     throw new \UnexpectedValueException('Expected a boolean in configuration.');
   }
 
+  /**
+   * Reads a source file as a string.
+   *
+   * @param string $path
+   *   Absolute path to the file.
+   *
+   * @return string
+   *   The file contents.
+   */
   private static function readSource(string $path): string {
     $source = file_get_contents($path);
     if (!is_string($source)) {
@@ -801,4 +855,5 @@ final class ForumTopicDisplayConfigTest extends UnitTestCase {
     }
     return $source;
   }
+
 }

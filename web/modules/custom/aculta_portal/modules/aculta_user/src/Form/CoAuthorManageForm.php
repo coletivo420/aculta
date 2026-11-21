@@ -82,7 +82,7 @@ final class CoAuthorManageForm extends FormBase {
    *   The node entity being managed.
    *
    * @return array<string, mixed>
-   *   The form structure.
+   *   The form structure.   *   *   *
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $node = NULL): array {
     if (!$node instanceof NodeInterface) {
@@ -128,7 +128,7 @@ final class CoAuthorManageForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.
@@ -173,7 +173,7 @@ final class CoAuthorManageForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   An associative array containing the structure of the form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current state of the form.

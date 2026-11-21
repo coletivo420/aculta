@@ -18,7 +18,6 @@ use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\editor\Ajax\EditorDialogSave;
 use Drupal\filter\FilterFormatInterface;
 use Drupal\file\FileInterface;
-use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -61,8 +60,15 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   * @param ?FilterFormatInterface $filter_format
+   *   Value used for $filter_format.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?FilterFormatInterface $filter_format = NULL): array {
     $this->dialogBuilder->wrap($form, 'aculta-forum-attachment-dialog', 'forum', 'forum-attachment-dialog');
@@ -106,7 +112,13 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $selection = $this->resolveSelection($form_state);
@@ -216,14 +228,26 @@ final class ForumAttachmentUploadDialogForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {}
 
   /**
    * Creates unpublished Media and inserts the Entity Embed in the editor.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return AjaxResponse
+   *   Value returned by the method.
    */
   public function ajaxSubmit(array &$form, FormStateInterface $form_state): AjaxResponse {
     $response = new AjaxResponse();

@@ -55,6 +55,9 @@ final class EventCatalogueController extends ControllerBase {
 
   /**
    * Página do catálogo.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function page(): array {
     $fuso = new \DateTimeZone('America/Sao_Paulo');
@@ -80,7 +83,7 @@ final class EventCatalogueController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-catalogue-actions-bar'],
         'add_btn' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => (string) $this->t('+ Cadastrar novo evento'),
             'url' => Url::fromRoute('aculta_events.event_add')->toString(),
@@ -141,9 +144,16 @@ final class EventCatalogueController extends ControllerBase {
   }
 
   /**
-   * Converte dd/mm/aaaa em data de Brasília; vazio vira NULL.
+   * Converte dd/mm/aaaa em data de Brasília; vazio vira NULL. Um valor inválido gera aviso.
    *
-   * Um valor inválido gera aviso.
+   * @param string $valor
+   *   Value used for $valor.
+   * @param \DateTimeZone $fuso
+   *   Value used for $fuso.
+   * @param array<array-key, mixed> $avisos
+   *   Value used for $avisos.
+   * @param string $rotulo
+   *   Value used for $rotulo.
    */
   private function dataBr(string $valor, \DateTimeZone $fuso, array &$avisos, string $rotulo): ?\DateTimeImmutable {
     if ($valor === '') {

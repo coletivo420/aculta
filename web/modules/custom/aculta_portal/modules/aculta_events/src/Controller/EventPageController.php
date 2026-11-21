@@ -81,6 +81,12 @@ final class EventPageController extends ControllerBase {
   /**
    * Página do evento.
    *
+   * @param string $slug
+   *   Value used for $slug.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
+   *
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
   public function page(string $slug): array {
@@ -317,7 +323,7 @@ final class EventPageController extends ControllerBase {
       $editUrl = $adminUrl?->toString()
         ?? Url::fromRoute('aculta_events.event_edit', ['aculta_event' => $evento->id()])->toString();
       $adminButton = [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Editar evento e datas'),
           'url' => $editUrl,
@@ -432,9 +438,9 @@ final class EventPageController extends ControllerBase {
     }
 
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:event-page-layout',
-      '#attributes' => ['class' => ['aculta-event']],
+      '#theme' => 'portal_component',
+      '#name' => 'event-page-layout',
+      '#attributes' => [],
       '#props' => [],
       '#slots' => $slots,
       '#prefix' => $prefix !== '' ? $prefix : NULL,
@@ -449,6 +455,16 @@ final class EventPageController extends ControllerBase {
 
   /**
    * Builds the title slot without moving event data into component props.
+   *
+   * @param string $title
+   *   Component title.
+   * @param string $subtitle
+   *   Value used for $subtitle.
+   * @param bool $cancelled
+   *   Value used for $cancelled.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   private function buildTitleSlot(string $title, string $subtitle, bool $cancelled): array {
     $slot = [
@@ -463,7 +479,7 @@ final class EventPageController extends ControllerBase {
       $slot['subtitle'] = [
         '#type' => 'html_tag',
         '#tag' => 'p',
-        '#attributes' => ['class' => ['aculta-event-page-layout__subtitle']],
+        '#attributes' => ['data-portal-ui' => 'event-page-subtitle'],
         '#value' => $subtitle,
       ];
     }
@@ -472,7 +488,7 @@ final class EventPageController extends ControllerBase {
         '#type' => 'html_tag',
         '#tag' => 'p',
         '#attributes' => [
-          'class' => ['aculta-event-page-layout__cancelled'],
+          'data-portal-ui' => 'event-page-cancelled',
           'role' => 'status',
         ],
         '#value' => $this->t('Este evento foi cancelado.'),
@@ -544,7 +560,7 @@ final class EventPageController extends ControllerBase {
   private function buildDescriptionSlot(string $description): array {
     return [
       '#type' => 'inline_template',
-      '#template' => '<div class="aculta-event-page-layout__description">{{ description|nl2br }}</div>',
+      '#template' => '<div data-portal-ui="event-page-description">{{ description|nl2br }}</div>',
       '#context' => ['description' => $description],
     ];
   }

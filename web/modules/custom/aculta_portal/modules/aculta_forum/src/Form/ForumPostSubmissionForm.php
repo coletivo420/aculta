@@ -14,7 +14,6 @@ use Drupal\Core\Entity\RevisionLogInterface;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Service\ForumPostThreadBuilder;
 use Drupal\node\NodeInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -52,8 +51,13 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
@@ -94,7 +98,10 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
    */
   public function buildEntity(array $form, FormStateInterface $form_state) {
     $entity = parent::buildEntity($form, $form_state);
@@ -110,8 +117,13 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   protected function actions(array $form, FormStateInterface $form_state): array {
     $actions = parent::actions($form, $form_state);
@@ -126,7 +138,13 @@ final class ForumPostSubmissionForm extends ContentEntityForm {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return int
+   *   Value returned by the method.
    */
   public function save(array $form, FormStateInterface $form_state): int {
     $wasNew = $this->entity->isNew();

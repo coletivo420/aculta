@@ -1,0 +1,43 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Botão de denúncia CGU (Phosphor)
+description: Ação transversal de denúncia, com ícone flag e popup padrão. A URL e o direito de denunciar são determinados pelo CGU.
+status: experimental
+group: Comunidade
+libraryOverrides:
+  dependencies:
+    - aculta420_v2/utility-drawers
+    - aculta420_v2/cgu-report-dialog
+props:
+  type: object
+  additionalProperties: false
+  required: [url, dialog_id]
+  properties:
+    url:
+      type: string
+      title: Rota de denúncia autorizada
+      minLength: 1
+      description: GET de formulário Form API; href é fallback sem JS.
+    dialog_id:
+      type: string
+      title: Identificador único do popup
+      pattern: '^[A-Za-z][A-Za-z0-9_-]*$'
+    label:
+      type: string
+      title: Nome acessível e legenda
+      default: Denunciar
+    with_dialog:
+      type: boolean
+      title: Montar popup padrão
+      default: true
+    load_on_open:
+      type: boolean
+      title: Carregar formulário real por HTMX ao abrir
+      default: true
+slots:
+  dialog_content:
+    title: Conteúdo de prévia do diálogo
+    description: Apenas histórias UI Patterns; em produção o Form API real chega por HTMX da rota CGU.
+assets:
+  css:
+    component:
+      cgu-report-button.css: {}

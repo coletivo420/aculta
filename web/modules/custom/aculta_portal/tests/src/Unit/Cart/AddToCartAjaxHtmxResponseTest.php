@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_portal\Unit\Cart;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Drupal\aculta_portal\Cart\AddToCartAjax;
 use Drupal\aculta_portal\Cart\CartUtility;
 use Drupal\Core\Form\FormInterface;
@@ -71,7 +72,7 @@ class AddToCartAjaxHtmxResponseTest extends UnitTestCase {
   /**
    * Formulário simulado com os erros informados.
    */
-  private function formState(array $errors): FormStateInterface&\PHPUnit\Framework\MockObject\MockObject {
+  private function formState(array $errors): FormStateInterface&MockObject {
     $form = $this->createMock(FormInterface::class);
     $form->method('getFormId')->willReturn(self::FORM_ID);
     $state = $this->createMock(FormStateInterface::class);
@@ -83,7 +84,7 @@ class AddToCartAjaxHtmxResponseTest extends UnitTestCase {
   /**
    * Sucesso: caixa de status, contador no HX-Trigger e limpeza das mensagens do Commerce.
    */
-  public function testSucessoDevolveStatusECarrinhoEContador(): void {
+  public function testSucessoDevolveStatusComContadorDoCarrinho(): void {
     $messenger = $this->createMock(MessengerInterface::class);
     $messenger->expects($this->once())->method('deleteAll');
 
@@ -105,10 +106,14 @@ class AddToCartAjaxHtmxResponseTest extends UnitTestCase {
 
     $this->assertInstanceOf(Response::class, $captured);
     $this->assertStringContainsString('id="portal-cart-status-', (string) $captured->getContent());
-    $this->assertSame('component', $rendered[0]['#type']);
-    $this->assertSame('aculta420_v2:cart-feedback', $rendered[0]['#component']);
-    $this->assertSame('success', $rendered[0]['#props']['status_type']);
-    $this->assertSame('aculta420_v2:cart-offcanvas-body', $rendered[1]['#component']);
+    $first = $rendered[0] ?? NULL;
+    $this->assertIsArray($first);
+    $this->assertSame('portal_component', $first['#theme'] ?? NULL);
+    $this->assertSame('cart-feedback', $first['#name'] ?? NULL);
+    $this->assertSame('success', $first['#props']['status_type']);
+    $second = $rendered[1] ?? NULL;
+    $this->assertIsArray($second);
+    $this->assertSame('cart-offcanvas-body', $second['#name'] ?? NULL);
     $trigger = json_decode((string) $captured->headers->get('HX-Trigger'), TRUE);
     $this->assertSame('2', $trigger['aculta:cart-updated']['count']);
     $this->assertSame('Abrir carrinho (2 itens)', $trigger['aculta:cart-updated']['label']);

@@ -1,0 +1,11 @@
+name: Leitura - sem novas publicações
+description: Exemplo estático de histórico sem posts não lidos; não representa posição do scroll.
+component: aculta420_v2:forum-reading-timeline
+props:
+  label: Acompanhamento de leitura
+  percent: 100
+  progress_text: 20 de 20 publicações anteriores à última visita
+slots:
+  navigation:
+    type: inline_template
+    template: '<span>Início · Última página (prévia)</span>'

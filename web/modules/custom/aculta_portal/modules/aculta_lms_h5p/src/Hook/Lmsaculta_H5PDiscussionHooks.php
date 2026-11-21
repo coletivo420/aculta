@@ -20,6 +20,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 /**
  * Adds authorized Forum links below H5P content in its course context.
  */
+// phpcs:ignore Drupal.NamingConventions.ValidClassName.NoUnderscores -- Preserve the established hook service identifier and test references.
 final class Lmsaculta_H5PDiscussionHooks {
 
   public function __construct(
@@ -31,8 +32,13 @@ final class Lmsaculta_H5PDiscussionHooks {
   ) {}
 
   /**
-   * Implements hook_h5p_formatter_alter().
-   */
+ * Implements hook_h5p_formatter_alter().
+ *
+ * @param array<array-key, mixed> $elements
+ *   Value used for $elements.
+ * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
+ *   Field item list.
+ */
   #[Hook('h5p_formatter_alter')]
   public function formatterAlter(array &$elements, FieldItemListInterface $items): void {
     $course = $items->getEntity();
@@ -59,8 +65,8 @@ final class Lmsaculta_H5PDiscussionHooks {
         continue;
       }
       $wrapped = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:layout-section',
+        '#theme' => 'portal_component',
+        '#name' => 'layout-section',
         '#slots' => [
           'content' => [
             'player' => $elements[$delta],

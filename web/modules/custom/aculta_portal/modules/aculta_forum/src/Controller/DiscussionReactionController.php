@@ -7,12 +7,12 @@ namespace Drupal\aculta_forum\Controller;
 use Drupal\aculta_forum\Access\DiscussionReactionEndpointAccess;
 use Drupal\aculta_forum\Service\DiscussionReactionBuilder;
 use Drupal\aculta_forum\Service\DiscussionReactionManager;
-use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\CsrfTokenGenerator;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Routing\LocalRedirectResponse;
+use Drupal\aculta_forum\Service\ReactionReturnUrl;
 use Drupal\Core\Session\AccountProxyInterface;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -69,8 +69,7 @@ class DiscussionReactionController extends ControllerBase {
       $reactionId = $this->reactionManager->getDefaultReaction();
     }
 
-    $allowed = $this->reactionManager->getAllowedReactions();
-    if (!isset($allowed[$reactionId])) {
+    if ($reactionId !== DiscussionReactionManager::UNDO_ACTION && !$this->reactionManager->isAllowedReaction($reactionId)) {
       throw new BadRequestHttpException('Invalid reaction identifier.');
     }
 
@@ -84,13 +83,14 @@ class DiscussionReactionController extends ControllerBase {
       return $renderArray;
     }
 
-    // Non-JS / Form POST fallback: redirect back to destination or referer.
-    $destination = $request->query->get('destination') ?: $request->headers->get('Referer');
-    if ($destination) {
-      return new RedirectResponse($destination);
-    }
-
-    return $renderArray;
+    // PRG for non-JS POST. Never redirect to an external URL taken from
+    // untrusted destination/Referer; preserve only same-origin paths.
+    $destination = ReactionReturnUrl::resolve(
+      $request->query->get('destination'),
+      $request->headers->get('Referer'),
+      $request,
+    );
+    return new LocalRedirectResponse($destination, 303);
   }
 
 

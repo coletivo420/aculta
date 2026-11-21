@@ -567,3 +567,28 @@ aculta_studio.calendar_fragment:
   options:
     _aculta_site_key: account
     no_cache: true
+
+# Ganjalab Educador: denúncias de discussões dos cursos da própria educadora (escopo por Group).
+aculta_studio.educator_report_queue:
+  path: '/ganjalab/educador/denuncias'
+  defaults:
+    _controller: 'aculta_studio.educator_report_controller:queue'
+    _title: 'Denúncias das discussões dos meus cursos'
+  requirements:
+    _permission: 'moderar denuncias lms'
+    _user_is_logged_in: 'TRUE'
+  options:
+    no_cache: true
+
+aculta_studio.educator_report_decide:
+  path: '/ganjalab/educador/denuncias/{target_type}/{target_id}'
+  defaults:
+    _form: '\Drupal\aculta_studio\Form\EducatorReportDecisionForm'
+    _title: 'Analisar denúncias'
+  requirements:
+    _permission: 'moderar denuncias lms'
+    _user_is_logged_in: 'TRUE'
+    target_type: '[a-z_]+'
+    target_id: '\d+'
+  options:
+    no_cache: true

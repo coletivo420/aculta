@@ -1,0 +1,12 @@
+name: "WE Sativa - Filtros de denúncias"
+description: "Prévia fictícia da navegação por situação; sem casos privados nem ações POST."
+props:
+  title: Filtrar denúncias por situação
+slots:
+  options:
+    type: inline_template
+    template: |
+      <a href="#" aria-current="page">Pendente</a>
+      <a href="#">Em análise</a>
+      <a href="#">Procedente</a>
+      <a href="#">Improcedente</a>

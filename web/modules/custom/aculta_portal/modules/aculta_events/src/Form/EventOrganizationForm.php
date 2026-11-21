@@ -68,6 +68,14 @@ final class EventOrganizationForm extends ContentEntityForm {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form = parent::buildForm($form, $form_state);
@@ -155,7 +163,8 @@ final class EventOrganizationForm extends ContentEntityForm {
       $isAdmin = $this->currentUser()->hasPermission('administer aculta events');
       if ($entity->isUnclaimed() && !$isAdmin) {
         $form['unclaimed_notice'] = [
-          '#component' => 'aculta420_v2:status-messages',
+          '#theme' => 'portal_component',
+          '#name' => 'status-messages',
           '#props' => ['type' => 'warning'],
           '#slots' => ['content' => ['#markup' => $this->t('<strong>Organização sem titular:</strong> suas alterações serão enviadas como sugestão e só aparecerão no perfil público após aprovação administrativa.')]],
           '#weight' => -15,

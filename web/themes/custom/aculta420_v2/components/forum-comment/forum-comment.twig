@@ -9,13 +9,27 @@
 {% set comment_card %}
 <article{{ attributes.addClass('comment', 'comment--discussion', 'js-comment', status ? 'comment--' ~ status) }}>
   {{ context }}
+  {% if accent_side|default('start') == 'end' %}
+  {{ include('aculta420_v2:forum-reply-mirror', {
+    author_name: author_name|default('Participante'|t),
+    author_posts: author_posts,
+    author_reactions_received: author_reactions_received|default(0),
+    timestamp: timestamp,
+    avatar: avatar_slot,
+    body: body_slot,
+    actions: actions_slot,
+    reactions_slot: reactions_slot_val
+  }, with_context = false) }}
+  {% else %}
   {{ include('aculta420_v2:forum-post-card', {
     stripe: 'brand',
     accent_side: accent_side|default('start'),
+    author_position: author_position|default('top'),
     accent_color: accent_side|default('start') == 'end' ? 'red' : 'green',
     author_name: author_name|default('Participante'|t),
     author_role: null,
     author_posts: author_posts,
+    author_reactions_received: author_reactions_received|default(0),
     timestamp: timestamp,
     reactions: null,
     reply_url: null,
@@ -23,8 +37,10 @@
     body: body_slot,
     actions: actions_slot,
     reactions_slot: reactions_slot_val,
-    reply: null
+    reply: null,
+    badge: edited_by_moderation|default(false) ? include('aculta420_v2:badge', { label: 'Editado pela moderação'|t, variant: 'neutral' }, with_context = false) : null
   }, with_context = false) }}
+  {% endif %}
   {% if admin_slot_val|trim != '' %}<div class="forum-comment__admin">{{ admin_slot_val }}</div>{% endif %}
   <div id="{{ composer_target_id }}" class="discussion-reply-target"></div>
 </article>

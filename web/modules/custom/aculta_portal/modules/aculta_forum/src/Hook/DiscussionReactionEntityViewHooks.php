@@ -89,26 +89,32 @@ final class DiscussionReactionEntityViewHooks {
     $threadComment = $variables['comment'] ?? NULL;
     if ($threadComment instanceof CommentInterface) {
       $thread = $threadComment->get('thread')->value;
-      $variables['reply_depth'] = min(3, is_string($thread) ? substr_count($thread, '.') : 0);
+      $variables['reply_depth'] = self::replyDepth(is_string($thread) ? $thread : NULL);
       // Resposta em nível: lado oposto ao cartão ao qual responde (pai). A raiz segue a alternância da conversa.
-      $variables['accent_side'] = $this->discussionSide($threadComment);
+      // Sequência por posição: consumidores começam na 1.ª resposta; no Fórum a abertura é a posição 0.
+      $isConsumer = self::isConsumerHost($threadComment->getCommentedEntity());
+      $variables['accent_side'] = $this->sequenceSide($threadComment, $isConsumer ? 0 : 1);
       // Comentários de publicação da Revista: sem tópico; a publicação é o próprio tópico.
       $host = $threadComment->getCommentedEntity();
       $variables['publication_comment'] = $host instanceof NodeInterface && $host->bundle() === 'revista';
+      // Consumidores (LMS, Wiki, Revista e comentários gerais) usam a resposta compacta; o Fórum mantém o cartão do post.
+      $variables['consumer_comment'] = self::isConsumerHost($host);
       // Controles administrativos valem para todo comentário da discussão (fórum, LMS, Revista e Wiki).
-      $variables['admin_url'] = $this->currentUser->hasPermission('administer comments')
+      $canModerate = $this->currentUser->hasPermission('administer comments')
+        || $this->currentUser->hasPermission('moderate aculta forum comments');
+      $variables['admin_url'] = $canModerate
         ? Url::fromRoute('aculta_forum.comment_moderation', ['comment' => (int) $threadComment->id()])->toString()
         : NULL;
       // Estado de exclusão vale para todo comentário da discussão, não só para a Revista.
       $cid = (int) $threadComment->id();
-      $isOwner = (int) $threadComment->getOwnerId() === (int) $this->currentUser->id();
-      $isAdmin = $this->currentUser->hasPermission('administer comments');
+      $isAdmin = $canModerate;
       // Estado: resposta excluída pelo autor fica como "Comentário excluído", sem edição, resposta nem citação.
       // Valor do tombstone: TRUE = excluído pelo autor; 'moderacao' = removido pela moderação.
       $tombstone = $this->keyValueFactory->get('aculta_forum_comment_tombstones')->get((string) $cid);
       $deleted = (bool) $tombstone;
       $variables['comment_deleted'] = $deleted;
-      $variables['delete_allowed'] = $isAdmin || ($isOwner && !$deleted);
+      // A barra nunca exclui: o autor não apaga resposta pela barra, e a moderação exclui pelos controles administrativos.
+      $variables['delete_allowed'] = FALSE;
       $variables['comment_removed_by_moderation'] = $tombstone === 'moderacao';
       // Controles administrativos: só para quem pode moderar (ver DiscussionCommentModerationForm).
       $variables['delete_token'] = $this->csrfGenerator->get('aculta_forum.comment.delete.' . $cid);
@@ -118,11 +124,7 @@ final class DiscussionReactionEntityViewHooks {
         : (string) new TranslatableMarkup('A resposta ficará como "Comentário excluído" e não poderá mais ser editada.');
       if ($variables['publication_comment']) {
         $reactions = $this->reactionManager->loadReactions('comment', (int) $threadComment->id(), NULL);
-        $total = 0;
-        foreach ($reactions['reactions'] as $reaction) {
-          $total += (int) $reaction['count'];
-        }
-        $variables['sort_total'] = $total;
+        $variables['sort_total'] = $reactions['total_count'];
         $variables['sort_created'] = (int) $threadComment->getCreatedTime();
         // Ações da resposta: responder, citar e editar abrem o Compositor de Resposta da Discussão;
         // a rota valida o acesso. Excluir só aparece quando a conta pode.
@@ -132,7 +134,8 @@ final class DiscussionReactionEntityViewHooks {
         if (!$deleted) {
           $actions['reply_url'] = $composer . '?resposta=' . $cid;
           $actions['quote_url'] = $composer . '?citar=' . $cid;
-          if ($threadComment->access('update', $this->currentUser)) {
+          // Editar pela barra é só do autor; moderador edita pelo painel administrativo.
+          if ((int) $threadComment->getOwnerId() === (int) $this->currentUser->id() && $threadComment->access('update', $this->currentUser)) {
             $actions['edit_url'] = $composer . '?editar=' . $cid;
           }
         }
@@ -186,21 +189,22 @@ final class DiscussionReactionEntityViewHooks {
     $variables['content'] = $content;
     $variables['reaction_bar'] = $content['reaction_bar'];
     // Contador de reações recebidas (somente leitura), com os dados da própria barra de reação.
-    $barProps = $variables['reaction_bar']['#props'] ?? [];
-    if (!is_array($barProps)) {
-      $barProps = [];
-    }
+    /** @var array<string, int|string|array<mixed>> $barProps */
+    $barProps = is_array($variables['reaction_bar']['#props'] ?? NULL) ? $variables['reaction_bar']['#props'] : [];
     $reactions = $barProps['reactions'] ?? NULL;
-    if (is_array($reactions) && $reactions !== []) {
+    if (is_array($reactions)) {
       $allowedReactions = $barProps['allowed_reactions'] ?? [];
       if (!is_array($allowedReactions)) {
         $allowedReactions = [];
       }
       $variables['reactions_received'] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:discussion-reactions-received',
+        '#theme' => 'portal_component',
+        '#name' => 'discussion-reactions-received',
         '#props' => [
-          'target_id' => 'discussion-reactions-comment-' . $comment->id(),
+          'target_id' => 'discussion-reactions-comment-' . $comment->id() . '-header',
+          'entity_type' => 'comment',
+          'entity_id' => (string) $comment->id(),
+          'total_count' => (int) ($barProps['total_count'] ?? 0),
           'reactions' => $reactions,
           'allowed_reactions' => $allowedReactions,
         ],
@@ -300,30 +304,41 @@ final class DiscussionReactionEntityViewHooks {
   }
 
   /**
-   * Lado do cartão de uma resposta: a raiz alterna (1.ª espelhada); uma resposta em nível é o oposto do pai.
+   * Consumidores do motor de discussão (LMS, Wiki, Revista, comentários): qualquer host que não seja tópico do Fórum.
    */
-  private function discussionSide(CommentInterface $comment, int $guard = 0): string {
-    if ($guard > 20) {
-      return 'start';
-    }
-    $pid = (int) ($comment->get('pid')->target_id ?? 0);
-    if ($pid === 0) {
-      $roots = $this->entityTypeManager->getStorage('comment')->getQuery()
-        ->accessCheck(FALSE)
-        ->condition('pid', NULL, 'IS NULL')
-        ->condition('entity_id', $comment->getCommentedEntityId())
-        ->condition('field_name', 'field_aculta_discussion')
-        ->condition('status', 1)
-        ->sort('thread', 'ASC')
-        ->execute();
-      $position = array_search((int) $comment->id(), array_values(array_map('intval', $roots)), TRUE);
-      return ($position !== FALSE && $position % 2 === 0) ? 'end' : 'start';
-    }
-    $parent = $this->entityTypeManager->getStorage('comment')->load($pid);
-    if (!$parent instanceof CommentInterface) {
-      return 'start';
-    }
-    return $this->discussionSide($parent, $guard + 1) === 'end' ? 'start' : 'end';
+  public static function isConsumerHost(?EntityInterface $host): bool {
+    return !($host instanceof NodeInterface && $host->bundle() === 'aculta_forum_topic');
+  }
+
+  /**
+   * Nível da resposta a partir da coluna thread do Drupal (ex.: 01/ = raiz, 01.01/ = nível 1), limitado a 3.
+   */
+  public static function replyDepth(?string $thread): int {
+    return min(3, $thread === NULL ? 0 : substr_count($thread, '.'));
+  }
+
+  /**
+   * Design compacto dos consumidores: alterna por posição na ordem de exibição (resposta, espelhada, resposta, espelhada).
+   */
+  public static function alternatingSide(int $position): string {
+    return $position % 2 === 0 ? 'start' : 'end';
+  }
+
+  /**
+   * Lado pela posição da resposta na ordem de exibição (thread ASC). O offset coloca a abertura na posição 0.
+   */
+  private function sequenceSide(CommentInterface $comment, int $offset): string {
+    $storage = $this->entityTypeManager->getStorage('comment');
+    $ids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('entity_type', $comment->getCommentedEntityTypeId())
+      ->condition('entity_id', $comment->getCommentedEntityId())
+      ->condition('field_name', $comment->getFieldName())
+      ->condition('status', 1)
+      ->sort('thread', 'ASC')
+      ->execute();
+    $position = array_search((int) $comment->id(), array_map('intval', array_values($ids)), TRUE);
+    return self::alternatingSide(($position === FALSE ? 0 : $position) + $offset);
   }
 
   /**
@@ -423,11 +438,7 @@ final class DiscussionReactionEntityViewHooks {
     $totals = [];
     foreach ($comments as $cid => $comment) {
       $reactions = $this->reactionManager->loadReactions('comment', $cid, NULL);
-      $sum = 0;
-      foreach ($reactions['reactions'] as $reaction) {
-        $sum += (int) $reaction['count'];
-      }
-      $totals[$cid] = $sum;
+      $totals[$cid] = $reactions['total_count'];
     }
     $children = [];
     $roots = [];

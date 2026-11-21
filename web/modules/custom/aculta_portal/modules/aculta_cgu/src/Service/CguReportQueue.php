@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Drupal\aculta_cgu\Service;
 
 use Drupal\Core\Database\Connection;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\aculta_cgu\ModerationScope;
+use Drupal\aculta_cgu\Scope\ReportTargetScope;
 use Drupal\aculta_user\Moderation\ReportQueue;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -20,7 +22,19 @@ final class CguReportQueue {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     private readonly ?AccountInterface $currentUser = NULL,
     private readonly ?Connection $database = NULL,
+    private readonly ?ReportTargetScope $targetScope = NULL,
   ) {}
+
+  /**
+   * Carrega o alvo de um grupo da fila, se o tipo existir e a entidade ainda existir.
+   */
+  private function loadTargetEntity(string $targetType, int $targetId): ?EntityInterface {
+    if (!$this->entityTypeManager->hasDefinition($targetType)) {
+      return NULL;
+    }
+    $target = $this->entityTypeManager->getStorage($targetType)->load($targetId);
+    return $target instanceof EntityInterface ? $target : NULL;
+  }
 
   /**
    * Retorna itens agrupados da fila com controle de acesso, agregação e paginação.
@@ -51,14 +65,20 @@ final class CguReportQueue {
       throw new AccessDeniedHttpException('Acesso negado: usuário anônimo não tem permissão para moderar.');
     }
 
+    // Purposes por alvo (ex.: LMS por Group) entram só se a conta tem a permissão do adaptador.
+    $scopedPurposes = $this->targetScope?->scopedPurposesFor($moderator) ?? [];
+    $globalPurposes = ModerationScope::purposesFor($moderator);
+    // Estes purposes existem só por alvo: cada grupo é decidido alvo a alvo abaixo.
+    $targetScopedOnly = array_values(array_diff($scopedPurposes, $globalPurposes));
+
     if ($purpose !== NULL) {
-      if (!ModerationScope::allows($moderator, $purpose)) {
+      if (!ModerationScope::allows($moderator, $purpose) && !in_array($purpose, $scopedPurposes, TRUE)) {
         throw new AccessDeniedHttpException('Acesso negado: sem permissão para moderar o purpose informado.');
       }
       $allowedPurposes = [$purpose];
     }
     else {
-      $allowedPurposes = ModerationScope::purposesFor($moderator);
+      $allowedPurposes = array_values(array_unique(array_merge($globalPurposes, $scopedPurposes)));
       if (empty($allowedPurposes)) {
         throw new AccessDeniedHttpException('Acesso negado: sem permissão de moderação em nenhum purpose.');
       }
@@ -92,7 +112,17 @@ final class CguReportQueue {
           ->execute()
           ->fetchAll();
         foreach ($decidedRows as $dRow) {
-          $decidedTargets[$dRow->target_type . ':' . $dRow->target_id] = TRUE;
+          if (!is_object($dRow)) {
+            continue;
+          }
+          $row = get_object_vars($dRow);
+          $targetType = $row['target_type'] ?? NULL;
+          $targetId = $row['target_id'] ?? NULL;
+          if ((!is_string($targetType) && !is_int($targetType))
+            || (!is_string($targetId) && !is_int($targetId))) {
+            continue;
+          }
+          $decidedTargets[(string) $targetType . ':' . (string) $targetId] = TRUE;
         }
       }
 
@@ -118,6 +148,19 @@ final class CguReportQueue {
           'ultima' => (int) $row->ultima,
           'motivos' => [],
         ];
+      }
+
+      // Purposes só por alvo: mantém o grupo apenas se a conta pode moderar aquele alvo.
+      if ($targetScopedOnly !== [] && $this->targetScope !== NULL) {
+        foreach ($grupos as $key => $grupo) {
+          if (!in_array($grupo['purpose'], $targetScopedOnly, TRUE)) {
+            continue;
+          }
+          $target = $this->loadTargetEntity($grupo['target_type'], $grupo['target_id']);
+          if ($target === NULL || !$this->targetScope->decide($grupo['purpose'], $target, $moderator)) {
+            unset($grupos[$key]);
+          }
+        }
       }
 
       // 3. Reconciliação com flags legadas do Fórum pendentes de migração.

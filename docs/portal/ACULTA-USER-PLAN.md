@@ -18,6 +18,13 @@ formulações antigas contraditórias de apresentação/gamificação deste plan
 não significam migração dos hooks, provider da entidade ou configuração do Runtime.
 A nova pesquisa compara releases e código, inclusive diferenças com páginas antigas.
 
+F-D48 definiu a transferência futura da entidade de autoria histórica, do
+memorial `/u/lendashistoricas` e de toda apresentação/regras específicas do
+acervo ao addon opcional `aculta_forum_legacy`. Essa extração ainda é um plano:
+até sua implementação, o código atual permanece em `aculta_user`. A identidade,
+avatar e perfil de contas Drupal continuam neste módulo; `aculta_user` não pode
+depender do addon nem tratar autores históricos como contas.
+
 **Atualização de arquitetura (2026-10-19):** a reconstrução aprovada em
 `aculta_forum` substitui Forum contrib por um motor compartilhado de tópicos e
 comentários contextuais. O código e as tabelas de implementação desta página

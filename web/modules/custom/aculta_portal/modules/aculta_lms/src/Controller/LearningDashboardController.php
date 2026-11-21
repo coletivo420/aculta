@@ -240,14 +240,14 @@ final class LearningDashboardController {
       $options[] = $link;
     }
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:tabs',
+      '#theme' => 'portal_component',
+      '#name' => 'tabs',
       '#props' => ['label' => (string) $this->t('Período da atividade')],
       '#slots' => [
         'items' => [
-        '#theme' => 'item_list',
-        '#items' => $options,
-      ],
+          '#theme' => 'item_list',
+          '#items' => $options,
+        ],
       ],
     ];
   }

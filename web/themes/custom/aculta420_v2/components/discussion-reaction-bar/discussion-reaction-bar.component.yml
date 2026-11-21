@@ -1,6 +1,6 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
 name: Barra de Reações
-description: Barra interativa para publicar ou remover uma reação; a paleta de opções faz parte da própria barra.
+description: Brócolis como curtir padrão, mão parda em botão próprio de descurtir e popin de emojis positivos com ação Undo para remover qualquer reação ativa. Undo não é emoji nem voto persistente.
 status: stable
 group: Comunidade
 props:
@@ -26,6 +26,36 @@ props:
       title: Mapa de reações ativas com contagem
       default: {}
       description: Mapa indexado pelo identificador da reação; cada item contém a contagem calculada pelo módulo proprietário.
+    total_count:
+      type: integer
+      title: Saldo público de curtidas
+      default: 0
+      description: Todas as reações positivas vigentes menos as descurtidas, nunca abaixo de zero.
+    positive_count:
+      type: integer
+      title: Número de reações positivas
+      default: 0
+    dislike_count:
+      type: integer
+      title: Número de descurtidas
+      default: 0
+    author_uid:
+      type: integer
+      title: ID do autor da mensagem
+      default: 0
+      description: UID usado apenas para identificar contadores renderizados do mesmo autor.
+    author_reactions_received:
+      type: integer
+      title: Saldo agregado de reações recebidas pelo autor
+      default: 0
+    viewer_uid:
+      type: integer
+      title: ID do usuário autenticado que visualiza a barra
+      default: 0
+    viewer_reactions_given:
+      type: integer
+      title: Contagem de reações positivas dadas pelo visualizador
+      default: 0
     user_reaction:
       type: [string, 'null']
       title: Emoji reagido pelo usuário atual

@@ -201,7 +201,7 @@ agrupados por camada. Esta seção registra a delimitação e o resultado; não 
 | Tema `aculta420` | `templates/node--revista--full`, `components/patterns/revista-publication`, `templates/comment--aculta-discussion-post`, `css/components/revista-post.css`, `css/components/discussion.css` | ACULTA420 | Só apresentação do bundle canônico. overrides de `article`/`blog` foram removidos; o slot `discussion` recebe `content.field_aculta_discussion` preparado pelo Drupal. Sem `Drupal::`, domínio, host ou decisão de access no tema. |
 | Submódulo `aculta_magazine` | Bundle `revista`, Comment direto, workflow editorial e registro histórico da migração `article`/`blog` | Portal (função) | `aculta_forum` fornece contexto de comentário sem criar tópico público; Galeria é incorporada como entidade existente; migrador removido após execução; access/cache permanecem nos donos. |
 | Submódulo `aculta_forum` | Discussion Context API, Node/Comment/Taxonomy/Views, Search API público restrito a `aculta_forum_topic`, ferramentas de moderação/movimento e regras de access/cache | Portal (função) | Runtime é dono de contexto, índice, query, acesso e cache; ACULTA420 apresenta Views e comentários pelos componentes existentes; nunca possui cartão de autoria nem SDC do tema; LMS entra por adapter opcional. |
-| Submódulo `aculta_user` | Atual: `DiscussionCommentAuthorHooks`, Author Card API, `PublicProfilePolicy`, `PublicProfileLink`, AvatarPool, LegacyAuthor; hooks de `forum`/`comment_forum` permanecem apenas durante a retirada | Portal (identidade/acesso/dados) | `aculta_forum` e os Comments da Revista consomem cartões, sem builder nem consulta privada própria; ACULTA420 apresenta. Ver `aculta_user/docs/AUTHOR-CARDS.md`. |
+| Submódulo `aculta_user` | Atual: `DiscussionCommentAuthorHooks`, Author Card API, `PublicProfilePolicy`, `PublicProfileLink`, AvatarPool; entidade, memorial e cartão histórico pertencem a `aculta_forum_legacy`; hooks de moderação/participação Growroom permanecem em retirada | Portal (identidade/acesso/dados) | `aculta_forum` e os Comments da Revista consomem cartões, sem builder nem consulta privada própria; ACULTA420 apresenta. Ver `aculta_user/docs/AUTHOR-CARDS.md`. |
 | Scripts de conteúdo | `scripts/content/editorial/*` (importação e JSON das notícias) | Projeto (ferramenta operacional) | Fora de `src/`. Usa `\Drupal::` no mesmo padrão dos scripts de conteúdo existentes (`link-project-art.php`). |
 | Documentação | `docs/portal/ACULTA-USER-PLAN.md` (E3.1), `aculta_magazine/docs/README.md`, esta seção | Projeto | Descreve o comportamento implementado e marca as regras propostas. |
 
@@ -270,3 +270,30 @@ variante compacta também aceita `data-card-variation="compact"` no SDC card.
 Os gates de fronteira e de documentação de tokens passam no worktree após a
 mudança; a validação Runtime e os testes Kernel ainda precisam ser executados.
 
+
+### Refatoração da fronteira Portal–ACULTA420 V2 (2026-11-20)
+
+Os módulos agora compõem componentes do tema por nomes neutros: `#theme =>
+portal_component` e `#name => <id>`. O tema resolve apenas IDs presentes em
+`PagePresentationHooks::PORTAL_COMPONENTS`; nomes fora da lista mantêm o fallback
+renderizável sem descoberta arbitrária. Botão, shell, menu da conta e editor de
+foto usam hooks neutros (`portal_button`, `portal_shell`, `portal_account_menu`
+e `portal_photo_editor`). O contrato de rota `_portal_presentation` comunica
+variantes visuais sem o tema depender dos nomes de rota dos módulos.
+
+Atributos de apresentação emitidos pelos módulos usam tokens semânticos
+`data-portal-ui`. `PortalUiHooks::TOKENS` do V2 converte tokens que precisam de
+estilo em classes; valores com lista vazia são âncoras semânticas ou pertencem a
+um SDC que já oferece o estilo. `visually-hidden` permanece como utilitário do
+Drupal Core e sua exceção sem folha CSS local está documentada em
+`aculta420_v2/docs/classes-sem-css-excecoes.md`. CSS de loja, checkout e campos
+de endereço foi movido para bibliotecas do tema; o módulo mantém dados,
+validação, acesso, cache e comportamento.
+
+Validação executada nesta fase: `validate-module-theme-boundary` PASS (7.306
+verificações), `validate-aculta420-mapped-classes` PASS (384 classes, sem
+Bootstrap), UI Styles PASS (54), fundações PASS (85 pares), UI Skins PASS
+(134), PHP lint PASS nos arquivos alterados e suíte Unit focal PASS (31 testes,
+169 assertions). A captura visual no Runtime não foi executada; permanece
+DEFERRED. PHPStan nível 10 e a redução da dívida tocada seguem em validação e
+não são declarados PASS neste registro.

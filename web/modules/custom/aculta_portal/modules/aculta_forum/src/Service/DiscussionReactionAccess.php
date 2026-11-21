@@ -6,6 +6,8 @@ namespace Drupal\aculta_forum\Service;
 
 use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_forum\Entity\ForumPost;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentingStatus;
 use Drupal\Core\Access\AccessResult;
@@ -27,6 +29,7 @@ class DiscussionReactionAccess {
     protected readonly DiscussionContextResolver $contextResolver,
     protected readonly EntityTypeManagerInterface $entityTypeManager,
     protected readonly ConfigFactoryInterface $configFactory,
+    protected readonly DiscussionOriginResolverInterface $originResolver,
   ) {}
 
   /**
@@ -82,6 +85,12 @@ class DiscussionReactionAccess {
       return AccessResult::forbidden('Host discussion entity cannot carry discussion fields.')
         ->addCacheableDependency($entity)
         ->addCacheableDependency($host);
+    }
+
+    $origin = $this->originResolver->classify($entity);
+    if (in_array($origin->origin, [DiscussionOrigin::ARCHIVE, DiscussionOrigin::UNKNOWN], TRUE)) {
+      return AccessResult::forbidden('Discussion origin does not allow reactions.')
+        ->addCacheableDependency($origin);
     }
 
     $context = $this->contextResolver->resolve($host, $account);

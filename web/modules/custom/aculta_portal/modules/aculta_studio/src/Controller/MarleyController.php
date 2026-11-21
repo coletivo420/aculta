@@ -39,6 +39,16 @@ final class MarleyController {
 
   /**
    * Renderiza o Studio no nível pedido pela URL.
+   *
+   * @param string $aba
+   *   Value used for $aba.
+   * @param string $secao
+   *   Value used for $secao.
+   * @param string $sub
+   *   Value used for $sub.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function page(string $aba = '', string $secao = '', string $sub = ''): array {
     $areas = $this->presenter->visibleTabs($this->account);
@@ -82,11 +92,13 @@ final class MarleyController {
     }
     $area = $areas[$aba] ?? throw new NotFoundHttpException();
     $area_links = array_map(
-      static fn (MarleyTabInterface $tab): array => [
-        'id' => $tab->getPluginId(),
-        'label' => $tab->getPluginDefinition()['label'],
-        'url' => Url::fromRoute('aculta_studio.area', ['aba' => $tab->getPluginId()]),
-      ],
+      function (MarleyTabInterface $tab): array {
+        return [
+          'id' => $tab->getPluginId(),
+          'label' => $this->tabLabel($tab),
+          'url' => Url::fromRoute('aculta_studio.area', ['aba' => $tab->getPluginId()]),
+        ];
+      },
       $areas,
     );
     $build['areas'] = $this->linkList(
@@ -176,8 +188,8 @@ final class MarleyController {
     // Popup de criação de conteúdo (ação Nova publicação): diálogo e HTMX.
     $build['#attached']['library'][] = 'aculta_studio/studio-create-popup';
     $build['studio_create_popup'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:popup',
+      '#theme' => 'portal_component',
+      '#name' => 'popup',
       '#props' => [
         'id' => 'aculta-studio-create-dialog',
         'title' => (string) t('Nova publicação'),
@@ -230,8 +242,8 @@ final class MarleyController {
       $build['layout']['main']['listing'] = $this->listings->build($tab['listing'], $this->account);
     }
     $build['layout']['main']['panel'] = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:surface-panel',
+      '#theme' => 'portal_component',
+      '#name' => 'surface-panel',
       '#props' => ['tone' => 'raised', 'radius' => 'md', 'spacing' => 'compact', 'elevation' => 'none'],
       '#attributes' => ['data-aculta-studio' => 'panel', 'data-aculta-studio-tab' => $sub],
       '#slots' => ['content' => ['actions' => [
@@ -246,8 +258,11 @@ final class MarleyController {
   /**
    * Publication-first landing: native SDC composition and authorized links.
    *
-   * @param array<string, \Drupal\aculta_studio\MarleyTabInterface> $areas
-   *   Areas already filtered by the presenter.
+   * @param array<string, MarleyTabInterface> $areas
+   *   Available areas the current account may access.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   private function welcome(array $areas): array {
     $items = [];
@@ -259,11 +274,11 @@ final class MarleyController {
         foreach ($section['tabs'] as $tab) {
           foreach ($tab['actions'] as $action) {
             $items[] = [
-              '#theme' => 'aculta_portal_component',
+              '#theme' => 'portal_component',
               '#name' => 'card',
               '#slots' => [
                 'header' => ['#plain_text' => (string) $action['title']],
-                'content' => ['#plain_text' => (string) $area->getPluginDefinition()['label']],
+                'content' => ['#plain_text' => $this->tabLabel($area)],
                 'footer' => PortalLinkElement::build($action['title'], $action['url'], [
                   'data-portal-ui' => 'studio-action',
                   'data-aculta-studio' => 'action',
@@ -278,7 +293,7 @@ final class MarleyController {
       '#type' => 'container',
       '#attributes' => ['data-aculta-studio' => 'welcome'],
       'header' => [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'context-header',
         '#props' => [
           'eyebrow' => (string) $this->t('ACULTA Studio Marley'),
@@ -287,7 +302,7 @@ final class MarleyController {
         ],
       ],
       'create' => $items === [] ? [] : [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'content-grid',
         '#props' => ['columns' => 2],
         '#slots' => ['items' => $items],
@@ -298,7 +313,7 @@ final class MarleyController {
   /**
    * Builds authorized links and announces the current item accessibly.
    *
-   * @param array<int, array{id: string, label: mixed, url: \Drupal\Core\Url}> $items
+   * @param array<array-key, array{id: string, label: mixed, url: \Drupal\Core\Url, attributes?: array<string, mixed>}> $items
    *   Authorized navigation links to render.
    * @param string $behaviour
    *   The data attribute value identifying the link level.
@@ -334,13 +349,27 @@ final class MarleyController {
     // Keep real links, the Studio AJAX hooks, access and cache on the list.
     if ($behaviour === 'tab' || $behaviour === 'subtab') {
       return [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'context-tabs',
         '#props' => ['label' => $label],
         '#slots' => ['items' => $list],
       ];
     }
     return $list;
+  }
+
+  /**
+   * Returns the visible label of a plugin definition with a safe fallback.
+   */
+  private function tabLabel(MarleyTabInterface $tab): string {
+    $definition = $tab->getPluginDefinition();
+    if (is_array($definition)) {
+      $label = $definition['label'] ?? NULL;
+      if (is_scalar($label) || $label instanceof \Stringable) {
+        return (string) $label;
+      }
+    }
+    return $tab->getPluginId();
   }
 
   /**

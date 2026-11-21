@@ -106,10 +106,12 @@ final class EventOrganizationModalForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<array-key, mixed> $form
-   *   Form elements and metadata.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    *
    * @return array<array-key, mixed>
-   *   Built form elements.
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $request = $this->getRequest();
@@ -164,7 +166,9 @@ final class EventOrganizationModalForm extends FormBase {
    * Constrói o passo de busca e seleção de organizações existentes.
    *
    * @param array<array-key, mixed> $form
-   *   Form elements and metadata, modified in place.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   private function buildSearchStep(array &$form, FormStateInterface $form_state): void {
     $isMultiple = $this->formBoolean($form_state->get('is_multiple'));
@@ -277,7 +281,8 @@ final class EventOrganizationModalForm extends FormBase {
     }
     else {
       $form['empty_notice'] = [
-        '#component' => 'aculta420_v2:status-messages',
+        '#theme' => 'portal_component',
+        '#name' => 'status-messages',
         '#props' => [
           'type' => 'status',
           'messages' => [$this->t('Nenhuma organização encontrada. Você pode cadastrar uma nova organização imediatamente no botão acima.')],
@@ -318,7 +323,9 @@ final class EventOrganizationModalForm extends FormBase {
    * Constrói o passo de criação de nova organização.
    *
    * @param array<array-key, mixed> $form
-   *   Form elements and metadata, modified in place.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   private function buildCreateStep(array &$form, FormStateInterface $form_state): void {
     $form['create_intro'] = [
@@ -336,7 +343,8 @@ final class EventOrganizationModalForm extends FormBase {
       $dups = $storage->loadMultiple($candidateIds);
 
       $form['duplicate_warning'] = [
-        '#component' => 'aculta420_v2:status-messages',
+        '#theme' => 'portal_component',
+        '#name' => 'status-messages',
         '#props' => ['type' => 'warning'],
         '#slots' => ['content' => [
           'heading' => ['#markup' => '<h4>' . $this->t('Atenção: Organizações com nomes semelhantes já cadastradas') . '</h4><p>' . $this->t('Para evitar duplicidade, verifique se a organização desejada já existe antes de criar uma nova:') . '</p>'],
@@ -505,7 +513,9 @@ final class EventOrganizationModalForm extends FormBase {
    * Submissão do filtro de busca.
    *
    * @param array<array-key, mixed> $form
-   *   Form elements and metadata.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitSearch(array &$form, FormStateInterface $form_state): void {
     $form_state->set('termo', trim($this->formString($form_state->getValue('termo'))));
@@ -516,7 +526,9 @@ final class EventOrganizationModalForm extends FormBase {
    * Alterna para a etapa de criação.
    *
    * @param array<array-key, mixed> $form
-   *   Form elements and metadata.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function switchToCreate(array &$form, FormStateInterface $form_state): void {
     $form_state->set('mode', 'create');
@@ -528,7 +540,9 @@ final class EventOrganizationModalForm extends FormBase {
    * Alterna de volta para a busca.
    *
    * @param array<array-key, mixed> $form
-   *   Form elements and metadata.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function switchToSearch(array &$form, FormStateInterface $form_state): void {
     $form_state->set('mode', 'search');
@@ -540,7 +554,9 @@ final class EventOrganizationModalForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<array-key, mixed> $form
-   *   Form elements and metadata.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $triggering = $this->formString($form_state->getTriggeringElement()['#name'] ?? NULL);
@@ -595,7 +611,9 @@ final class EventOrganizationModalForm extends FormBase {
    * Submissão de seleção de organização existente com validação estrita.
    *
    * @param array<array-key, mixed> $form
-   *   Form elements and metadata.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitSelectOrganization(array &$form, FormStateInterface $form_state): void {
     $triggering = $form_state->getTriggeringElement();
@@ -637,7 +655,9 @@ final class EventOrganizationModalForm extends FormBase {
    * Submissão de criação e seleção de nova organização.
    *
    * @param array<array-key, mixed> $form
-   *   Form elements and metadata.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitCreateOrganization(array &$form, FormStateInterface $form_state): void {
     $nome = trim($this->formString($form_state->getValue('novo_nome')));
@@ -726,7 +746,9 @@ final class EventOrganizationModalForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<array-key, mixed> $form
-   *   Form elements and metadata.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Processado pelos submits específicos.

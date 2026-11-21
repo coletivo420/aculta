@@ -1,0 +1,25 @@
+{#
+/**
+ * @file
+ * Modal de controles do tópico: situação e categoria (somente leitura), ações e registro do CGU.
+ */
+#}
+<section class="topic-admin-controls">
+  <dl class="topic-admin-controls__facts">
+    <div><dt>{{ 'Autor'|t }}</dt><dd>{{ author_name }}</dd></div>
+    <div><dt>{{ 'Situação'|t }}</dt><dd>{{ state_label }}</dd></div>
+    <div><dt>{{ 'Categoria'|t }}</dt><dd>{{ category_label }}</dd></div>
+    {% if created_label %}<div><dt>{{ 'Publicado'|t }}</dt><dd>{{ created_label }}</dd></div>{% endif %}
+    <div><dt>{{ 'Reações'|t }}</dt><dd>{{ reactions_total }}</dd></div>
+    <div><dt>{{ 'Respostas'|t }}</dt><dd>{{ reply_count }}</dd></div>
+  </dl>
+  {% if actions %}
+    <div class="topic-admin-controls__actions">{{ actions }}</div>
+  {% endif %}
+  {% if log %}
+    <div class="topic-admin-controls__log">
+      <h3 class="topic-admin-controls__subtitle">{{ 'Registro de decisões'|t }}</h3>
+      {{ log }}
+    </div>
+  {% endif %}
+</section>

@@ -14,7 +14,7 @@
 {% set more_id = 'reaction-more-' ~ uid %}
 {% set palette_id = 'reaction-palette-' ~ uid %}
 
-<div id="{{ target_id }}" class="discussion-reaction-bar" data-discussion-reaction-bar data-entity-type="{{ entity_type }}" data-entity-id="{{ entity_id }}">
+<div id="{{ target_id }}" class="discussion-reaction-bar" data-discussion-reaction-bar data-entity-type="{{ entity_type }}" data-entity-id="{{ entity_id }}" data-author-uid="{{ author_uid|default(0) }}" data-author-reactions-received="{{ author_reactions_received|default(0) }}" data-viewer-uid="{{ viewer_uid|default(0) }}" data-viewer-reactions-given="{{ viewer_reactions_given|default(0) }}" data-reaction-total="{{ total_count|default(0) }}" data-user-reaction="{{ user_reaction|default('') }}">
 {% if can_react %}
   <div class="discussion-reaction-bar__actions">
     {# Reação rápida (padrão) #}
@@ -24,8 +24,19 @@
     <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__quick-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
       <input type="hidden" name="reaction" value="{{ default_reaction }}">
-      <button type="submit" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--quick{% if is_default_active %} is-active{% endif %}" title="{{ default_label }}" aria-label="{{ default_label }}">
+      <button type="submit" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--quick{% if is_default_active %} is-active{% endif %}" title="{{ default_label }}" aria-label="{{ default_label }}" aria-pressed="{{ is_default_active ? 'true' : 'false' }}">
         {{ include('aculta420_v2:reaction-emoji', { name: default_icon, variant: is_default_active ? 'color' : 'flat', size: 'sm' }, with_context = false) }}
+      </button>
+    </form>
+
+    {# Reação negativa com o mesmo componente Fluent Emoji das reações positivas.
+       Não há controle extra de desfazer: clicar na reação já selecionada a remove. #}
+    {% set is_dislike_active = (user_reaction == 'dislike') %}
+    <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__quick-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <input type="hidden" name="reaction" value="dislike">
+      <button type="submit" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--quick discussion-reaction-bar__btn--dislike{% if is_dislike_active %} is-active{% endif %}" title="{{ 'Descurtir'|t }}" aria-label="{{ 'Descurtir'|t }}" aria-pressed="{{ is_dislike_active ? 'true' : 'false' }}">
+        {{ include('aculta420_v2:reaction-emoji', { name: 'thumbs-down-medium', variant: is_dislike_active ? 'color' : 'flat', size: 'sm' }, with_context = false) }}
       </button>
     </form>
 
@@ -33,26 +44,44 @@
     <div class="discussion-reaction-bar__palette-wrapper">
       <button type="button" class="discussion-reaction-bar__btn discussion-reaction-bar__btn--trigger" popovertarget="{{ palette_id }}" style="anchor-name: --{{ palette_id }}" aria-haspopup="dialog" aria-expanded="false" title="{{ 'Escolher reação'|t }}" aria-label="{{ 'Escolher reação'|t }}">
         {{ include('aculta420_v2:icon', { name: 'smiley', variant: 'regular', size: 'sm' }, with_context = false) }}
+        <span class="discussion-reaction-bar__label">{{ 'Reagir'|t }}</span>
       </button>
       <div id="{{ palette_id }}" class="discussion-reaction-bar__popover discussion-reaction-bar__popover--palette" style="position-anchor: --{{ palette_id }}" popover="auto" role="dialog" aria-label="{{ 'Escolher reação'|t }}" data-reaction-popover>
         <div class="discussion-reaction-bar__popover-list">
           {% for key, reaction in allowed_reactions %}
-            {% if reaction.enabled|default(true) %}
+            {% if reaction.enabled|default(true) and key not in ['dislike', 'thumbs-down', 'thumbs-down-medium', 'thumbs_down', 'thumbs_down_medium'] and reaction.icon not in ['thumbs-down', 'thumbs-down-medium'] %}
               <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__form">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
                 <input type="hidden" name="reaction" value="{{ key }}">
-                <button type="submit" class="discussion-reaction-bar__palette-btn{% if user_reaction == key %} is-selected{% endif %}" title="{{ reaction.label }}" aria-label="{{ reaction.label }}">
+                <button type="submit" class="discussion-reaction-bar__palette-btn{% if user_reaction == key %} is-selected{% endif %}" title="{{ reaction.label }}" aria-label="{{ reaction.label }}" aria-pressed="{{ user_reaction == key ? 'true' : 'false' }}">
                   {{ include('aculta420_v2:reaction-emoji', { name: reaction.icon, variant: 'color', size: 'sm', label: reaction.label }, with_context = false) }}
                 </button>
               </form>
             {% endif %}
           {% endfor %}
+          {# Undo is an action, not a vote or another emoji. It removes
+             whatever reaction is active, and is disabled for non-voters. #}
+          <form method="post" action="{{ react_url }}" data-hx-post="{{ react_url }}" data-hx-target="#{{ target_id }}" data-hx-swap="outerHTML" class="discussion-reaction-bar__form discussion-reaction-bar__form--undo">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            <input type="hidden" name="reaction" value="undo">
+            <button type="submit" class="discussion-reaction-bar__palette-btn discussion-reaction-bar__palette-btn--undo" title="{{ 'Desfazer reação'|t }}" aria-label="{{ 'Desfazer reação'|t }}" {% if user_reaction is empty %}disabled{% endif %}>
+              {{ include('aculta420_v2:icon', { name: 'arrow-counter-clockwise', variant: 'regular', size: 'sm' }, with_context = false) }}
+              <span>{{ 'Desfazer'|t }}</span>
+            </button>
+          </form>
         </div>
       </div>
     </div>
   </div>
-{% else %}
-  {# Sem permissão para reagir: somente as reações recebidas. #}
-  {{ include('aculta420_v2:discussion-reactions-received', { target_id: target_id, reactions: reactions, allowed_reactions: allowed_reactions }, with_context = false) }}
 {% endif %}
+  {# A soma geral inclui todas as reações positivas, menos as descurtidas. #}
+  {{ include('aculta420_v2:discussion-reactions-received', {
+    target_id: target_id,
+    entity_type: entity_type,
+    entity_id: entity_id,
+    reactions: reactions,
+    allowed_reactions: allowed_reactions,
+    total_count: total_count|default(0),
+    positive_count: positive_count|default(0)
+  }, with_context = false) }}
 </div>

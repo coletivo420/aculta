@@ -1,0 +1,13 @@
+name: Denúncia - falha ao carregar
+description: Estado ilustrativo de erro no carregamento; não representa erro efetivo da integração.
+component: aculta420_v2:cgu-report-button
+props:
+  url: '#'
+  dialog_id: cgu-report-failure-demo
+  label: Denunciar
+  with_dialog: true
+  load_on_open: false
+slots:
+  dialog_content:
+    type: inline_template
+    template: '<p role="alert">Não foi possível apresentar o formulário nesta janela.</p><p>Na página real, o link original permite abrir o formulário completo.</p>'

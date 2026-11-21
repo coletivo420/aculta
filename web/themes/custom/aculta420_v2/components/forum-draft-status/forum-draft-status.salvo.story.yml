@@ -1,0 +1,6 @@
+name: Rascunho - salvo
+description: Estado de apresentação para futura persistência verificada; não anuncia salvamento no sistema.
+component: aculta420_v2:forum-draft-status
+props:
+  state: saved
+  message: Rascunho de demonstração salvo.

@@ -6,6 +6,9 @@ namespace Drupal\Tests\aculta_game\Unit;
 
 use Drupal\aculta_game\ForumParticipationPolicy;
 use Drupal\aculta_game\Hook\BadgeEvaluationHooks;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_user\Badge\AchievementDefinitions;
 use Drupal\aculta_user\Badge\BadgeCatalog;
@@ -15,6 +18,7 @@ use Drupal\Core\Config\ImmutableConfig;
 use Drupal\Core\Database\Connection;
 use Drupal\Core\Database\Transaction\TransactionManagerInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\Query\QueryInterface;
@@ -98,9 +102,9 @@ final class BadgeEvaluationHooksTest extends UnitTestCase {
       $configFactory,
       new RequestStack(),
     );
-    $hook = new BadgeEvaluationHooks($badges, new ForumParticipationPolicy($purpose));
+    $hook = new BadgeEvaluationHooks($badges, new ForumParticipationPolicy($this->originResolver(), $purpose));
     $post = $this->publishedForumPost();
-    self::assertTrue((new ForumParticipationPolicy($purpose))->isEligiblePost($post));
+    self::assertTrue((new ForumParticipationPolicy($this->originResolver(), $purpose))->isEligiblePost($post));
     $hook->forumPostSave($post);
     $hook->forumPostSave($post);
 
@@ -110,12 +114,18 @@ final class BadgeEvaluationHooksTest extends UnitTestCase {
   }
 
   /**
+   * Creates an origin resolver fixture.
+   */
+  private function originResolver(): DiscussionOriginResolverInterface {
+    $resolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $resolver->method('classify')->willReturn(DiscussionOriginClassification::from(DiscussionOrigin::CURRENT, new CacheableMetadata()));
+    return $resolver;
+  }
+
+  /**
    * Builds a ForumPost-shaped entity and its current public topic context.
    */
   private function publishedForumPost(): EntityInterface {
-    $emptyField = $this->createMock(FieldItemListInterface::class);
-    $emptyField->method('isEmpty')->willReturn(TRUE);
-
     $domainField = $this->createMock(FieldItemListInterface::class);
     $domainField->method('isEmpty')->willReturn(FALSE);
     $domainField->method('__get')->with('target_id')->willReturn('forum_aculta_org');
@@ -123,11 +133,8 @@ final class BadgeEvaluationHooksTest extends UnitTestCase {
     $topic = $this->createMock(NodeInterface::class);
     $topic->method('bundle')->willReturn('aculta_forum_topic');
     $topic->method('isPublished')->willReturn(TRUE);
-    $topic->method('hasField')->willReturnCallback(
-      static fn (string $name): bool => in_array($name, ['field_autor_legado', 'field_domain_source'], TRUE),
-    );
+    $topic->method('hasField')->with('field_domain_source')->willReturn(TRUE);
     $topic->method('get')->willReturnMap([
-      ['field_autor_legado', $emptyField],
       ['field_domain_source', $domainField],
     ]);
 
@@ -141,11 +148,8 @@ final class BadgeEvaluationHooksTest extends UnitTestCase {
     $post->method('isDefaultRevision')->willReturn(TRUE);
     $post->method('getOwnerId')->willReturn(73);
     $post->method('getOriginal')->willReturn(NULL);
-    $post->method('hasField')->willReturnCallback(
-      static fn (string $name): bool => in_array($name, ['field_autor_legado', 'topic'], TRUE),
-    );
+    $post->method('hasField')->with('topic')->willReturn(TRUE);
     $post->method('get')->willReturnMap([
-      ['field_autor_legado', $emptyField],
       ['topic', $topicReference],
     ]);
     return $post;

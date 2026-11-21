@@ -26,6 +26,15 @@ final class LocationPageController extends ControllerBase {
 
   /**
    * Construtor.
+   *
+   * @param LocationCatalogue $catalogue
+   *   Value used for $catalogue.
+   * @param CalendarAgenda $agenda
+   *   Value used for $agenda.
+   * @param EventCalendarItemProvider $calendarProvider
+   *   Value used for $calendarProvider.
+   * @param TimeInterface $time
+   *   Value used for $time.
    */
   public function __construct(
     private readonly LocationCatalogue $catalogue,
@@ -36,6 +45,9 @@ final class LocationPageController extends ControllerBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -48,6 +60,9 @@ final class LocationPageController extends ControllerBase {
 
   /**
    * Título da página do local.
+   *
+   * @param EventLocation $aculta_event_location
+   *   Value used for $aculta_event_location.
    */
   public function title(EventLocation $aculta_event_location): string {
     return (string) $aculta_event_location->label();
@@ -55,6 +70,12 @@ final class LocationPageController extends ControllerBase {
 
   /**
    * Renderiza a página pública do local.
+   *
+   * @param EventLocation $aculta_event_location
+   *   Value used for $aculta_event_location.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function page(EventLocation $aculta_event_location): array {
     $viewAccess = $aculta_event_location->access('view', $this->currentUser(), TRUE);
@@ -107,7 +128,7 @@ final class LocationPageController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-location-actions'],
         'edit_link' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => (string) $this->t('Editar este local'),
             'url' => Url::fromRoute('aculta_events.location_edit', [
@@ -173,7 +194,7 @@ final class LocationPageController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'event-location-admin-actions'],
         'edit' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => (string) $this->t('Editar local'),
             'url' => Url::fromRoute('aculta_events.location_edit', ['aculta_event_location' => $aculta_event_location->id()])->toString(),
@@ -291,6 +312,12 @@ final class LocationPageController extends ControllerBase {
 
   /**
    * Constrói a agenda de datas e eventos associados a este local.
+   *
+   * @param EventLocation $location
+   *   Value used for $location.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   private function buildAgenda(EventLocation $location): array {
     $timezone = new \DateTimeZone('America/Sao_Paulo');

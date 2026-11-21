@@ -32,6 +32,14 @@ final class CourseLessonPreviewController {
 
   /**
    * Builds a preview of one lesson and its question prompts.
+   *
+   * @param GroupInterface $course
+   *   Value used for $course.
+   * @param ContentEntityInterface $lesson
+   *   Value used for $lesson.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function preview(GroupInterface $course, ContentEntityInterface $lesson): array {
     if (!$this->previewAccess->access($course, $lesson)->isAllowed()) {
@@ -68,7 +76,7 @@ final class CourseLessonPreviewController {
 
     $preview = [
       '#type' => 'container',
-      '#attributes' => ['data-aculta-lms' => 'course-preview', 'class' => ['aculta-lms-course-preview']],
+      '#attributes' => ['data-aculta-lms' => 'course-preview', 'data-portal-ui' => 'lms-course-preview'],
       '#attached' => ['library' => ['aculta_lms/course_structure']],
       'back' => Link::fromTextAndUrl(
         $this->t('Voltar à estrutura do curso'),
@@ -96,8 +104,8 @@ final class CourseLessonPreviewController {
       '#cache' => [],
     ];
     $build = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:lms-lesson-page',
+      '#theme' => 'portal_component',
+      '#name' => 'lms-lesson-page',
       '#props' => [],
       '#slots' => ['content' => $preview],
     ];

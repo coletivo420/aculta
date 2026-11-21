@@ -474,7 +474,7 @@ correspondentes estão habilitados no ambiente.
 | `main.aculta` | `/painel-administrativo/aculta/termos/aceites` | Consulta administrativa somente leitura de eventos, dados de evidência e verificação HMAC | Exige `administer aculta user agreements`; expõe IP/User-Agent; sem edição. Route registrada no Runtime de desenvolvimento; smoke anônimo 403. Acesso autenticado pendente. |
 | `conta.aculta` | `/bio/editar` | Editor da bio no cartão da conta (modal) | Purpose `account`; acesso pelo `aculta_user.account_modal_access`. |
 | `conta.aculta` | `/redes/editar/{rede}` | Editor de link de rede social (`instagram`, `facebook` ou `reddit`) | Purpose `account`; acesso pelo `aculta_user.account_modal_access`. |
-| `main.aculta` | `/u/lendashistoricas` | Memorial de legados (página pública) | Purpose `main`; sem restrição de acesso (`_access: TRUE`). |
+| `main.aculta` | `/u/lendashistoricas` | Memorial coletivo de autores históricos (página pública; atualmente registrado por `aculta_user`) | Purpose `main`; sem restrição de acesso (`_access: TRUE`). F-D48 transfere a rota ao opcional `aculta_forum_legacy`, preservando URL e acesso público. |
 | `main.aculta` | `/painel-administrativo/associados/relatorio` | Relatório administrativo de associados | Exige `administer aculta associados`; rota administrativa. |
 | `main.aculta` | `/painel-administrativo/associados/exportar` | Exportação CSV de associados | Exige `export aculta associados` (somente administrador). |
 | `main.aculta` | `/painel-administrativo/associados/{user}/situacao` | Situação de associado de uma conta (ativo, suspenso, desligado) e recusa de pedido | Exige `administer aculta associados`; só administrador concede. |

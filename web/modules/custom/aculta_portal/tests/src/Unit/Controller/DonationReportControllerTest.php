@@ -69,9 +69,17 @@ final class DonationReportControllerTest extends UnitTestCase {
       ['de' => '2026-10-01', 'ate' => '2026-10-16'],
     ));
 
-    $this->assertSame('aculta420_v2:sales-panel', $render['#component']);
-    $this->assertSame([['2026-10', 2, '60,00 BRL', 'BRL']], $render['#slots']['content']['resumo']['conteudo']['#rows']);
-    $this->assertArrayHasKey('#empty', $render['#slots']['content']['resumo']['conteudo']);
+    $this->assertSame('sales-panel', $render['#name'] ?? NULL);
+    $renderSlots = $render['#slots'] ?? NULL;
+    $this->assertIsArray($renderSlots);
+    $renderContent = $renderSlots['content'] ?? NULL;
+    $this->assertIsArray($renderContent);
+    $renderResumo = $renderContent['resumo'] ?? NULL;
+    $this->assertIsArray($renderResumo);
+    $renderConteudo = $renderResumo['conteudo'] ?? NULL;
+    $this->assertIsArray($renderConteudo);
+    $this->assertSame([['2026-10', 2, '60,00 BRL', 'BRL']], $renderConteudo['#rows'] ?? NULL);
+    $this->assertArrayHasKey('#empty', $renderConteudo);
   }
 
   /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_forum\Form;
 
+use Drupal\taxonomy\TermInterface;
 use Drupal\aculta_forum\Service\ForumTopicMover;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
@@ -26,7 +27,11 @@ final class ForumTopicMoveForm extends FormBase {
   ) {}
 
   /**
-   * {@inheritdoc} */
+   * Creates an instance from the service container.
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('aculta_forum.topic_mover'),
@@ -36,7 +41,8 @@ final class ForumTopicMoveForm extends FormBase {
   }
 
   /**
-   * {@inheritdoc} */
+   * Provides the getFormId operation.
+   */
   public function getFormId(): string {
     return 'aculta_forum_topic_move';
   }
@@ -45,7 +51,14 @@ final class ForumTopicMoveForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param ?NodeInterface $node
+   *   Node being rendered.
+   *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $node = NULL): array {
     if (!$node instanceof NodeInterface || !$this->mover->access($node, $this->account)->isAllowed()) {
@@ -62,7 +75,7 @@ final class ForumTopicMoveForm extends FormBase {
     $tree = $this->entityTypeManager->getStorage('taxonomy_term')->loadTree('aculta_forum_categories', 0, NULL, TRUE);
     $options = [];
     foreach ($tree as $term) {
-      if (!$term instanceof \Drupal\taxonomy\TermInterface) {
+      if (!$term instanceof TermInterface) {
         continue;
       }
       $termId = (int) $term->id();
@@ -104,7 +117,7 @@ final class ForumTopicMoveForm extends FormBase {
       '#button_type' => 'primary',
     ];
     $form['actions']['cancel'] = [
-      '#type' => 'aculta_portal_button',
+      '#type' => 'portal_button',
       '#props' => [
         'text' => (string) $this->t('Cancelar'),
         'url' => Url::fromRoute('aculta_forum.admin')->toString(),
@@ -118,6 +131,9 @@ final class ForumTopicMoveForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $destination = filter_var($form_state->getValue('destination'), FILTER_VALIDATE_INT);
@@ -130,6 +146,9 @@ final class ForumTopicMoveForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     try {

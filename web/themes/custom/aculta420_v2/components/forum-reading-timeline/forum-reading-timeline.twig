@@ -1,0 +1,25 @@
+{# The percentage is a server-provided History receipt, not scroll telemetry. #}
+{% set reading_content %}
+  <nav{{ attributes.addClass('forum-reading-timeline') }} aria-label="{{ label }}">
+    <div class="forum-reading-timeline__summary">
+      <span class="forum-reading-timeline__text">{{ progress_text|default(label) }}</span>
+      {{ include('aculta420_v2:badge', {
+        label: percent ~ '%',
+        icon_name: 'book-open-text',
+        variant: 'neutral',
+      }, with_context = false) }}
+    </div>
+    <progress class="forum-reading-timeline__progress" value="{{ percent }}" max="100" aria-label="{{ label }}">{{ percent }}%</progress>
+    {% if navigation %}
+      <div class="forum-reading-timeline__links">{{ navigation }}</div>
+    {% endif %}
+  </nav>
+{% endset %}
+{{ include('aculta420_v2:surface', {
+  tone: 'green-soft',
+  radius: 'lg',
+  spacing: 'compact',
+  border: 'subtle',
+  elevation: 'subtle',
+  content: reading_content,
+}, with_context = false) }}

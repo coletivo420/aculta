@@ -34,7 +34,7 @@ final class SettingsForm extends ConfigFormBase {
   /**
    * Monta o formulário do modo de cor padrão do site.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.
@@ -64,7 +64,7 @@ final class SettingsForm extends ConfigFormBase {
   /**
    * Salva o modo de cor padrão escolhido.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   Estrutura do formulário.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   Estado atual do formulário.

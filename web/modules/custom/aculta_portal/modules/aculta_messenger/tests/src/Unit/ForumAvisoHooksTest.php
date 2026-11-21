@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_messenger\Unit;
 
+use Drupal\aculta_messenger\Aviso\ForumMentionNoticeRecorder;
 use Drupal\aculta_messenger\Aviso\ForumNoticeEventProducerInterface;
 use Drupal\aculta_messenger\Hook\ForumAvisoHooks;
 use Drupal\comment\CommentInterface;
@@ -30,7 +31,7 @@ final class ForumAvisoHooksTest extends UnitTestCase {
 
     $producer = $this->createMock(ForumNoticeEventProducerInterface::class);
     $producer->expects(self::never())->method('publishComment');
-    $hooks = new ForumAvisoHooks($producer);
+    $hooks = new ForumAvisoHooks($producer, $this->createMock(ForumMentionNoticeRecorder::class));
 
     $hooks->commentUpdate($comment);
   }
@@ -47,7 +48,7 @@ final class ForumAvisoHooksTest extends UnitTestCase {
     $comment->expects(self::once())->method('getOriginal')->willReturn($original);
     $producer = $this->createMock(ForumNoticeEventProducerInterface::class);
     $producer->expects(self::once())->method('publishComment')->with($comment);
-    $hooks = new ForumAvisoHooks($producer);
+    $hooks = new ForumAvisoHooks($producer, $this->createMock(ForumMentionNoticeRecorder::class));
 
     $hooks->commentUpdate($comment);
   }

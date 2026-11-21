@@ -60,7 +60,7 @@ final class CourseAuthoringControllerTest extends UnitTestCase {
    */
   public function testDashboardBuildsCreateLinkWithPortalAttributes(): void {
     $account = $this->createMock(AccountInterface::class);
-    $account->method('hasPermission')->with('create lms_course group')->willReturn(TRUE);
+    $account->method('hasPermission')->willReturnCallback(static fn (string $permission): bool => $permission === 'create lms_course group');
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->with(TRUE)->willReturnSelf();
     $query->method('condition')->willReturnSelf();
@@ -79,8 +79,12 @@ final class CourseAuthoringControllerTest extends UnitTestCase {
       $this->getStringTranslationStub(),
     ))->dashboard();
 
-    self::assertSame('aculta_portal_button', $build['create']['#type']);
-    self::assertSame('primary', $build['create']['#props']['variant']);
+    $create = $build['create'] ?? NULL;
+    self::assertIsArray($create);
+    self::assertSame('portal_button', $create['#type'] ?? NULL);
+    $createProps = $create['#props'] ?? NULL;
+    self::assertIsArray($createProps);
+    self::assertSame('primary', $createProps['variant'] ?? NULL);
     self::assertSame(
       'course-create',
       (string) $build['create']['#attributes']['data-aculta-studio'],
@@ -93,7 +97,7 @@ final class CourseAuthoringControllerTest extends UnitTestCase {
    */
   public function testDashboardLinksManagedCourseToItsStructureEditor(): void {
     $account = $this->createMock(AccountInterface::class);
-    $account->method('hasPermission')->with('create lms_course group')->willReturn(TRUE);
+    $account->method('hasPermission')->willReturnCallback(static fn (string $permission): bool => $permission === 'create lms_course group');
     $query = $this->createMock(QueryInterface::class);
     $query->method('accessCheck')->willReturnSelf();
     $query->method('condition')->willReturnSelf();

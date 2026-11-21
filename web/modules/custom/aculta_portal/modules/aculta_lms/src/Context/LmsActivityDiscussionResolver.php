@@ -30,10 +30,17 @@ final class LmsActivityDiscussionResolver {
   ) {}
 
   /**
-   * Builds links only for topics in this course that the account can view.
+   * Builds links only for topics in this course that the account can view. A topic can be attached to the course or one of its classes. Group access remains authoritative, so learners see only the contexts they can access.
    *
-   * A topic can be attached to the course or one of its classes. Group access
-   * remains authoritative, so learners see only the contexts they can access.
+   * @param ContentEntityInterface $activity
+   *   Value used for $activity.
+   * @param GroupInterface $course
+   *   Value used for $course.
+   * @param UserInterface $account
+   *   Account to evaluate.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function build(ContentEntityInterface $activity, GroupInterface $course, UserInterface $account): array {
     $cache = (new CacheableMetadata())
@@ -98,8 +105,8 @@ final class LmsActivityDiscussionResolver {
     }
 
     $build = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:layout-section',
+      '#theme' => 'portal_component',
+      '#name' => 'layout-section',
       '#slots' => [
         'header' => [
           '#type' => 'html_tag',
@@ -109,7 +116,7 @@ final class LmsActivityDiscussionResolver {
         'content' => [
           '#theme' => 'item_list',
           '#items' => $items,
-          '#attributes' => ['class' => ['aculta-lms-discussion-list']],
+          '#attributes' => ['data-portal-ui' => 'lms-discussion-list'],
         ],
       ],
     ];

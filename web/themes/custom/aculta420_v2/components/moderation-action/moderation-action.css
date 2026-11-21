@@ -1,0 +1,31 @@
+.moderation-action {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  min-block-size: 2.75rem;
+  padding-inline: .75rem;
+  text-decoration: none;
+  color: inherit;
+  border-radius: .5rem;
+}
+
+.moderation-action:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.moderation-action--primary {
+  color: var(--color-primary);
+}
+
+.moderation-action--success {
+  color: var(--color-success);
+}
+
+.moderation-action--warning {
+  color: var(--color-warning-text, var(--color-warning));
+}
+
+.moderation-action--danger {
+  color: var(--color-danger);
+}

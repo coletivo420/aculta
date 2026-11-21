@@ -44,6 +44,7 @@ final class CourseStructureControllerTest extends UnitTestCase {
   }
 
   /**
+   * Lists lessons and activities that belong to owned entities.
    */
   public function testCourseStructureListsLessonsAndActivitiesFromOwnedEntities(): void {
     $course = $this->createMock(GroupInterface::class);
@@ -100,8 +101,8 @@ final class CourseStructureControllerTest extends UnitTestCase {
     $formBuilder->method('getForm')->willReturn(['#type' => 'form']);
     $build = (new CourseStructureController($manager, $this->getStringTranslationStub(), $formBuilder))->structure($course);
 
-    self::assertSame('component', self::renderValue($build, '#type'));
-    self::assertSame('aculta420_v2:lms-course-curriculum', self::renderValue($build, '#component'));
+    self::assertSame('portal_component', self::renderValue($build, '#theme'));
+    self::assertSame('lms-course-curriculum', self::renderValue($build, '#name'));
     self::assertSame(['aculta_lms/course_structure'], self::renderValue($build, '#attached', 'library'));
     self::assertSame('user', self::renderValue($build, '#cache', 'contexts', 0));
     self::assertSame('Curso de exemplo', self::renderValue($build, '#slots', 'header', 'title', '#value'));
@@ -155,6 +156,8 @@ final class CourseStructureControllerTest extends UnitTestCase {
   /**
    * Creates entity storage around a query fixture.
    *
+   * @param \Drupal\Core\Entity\Query\QueryInterface $query
+   *   Query fixture returned by the storage.
    * @param array<int|string, ContentEntityInterface> $entities
    *   Entities keyed by their storage IDs.
    */

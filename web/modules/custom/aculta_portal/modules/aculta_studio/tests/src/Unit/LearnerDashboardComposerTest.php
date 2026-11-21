@@ -59,11 +59,13 @@ final class LearnerDashboardComposerTest extends UnitTestCase {
 
     $build = $composer->build();
 
-    self::assertSame('aculta420_v2:lms-learning-dashboard', $build['#component']);
+    self::assertSame('lms-learning-dashboard', $build['#name']);
     self::assertSame('Minha aprendizagem', $build['#props']['title']);
     self::assertSame([], $build['#slots']['courses']);
     self::assertSame([], $build['#slots']['resume']);
-    self::assertSame('aculta420_v2:button', $build['#slots']['empty_action']['#component']);
+    $emptyAction = $build['#slots']['empty_action'] ?? NULL;
+    self::assertIsArray($emptyAction);
+    self::assertSame('button', $emptyAction['#name'] ?? NULL);
     self::assertArrayNotHasKey('#attributes', $build);
     self::assertArrayHasKey('#cache', $build);
   }

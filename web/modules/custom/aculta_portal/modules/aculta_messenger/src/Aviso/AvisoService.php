@@ -516,6 +516,58 @@ final class AvisoService implements ForumNoticeTransferInterface, ForumNoticeReg
   }
 
   /**
+   * Registers an in-app mention notice for one account.
+   *
+   * Returns 1 when a notice was recorded, 0 otherwise (author, no access,
+   * duplicate).
+   */
+  public function registrarMencao(CommentInterface $comment, int $uid): int {
+    return $this->registrarAvisoComentario($comment, $uid, Aviso::TIPO_MENCAO);
+  }
+
+  /**
+   * Registers an in-app citation notice for the author of the quoted comment.
+   *
+   * Returns 1 when a notice was recorded, 0 otherwise (author, no access,
+   * duplicate).
+   */
+  public function registrarCitacao(CommentInterface $comment, int $uid): int {
+    return $this->registrarAvisoComentario($comment, $uid, Aviso::TIPO_CITACAO);
+  }
+
+  /**
+   * Shared path for mention and citation notices.
+   */
+  private function registrarAvisoComentario(CommentInterface $comment, int $uid, string $tipo): int {
+    if (!$comment->isPublished() || $comment->bundle() !== 'aculta_discussion_post' || $uid <= 0) {
+      return 0;
+    }
+    if ($uid === (int) $comment->getOwnerId()) {
+      return 0;
+    }
+    $topico = $comment->getCommentedEntity();
+    if (!$topico instanceof NodeInterface || !$this->accessPolicy->supportsTopic($topico)) {
+      return 0;
+    }
+    if (!$this->accessPolicy->canViewComment($comment, $uid)) {
+      return 0;
+    }
+    $commentId = (int) $comment->id();
+    if ($commentId <= 0) {
+      return 0;
+    }
+    $recorded = $this->recordNoticeEvent(
+      $uid,
+      $topico,
+      $tipo,
+      'comment',
+      $commentId,
+      'ultimo_comentario',
+    );
+    return $recorded ? 1 : 0;
+  }
+
+  /**
    * Records one Forum event and increments its aggregate notice atomically.
    */
   private function recordNoticeEvent(

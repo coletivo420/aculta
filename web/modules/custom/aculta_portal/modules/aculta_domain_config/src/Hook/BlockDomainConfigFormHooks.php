@@ -11,7 +11,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Hook\Attribute\Hook;
 use Drupal\Core\Hook\Order\OrderBefore;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\domain\DomainInterface;
 use Drupal\domain_config_switcher\DomainConfigSwitcherInterface;
 use Drupal\domain_config_ui\DomainConfigEditContextInterface;
 use Drupal\domain_config_ui\DomainConfigUIManagerInterface;
@@ -42,7 +41,7 @@ final class BlockDomainConfigFormHooks {
   /**
    * Adds the domain selector before domain_config_ui builds its toggle.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   The form array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.
@@ -137,7 +136,7 @@ final class BlockDomainConfigFormHooks {
   /**
    * Redirects to the current block form with the selected domain in the URL.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
    *   The form array.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
    *   The current form state.

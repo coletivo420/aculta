@@ -32,8 +32,28 @@ final class EventLocationModalWidget extends WidgetBase {
 
   use \Drupal\Core\StringTranslation\StringTranslationTrait;
 
+  /**
+   * Constructs this service or plugin.
+   *
+   * @param string $plugin_id
+   *   Plugin ID.
+   * @param mixed $plugin_definition
+   *   Plugin definition.
+   * @param FieldDefinitionInterface $field_definition
+   *   Field definition.
+   * @param array<mixed> $settings
+   *   Widget settings.
+   * @param array<mixed> $third_party_settings
+   *   Third-party widget settings.
+   * @param EntityTypeManagerInterface $entityTypeManager
+   *   Entity type manager service.
+   * @param AccountProxyInterface $currentUser
+   *   Current user account.
+   * @param EventRouteContext $eventRouteContext
+   *   Event route context service.
+   */
   public function __construct(
-    $plugin_id,
+    string $plugin_id,
     $plugin_definition,
     FieldDefinitionInterface $field_definition,
     array $settings,
@@ -48,32 +68,85 @@ final class EventLocationModalWidget extends WidgetBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param \Drupal\Core\Field\FieldItemListInterface<\Drupal\Core\Field\FieldItemInterface> $items
+   *   Field item list.
+   * @param mixed $delta
+   *   Field item delta.
+   * @param array<array-key, mixed> $element
+   *   Field element.
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state): array {
     $fieldName = $this->fieldDefinition->getName();
-    $targetId = $items[$delta]->target_id ?? NULL;
+    $item = $items->get($delta);
+    $itemValues = $item?->getValue() ?? [];
+    $targetId = is_array($itemValues) ? ($itemValues['target_id'] ?? NULL) : NULL;
 
     // Se houve submissão ou rebuild do form, prioriza o valor do form_state.
     $formValues = $form_state->getValue($fieldName);
-    if (is_array($formValues) && isset($formValues[$delta]['target_id']) && $formValues[$delta]['target_id'] !== '') {
-      $targetId = (int) $formValues[$delta]['target_id'];
+    $submittedItem = is_array($formValues) ? ((is_int($delta) || is_string($delta) ? ($formValues[$delta] ?? NULL) : NULL)) : NULL;
+    $submittedId = is_array($submittedItem) ? ($submittedItem['target_id'] ?? NULL) : NULL;
+    if (is_int($submittedId) || (is_string($submittedId) && ctype_digit($submittedId))) {
+      $targetId = (int) $submittedId;
     }
+    $targetId = is_int($targetId) || (is_string($targetId) && ctype_digit($targetId)) ? (int) $targetId : 0;
 
     $wrapperId = 'field-event-location-wrapper';
 
     $element['#type'] = 'container';
-    $element['#attributes']['id'] = $wrapperId;
-    $element['#attributes']['data-portal-ui'] = 'event-location-widget';
-    $element['#attached']['library'][] = 'core/drupal.dialog.ajax';
-    $element['#attached']['library'][] = 'aculta_events/events-portal-ui';
+    $attributes = $element['#attributes'] ?? [];
+    if (!is_array($attributes)) {
+      $attributes = [];
+    }
+    $attributes['id'] = $wrapperId;
+    $attributes['data-portal-ui'] = 'event-location-widget';
+    $element['#attributes'] = $attributes;
 
-    $element += self::buildCardOrEmpty((int) $targetId, $fieldName, $wrapperId, $this->entityTypeManager, $this->currentUser, $this->eventRouteContext, $this->getStringTranslation());
+    $attached = $element['#attached'] ?? [];
+    if (!is_array($attached)) {
+      $attached = [];
+    }
+    $libraries = $attached['library'] ?? [];
+    if (!is_array($libraries)) {
+      $libraries = [];
+    }
+    $libraries[] = 'core/drupal.dialog.ajax';
+    $libraries[] = 'aculta_events/events-portal-ui';
+    $attached['library'] = $libraries;
+    $element['#attached'] = $attached;
+
+    $element += self::buildCardOrEmpty($targetId, $fieldName, $wrapperId, $this->entityTypeManager, $this->currentUser, $this->eventRouteContext, $this->getStringTranslation());
 
     return $element;
   }
 
   /**
    * Constrói a estrutura do card de resumo ou o estado vazio.
+   *
+   * @param int $targetId
+   *   Value used for $targetId.
+   * @param string $fieldName
+   *   Value used for $fieldName.
+   * @param string $wrapperId
+   *   Value used for $wrapperId.
+   * @param EntityTypeManagerInterface $entityTypeManager
+   *   Entity type manager service.
+   * @param AccountInterface $currentUser
+   *   Current user account.
+   * @param EventRouteContext $eventRouteContext
+   *   Event route context service.
+   * @param TranslationInterface $translation
+   *   Value used for $translation.
+   *
+   * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public static function buildCardOrEmpty(int $targetId, string $fieldName, string $wrapperId, EntityTypeManagerInterface $entityTypeManager, AccountInterface $currentUser, EventRouteContext $eventRouteContext, TranslationInterface $translation): array {
     $element = [];
@@ -125,29 +198,29 @@ final class EventLocationModalWidget extends WidgetBase {
         $statusLabel = $isPublic ? $translation->translate('Publicado') : $translation->translate('Rascunho');
 
         $element['summary'] = [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:surface-panel',
+          '#theme' => 'portal_component',
+          '#name' => 'surface-panel',
           '#props' => ['tone' => 'raised', 'radius' => 'md', 'spacing' => 'compact', 'elevation' => 'none'],
-          '#attributes' => ['class' => ['aculta-location-summary-card']],
+          '#attributes' => ['data-portal-ui' => 'location-summary-card'],
           '#slots' => ['content' => [
-          'title' => [
-            '#type' => 'html_tag',
-            '#tag' => 'h4',
-            '#value' => (string) $location->label(),
-            '#attributes' => ['data-portal-ui' => 'event-location-title'],
-          ],
-          'address' => [
-            '#type' => 'html_tag',
-            '#tag' => 'p',
-            '#value' => $enderecoStr !== '' ? $enderecoStr : (string) $translation->translate('Endereço não informado.'),
-            '#attributes' => ['data-portal-ui' => 'event-location-address'],
-          ],
-          'badge' => [
-            '#type' => 'html_tag',
-            '#tag' => 'span',
-            '#value' => (string) $statusLabel,
-            '#attributes' => ['data-portal-ui' => 'event-location-badge ' . ($isPublic ? 'event-location-badge-public' : 'event-location-badge-draft')],
-          ],
+            'title' => [
+              '#type' => 'html_tag',
+              '#tag' => 'h4',
+              '#value' => (string) $location->label(),
+              '#attributes' => ['data-portal-ui' => 'event-location-title'],
+            ],
+            'address' => [
+              '#type' => 'html_tag',
+              '#tag' => 'p',
+              '#value' => $enderecoStr !== '' ? $enderecoStr : (string) $translation->translate('Endereço não informado.'),
+              '#attributes' => ['data-portal-ui' => 'event-location-address'],
+            ],
+            'badge' => [
+              '#type' => 'html_tag',
+              '#tag' => 'span',
+              '#value' => (string) $statusLabel,
+              '#attributes' => ['data-portal-ui' => 'event-location-badge ' . ($isPublic ? 'event-location-badge-public' : 'event-location-badge-draft')],
+            ],
           ]],
         ];
 
@@ -187,7 +260,8 @@ final class EventLocationModalWidget extends WidgetBase {
       }
       else {
         $element['summary'] = [
-          '#component' => 'aculta420_v2:status-messages',
+          '#theme' => 'portal_component',
+          '#name' => 'status-messages',
           '#props' => [
             'type' => 'warning',
             'messages' => [$translation->translate('O local selecionado anteriormente não é acessível pela sua conta.')],

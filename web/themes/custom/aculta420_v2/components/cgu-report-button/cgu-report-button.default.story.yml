@@ -1,0 +1,24 @@
+name: Denunciar conteúdo - popup de confirmação
+description: Prévia sintética do gatilho Phosphor e popup do tema; a submissão real é propriedade do Form API CGU.
+component: aculta420_v2:cgu-report-button
+props:
+  url: '#'
+  dialog_id: cgu-report-story
+  label: Denunciar
+  with_dialog: true
+  load_on_open: false
+slots:
+  dialog_content:
+    type: inline_template
+    template: |
+      <p>Informe a situação à equipe responsável. Uma denúncia não remove o conteúdo automaticamente.</p>
+      <fieldset>
+        <legend>Dados da denúncia (prévia sem envio)</legend>
+        <label>Motivo
+          <select disabled><option>Selecione o motivo</option><option>Ofensa</option><option>Spam</option></select>
+        </label>
+        <label>Descrição
+          <textarea rows="4" placeholder="Descreva o problema" disabled></textarea>
+        </label>
+      </fieldset>
+      <p>O botão de confirmação real é produzido pelo CGU, com CSRF e controle de acesso.</p>

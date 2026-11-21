@@ -158,7 +158,7 @@ final class StudioProfileController {
         '#plain_text' => new TranslatableMarkup('Administre somente sua identidade na comunidade: foto, biografia, redes e visibilidade. Informações cadastrais e segurança pertencem a Minha Conta.'),
       ],
       'identity' => [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'profile-identity',
         '#props' => [
           'display_name' => $displayName,
@@ -196,7 +196,7 @@ final class StudioProfileController {
       $social['list'] = $socialList;
 
       $slots['biography'] = [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'profile-bio',
         '#props' => ['title' => (string) new TranslatableMarkup('Biografia')],
         '#slots' => [
@@ -205,7 +205,7 @@ final class StudioProfileController {
         ],
       ];
       $slots['social'] = [
-        '#theme' => 'aculta_portal_component',
+        '#theme' => 'portal_component',
         '#name' => 'profile-social',
         '#props' => ['title' => (string) new TranslatableMarkup('Redes sociais')],
         '#slots' => [
@@ -218,7 +218,7 @@ final class StudioProfileController {
     // Slots carry all owner metadata, while the complete personal editor
     // is uncacheable and varies by account and permissions.
     $build = [
-      '#theme' => 'aculta_portal_component',
+      '#theme' => 'portal_component',
       '#name' => 'profile-editor',
       '#props' => [],
       '#slots' => $slots,

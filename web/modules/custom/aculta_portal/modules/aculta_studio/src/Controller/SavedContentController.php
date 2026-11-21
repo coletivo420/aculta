@@ -154,8 +154,8 @@ class SavedContentController {
     };
 
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:saved-content-page',
+      '#theme' => 'portal_component',
+      '#name' => 'saved-content-page',
       '#slots' => [
         'content' => [
           'header' => [

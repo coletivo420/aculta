@@ -66,8 +66,8 @@ final class LearnerDashboardComposer {
     }
 
     $build = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:lms-learning-dashboard',
+      '#theme' => 'portal_component',
+      '#name' => 'lms-learning-dashboard',
       '#props' => [
         'title' => (string) $this->t('Minha aprendizagem'),
         'introduction' => (string) $this->t('Acompanhe seus cursos e continue de onde parou.'),
@@ -80,9 +80,9 @@ final class LearnerDashboardComposer {
         'resume' => $summary->continueCourse instanceof StudentLearningCourse ? $this->buildCourseCard($summary->continueCourse, TRUE) : [],
         'courses' => $courses,
         'empty_action' => $this->buildButton(
-          $this->t('Explorar o catálogo de cursos'),
-          Url::fromRoute('aculta_portal.courses_home'),
-          'primary',
+            $this->t('Explorar o catálogo de cursos'),
+            Url::fromRoute('aculta_portal.courses_home'),
+            'primary',
         ),
         'certificates' => $certificates,
       ],
@@ -96,6 +96,14 @@ final class LearnerDashboardComposer {
 
   /**
    * Builds a course card using the LMS-specific SDC.
+   *
+   * @param StudentLearningCourse $course
+   *   Value used for $course.
+   * @param bool $resume
+   *   Value used for $resume.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   private function buildCourseCard(StudentLearningCourse $course, bool $resume = FALSE): array {
     $hasLessons = $course->totalLessons > 0;
@@ -129,8 +137,8 @@ final class LearnerDashboardComposer {
     }
 
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:lms-learning-course-card',
+      '#theme' => 'portal_component',
+      '#name' => 'lms-learning-course-card',
       '#props' => [
         'title' => $course->label,
         'progress_id' => 'lms-course-progress-' . $courseId,
@@ -152,12 +160,18 @@ final class LearnerDashboardComposer {
 
   /**
    * Builds a certificate card from the public-safe LMS certificate summary.
+   *
+   * @param StudentLearningCertificate $certificate
+   *   Value used for $certificate.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   private function buildCertificateCard(StudentLearningCertificate $certificate): array {
     $active = $certificate->state === 'active';
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:lms-certificate-card',
+      '#theme' => 'portal_component',
+      '#name' => 'lms-certificate-card',
       '#props' => [
         'title' => (string) $certificate->courseTitle,
         'status' => $active ? 'active' : 'revoked',
@@ -168,9 +182,9 @@ final class LearnerDashboardComposer {
       ],
       '#slots' => [
         'verification_action' => $this->buildButton(
-          $this->t('Ver certificado'),
-          $certificate->verificationUrl,
-          'secondary',
+            $this->t('Ver certificado'),
+            $certificate->verificationUrl,
+            'secondary',
         ),
       ],
     ];
@@ -181,8 +195,8 @@ final class LearnerDashboardComposer {
    */
   private function buildButton(mixed $label, Url $url, string $variant): array {
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:button',
+      '#theme' => 'portal_component',
+      '#name' => 'button',
       '#props' => [
         'text' => (string) $label,
         'url' => $url->toString(),

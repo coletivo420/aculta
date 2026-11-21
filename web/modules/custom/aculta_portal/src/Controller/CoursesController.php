@@ -31,26 +31,26 @@ final class CoursesController extends ControllerBase {
    */
   public function home(): array {
     return [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:courses-catalog',
+      '#theme' => 'portal_component',
+      '#name' => 'courses-catalog',
       '#props' => [],
       '#slots' => [
         'intro' => [
-        '#type' => 'html_tag',
-        '#tag' => 'p',
-        '#value' => $this->t('Formação para ampliar conhecimento, fortalecer direitos e construir caminhos antiproibicionistas.'),
-      ],
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => $this->t('Formação para ampliar conhecimento, fortalecer direitos e construir caminhos antiproibicionistas.'),
+        ],
         'catalog_title' => [
-        '#type' => 'html_tag',
-        '#tag' => 'h2',
-        '#value' => $this->t('Cursos disponíveis'),
-      ],
+          '#type' => 'html_tag',
+          '#tag' => 'h2',
+          '#value' => $this->t('Cursos disponíveis'),
+        ],
         'catalog' => $this->catalog(),
         'collaboration' => [
-        '#type' => 'html_tag',
-        '#tag' => 'p',
-        '#value' => $this->t('Acesse sua conta para participar dos cursos.'),
-      ],
+          '#type' => 'html_tag',
+          '#tag' => 'p',
+          '#value' => $this->t('Acesse sua conta para participar dos cursos.'),
+        ],
       ],
     ];
   }

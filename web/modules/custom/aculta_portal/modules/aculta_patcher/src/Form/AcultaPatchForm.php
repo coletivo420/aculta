@@ -16,13 +16,25 @@ final class AcultaPatchForm extends EntityForm {
 
   /**
    * {@inheritdoc}
+   *
+   * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function form(array $form, FormStateInterface $form_state): array {
-    $form = parent::form($form, $form_state);
+    $parent_form = parent::form($form, $form_state);
+    if (is_array($parent_form)) {
+      $form = $parent_form;
+    }
     /** @var \Drupal\aculta_patcher\Entity\AcultaPatch $patch */
     $patch = $this->entity;
     $form['notice'] = [
-      '#component' => 'aculta420_v2:status-messages',
+      '#theme' => 'portal_component',
+      '#name' => 'status-messages',
       '#props' => ['type' => 'warning'],
       '#slots' => ['content' => ['#markup' => $this->t('O estado ativo inclui este diff no manifesto do próximo build Composer. Salvar aqui não altera arquivos de código nem ativa o patch no site em execução; exporte a configuração, gere os artefatos e revise o commit antes do deploy.')]],
     ];

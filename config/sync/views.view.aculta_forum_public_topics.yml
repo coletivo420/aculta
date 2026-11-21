@@ -661,6 +661,14 @@ display:
     display_options:
       title: 'Discussões mais comentadas'
       sorts:
+        sticky:
+          id: sticky
+          table: node_field_data
+          field: sticky
+          entity_type: node
+          entity_field: sticky
+          plugin_id: standard
+          order: DESC
         comment_count:
           id: comment_count
           table: comment_entity_statistics

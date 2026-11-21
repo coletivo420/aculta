@@ -11,6 +11,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_cgu\Entity\CguReport;
 use Drupal\aculta_cgu\ModerationScope;
@@ -35,6 +36,7 @@ final class CguReportDecisionForm extends FormBase {
     protected readonly ReportService $reportService,
     protected readonly EntityTypeManagerInterface $entityTypeMgr,
     protected readonly DateFormatterInterface $dateFormatter,
+    protected readonly ?RouteMatchInterface $cguDecisionRouteMatch = NULL,
   ) {}
 
   /**
@@ -48,6 +50,7 @@ final class CguReportDecisionForm extends FormBase {
       $service,
       $container->get('entity_type.manager'),
       $container->get('date.formatter'),
+      $container->get('current_route_match'),
     );
   }
 
@@ -80,7 +83,14 @@ final class CguReportDecisionForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
+   * @param ?CguReport $aculta_cgu_report
+   *   Value used for $aculta_cgu_report.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?CguReport $aculta_cgu_report = NULL): array {
     if ($aculta_cgu_report === NULL) {
@@ -120,6 +130,7 @@ final class CguReportDecisionForm extends FormBase {
           [$this->t('Conteúdo denunciado:'), $targetLabel],
           [$this->t('Área / Purpose:'), ucfirst($purpose)],
           [$this->t('Motivo apontado:'), ucfirst($motivo)],
+          [$this->t('Descrição do relato:'), $this->report->get('description')->getString() ?: '-'],
           [$this->t('Data da denúncia:'), $created > 0 ? $this->dateFormatter->format($created, 'medium') : '-'],
           [$this->t('Situação atual:'), ucfirst($status)],
         ],
@@ -158,10 +169,10 @@ final class CguReportDecisionForm extends FormBase {
       $form['actions'] = [
         '#type' => 'actions',
         'back' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => $this->t('Voltar para a fila'),
-            'url' => Url::fromRoute('aculta_cgu.admin_reports')->toString(),
+            'url' => Url::fromRoute($this->queueRoute())->toString(),
             'variant' => 'secondary',
           ],
         ],
@@ -220,10 +231,10 @@ final class CguReportDecisionForm extends FormBase {
         '#button_type' => 'primary',
       ],
       'cancel' => [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => $this->t('Cancelar'),
-          'url' => Url::fromRoute('aculta_cgu.admin_reports')->toString(),
+          'url' => Url::fromRoute($this->queueRoute())->toString(),
           'variant' => 'secondary',
         ],
       ],
@@ -233,9 +244,26 @@ final class CguReportDecisionForm extends FormBase {
   }
 
   /**
+   * Returns the own CGU queue matching the current administrative/frontend UI.
+   */
+  private function queueRoute(): string {
+    $route = $this->cguDecisionRouteMatch?->getRouteName();
+    // Keep report decisions in the owner experience. The CGU remains the
+    // single decision engine for Wiki and Forum, with distinct frontend ACLs.
+    return match ($route) {
+      'aculta_cgu.forum_marley_decide' => 'aculta_cgu.forum_marley_queue',
+      'aculta_wiki.moderation_report_decide' => 'aculta_wiki.moderation_reports',
+      default => 'aculta_cgu.admin_reports',
+    };
+  }
+
+  /**
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     if ($this->report === NULL) {
@@ -285,7 +313,7 @@ final class CguReportDecisionForm extends FormBase {
       $this->messenger()->addError($this->t('Erro ao salvar decisão: @message', ['@message' => $e->getMessage()]));
     }
 
-    $form_state->setRedirect('aculta_cgu.admin_reports');
+    $form_state->setRedirect($this->queueRoute());
   }
 
 }

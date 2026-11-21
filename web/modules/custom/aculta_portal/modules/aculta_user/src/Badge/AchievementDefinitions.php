@@ -47,6 +47,13 @@ final class AchievementDefinitions {
       BadgeCatalog::PRIMEIRA_EDICAO_WIKI => ['wiki_revision'],
       BadgeCatalog::PRIMEIRO_CURSO => ['course_passed'],
       BadgeCatalog::PERFIL_BASICO => ['profile_basic'],
+      // Sem gatilho: concedidos só pelo ForumItemMilestoneAwarder, com limiar por item.
+      BadgeCatalog::TOPICO_LEGAL_FORUM => [],
+      BadgeCatalog::TOPICO_BOM_FORUM => [],
+      BadgeCatalog::TOPICO_EXCELENTE_FORUM => [],
+      BadgeCatalog::RESPOSTA_LEGAL_FORUM => [],
+      BadgeCatalog::RESPOSTA_BOA_FORUM => [],
+      BadgeCatalog::RESPOSTA_EXCELENTE_FORUM => [],
     ];
     $legacy = [
       BadgeCatalog::FUNDADORE => [

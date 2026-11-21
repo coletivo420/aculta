@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_portal\Form;
 
+use Drupal\user\UserInterface;
 use Drupal\aculta_portal\EventSubscriber\SimplifiedAccountCheckoutSubscriber;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -42,7 +43,12 @@ final class SimplifiedAccountPasswordForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $form['intro'] = ['#markup' => '<p>' . $this->t('Seu e-mail foi confirmado. Crie uma senha para acessar sua conta.') . '</p>'];
@@ -59,12 +65,18 @@ final class SimplifiedAccountPasswordForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $uid = (int) $this->currentUser()->id();
     $account = $uid > 0 ? $this->entityTypeManager->getStorage('user')->load($uid) : NULL;
-    if (!$account instanceof \Drupal\user\UserInterface) {
+    if (!$account instanceof UserInterface) {
       return;
     }
     $rawPass = $form_state->getValue('pass');

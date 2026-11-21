@@ -6,8 +6,8 @@
 ] %}
 {% set section_items = [
   { label: 'Todas as discussões'|t, href: url('<current>'), active: true, count: null },
-  { label: 'Em alta'|t, href: '#', active: false, count: null },
-  { label: 'Sem resposta'|t, href: '#', active: false, count: null }
+  { label: 'Em alta'|t, href: url('view.aculta_forum_public_topics.page_most_commented') ~ (forum_query|default('')), active: false, count: null },
+  { label: 'Sem resposta'|t, href: url('view.aculta_forum_public_topics.page_unanswered') ~ (forum_query|default('')), active: false, count: null }
 ] %}
 {% set aside_stats = [
   { label: 'Tópicos'|t, value: view.total_rows|default(null) },

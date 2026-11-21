@@ -60,7 +60,8 @@ final class SearchPreviewController implements ContainerInjectionInterface {
    */
   public function preview(Request $request): Response {
     $term = mb_substr(trim((string) $request->query->get('q', '')), 0, SearchPageController::MAX_CHARS);
-    $html = (string) $this->renderer->renderInIsolation($this->build($term));
+    $render = $this->build($term);
+    $html = (string) $this->renderer->renderInIsolation($render);
     $response = new Response($html);
     $response->headers->set('Cache-Control', 'no-store, private');
     return $response;
@@ -80,8 +81,8 @@ final class SearchPreviewController implements ContainerInjectionInterface {
       return [
         '#cache' => ['max-age' => 0],
         'hint' => [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:hint',
+          '#theme' => 'portal_component',
+          '#name' => 'hint',
           '#slots' => ['content' => ['#plain_text' => $this->t(
             'Digite pelo menos @n caracteres para ver resultados.',
             ['@n' => SearchPageController::MIN_CHARS],

@@ -41,6 +41,9 @@ final class AccountBioForm extends FormBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @param ContainerInterface $container
+   *   Dependency injection container.
    */
   public static function create(ContainerInterface $container): static {
     return new static(
@@ -62,10 +65,12 @@ final class AccountBioForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<array-key, mixed> $form
-   *   Estrutura do formulário.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    *
    * @return array<array-key, mixed>
-   *   Estrutura do formulário.
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state): array {
     $profile = $this->profile();
@@ -116,7 +121,7 @@ final class AccountBioForm extends FormBase {
     // Limpar antes de Salvar bio. É do tipo botão: o JS só esvazia o campo, sem enviar.
     if (!$studio) {
       $form['actions']['clear'] = [
-        '#type' => 'aculta_portal_button',
+        '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Limpar'),
           'variant' => 'secondary',
@@ -137,7 +142,9 @@ final class AccountBioForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<array-key, mixed> $form
-   *   Estrutura do formulário.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     if (mb_strlen(trim($this->textValue($form_state->getValue('bio')))) > self::MAX_LENGTH) {
@@ -149,7 +156,9 @@ final class AccountBioForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<array-key, mixed> $form
-   *   Estrutura do formulário.
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $profile = $this->profile();

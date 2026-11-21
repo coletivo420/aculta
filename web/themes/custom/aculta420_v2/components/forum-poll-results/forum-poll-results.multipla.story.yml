@@ -1,0 +1,11 @@
+name: Resultados de enquete - múltipla escolha
+description: Exemplifica a soma de percentuais acima de cem sem confundir votos e pessoas.
+component: aculta420_v2:forum-poll-results
+props:
+  title: Resultados da enquete
+  voters: 10
+  selections: 15
+  multiple: true
+  options:
+    - {label: Cultura, votes: 9, percentage: 90}
+    - {label: Educação, votes: 6, percentage: 60}

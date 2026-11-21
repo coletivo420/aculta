@@ -16,6 +16,7 @@ aculta_portal.dashboard:
   defaults:
     _controller: '\Drupal\aculta_portal\Controller\PortalController::dashboard'
     _title: Visão geral
+    _portal_presentation: account-dashboard
   requirements:
     _permission: access aculta portal
   options:
@@ -104,6 +105,7 @@ aculta_portal.support_form:
   defaults:
     _form: '\Drupal\aculta_portal\Support\Form\SupportForm'
     _title: Apoie a Associação
+    _portal_presentation: support-form
   requirements:
     _access: 'TRUE'
 aculta_portal.account_settings:
@@ -195,6 +197,7 @@ aculta_portal.search:
   defaults:
     _controller: '\Drupal\aculta_portal\Search\SearchPageController::page'
     _title: Buscar
+    _portal_presentation: search
   requirements:
     _permission: access content
 aculta_portal.search_popup:

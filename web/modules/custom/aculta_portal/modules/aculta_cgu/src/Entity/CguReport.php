@@ -61,6 +61,10 @@ final class CguReport extends ContentEntityBase {
       ->setSetting('max_length', 64)
       ->setRequired(TRUE);
 
+    $fields['description'] = BaseFieldDefinition::create('string_long')
+      ->setLabel(new TranslatableMarkup('Descrição da denúncia'))
+      ->setDescription(new TranslatableMarkup('Relato sigiloso fornecido por quem denunciou o conteúdo.'));
+
     $fields['purpose'] = BaseFieldDefinition::create('string')
       ->setLabel(new TranslatableMarkup('Purpose da denúncia'))
       ->setSetting('max_length', 32)

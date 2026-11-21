@@ -44,8 +44,16 @@ final class ForumPostRevisionSelectionForm extends FormBase {
    * {@inheritdoc}
    *
    * @param array<string, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
    * @param array<int|string, mixed> $revisionOptions
+   *   Value used for $revisionOptions.
+   * @param ?int $olderRevisionId
+   *   Value used for $olderRevisionId.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, array $revisionOptions = [], ?int $olderRevisionId = NULL): array {
     if ($revisionOptions === []) {
@@ -100,7 +108,13 @@ final class ForumPostRevisionSelectionForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function validateForm(array &$form, FormStateInterface $form_state): void {
     $older = filter_var($form_state->getValue('older_revision'), FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]);
@@ -137,7 +151,13 @@ final class ForumPostRevisionSelectionForm extends FormBase {
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $post = $this->forumRouteMatch->getParameter('aculta_forum_post');

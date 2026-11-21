@@ -23,3 +23,36 @@ use Drupal\aculta420_v2\Hook\PortalUiHooks;
 function aculta420_v2_preprocess(array &$variables): void {
   PortalUiHooks::preprocessVariables($variables);
 }
+
+/**
+ * Implements hook_theme_suggestions_input_alter().
+ *
+ * Botões de moderação com ícone Phosphor usam o componente moderation-submit.
+ *
+ * @param array<int, string> $suggestions
+ *   Theme suggestions.
+ * @param array<string, mixed> $variables
+ *   Input variables.
+ */
+function aculta420_v2_theme_suggestions_input_alter(array &$suggestions, array $variables): void {
+  $element = $variables['element'] ?? [];
+  if (is_array($element) && isset($element['#moderation_icon'])) {
+    $suggestions[] = 'input__submit__moderation';
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view().
+ *
+ * Expõe se o usuário está autenticado, para abas que só existem para quem tem conta.
+ *
+ * @param array<string, mixed> $variables
+ *   View template variables.
+ */
+function aculta420_v2_preprocess_views_view(array &$variables): void {
+  $variables['forum_logged_in'] = (bool) \Drupal::currentUser()->isAuthenticated();
+  // Filtro de categoria da listagem (?categoria=ID) é mantido ao trocar a ordenação.
+  $categoria = \Drupal::request()->query->get('categoria');
+  $id = is_string($categoria) ? $categoria : '';
+  $variables['forum_query'] = ctype_digit($id) ? '?categoria=' . $id : '';
+}

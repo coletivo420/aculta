@@ -1,0 +1,30 @@
+{
+  "isolated": true,
+  "originForum": "https://forum.aculta.test",
+  "originWiki": "https://wiki.aculta.test",
+  "originMagazine": "https://revista.aculta.test",
+  "originCourses": "https://cursos.aculta.test",
+  "states": {
+    "common": "/absolute/test-qa/auth/common.json",
+    "forumModerator": "/absolute/test-qa/auth/forumModerator.json",
+    "forumMoverMember": "/absolute/test-qa/auth/forumMoverMember.json",
+    "forumMoverNonMember": "/absolute/test-qa/auth/forumMoverNonMember.json",
+    "adminComments": "/absolute/test-qa/auth/adminComments.json"
+  },
+  "ids": {
+    "publicForumTopic": 101,
+    "restrictedForumTopic": 102,
+    "publicForumComment": 201,
+    "restrictedForumComment": 202,
+    "legacyForumComment": 203,
+    "wikiComment": 204,
+    "magazineComment": 205,
+    "lmsComment": 206
+  },
+  "markers": {
+    "privateTitle": "QA-PRIVATE-FORUM-TOPIC",
+    "privateComment": "QA-PRIVATE-FORUM-COMMENT",
+    "privateCguNotes": "QA-PRIVATE-CGU-NOTES",
+    "publicCguNotes": "QA-PUBLIC-CGU-SECRET-NOTES"
+  }
+}

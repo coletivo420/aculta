@@ -37,13 +37,17 @@ class FluentEmojiIconAdapterTest extends UnitTestCase {
 
   public function testGetUnicode(): void {
     $this->assertSame('🌿', $this->adapter->getUnicode('herb'));
+    $this->assertSame('👎🏽', $this->adapter->getUnicode('thumbs-down-medium'));
     $this->assertSame('🌿', $this->adapter->getUnicode('aculta_fluent_emoji:herb'));
     $this->assertSame('✊🏽', $this->adapter->getUnicode('raised-fist-medium'));
+    $this->assertSame('👎', $this->adapter->getUnicode('thumbs-down'));
     $this->assertNull($this->adapter->getUnicode('non_existent'));
   }
 
   public function testIsValid(): void {
     $this->assertTrue($this->adapter->isValid('herb'));
+    $this->assertTrue($this->adapter->isValid('thumbs-down-medium'));
+    $this->assertTrue($this->adapter->isValid('aculta_fluent_emoji:thumbs-down'));
     $this->assertTrue($this->adapter->isValid('aculta_fluent_emoji:herb'));
     $this->assertFalse($this->adapter->isValid('aculta_phosphor_regular:heart'));
     $this->assertFalse($this->adapter->isValid('../../../etc/passwd'));
@@ -64,6 +68,11 @@ class FluentEmojiIconAdapterTest extends UnitTestCase {
 
     $searchResultsDirect = $this->adapter->search('Erva');
     $this->assertArrayHasKey('herb', $searchResultsDirect);
+    $this->assertArrayHasKey('thumbs-down-medium', $this->adapter->search('mão parda'));
+
+    $negativeResults = $this->adapter->search('descurtir');
+    $this->assertArrayHasKey('thumbs-down', $negativeResults);
+    self::assertSame('aculta_fluent_emoji:thumbs-down', $this->adapter->toIconId('thumbs-down'));
   }
 
 }

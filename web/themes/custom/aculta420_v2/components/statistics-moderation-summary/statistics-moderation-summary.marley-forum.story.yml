@@ -1,0 +1,16 @@
+name: "Marley - resumo autorizado da moderação comunitária"
+description: "Indicadores sem identificar denunciantes; dados de demonstração."
+component: aculta420_v2:statistics-moderation-summary
+props:
+  title: "Fórum - revisão comunitária"
+  note: "Valores fictícios do Story. A fonte real será aculta_statistics/aculta_cgu."
+  rows:
+    - label: Casos pendentes
+      value: '3'
+      description: "Sem dados pessoais."
+    - label: Casos atribuídos
+      value: '2'
+      description: "Trabalho em análise."
+    - label: Resolvidos
+      value: '5'
+      description: "Decisões registradas."

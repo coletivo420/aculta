@@ -24,7 +24,7 @@ final class DeployerStatusController extends ControllerBase {
   /**
    * Renderiza o painel de status do ACULTA Deployer.
    *
-   * @return array
+   * @return array<array-key, mixed>
    *   Render array do painel.
    */
   public function page(): array {
@@ -34,8 +34,14 @@ final class DeployerStatusController extends ControllerBase {
     ];
     if ($data === NULL) {
       $build['missing'] = [
-        '#component' => 'aculta420_v2:status-messages',
-        '#props' => ['type' => 'warning', 'messages' => [$this->t('⚠ Atenção: relatório do deployer indisponível. Gere com "aculta-deployer report" na raiz do repositório e confira a leitura do arquivo var/deployer/status.json.')]],
+        '#theme' => 'portal_component',
+        '#name' => 'status-messages',
+        '#props' => [
+          'type' => 'warning',
+          'messages' => [
+            $this->t('⚠ Atenção: relatório do deployer indisponível. Gere com "aculta-deployer report" na raiz do repositório e confira a leitura do arquivo var/deployer/status.json.'),
+          ],
+        ],
       ];
       return $build;
     }
@@ -116,7 +122,8 @@ final class DeployerStatusController extends ControllerBase {
     $sync = $this->reader->readRuntimeSync();
     if ($sync === NULL) {
       return [
-        '#component' => 'aculta420_v2:status-messages',
+        '#theme' => 'portal_component',
+        '#name' => 'status-messages',
         '#props' => [
           'type' => 'warning',
           'messages' => [$this->t('⚠ Atenção: relatório do Runtime Sync v2 indisponível (var/runtime-sync/state.json). Execute a sincronização cotidiana ou o diagnóstico na raiz do checkout de desenvolvimento.')],
@@ -196,7 +203,11 @@ final class DeployerStatusController extends ControllerBase {
           $this->statusCell($pendingSha !== '' && $pendingSha !== '—' ? 'error' : 'ok'),
         ],
         [
-          ['data' => ['#plain_text' => $this->t('Última execução (@mode em @ts)', ['@mode' => $mode, '@ts' => $timestamp])]],
+          [
+            'data' => [
+              '#plain_text' => $this->t('Última execução (@mode em @ts)', ['@mode' => $mode, '@ts' => $timestamp]),
+            ],
+          ],
           ['data' => ['#plain_text' => $summary]],
           $this->statusCell($outcomeState, $outcome),
         ],
@@ -280,7 +291,7 @@ final class DeployerStatusController extends ControllerBase {
    * @param string|null $label
    *   Rótulo opcional; usa o padrão do estado quando NULL.
    *
-   * @return array
+   * @return array<array-key, mixed>
    *   Célula de tabela formatada.
    */
   private function statusCell(string $state, $label = NULL): array {

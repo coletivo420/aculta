@@ -1,6 +1,18 @@
 # ACULTA Forum — Growroom420 e discussões contextuais
 
-**Ciclo atual: 0.2.0-dev.4 - integração analítica FST.** O novo ciclo consolida
+> **Arquivo histórico obrigatório:** [política de separação](docs/POLITICA-ACERVO-HISTORICO-GROWROOM-2026-11-19.md). Sem conversão de Comments históricos para ForumPost; a separação física ainda exige inventário do Runtime.
+
+> **Diretriz vigente (2026-11-19):** clone funcional Drupal do Discourse; motor transversal obrigatório de comentários de Growroom, Wiki, Revista e LMS, inclusive inventário de feedback avaliativo; CGU é a fila única de denúncias/casos; Index, Statistics, Messenger e UI Suite conservam ownership. [Auditoria](docs/AUDITORIA-CLONE-DISCOURSE-INTEGRACOES-2026-11-19.md) · [Plano](docs/PLANO-CLONE-DISCOURSE-UI-SUITE-CGU-2026-11-19.md) · [Matriz UI Patterns](docs/MATRIZ-PARIDADE-DISCOURSE-UI-PATTERNS-2026-11-19.md) · [Aceite](docs/MATRIZ-ACEITE-DISCOURSE-ACULTA-2026-11-19.md). Documento de planejamento, **não homologação de Runtime nem autorização de migração**.
+
+
+**Ciclo atual: 0.2.0-dev.6 - classificação genérica nos movedores.** O motor
+removeu dos movedores de tópicos e Comments a leitura direta de
+`field_autor_legado`; só permite mover entidades classificadas `CURRENT`. A
+Dev.5 também removeu o conversor Comment→ForumPost e `ForumPost.legacy_author`.
+A importação Growroom não ocorreu e nenhuma operação de dados no Runtime foi
+executada.
+
+O ciclo anterior de integração analítica FST mantém suas entregas. O novo ciclo consolida
 comentários e respostas na página atual para Revista, Wiki, LMS e Growroom420.
 Inclui registro central dos providers pelo aculta_forum (também o da Wiki),
 Form API/HTMX, SDC de resposta, citação, acesso/cache e URLs em português.
@@ -112,8 +124,9 @@ por padrão).
 - Publicações, LMS e Wiki usam comentários no contexto da entidade original; não
   há tópico público automático para publicação ou verbete.
 - LMS tem adapter opcional e acesso revalidado por Group/membership e Entity Access.
-- `aculta_user` é o dono único de identidade e cartões de autor/participante/perfil. Variantes distinguem `author_forum`, `author_comment`, `author_editorial`, `author_lms`, `author_wiki` e `author_growroom_historico`; autoria histórica não passa pelo resolver de User.
-- Nas listagens públicas, a última atividade compara mudança do Node, Comment Core e ForumPost publicado. A identidade User/histórica usa o `aculta_user.author_card_builder` e é carregada em lotes; o nome de login nunca é exibido.
+- `aculta_user` é dono da identidade e dos cartões de usuários atuais. O adapter de autoria do acervo, seus dados e a apresentação histórica pertencem a `aculta_forum_legacy`; sua presença é opcional em projetos que não instalam o arquivo.
+- `aculta_forum_legacy` é o addon/importador opcional do acervo. Código, configuração, rotas, campos, ferramentas e integrações específicas do legado ficam nele. O motor e o Portal não dependem do addon nem carregam sua configuração; expõem contratos genéricos que o addon pode implementar. A dependência é somente do addon para as APIs genéricas necessárias.
+- Nas listagens públicas, a última atividade compara mudança do Node, Comment Core e ForumPost publicado. A identidade de usuários atuais usa o `aculta_user.author_card_builder`; autoria histórica, quando o addon está instalado, é apresentada somente nos tópicos e comentários do acervo, respeitando o perfil legado e sem criar página individual.
 - ACULTA420 é o dono visual; `aculta_forum` entrega contrato neutro, acesso e cache.
 - Core/contrib permanecem fonte de verdade para Node, Taxonomy, Views, Search
   API, History, Flag e workflow/revisão. A entidade `aculta_forum_post` passa a

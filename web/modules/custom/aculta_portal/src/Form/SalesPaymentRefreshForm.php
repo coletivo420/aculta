@@ -51,7 +51,14 @@ final class SalesPaymentRefreshForm extends FormBase {
    * Performs the build form operation.
    *
    * @param array<string, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   * @param ?PaymentInterface $commerce_payment
+   *   Value used for $commerce_payment.
+   *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(array $form, FormStateInterface $form_state, ?PaymentInterface $commerce_payment = NULL): array {
     if ($this->pagamentos === NULL || $commerce_payment === NULL) {
@@ -68,7 +75,13 @@ final class SalesPaymentRefreshForm extends FormBase {
   /**
    * Performs the submit form operation.
    *
-   * @param array<string, mixed> $form
+   * @param array<array-key, mixed> $form
+   *   Value used for $form.
+   * @param FormStateInterface $form_state
+   *   Value used for $form_state.
+   *
+   * @return void
+   *   Value returned by the method.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $rawId = $form_state->get('pagamento_id');

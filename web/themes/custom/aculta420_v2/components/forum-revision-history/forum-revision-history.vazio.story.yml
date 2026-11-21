@@ -1,0 +1,9 @@
+name: Histórico sem revisões disponíveis
+description: Estado vazio de demonstração, sem expor revisões privadas.
+component: aculta420_v2:forum-revision-history
+props:
+  label: Histórico de revisões
+slots:
+  revisions:
+    type: inline_template
+    template: '<p role="status">Não há revisões disponíveis para esta publicação.</p>'

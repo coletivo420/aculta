@@ -9,6 +9,8 @@ use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\node\NodeInterface;
 use Drupal\taxonomy\TermInterface;
@@ -27,6 +29,7 @@ final class ForumTopicMover {
     private readonly EntityTypeManagerInterface $entityTypeManager,
     #[Autowire(service: 'aculta_portal.domain_site')]
     private readonly DomainSiteManager $siteManager,
+    private readonly DiscussionOriginResolverInterface $originResolver,
     #[Autowire(service: 'logger.channel.aculta_forum')]
     private readonly LoggerInterface $logger,
   ) {}
@@ -35,11 +38,14 @@ final class ForumTopicMover {
    * Returns whether the account may start the category movement workflow.
    */
   public function access(NodeInterface $node, AccountInterface $account): AccessResultInterface {
+    $origin = $this->originResolver->classify($node);
     if ($node->bundle() !== 'aculta_forum_topic'
       || !$node->hasField('field_domain_source')
-      || !$node->hasField('field_autor_legado')
-      || !$node->hasField('field_aculta_categories')) {
-      return AccessResult::forbidden()->addCacheableDependency($node);
+      || !$node->hasField('field_aculta_categories')
+      || $origin->origin !== DiscussionOrigin::CURRENT) {
+      return AccessResult::forbidden()
+        ->addCacheableDependency($node)
+        ->addCacheableDependency($origin);
     }
 
     $forum_domain = $this->siteManager->getDomain(SiteKey::Forum);
@@ -54,7 +60,6 @@ final class ForumTopicMover {
     $domainSourceId = is_scalar($domainTarget) ? (string) $domainTarget : '';
     $allowed = $forum_domain !== NULL
       && $account->hasPermission('move aculta forum topics')
-      && $node->get('field_autor_legado')->isEmpty()
       && $source_category instanceof TermInterface
       && $source_category->bundle() === 'aculta_forum_categories'
       && $source_category->access('view', $account)
@@ -62,7 +67,8 @@ final class ForumTopicMover {
 
     $result = ($allowed ? AccessResult::allowed() : AccessResult::forbidden())
       ->addCacheContexts(['user.permissions'])
-      ->addCacheableDependency($node);
+      ->addCacheableDependency($node)
+      ->addCacheableDependency($origin);
     if ($forum_domain !== NULL) {
       $result->addCacheableDependency($forum_domain);
     }

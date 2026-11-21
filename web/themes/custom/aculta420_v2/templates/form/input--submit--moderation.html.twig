@@ -1,0 +1,11 @@
+{#
+  Botão de envio da moderação de comentários: usa o componente moderation-submit
+  com o ícone Phosphor definido em #moderation_icon do elemento.
+#}
+{{ include('aculta420_v2:moderation-submit', {
+  attributes: attributes,
+  label: element['#value'],
+  icon: element['#moderation_icon'],
+  variant: element['#moderation_variant']|default('regular'),
+  tone: element['#moderation_tone']|default('neutral'),
+}, with_context = false) }}

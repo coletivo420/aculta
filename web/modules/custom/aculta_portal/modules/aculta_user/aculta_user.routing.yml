@@ -209,18 +209,6 @@ aculta_user.redes_save:
   options:
     _aculta_site_key: 'account'
 
-# Memorial coletivo do Fórum (ACULTA Fórum, F2). Apelido reservado em AccountNames::RESERVED.
-# Conteúdo pendente: lista de autores e texto aprovado; ver CHANGELOG do aculta_forum.
-aculta_user.memorial_legados:
-  path: '/u/lendashistoricas'
-  defaults:
-    _controller: '\Drupal\aculta_user\Controller\LegacyMemorialController::view'
-    _title: 'Perfil'
-  requirements:
-    _access: 'TRUE'
-  options:
-    _aculta_site_key: 'main'
-
 aculta_user.denuncias_forum:
   path: '/painel-administrativo/forum/denuncias'
   defaults:

@@ -29,6 +29,10 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 #[RunTestsInSeparateProcesses]
 final class CguModerationKernelTest extends KernelTestBase {
 
+  use CguPortalStubTrait;
+
+  use \Drupal\Tests\aculta_cgu\Kernel\CguPortalStubTrait;
+
   /**
    * {@inheritdoc}
    */
@@ -65,6 +69,7 @@ final class CguModerationKernelTest extends KernelTestBase {
    */
   public function register(ContainerBuilder $container): void {
     parent::register($container);
+    $this->registerDomainSiteStub($container);
 
     // This Kernel does not install the complete aculta_user dependency graph.
     // The service is only needed to compile the Events access checker here.
@@ -192,9 +197,9 @@ final class CguModerationKernelTest extends KernelTestBase {
 
     // Moderador autorizado decide a denúncia.
     $reportService->decideReport($report, $this->adminModerator, 'improcedente', 'Conteúdo em conformidade.');
-    $this->assertSame('improcedente', $report->get('status')->value);
-    $this->assertSame((int) $this->adminModerator->id(), (int) $report->get('decided_by')->value);
-    $this->assertSame('Conteúdo em conformidade.', $report->get('decision_notes')->value);
+    $this->assertSame('improcedente', $this->reportValue($report, 'status'));
+    $this->assertSame((int) $this->adminModerator->id(), (int) $this->reportValue($report, 'decided_by'));
+    $this->assertSame('Conteúdo em conformidade.', $this->reportValue($report, 'decision_notes'));
   }
 
   /**

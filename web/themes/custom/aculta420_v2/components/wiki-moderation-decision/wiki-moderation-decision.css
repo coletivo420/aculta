@@ -1,0 +1,31 @@
+.wiki-moderation-decision {
+  display: grid;
+  gap: 1rem;
+  min-inline-size: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+  border: 1px solid var(--color-border, currentColor);
+  border-radius: var(--radius-lg, 1rem);
+  background: var(--color-surface, transparent);
+}
+
+.wiki-moderation-decision__header h2 {
+  margin: 0;
+}
+
+.wiki-moderation-decision__header p {
+  margin-block: .5rem 0;
+  color: var(--color-text-secondary, currentColor);
+}
+
+.wiki-moderation-decision__context {
+  padding-block-end: 1rem;
+  border-block-end: 1px solid var(--color-border, currentColor);
+}
+
+.wiki-moderation-decision__form {
+  min-inline-size: 0;
+}
+
+.wiki-moderation-decision__form :is(input, textarea, select) {
+  max-inline-size: 100%;
+}

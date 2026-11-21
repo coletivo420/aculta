@@ -1,3 +1,5 @@
+> **ROADMAP VIGENTE 2026-11-20:** [ST-OP-00 a ST-OP-06 - todas as interfaces operacionais no ACULTA Studio](PLANO-FRONTEND-OPERACIONAL-2026-11-20.md). Moderação comunitária por Marley Fórum, pedagogia por GanjaLab, edição por Marley/WE Sativa, backend só `administrator`. Etapas antigas abaixo são histórico quando conflitarem.
+
 ## Estado consolidado da entrega Studio — ACULTA420 dev.36 — 2026-11-03
 
 - **Implementado:** Dashboard e cards vindos dos providers/permissões; shell Conta dedicado com navegação AJAX, histórico, acessibilidade e fallback; Perfil público separado da Conta; Marley com ação Criar junto ao título e moderação condicionada ao owner. Nenhum owner, grant, workflow ou storage foi duplicado.

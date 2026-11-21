@@ -13,6 +13,21 @@ autorização existente `createAccess('wiki_entry')` e o formulário nativo Node
 Form API; não cria um segundo formulário editorial nem usa uma rota do propósito
 Main como link entre purposes.
 
+## Moderação Wiki no WE Sativa - dev.140
+
+A moderação editorial da Wiki está no purpose `wiki`, em
+`/we-sativa/moderacao`, com filas separadas para verbetes, propostas e
+denúncias. A autorização pertence a `WikiModerationAccess`; os providers
+`WikiEditorialQueue` e `CguReportQueue` permanecem proprietários dos dados.
+A decisão editorial usa formulários existentes Wiki/Content Moderation e
+pareceres de denúncia usam `CguReportDecisionForm`, sem replicar moderação do
+Fórum no Marley. Stories SDC: `wiki-moderation-workspace`,
+`wiki-moderation-case`, `wiki-moderation-decision`. Consulte
+[`docs/WE-SATIVA-MODERATION-PLAN.md`](docs/WE-SATIVA-MODERATION-PLAN.md).
+
+**Estado:** código e testes de regressão publicados; Browser e Kernel em
+ambiente isolado ainda não homologados. Nenhum Runtime alterado.
+
 ## Avisos da Wiki
 
 O `aculta_wiki` publica eventos editoriais e seleciona destinatários de acordo

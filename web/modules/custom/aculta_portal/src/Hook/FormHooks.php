@@ -47,10 +47,15 @@ class FormHooks {
   ) {}
 
   /**
-   * Alters Portal-owned account and Commerce form surfaces.
-   *
-   * @param array<array-key, mixed> $form
-   */
+ * Alters Portal-owned account and Commerce form surfaces.
+ *
+ * @param array<array-key, mixed> $form
+ *   Form render array.
+ * @param FormStateInterface $formState
+ *   Current form state.
+ * @param string $formId
+ *   Value used for $formId.
+ */
   #[Hook('form_alter')]
   public function formAlter(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
@@ -259,18 +264,12 @@ class FormHooks {
   }
 
   /**
-   * Adds HTMX submit behavior to account forms.
-   *
-   * The response returns the form and its messages inside the same wrapper
-   * without reloading. Save redirects are disabled and the theme focus
-   * behavior moves to the first error (aculta_portal/account-navigation).
-   *
-   * The bio form uses its modal's JSON route and stays outside this behavior.
-   *
-   * The login form stays outside this behavior so Core can redirect after
-   * authentication.
+   * Adds HTMX submit behavior to account forms. The response returns the form and its messages inside the same wrapper without reloading. Save redirects are disabled and the theme focus behavior moves to the first error (aculta_portal/account-navigation). The bio form uses its modal's JSON route and stays outside this behavior. The login form stays outside this behavior so Core can redirect after authentication.
    *
    * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param string $formId
+   *   Value used for $formId.
    */
   private function accountAjaxSubmit(array &$form, string $formId): void {
     $route = $this->routeMatch->getRouteObject();
@@ -328,13 +327,14 @@ class FormHooks {
   }
 
   /**
-   * Recuperação de senha em modal sem fechar, só com a nova senha.
-   *
-   * O link do e-mail leva ao formulário de conta com o token do Core. Só o
-   * campo de senha aparece em modal sem botão de fechar
-   * (js/account-password-modal.js), como na criação de senha do cadastro.
+   * Recuperação de senha em modal sem fechar, só com a nova senha. O link do e-mail leva ao formulário de conta com o token do Core. Só o campo de senha aparece em modal sem botão de fechar (js/account-password-modal.js), como na criação de senha do cadastro.
    *
    * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $formState
+   *   Current form state.
+   * @param string $formId
+   *   Value used for $formId.
    */
   private function recoveryPasswordModal(array &$form, FormStateInterface $formState, string $formId): void {
     $formObject = $formState->getFormObject();
@@ -402,12 +402,12 @@ class FormHooks {
   }
 
   /**
-   * Adds the confirmation notice and hides protected form fields.
-   *
-   * Wiki and comment writes are already denied by access checks. This directs
-   * the user to account security to confirm the address.
+   * Adds the confirmation notice and hides protected form fields. Wiki and comment writes are already denied by access checks. This directs the user to account security to confirm the address.
    *
    * @param array<array-key, mixed> $form
+   *   Form render array.
+   * @param string $form_id
+   *   Value used for $form_id.
    */
   private function restrictedFormNotice(array &$form, string $form_id): void {
     $policy = $this->emailPolicy;
@@ -427,7 +427,8 @@ class FormHooks {
     }
     $url = Url::fromRoute('aculta_portal.security')->toString();
     $form['aculta_email_restriction'] = [
-      '#component' => 'aculta420_v2:status-messages',
+      '#theme' => 'portal_component',
+      '#name' => 'status-messages',
       '#weight' => -100,
       '#props' => ['type' => 'error'],
       '#slots' => ['content' => [

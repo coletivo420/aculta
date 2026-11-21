@@ -26,7 +26,6 @@ use Drupal\media\MediaInterface;
 use Drupal\Tests\UnitTestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
@@ -40,7 +39,7 @@ final class CourseMaterialsFormTest extends UnitTestCase {
   /**
    * Current test account.
    *
-   * @var AccountProxyInterface&MockObject
+   * @var AccountProxyInterface&\PHPUnit\Framework\MockObject\MockObject
    */
   private AccountProxyInterface $account;
 
@@ -144,7 +143,7 @@ final class CourseMaterialsFormTest extends UnitTestCase {
 
     $build = $form->buildForm([], new FormState());
     $courseDocuments = $this->assertArray($build['course_documents'] ?? NULL);
-    self::assertSame('aculta420_v2:lms-course-materials', $courseDocuments['#component'] ?? NULL);
+    self::assertSame('lms-course-materials', $courseDocuments['#name'] ?? NULL);
     $slots = $this->assertArray($courseDocuments['#slots'] ?? NULL);
     $add = $this->assertArray($slots['add'] ?? NULL);
     $addUrl = $add['#url'] ?? NULL;

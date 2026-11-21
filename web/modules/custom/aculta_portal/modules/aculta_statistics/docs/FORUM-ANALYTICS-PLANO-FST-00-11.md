@@ -1,3 +1,7 @@
+> **STATISTICS - PATCH 2026-11-20:** [descurtidas e scores](../../aculta_forum/docs/IMPLEMENTACAO-DESCURTIDAS-2026-11-20.md): catalogados `forum.reactions.dislikes_current` e `forum.reactions.net_current` (snapshots), `forum.reactions.active` passa a excluir reação negativa. Este último é contagem positiva; o net é MAX(0, positivas globais - dislikes globais), **não** necessariamente soma dos scores por objeto individual truncados. Testes e reconciliação Runtime DEFERRED. Todo emoji positivo atual conta no score, sem mapeamento `like_reaction_ids` para total geral.
+
+> **AMPLIAÇÃO 2026-11-20 - FST-12 a FST-15 (PLANNED):** [auditoria Game/Stats/Discourse](../../aculta_forum/docs/ESTUDO-DISCOURSE-GAME-METRICAS-INTEGRACOES-2026-11-20.md). Separar like de outros emojis e tópicos criados de visitados; eventos/estoques de likes e badges agregados, projeções pessoais consultadas no Fórum; preservar `forum.reactions.added` e `forum.*.created`, sem UID em métricas públicas. O subscriber atual `ForumReactionSubscriber` só recebe tipo de emoji e **não** pode conceder troféu nominal. Nenhum catálogo foi alterado nesta entrega.
+
 # ACULTA Forum + Statistics - auditoria e plano de integração FST-00 a FST-11
 
 **Data da auditoria:** 2026-11-10  
@@ -382,3 +386,14 @@ A matriz completa de navegador e HTTP permanece DEFERRED.
 4. Habilitar coleta de buscas somente com política de privacidade e consentimento aprovados.
 5. Instrumentar estado de resolução de denúncias no owner antes de `reports_resolved` e `resolution_median_minutes`.
 6. Medir carga representativa (100k/1M) e memória antes de declarar qualquer SLO.
+
+## Adendo FST-12 a FST-15 - integração Game/Perfil (2026-11-20)
+
+| Pacote | Entrega proposta | Gate |
+| --- | --- | --- |
+| **FST-12** | Definir mapping configurável `like_reaction_ids`, tipo de métrica, publish/current, purpose/Domain e dimensões seguras | `broccoli` default não equipara automaticamente todo emoji a curtida; nenhum post ARCHIVE |
+| **FST-13** | Criar snapshots agregados de likes atuais e séries de grants por ID de badge, mantendo eventos de reação genéricos | Novos IDs só no MetricCatalog após contrato aprovado; UID e alvo não entram em dimensões públicas |
+| **FST-14** | Projeção pessoal de tópicos criados, replies, likes/reações e visitas distintas no serviço owner Fórum, User/Studio exibem com ACL | Contagens por UID privadas, público autorizado, Stats agregado sem leaks |
+| **FST-15** | Reconcile Game+Stats e regras idempotentes com reações alteradas, posts despublicados, concorrência e backend/Studio | `reconcile --dry-run`, testes e prova sem dupla concessão |
+
+Regra: `getUserStats()` atual combina reações de múltiplos escopos e não equivale a likes de Fórum. `forum.topics.views` não representa pessoas ou tópicos distintos lidos. Nunca usar leitura `mark all as read` para emitir badge Reader.

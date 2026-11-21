@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\aculta_forum\Unit\ContentIndex;
 
+use Drupal\aculta_forum\Origin\DiscussionOriginResolver;
 use Drupal\aculta_index\Provider\ContentIndexProviderRegistry;
 use Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider;
 use Drupal\Tests\UnitTestCase;
@@ -64,6 +65,10 @@ final class ForumContentIndexProviderServiceTest extends UnitTestCase {
     }
     $registryDefinition = (new Definition(ContentIndexProviderRegistry::class, [new TaggedIteratorArgument('aculta_index.provider')]))
       ->setPublic(TRUE);
+    $container->setDefinition(
+      'aculta_forum.discussion_origin_resolver',
+      (new Definition(DiscussionOriginResolver::class, [[]]))->setPublic(TRUE),
+    );
     $container->setDefinition('aculta_index.provider_registry', $registryDefinition);
     $container->compile();
 

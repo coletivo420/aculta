@@ -10,7 +10,6 @@ use Drupal\commerce_checkout\Attribute\CommerceCheckoutFlow;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowWithPanesBase;
 use Drupal\commerce_checkout\Plugin\Commerce\CheckoutFlow\CheckoutFlowWithPanesInterface;
 use Drupal\commerce_order\Entity\OrderInterface;
-use Drupal\commerce_order\Entity\OrderItemInterface;
 use Drupal\commerce_price\Plugin\Field\FieldType\PriceItem;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormStateInterface;
@@ -59,9 +58,14 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
   /**
    * {@inheritdoc}
    *
-   * @param array<string, mixed> $configuration
+   * @param ContainerInterface $container
+   *   Dependency injection container.
+   * @param array<array-key, mixed> $configuration
+   *   Plugin configuration.
    * @param string $pane_id
+   *   Value used for $pane_id.
    * @param mixed $pane_definition
+   *   Value used for $pane_definition.
    */
   public static function create(
     ContainerInterface $container,
@@ -100,6 +104,7 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function defaultConfiguration(): array {
     /** @var array<string, mixed> $parentConfig */
@@ -114,8 +119,12 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function buildConfigurationForm(
     array $form,
@@ -146,6 +155,9 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitConfigurationForm(
     array &$form,
@@ -171,6 +183,7 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    * {@inheritdoc}
    *
    * @param string $step_id
+   *   Value used for $step_id.
    */
   public function redirectToStep($step_id): void {
     // May throw a redirect exception with settings to commerce checkout.
@@ -195,6 +208,7 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    * {@inheritdoc}
    *
    * @return array<string, mixed>
+   *   Render array returned by the method.
    */
   public function getSteps(): array {
     // Note that previous_label and next_label are not the labels
@@ -280,9 +294,14 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    * @param string|null $step_id
+   *   Value used for $step_id.
    *
    * @return array<mixed>
+   *   Render array returned by the method.
    */
   public function buildForm(
     array $form,
@@ -338,7 +357,7 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
         '#attributes' => [
           'target' => '_blank',
           'rel' => 'noopener noreferrer',
-          'class' => ['donation-presentation__document-link'],
+          'data-portal-ui' => 'donation-presentation-document-link',
         ],
         '#theme_wrappers' => ['container'],
       ];
@@ -382,6 +401,9 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    * {@inheritdoc}
    *
    * @param array<mixed> $form
+   *   Form render array.
+   * @param FormStateInterface $form_state
+   *   Current form state.
    */
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     // Steps are dynamic based on the submission, so clear to recalculate.
@@ -470,8 +492,8 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
    */
   protected function buildSummaries(array &$form, array $summarySteps): void {
     $summariesComponent = [
-      '#type' => 'component',
-      '#component' => 'aculta420_v2:donation-presentation',
+      '#theme' => 'portal_component',
+      '#name' => 'donation-presentation',
       '#props' => ['variant' => 'summaries'],
       '#slots' => ['content' => []],
       '#weight' => -80,
@@ -487,8 +509,8 @@ class DonationCheckoutFlow extends CheckoutFlowWithPanesBase implements Checkout
         }
       }
       $contentSlots[$summaryStep] = [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:donation-presentation',
+        '#theme' => 'portal_component',
+        '#name' => 'donation-presentation',
         '#props' => [
           'variant' => 'summary',
           'attributes' => new Attribute(['data-donation-step' => $summaryStep]),

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta420_v2\Hook;
 
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\aculta420_v2\Support\ComponentLibraryRoutes;
 use Drupal\aculta420_v2\Presentation\WikiBrandMediaProps;
 use Drupal\commerce_product\Entity\ProductInterface;
@@ -29,6 +30,72 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
  * Maps the Portal's neutral Domain Presentation contract to theme variables.
  */
 final class PagePresentationHooks {
+
+  /**
+   * Portal component IDs supported by this theme.
+   */
+  private const PORTAL_COMPONENTS = [
+    'account-courses',
+    'account-experience-card',
+    'account-experience-dashboard',
+    'account-terms-modal',
+    'article-authors',
+    'button',
+    'cgu-report-button',
+    'calendar-interactive',
+    'card-cultural',
+    'cart-feedback',
+    'cart-offcanvas-body',
+    'comment-admin-controls',
+    'consent-banner',
+    'courses-catalog',
+    'dialog',
+    'discussion-content-composer',
+    'discussion-reaction-bar',
+    'discussion-reactions-received',
+    'document-download',
+    'donation-presentation',
+    'editorial-category',
+    'empty-state',
+    'event-page-layout',
+    'events-upcoming-block',
+    'forum-draft-status',
+    'forum-poll-builder',
+    'forum-poll-card',
+    'forum-poll-results',
+    'forum-reading-timeline',
+    'forum-revision-history',
+    'hint',
+    'icon',
+    'image-audit-report',
+    'layout-section',
+    'lms-certificate-card',
+    'lms-course-curriculum',
+    'lms-course-materials',
+    'lms-h5p-course',
+    'lms-learning-course-card',
+    'lms-learning-dashboard',
+    'lms-learning-journey',
+    'lms-lesson-page',
+    'multidomain-bar',
+    'payment-notice',
+    'popup',
+    'portal-requirements',
+    'posting-overlay',
+    'related-content',
+    'sales-panel',
+    'saved-content-page',
+    'search-preview',
+    'secret-reveal',
+    'site-search-trigger',
+    'status-messages',
+    'studio-calendar',
+    'studio-connections-block',
+    'studio-menu',
+    'studio-menu-item',
+    'surface-panel',
+    'tabs',
+  ];
 
   /**
    * Routes that render the statistics dashboard UI.
@@ -70,12 +137,20 @@ final class PagePresentationHooks {
   ) {}
 
   /**
-   * Exposes the legacy homepage showcase prepared by ACULTA Portal.
-   */
+ * Exposes the legacy homepage showcase prepared by ACULTA Portal.
+ *
+ * @param array<array-key, mixed> $variables
+ *   Template variables.
+ */
   #[Hook('preprocess_page')]
   public function preprocessPage(array &$variables): void {
     $routeName = (string) $this->currentRouteMatch?->getRouteName();
-    $variables['aculta_studio_account_dashboard'] = in_array($routeName, ['aculta_studio.dashboard', 'aculta_studio.account'], TRUE);
+    $presentation = $this->currentRouteMatch?->getRouteObject()?->getDefault('_portal_presentation');
+    $variables['aculta_studio_account_dashboard'] = in_array(
+      $routeName,
+      ['aculta_studio.dashboard', 'aculta_studio.account'],
+      TRUE,
+    );
     $variables['aculta_layout_variant'] = $this->getPageLayoutVariant();
     // ADR-054 P7: CSS de estatísticas carregado só nas rotas do painel.
     if (in_array($this->currentRouteMatch?->getRouteName(), self::STATISTICS_ROUTES, TRUE)) {
@@ -84,10 +159,10 @@ final class PagePresentationHooks {
     if ($this->currentRouteMatch?->getRouteName() === 'user.login') {
       $variables['#attached']['library'][] = 'aculta420_v2/login-page';
     }
-    if ($this->currentRouteMatch?->getRouteName() === 'aculta_portal.search') {
+    if ($presentation === 'search') {
       $variables['#attached']['library'][] = 'aculta420_v2/search-page';
     }
-    if ($this->currentRouteMatch?->getRouteName() === 'aculta_portal.support_form'
+    if ($presentation === 'support-form'
       && isset($variables['page']['content'])
       && is_array($variables['page']['content'])
       && $this->componentAvailable('support-form')) {
@@ -96,7 +171,7 @@ final class PagePresentationHooks {
     if ($this->currentRouteMatch?->getRouteName() === 'aculta_linkweed.social_links_settings') {
       $variables['#attached']['library'][] = 'aculta420_v2/linkweed-admin';
     }
-    if (str_starts_with((string) $this->currentRouteMatch?->getRouteName(), 'aculta_portal.secrets_')) {
+    if ($presentation === 'secrets-admin') {
       $variables['#attached']['library'][] = 'aculta420_v2/secrets-admin';
     }
     // ADR-054 P7: CSS do Studio carregado só nas rotas do Studio/Conta.
@@ -112,7 +187,7 @@ final class PagePresentationHooks {
       unset($variables['page']['content']['aculta_lms_course_builder_resources']);
     }
     if (isset($variables['page']['content']) && is_array($variables['page']['content'])) {
-      if (in_array($routeName, ['aculta_portal.dashboard', 'aculta_studio.profile'], TRUE)
+      if ((in_array($presentation, ['account-dashboard'], TRUE) || $routeName === 'aculta_studio.profile')
         && $this->componentAvailable('account-profile-card')) {
         foreach (['account-bio-card', 'account-social-card'] as $accountProfileToken) {
           while ($this->wrapPortalUiRenderArray(
@@ -239,7 +314,7 @@ final class PagePresentationHooks {
     $variables['aculta_page_title'] = [];
     $variables['aculta_breadcrumb'] = [];
     $variables['aculta_help'] = [];
-    $variables['aculta_portal_menu'] = [];
+    $variables['portal_account_menu'] = [];
     $variables['aculta_account_authenticated'] = $this->currentUser->isAuthenticated();
     $variables['aculta_account_avatar'] = $variables['aculta_account_avatar'] ?? NULL;
     $variables['aculta_account_name'] = $variables['aculta_account_name'] ?? NULL;
@@ -258,8 +333,8 @@ final class PagePresentationHooks {
       // sem isso a rota renderiza um segundo H1 oculto por CSS.
       $variables['aculta_page_title'] = [];
     }
-    $variables['aculta_portal_menu'] = $this->buildAccountMenuComponent(
-      $variables['aculta_portal_menu'],
+    $variables['portal_account_menu'] = $this->buildAccountMenuComponent(
+      $variables['portal_account_menu'],
       $variables['aculta_account_authenticated'],
       $variables['aculta_account_avatar'],
       $variables['aculta_account_name'],
@@ -290,7 +365,7 @@ final class PagePresentationHooks {
    * antigas. O H1 pertence à área de conteúdo, junto do layout-page, para não
    * duplicar título nem deixar o H1 fora do landmark principal.
    *
-   * @param array<string, mixed> $variables
+   * @param array<array-key, mixed> $variables
    *   Page theme variables.
    */
   private function composeShellTitle(array &$variables): void {
@@ -312,8 +387,11 @@ final class PagePresentationHooks {
   }
 
   /**
-   * Composes theme-owned presentation for node view modes.
-   */
+ * Composes theme-owned presentation for node view modes.
+ *
+ * @param array<array-key, mixed> $variables
+ *   Template variables.
+ */
   #[Hook('preprocess_node')]
   public function preprocessNode(array &$variables): void {
     $node = $variables['node'] ?? NULL;
@@ -398,6 +476,7 @@ final class PagePresentationHooks {
 
     $bookmark = $content['flag_salvar_topico'] ?? [];
     $openingReactionBar = $variables['reaction_bar'] ?? $content['reaction_bar'] ?? [];
+    $reportAction = $content['aculta_cgu_report_action'] ?? [];
     $owner = $node->getOwner();
     $excludedContentKeys = [
       'flag_salvar_topico',
@@ -406,6 +485,7 @@ final class PagePresentationHooks {
       'body',
       'reaction_bar',
       'author_card',
+      'aculta_cgu_report_action',
     ];
     foreach ($excludedContentKeys as $key) {
       unset($content[$key]);
@@ -430,6 +510,7 @@ final class PagePresentationHooks {
         'body' => $variables['content']['body'] ?? [],
         'avatar' => $variables['opening_author_avatar'] ?? [],
         'reactions_slot' => $openingReactionBar,
+        'report_action' => $reportAction,
       ],
       '#weight' => -100,
     ];
@@ -455,6 +536,36 @@ final class PagePresentationHooks {
     ];
 
     if ($viewMode === 'full') {
+      // Administração do tópico: ícone (comment-admin-trigger, kind topico) abre o popup por HTMX.
+      $pageAdmin = [];
+      if ($this->currentUser->hasPermission('move aculta forum topics')) {
+        $pageAdmin['aculta_admin_popup'] = [
+          '#theme' => 'portal_component',
+          '#name' => 'popup',
+          '#props' => [
+            'id' => 'aculta-admin-dialog',
+            'title' => (string) t('Ações de moderação do tópico'),
+            'close_label' => (string) t('Fechar'),
+          ],
+          '#slots' => [
+            'content' => ['#markup' => '<div id="aculta-admin-dialog-body" class="aculta-admin-dialog__body"></div>'],
+          ],
+        ];
+        $pageAdmin['aculta_admin_trigger'] = [
+          '#type' => 'component',
+          '#component' => 'aculta420_v2:comment-admin-trigger',
+          '#props' => [
+            'kind' => 'topico',
+            'author_name' => $owner->getDisplayName(),
+            'url' => Url::fromRoute('aculta_forum.topic_admin_popup', ['node' => $node->id()])->toString(),
+          ],
+          '#attached' => ['library' => ['aculta_forum/comment-admin-popup']],
+          '#cache' => [
+            'contexts' => ['user.permissions'],
+            'tags' => $node->getCacheTags(),
+          ],
+        ];
+      }
       $categoryEntity = $node->hasField('field_aculta_categories') && !$node->get('field_aculta_categories')->isEmpty()
         ? $node->get('field_aculta_categories')->entity
         : NULL;
@@ -469,6 +580,7 @@ final class PagePresentationHooks {
         ],
         '#slots' => ['topic' => $topic],
       ];
+      $page += $pageAdmin;
       $cacheability = CacheableMetadata::createFromRenderArray($page)
         ->addCacheableDependency($owner);
       if ($categoryEntity !== NULL) {
@@ -592,7 +704,7 @@ final class PagePresentationHooks {
   /**
    * Composes the FAQ question and answer through the published accordion SDC.
    *
-   * @param array<string, mixed> $variables
+   * @param array<array-key, mixed> $variables
    *   Node theme variables.
    * @param \Drupal\node\NodeInterface $node
    *   FAQ node being rendered.
@@ -1024,7 +1136,7 @@ final class PagePresentationHooks {
   /**
    * Renders the Portal's reusable button contract through the theme SDC.
    */
-  #[Hook('preprocess_aculta_portal_button')]
+  #[Hook('preprocess_portal_button')]
   public function preprocessPortalButton(array &$variables): void {
     if (!$this->componentAvailable('button')) {
       return;
@@ -1058,7 +1170,7 @@ final class PagePresentationHooks {
   /**
    * Sends the account shell's semantic data and content slot to its SDC.
    */
-  #[Hook('preprocess_aculta_portal_shell')]
+  #[Hook('preprocess_portal_shell')]
   public function preprocessPortalShell(array &$variables): void {
     if (!$this->componentAvailable('account-shell')) {
       return;
@@ -1093,7 +1205,7 @@ final class PagePresentationHooks {
       '#type' => 'component',
       '#component' => 'aculta420_v2:account-shell',
       '#props' => [
-        'title' => (string) new \Drupal\Core\StringTranslation\TranslatableMarkup('Minha conta'),
+        'title' => (string) new TranslatableMarkup('Minha conta'),
         'section_title' => (string) ($variables['section_title'] ?? ''),
         'menu_items' => $menuItems,
         'accordion_items' => $accordionItems,
@@ -1109,7 +1221,7 @@ final class PagePresentationHooks {
   /**
    * Composes the account photo trigger and editor form with the shared popup SDC.
    */
-  #[Hook('preprocess_aculta_portal_photo_editor')]
+  #[Hook('preprocess_portal_photo_editor')]
   public function preprocessPortalPhotoEditor(array &$variables): void {
     if (!$this->componentAvailable('account-photo-editor')) {
       return;
@@ -1120,8 +1232,8 @@ final class PagePresentationHooks {
       '#component' => 'aculta420_v2:account-photo-editor',
       '#props' => [
         'id' => 'account-photo-popup',
-        'title' => (string) new \Drupal\Core\StringTranslation\TranslatableMarkup('Alterar foto do perfil'),
-        'trigger_aria_label' => (string) new \Drupal\Core\StringTranslation\TranslatableMarkup('Alterar foto de perfil'),
+        'title' => (string) new TranslatableMarkup('Alterar foto do perfil'),
+        'trigger_aria_label' => (string) new TranslatableMarkup('Alterar foto de perfil'),
       ],
       '#slots' => [
         'trigger' => $variables['photo'] ?? [],
@@ -1177,7 +1289,7 @@ final class PagePresentationHooks {
         'standalone_popup' => FALSE,
         'status' => (string) ($variables['status'] ?? 'editando'),
         'mode' => (string) ($variables['mode'] ?? 'responder'),
-        'parent_id' => isset($variables['parent_id']) ? $variables['parent_id'] : NULL,
+        'parent_id' => $variables['parent_id'] ?? NULL,
         'parent_author' => isset($variables['parent_author']) ? (string) $variables['parent_author'] : NULL,
         'parent_subject' => isset($variables['parent_subject']) ? (string) $variables['parent_subject'] : NULL,
         'host_title' => isset($variables['host_title']) ? (string) $variables['host_title'] : NULL,
@@ -1223,7 +1335,7 @@ final class PagePresentationHooks {
    * while preserving owner render arrays. `context-tabs` maps to `tabs`;
    * `profile-identity` maps to the `profile_full` variant of `author-card`.
    */
-  #[Hook('preprocess_aculta_portal_component')]
+  #[Hook('preprocess_portal_component')]
   public function preprocessPortalComponent(array &$variables): void {
     $name = $variables['name'] ?? NULL;
     $component = match ($name) {
@@ -1233,7 +1345,7 @@ final class PagePresentationHooks {
       'profile-identity' => 'author-card',
       'profile-bio', 'profile-social' => 'profile-details',
       'profile-editor' => 'profile-editor-dialog',
-      default => NULL,
+      default => is_string($name) && in_array($name, self::PORTAL_COMPONENTS, TRUE) ? $name : NULL,
     };
     if ($component === NULL || !$this->componentAvailable($component)) {
       return;
@@ -1266,15 +1378,12 @@ final class PagePresentationHooks {
       $slots = $mappedSlots;
     }
 
-    $attributes = [];
-    if (in_array($component, ['author-card', 'profile-editor-dialog'], TRUE)) {
-      $attributes = $variables['attributes'] ?? [];
-      if ($attributes instanceof Attribute) {
-        $attributes = $attributes->toArray();
-      }
-      if (!is_array($attributes)) {
-        $attributes = [];
-      }
+    $attributes = $variables['attributes'] ?? [];
+    if ($attributes instanceof Attribute) {
+      $attributes = $attributes->toArray();
+    }
+    if (!is_array($attributes)) {
+      $attributes = [];
     }
     if ($component === 'author-card') {
       if (!is_string($props['display_name'] ?? NULL) || trim($props['display_name']) === '') {
@@ -1292,7 +1401,11 @@ final class PagePresentationHooks {
         $slots['avatar'] = $variables['slots']['avatar'];
       }
       if ($actions !== []) {
-        $slots['actions'] = ['#type' => 'container', '#attributes' => ['class' => ['author-card__actions-list']], ...$actions];
+        $slots['actions'] = [
+          '#type' => 'container',
+          '#attributes' => ['class' => ['author-card__actions-list']],
+          ...$actions,
+        ];
       }
       $props = [
         'variant' => 'profile_full',
@@ -1310,7 +1423,7 @@ final class PagePresentationHooks {
       '#props' => $props,
       '#slots' => $slots,
     ];
-    if (in_array($component, ['author-card', 'profile-editor-dialog'], TRUE) && $attributes !== []) {
+    if ($attributes !== []) {
       $renderArray['#attributes'] = $attributes;
     }
     if ($component === 'profile-editor-dialog' && is_array($variables['elements'] ?? NULL)) {
@@ -1578,7 +1691,10 @@ final class PagePresentationHooks {
       ['title' => 'Política de privacidade', 'url' => Url::fromUserInput('/politica-de-privacidade')->toString()],
     ];
     if ($authenticated) {
-      $legalLinks[] = ['title' => 'Configurações de privacidade', 'url' => Url::fromUserInput('/configuracoes/privacidade')->toString()];
+      $legalLinks[] = [
+        'title' => 'Configurações de privacidade',
+        'url' => Url::fromUserInput('/configuracoes/privacidade')->toString(),
+      ];
     }
 
     return [
@@ -1636,7 +1752,7 @@ final class PagePresentationHooks {
   /**
    * The V2 bar uses Fetch instead of Drupal's jQuery dialog.
    *
-   * @param array<string, mixed> $variables
+   * @param array<array-key, mixed> $variables
    *   Page theme variables.
    */
   private function removeSearchDialogDependency(array &$variables): void {
@@ -1655,7 +1771,7 @@ final class PagePresentationHooks {
    *
    * This preserves the Portal-owned links, access results and cache metadata.
    *
-   * @param array<string, mixed> $variables
+   * @param array<array-key, mixed> $variables
    *   Page theme variables.
    */
   private function composeDomainHeader(array &$variables): void {
@@ -1710,7 +1826,7 @@ final class PagePresentationHooks {
 
         case 'system_menu_block:account':
           if ($this->currentUser->isAuthenticated()) {
-            $variables['aculta_portal_menu'][$key] = $block;
+            $variables['portal_account_menu'][$key] = $block;
           }
           unset($variables['page']['header'][$key]);
           break;
@@ -1801,7 +1917,7 @@ final class PagePresentationHooks {
    *
    * @param array<string, mixed> $brandMedia
    *   Brand identity metadata prepared by ACULTA Portal.
-   * @param array<string, mixed> $variables
+   * @param array<array-key, mixed> $variables
    *   Page theme variables containing the neutral domain identity.
    *
    * @return array<string, string>|null
@@ -1817,7 +1933,7 @@ final class PagePresentationHooks {
   /**
    * Reads the neutral identity without assuming optional theme variables.
    *
-   * @param array<string, mixed> $variables
+   * @param array<array-key, mixed> $variables
    *   Page theme variables.
    *
    * @return array<string, mixed>

@@ -1,0 +1,37 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: WE Sativa - Área de moderação
+description: Superfície Wiki de moderação editorial, propostas e denúncias no WE Sativa; não consome permissões do Fórum.
+status: experimental
+group: Studio
+props:
+  type: object
+  additionalProperties: false
+  required: [title]
+  properties:
+    title:
+      type: string
+      title: Título
+    eyebrow:
+      type: string
+      title: Identificador
+      default: WE SATIVA
+    description:
+      type: string
+      title: Orientação editorial
+slots:
+  tabs:
+    title: Navegação de moderação
+    description: Links de seções autorizados pela Wiki.
+  summary:
+    title: Resumo editorial
+    description: Indicadores de filas sem expor contagens ou dados de casos restritos.
+  content:
+    title: Fila ou análise
+    description: Render array da lista de casos, aprovado pelo provider da Wiki.
+  footer:
+    title: Orientações
+    description: Notas de política editorial sem dados privados ou pareceres de terceiros.
+assets:
+  css:
+    component:
+      wiki-moderation-workspace.css: {}

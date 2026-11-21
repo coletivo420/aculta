@@ -1,0 +1,8 @@
+{#
+  Botão de marcação do tópico. O elemento raiz recebe os atributos do Flag
+  (href, classes e dados da ação) pela variável attributes.
+#}
+<a{{ attributes }} class="flag-button{% if pressed %} flag-button--pressed{% endif %}" aria-pressed="{{ pressed ? 'true' : 'false' }}">
+  {{ include('aculta420_v2:icon', { name: icon, variant: pressed ? 'duotone' : 'regular', size: 'sm' }, with_context = false) }}
+  <span class="flag-button__label">{{ label }}</span>
+</a>

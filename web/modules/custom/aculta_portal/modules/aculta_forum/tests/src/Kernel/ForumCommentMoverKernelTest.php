@@ -8,6 +8,9 @@ use Drupal\aculta_forum\Form\ForumCommentMoveForm;
 use Drupal\aculta_forum\Event\ForumCommentSubtreeMovedEvent;
 use Drupal\aculta_forum\Service\ForumCommentMover;
 use Drupal\aculta_forum\Service\ForumDiscussionWriteGuard;
+use Drupal\aculta_forum\Origin\CoreDiscussionOriginClassifier;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolver;
+use Drupal\aculta_forum\Context\DiscussionContextResolver;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\comment\CommentInterface;
 use Drupal\comment\CommentingStatus;
@@ -34,6 +37,7 @@ use Drupal\search_api\Entity\Index;
 use Drupal\search_api\Entity\Server;
 use Drupal\search_api\Utility\Utility;
 use Drupal\user\Entity\User;
+use Drupal\user\Entity\Role;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 use Psr\Log\LoggerInterface;
@@ -48,6 +52,11 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 final class ForumCommentMoverKernelTest extends KernelTestBase {
 
   use CommentTestTrait;
+
+  /**
+   * The persisted Drupal user used as the current content owner.
+   */
+  private int $ownerId;
 
   /**
    * Modules required by the Kernel test fixture.
@@ -137,6 +146,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       'search_api',
       'user',
     ]);
+    $owner = User::create(['name' => 'forum-comment-move-owner', 'status' => 1]);
+    $owner->save();
+    $this->ownerId = (int) $owner->id();
     $this->container->set('lock', new DatabaseLockBackend($this->container->get('database')));
     $this->config('aculta_forum.settings')->set('comment_move_enabled', TRUE)->save();
     $this->container->get('state')->set('comment.maintain_entity_statistics', TRUE);
@@ -159,7 +171,6 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     ])->save();
     NodeType::create(['type' => 'aculta_forum_topic', 'name' => 'Forum topic'])->save();
     $this->addField('entity_reference', 'field_domain_source', ['target_type' => 'domain']);
-    $this->addField('string', 'field_autor_legado', []);
     $this->addDefaultCommentField(
       'node',
       'aculta_forum_topic',
@@ -190,7 +201,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
         'move aculta forum comments',
       ], TRUE),
     );
-    $this->account->method('id')->willReturn(42);
+    $this->account->method('id')->willReturn($this->ownerId);
     $this->account->method('isAnonymous')->willReturn(FALSE);
     $this->account->method('isAuthenticated')->willReturn(TRUE);
 
@@ -210,6 +221,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       $manager,
       $this->container->get('config.factory'),
       $this->writeGuard,
+      new DiscussionOriginResolver([
+        new CoreDiscussionOriginClassifier(new DiscussionContextResolver([])),
+      ]),
       $purpose,
       $this->container->get('lock'),
       $this->container->get('database'),
@@ -327,7 +341,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
 
   /**
    * Pending comments stay pending and cannot escape the public Forum. */
-  public function testMovePreservesPendingStateAndRejectsHistoricalTopics(): void {
+  public function testMovePreservesPendingStateAndRejectsUnclassifiedTopics(): void {
     $source = $this->topic('Source');
     $destination = $this->topic('Destination');
     $pending = $this->comment($source, NULL, CommentInterface::NOT_PUBLISHED);
@@ -347,11 +361,11 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     self::assertSame(0, $this->commentCount($source));
     self::assertSame(0, $this->commentCount($destination));
 
-    $historical = $this->topic('Historical', 'legacy-author-ref');
-    $historical_comment = $this->comment($historical, NULL, CommentInterface::PUBLISHED);
-    self::assertTrue($this->mover->access($historical_comment, $this->account)->isForbidden());
+    $unclassified = $this->topic('Unclassified', CommentingStatus::Open, 'forum_aculta_org', FALSE);
+    $unclassified_comment = $this->comment($unclassified, NULL, CommentInterface::PUBLISHED);
+    self::assertTrue($this->mover->access($unclassified_comment, $this->account)->isForbidden());
     $this->expectException(\InvalidArgumentException::class);
-    $this->mover->move((int) $historical_comment->id(), (int) $destination->id(), $this->account);
+    $this->mover->move((int) $unclassified_comment->id(), (int) $destination->id(), $this->account);
   }
 
   /**
@@ -359,8 +373,8 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
    */
   public function testMoveRejectsClosedAndCrossPurposeDestinations(): void {
     $source = $this->topic('Source');
-    $closed = $this->topic('Closed destination', '', CommentingStatus::Closed);
-    $cross_purpose = $this->topic('Main destination', '', CommentingStatus::Open, 'aculta_org');
+    $closed = $this->topic('Closed destination', CommentingStatus::Closed);
+    $cross_purpose = $this->topic('Main destination', CommentingStatus::Open, 'aculta_org');
     $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
 
     foreach ([$closed, $cross_purpose] as $destination) {
@@ -474,7 +488,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     $destination = $this->topic('Destination');
     $comment = $this->comment($source, NULL, CommentInterface::PUBLISHED);
     $file = File::create([
-      'uid' => 42,
+      'uid' => $this->ownerId,
       'filename' => 'forum-attachment.txt',
       'uri' => 'private://forum-attachment.txt',
       'filemime' => 'text/plain',
@@ -794,13 +808,18 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
   /**
    * Creates a public Forum topic for a test scenario.
    */
-  private function topic(string $title, string $legacyAuthor = '', CommentingStatus $commentStatus = CommentingStatus::Open, string $domainId = 'forum_aculta_org'): Node {
+  private function topic(
+    string $title,
+    CommentingStatus $commentStatus = CommentingStatus::Open,
+    string $domainId = 'forum_aculta_org',
+    bool $currentOwner = TRUE,
+  ): Node {
     $topic = Node::create([
       'type' => 'aculta_forum_topic',
       'title' => $title,
       'status' => 1,
+      'uid' => $currentOwner ? $this->ownerId : 0,
       'field_domain_source' => ['target_id' => $domainId],
-      'field_autor_legado' => $legacyAuthor === '' ? [] : ['value' => $legacyAuthor],
       ForumCommentMover::FIELD_NAME => ['status' => $commentStatus->value],
     ]);
     $topic->save();
@@ -817,7 +836,7 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
       'field_name' => ForumCommentMover::FIELD_NAME,
       'comment_type' => ForumCommentMover::COMMENT_TYPE,
       'pid' => $parent?->id(),
-      'uid' => 42,
+      'uid' => $this->ownerId,
       'subject' => 'Reply subject',
       'comment_body' => ['value' => 'Reply body', 'format' => 'plain_text'],
       'status' => $status,
@@ -843,6 +862,10 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
   /**
    * Adds a field storage and its bundle field configuration.
    *
+   * @param string $type
+   *   The field type.
+   * @param string $name
+   *   The field machine name.
    * @param array<string, mixed> $settings
    *   Field storage settings.
    */
@@ -861,6 +884,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     ])->save();
   }
 
+  /**
+   * Loads a saved Comment or fails the test with a clear diagnostic.
+   */
   private function loadComment(int|string|null $id): Comment {
     if ($id === NULL) {
       throw new \UnexpectedValueException('The saved comment has no ID.');
@@ -872,6 +898,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     return $comment;
   }
 
+  /**
+   * Narrows an entity to a saved Comment.
+   */
   private function requireComment(mixed $entity): Comment {
     if (!$entity instanceof Comment) {
       throw new \UnexpectedValueException('Expected a saved Comment entity.');
@@ -879,6 +908,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     return $entity;
   }
 
+  /**
+   * Loads a saved topic or fails the test with a clear diagnostic.
+   */
   private function loadNode(int|string|null $id): Node {
     if ($id === NULL) {
       throw new \UnexpectedValueException('The saved topic has no ID.');
@@ -890,6 +922,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     return $node;
   }
 
+  /**
+   * Loads a saved File or fails the test with a clear diagnostic.
+   */
   private function loadFile(int|string|null $id): File {
     if ($id === NULL) {
       throw new \UnexpectedValueException('The saved file has no ID.');
@@ -901,6 +936,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     return $file;
   }
 
+  /**
+   * Narrows an entity to a saved Flagging.
+   */
   private function requireFlagging(mixed $entity): FlaggingInterface {
     if (!$entity instanceof FlaggingInterface) {
       throw new \UnexpectedValueException('Expected a saved Flagging entity.');
@@ -908,13 +946,19 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     return $entity;
   }
 
-  private function requireRole(mixed $entity): \Drupal\user\Entity\Role {
-    if (!$entity instanceof \Drupal\user\Entity\Role) {
+  /**
+   * Narrows an entity to a Drupal Role.
+   */
+  private function requireRole(mixed $entity): Role {
+    if (!$entity instanceof Role) {
       throw new \UnexpectedValueException('The authenticated role could not be loaded.');
     }
     return $entity;
   }
 
+  /**
+   * Returns the saved identifier for a Comment.
+   */
   private function entityId(CommentInterface $comment): int|string {
     $id = $comment->id();
     if (!is_int($id) && !is_string($id)) {
@@ -923,6 +967,9 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
     return $id;
   }
 
+  /**
+   * Converts an integer-like value and rejects other scalar forms.
+   */
   private function integerValue(mixed $value): int {
     if (is_int($value)) {
       return $value;
@@ -934,7 +981,12 @@ final class ForumCommentMoverKernelTest extends KernelTestBase {
   }
 
   /**
+   * Asserts that a File usage record points to the supplied Comment.
+   *
    * @param array<mixed> $usage
+   *   File usage data keyed by type and entity ID.
+   * @param int|string $commentId
+   *   The expected Comment identifier.
    */
   private function assertFileCommentUsage(array $usage, int|string $commentId): void {
     $file_usage = $usage['file'] ?? NULL;

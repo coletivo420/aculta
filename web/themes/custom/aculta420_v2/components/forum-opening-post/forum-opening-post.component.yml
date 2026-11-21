@@ -24,6 +24,10 @@ props:
       title: Contagem de posts do autor
       description: Total formatado de posts do autor; null omite essa estatística.
       default: null
+    author_reactions_received:
+      type: integer
+      title: Saldo acumulado de curtidas do autor
+      default: 0
     timestamp:
       type: [string, 'null']
       title: Data de publicação formatada
@@ -58,6 +62,9 @@ slots:
   avatar:
     title: Avatar ou cartão de autor
     description: Avatar ou bloco de autoria do criador do tópico.
+  report_action:
+    title: Denunciar tópico
+    description: Ação CGU já autorizada para a publicação de abertura, composta na barra de respostas.
   body:
     title: Corpo da postagem
     description: Corpo do tópico renderizado pelo Drupal.

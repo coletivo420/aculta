@@ -1,0 +1,30 @@
+{# The owner decides if the assignee's display name can be exposed. #}
+{% set assignment_content %}
+  <div class="forum-assignment-state__header">
+    <h3 class="forum-assignment-state__title">{{ title }}</h3>
+    {{ include('aculta420_v2:badge', {
+      label: status_label,
+      icon_name: assigned ? 'user-check' : 'user',
+      variant: assigned ? 'primary' : 'neutral',
+    }, with_context = false) }}
+  </div>
+  {% if assigned and assignee_label %}
+    <p class="forum-assignment-state__assignee">{{ assignee_label }}</p>
+  {% endif %}
+  {% if description %}
+    <p class="forum-assignment-state__description">{{ description }}</p>
+  {% endif %}
+  {% if actions %}
+    <div class="forum-assignment-state__actions">{{ actions }}</div>
+  {% endif %}
+{% endset %}
+<section{{ attributes.addClass('forum-assignment-state') }} aria-label="{{ title }}">
+  {{ include('aculta420_v2:surface', {
+    tone: assigned ? 'green-soft' : 'raised',
+    radius: 'lg',
+    spacing: 'normal',
+    border: 'subtle',
+    elevation: 'subtle',
+    content: assignment_content,
+  }, with_context = false) }}
+</section>

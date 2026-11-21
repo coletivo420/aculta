@@ -132,7 +132,8 @@ services:
       - { name: aculta_mailer.type }
   aculta_messenger.forum_notice_access_policy:
     class: Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy
-    arguments: ['@entity_type.manager', '@aculta_portal.domain_site']
+    arguments: ['@entity_type.manager', '@aculta_portal.domain_site', '@aculta_forum.discussion_origin_resolver']
+  Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy: '@aculta_messenger.forum_notice_access_policy'
   aculta_messenger.forum_aviso_read_subscriber:
     class: Drupal\aculta_messenger\EventSubscriber\ForumAvisoReadSubscriber
     arguments: ['@current_user', '@aculta_messenger.aviso_service']
@@ -263,4 +264,7 @@ services:
 
   aculta_messenger.pm.mapper:
     class: Drupal\aculta_messenger\Mapper\PrivateMessageMapper
+    autowire: true
+  Drupal\aculta_messenger\Aviso\ForumMentionNoticeRecorder:
+    class: Drupal\aculta_messenger\Aviso\ForumMentionNoticeRecorder
     autowire: true

@@ -47,6 +47,9 @@ final class InteractiveController extends ControllerBase {
 
   /**
    * Página da visão interativa.
+   *
+   * @return array<array-key, mixed>
+   *   Render array returned by the method.
    */
   public function page(): array {
     $agenda = $this->url('agenda');
@@ -61,7 +64,7 @@ final class InteractiveController extends ControllerBase {
         '#type' => 'container',
         '#attributes' => ['data-portal-ui' => 'calendar-interactive-controls'],
         'contrast' => [
-          '#type' => 'aculta_portal_button',
+          '#type' => 'portal_button',
           '#props' => [
             'text' => (string) $this->t('Alto contraste'),
             'variant' => 'secondary',
@@ -108,7 +111,8 @@ final class InteractiveController extends ControllerBase {
       ],
     ];
     return [
-      '#component' => 'aculta420_v2:calendar-interactive',
+      '#theme' => 'portal_component',
+      '#name' => 'calendar-interactive',
       '#props' => [],
       '#slots' => ['content' => $content],
     ];

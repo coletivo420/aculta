@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\aculta_wiki\Presentation;
 
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\Core\Url;
 use Drupal\aculta_portal\Presentation\WikiSearchFormBuilderInterface;
@@ -52,7 +53,7 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
         '#value' => $searchLabel,
         '#attributes' => [
           'for' => $searchInputId,
-          'class' => ['visually-hidden'],
+          'data-portal-ui' => 'visually-hidden',
         ],
       ],
       'q' => [
@@ -74,9 +75,9 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
         ],
       ],
       'preview' => [
-        '#type' => 'component',
-        '#component' => 'aculta420_v2:search-preview',
-        '#props' => ['attributes' => new \Drupal\Core\Template\Attribute([
+        '#theme' => 'portal_component',
+        '#name' => 'search-preview',
+        '#props' => ['attributes' => new Attribute([
           'id' => $searchPreviewId,
           'role' => 'region',
           'aria-label' => (string) $this->translation->translate('Prévia dos resultados da busca'),
@@ -84,8 +85,8 @@ final class WikiSearchFormBuilder implements WikiSearchFormBuilderInterface {
           'hidden' => TRUE,
         ])],
         '#slots' => ['content' => ['hint' => [
-          '#type' => 'component',
-          '#component' => 'aculta420_v2:hint',
+          '#theme' => 'portal_component',
+          '#name' => 'hint',
           '#slots' => ['content' => ['#plain_text' => (string) $this->translation->translate('Digite pelo menos @n caracteres para ver resultados.', ['@n' => SearchPageController::MIN_CHARS])]],
         ]]],
       ],

@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Drupal\aculta_game;
 
 use Drupal\aculta_portal\Domain\DomainSiteManager;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\comment\CommentInterface;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
+use Drupal\Core\Entity\EntityPublishedInterface;
 use Drupal\Core\Entity\RevisionableInterface;
 use Drupal\Core\Entity\SynchronizableInterface;
 use Drupal\node\NodeInterface;
@@ -20,6 +22,7 @@ use Drupal\user\EntityOwnerInterface;
 final class ForumParticipationPolicy {
 
   public function __construct(
+    private readonly DiscussionOriginResolverInterface $originResolver,
     private readonly ?DomainSiteManager $siteManager = NULL,
   ) {}
 
@@ -29,7 +32,7 @@ final class ForumParticipationPolicy {
     if (!$comment->isPublished() || !$topic->isPublished()
       || (int) $comment->getOwnerId() < 1
       || !$this->isLive($comment) || !$this->isLive($topic)
-      || $this->hasLegacyAuthor($comment) || $this->hasLegacyAuthor($topic)) {
+      || !$this->isCurrent($comment) || !$this->isCurrent($topic)) {
       return FALSE;
     }
 
@@ -58,7 +61,7 @@ final class ForumParticipationPolicy {
       || !$post->isDefaultRevision()
       || (int) $post->getOwnerId() < 1
       || !$this->isLive($post)
-      || $this->hasLegacyAuthor($post)
+      || !$this->isCurrent($post)
       || !$post->hasField('topic')
       || $post->get('topic')->isEmpty()) {
       return FALSE;
@@ -72,7 +75,7 @@ final class ForumParticipationPolicy {
       || $topic->get('field_domain_source')->isEmpty()
       || $this->siteManager?->getSiteKeyValueForDomainId((string) $topic->get('field_domain_source')->target_id) !== 'forum'
       || !$this->isLive($topic)
-      || $this->hasLegacyAuthor($topic)) {
+      || !$this->isCurrent($topic)) {
       return FALSE;
     }
 
@@ -81,11 +84,10 @@ final class ForumParticipationPolicy {
   }
 
   /**
-   * Restored Growroom archive never earns contemporary achievements. */
-  private function hasLegacyAuthor(EntityInterface $entity): bool {
-    return $entity instanceof FieldableEntityInterface
-      && $entity->hasField('field_autor_legado')
-      && !$entity->get('field_autor_legado')->isEmpty();
+   * Unknown and archive entities never create current participation effects.
+   */
+  private function isCurrent(EntityInterface $entity): bool {
+    return $this->originResolver->classify($entity)->origin === DiscussionOrigin::CURRENT;
   }
 
   /**

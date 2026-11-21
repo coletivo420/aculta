@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Drupal\Tests\aculta_messenger\Unit;
 
 use Drupal\aculta_messenger\Aviso\ForumNoticeAccessPolicy;
+use Drupal\aculta_forum\Origin\DiscussionOrigin;
+use Drupal\aculta_forum\Origin\DiscussionOriginClassification;
+use Drupal\aculta_forum\Origin\DiscussionOriginResolverInterface;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -18,7 +22,6 @@ use Drupal\node\NodeInterface;
 use Drupal\Tests\UnitTestCase;
 use Drupal\user\UserInterface;
 use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
@@ -70,11 +73,7 @@ final class ForumNoticeAccessPolicyTest extends UnitTestCase {
   /**
    * Creates the Forum domain, active recipient, and topic fixtures.
    *
-   * @return array{ForumNoticeAccessPolicy, NodeInterface&MockObject, UserInterface}
-   *   Policy, topic, and recipient fixtures.
-   */
-  /**
-   * @return array{ForumNoticeAccessPolicy, NodeInterface&MockObject, UserInterface&MockObject}
+   * @return array{ForumNoticeAccessPolicy, NodeInterface&\PHPUnit\Framework\MockObject\MockObject, UserInterface&\PHPUnit\Framework\MockObject\MockObject}
    *   Access policy and its node/account fixtures.
    */
   private function fixture(string $assignedDomain, AccessResult $access, bool $active = TRUE): array {
@@ -115,7 +114,11 @@ final class ForumNoticeAccessPolicyTest extends UnitTestCase {
     $topic->method('get')->with('field_domain_source')->willReturn($source);
     $topic->method('access')->willReturn($access);
 
-    return [new ForumNoticeAccessPolicy($entityTypeManager, $siteManager), $topic, $account];
+    $originResolver = $this->createMock(DiscussionOriginResolverInterface::class);
+    $originResolver->method('classify')->willReturn(
+      DiscussionOriginClassification::from(DiscussionOrigin::CURRENT, new CacheableMetadata()),
+    );
+    return [new ForumNoticeAccessPolicy($entityTypeManager, $siteManager, $originResolver), $topic, $account];
   }
 
 }
