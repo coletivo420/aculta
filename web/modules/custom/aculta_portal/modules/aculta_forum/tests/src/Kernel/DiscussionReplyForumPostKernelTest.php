@@ -13,6 +13,9 @@ use Drupal\aculta_forum\Service\DiscussionReplyFormBuilder;
 use Drupal\aculta_forum\Service\DiscussionThreadDepthResolver;
 use Drupal\aculta_forum\Service\ForumQuoteBuilder;
 use Drupal\aculta_forum\Service\DiscussionReplyAccess;
+use Drupal\aculta_forum\Service\TopicAuthorDeletion;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Reference;
 use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityFormBuilderInterface;
@@ -43,8 +46,27 @@ final class DiscussionReplyForumPostKernelTest extends KernelTestBase {
    */
   protected static $modules = [
     'system', 'user', 'field', 'filter', 'text', 'node', 'domain',
-    'workflows', 'content_moderation', 'aculta_forum_post_test',
+    'workflows', 'content_moderation', 'options', 'aculta_forum_post_test', 'aculta_cgu',
   ];
+
+  /**
+   * Registra o serviço de estado de tópico do Fórum, que depende do ReportService do CGU.
+   *
+   * O módulo do Fórum não é habilitado neste teste; o serviço é declarado aqui com as
+   * mesmas dependências de produção, para o DiscussionReplyAccess ser montado pelo container.
+   */
+  public function register(ContainerBuilder $container): void {
+    parent::register($container);
+    // O controller Marley do CGU referencia aculta_portal.domain_site sem habilitar o aculta_portal;
+    // o serviço sintético só satisfaz a referência do container.
+    $container->register('aculta_portal.domain_site', \stdClass::class)
+      ->setSynthetic(TRUE)
+      ->setPublic(TRUE);
+    $container->register('aculta_forum.topic_author_deletion', TopicAuthorDeletion::class)
+      ->addArgument(new Reference('keyvalue'))
+      ->addArgument(new Reference('aculta_cgu.report_service'))
+      ->addArgument(new Reference('cache_tags.invalidator'));
+  }
 
   /**
    * The public Forum topic used by the tests.
