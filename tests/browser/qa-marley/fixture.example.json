@@ -1,0 +1,29 @@
+{
+  "isolated": true,
+  "accountOrigin": "https://conta.aculta.test",
+  "forumOrigin": "https://forum.aculta.test",
+  "states": {
+    "common": "/absolute/isolated/.auth/common.json",
+    "forum_only": "/absolute/isolated/.auth/forum_only.json",
+    "revista_only": "/absolute/isolated/.auth/revista_only.json",
+    "wiki_only": "/absolute/isolated/.auth/wiki_only.json",
+    "revista_wiki": "/absolute/isolated/.auth/revista_wiki.json",
+    "forum_wiki": "/absolute/isolated/.auth/forum_wiki.json",
+    "forum_revista": "/absolute/isolated/.auth/forum_revista.json"
+  },
+  "reports": {
+    "publicForum": 101,
+    "privateForum": 102,
+    "revista": 103,
+    "wiki": 104,
+    "pendingWrite": 105
+  },
+  "targets": {
+    "pendingWriteUrl": "https://forum.aculta.test/discussoes/topico-descartavel"
+  },
+  "markers": {
+    "privateTitle": "TOPICO-PRIVADO-MARLEY-QA",
+    "publicTitle": "TOPICO-PUBLICO-MARLEY-QA",
+    "reporterIdentity": "REPORTER-PRIVADO-MARLEY-QA"
+  }
+}
