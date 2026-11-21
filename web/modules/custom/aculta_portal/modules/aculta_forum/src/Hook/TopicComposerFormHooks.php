@@ -164,17 +164,24 @@ final class TopicComposerFormHooks {
       return;
     }
 
-    $form['poll_enabled'] = [
+    // Keep all inputs in the Form API tree until validation. Only the
+    // rendering phase moves the already-processed controls to SDC slots.
+    $form['poll_builder'] = [
+      '#type' => 'container',
+      '#weight' => 5,
+      '#after_build' => [[self::class, 'afterBuildPollBuilder']],
+    ];
+    $form['poll_builder']['poll_enabled'] = [
       '#type' => 'checkbox',
       '#title' => $this->translation->translate('Adicionar enquete'),
       '#default_value' => FALSE,
-      '#weight' => 5,
+      '#weight' => 0,
     ];
     $enabled = [':input[name="poll_enabled"]' => ['checked' => TRUE]];
     $multiple = [':input[name="poll_type"]' => ['value' => 'multiple']];
-    $form['poll'] = [
+    $form['poll_builder']['poll'] = [
       '#type' => 'container',
-      '#weight' => 6,
+      '#weight' => 1,
       '#states' => ['visible' => $enabled],
       'poll_question' => [
         '#type' => 'textfield',
@@ -239,6 +246,50 @@ final class TopicComposerFormHooks {
         $actions['submit']['#submit'][] = self::class . ':createPoll';
       }
     }
+  }
+
+  /**
+   * Attaches the SDC transform after Form API has processed input names.
+   *
+   * @param array<string, mixed> $element
+   *   The native container containing the processed input elements.
+   *
+   * @return array<string, mixed>
+   *   Container with an additional render-only callback.
+   */
+  public static function afterBuildPollBuilder(array $element, FormStateInterface $formState): array {
+    $callbacks = is_array($element['#pre_render'] ?? NULL) ? $element['#pre_render'] : [];
+    $callbacks[] = [self::class, 'preRenderPollBuilder'];
+    $element['#pre_render'] = $callbacks;
+    return $element;
+  }
+
+  /**
+   * Presents the already-processed Form API fields inside UI Patterns slots.
+   *
+   * This callback runs at render time, after Form API has assigned #parents,
+   * #name, #value and validation. It must never rebuild or rename inputs.
+   *
+   * @param array<string, mixed> $element
+   *   Processed poll builder container.
+   *
+   * @return array<string, mixed>
+   *   SDC render array retaining the original processed form children.
+   */
+  public static function preRenderPollBuilder(array $element): array {
+    $toggle = is_array($element['poll_enabled'] ?? NULL) ? $element['poll_enabled'] : [];
+    $fields = is_array($element['poll'] ?? NULL) ? $element['poll'] : [];
+    unset($element['poll_enabled'], $element['poll'], $element['#theme_wrappers']);
+    $element['#theme'] = 'portal_component';
+    $element['#name'] = 'forum-poll-builder';
+    $element['#props'] = [
+      'title' => (string) t('Configuração da enquete'),
+    ];
+    $element['#slots'] = [
+      'toggle' => $toggle,
+      'fields' => $fields,
+    ];
+    return $element;
   }
 
   /**

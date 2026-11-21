@@ -1,0 +1,11 @@
+.forum-poll-builder {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  padding: var(--spacing-md, 1rem);
+  background: var(--color-surface-raised, var(--color-surface, transparent));
+  border: 1px solid var(--color-border, currentColor);
+  border-radius: var(--radius-md, .75rem);
+}
+.forum-poll-builder__fields { display: grid; gap: .75rem; min-inline-size: 0; }
+.forum-poll-builder :is(input, textarea, select) { max-inline-size: 100%; }
+.forum-poll-builder :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }

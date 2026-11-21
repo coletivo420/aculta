@@ -30,12 +30,32 @@ não converte nem reconta as mensagens do acervo histórico Growroom.
 O histórico de decisão CGU pertence ao `aculta_cgu` e será exibido no
 Marley/Fórum apenas após contrato de audit trail e ACL.
 
+## Continuação: construtor de enquete + leitura com History
+
+- O SDC `forum-poll-builder` usa slots para receber o checkbox e os campos
+  **já processados** pelo Form API. `afterBuildPollBuilder` registra a
+  conversão apenas para `#pre_render`: `#parents`, `#name`,
+  `#value`, `#states`, #validate e #submit permanecem no Drupal
+  durante processamento/validação. O Twig não reimplementa formulário.
+- `ForumReadingTimelineHooks` registra `node_view` somente para
+  `aculta_forum_topic` publicado e autorizado do purpose Forum. A
+  contagem usa `accessCheck(TRUE)` de ForumPost e o recibo
+  `ForumPostUnreadManager` (History). Links: início, primeiro não lido
+  com fragmento `forum-post-{id}` e pager 1, última página. Cache por
+  usuário/domínio/grants e max-age 0.
+- O percentual é **estimativa das publicações desde a última visita**.
+  Não mede posição do scroll no navegador e não substitui timeline
+  paginada visual de todas as respostas. O History considera apenas a
+  janela temporal suportada pelo módulo Core.
+- Contratos de regressão verificam slotting pós-Form API e o cálculo
+  percentual com limites; Browser/Kernel e a prévia Library são DEFERRED.
+
 ## Lacunas de paridade ainda abertas
 
 | Frente | Estado e condição de integração |
 | --- | --- |
-| `forum-poll-builder` | Os campos já existem no `TopicComposerFormHooks`; falta extrair composição SDC sem quebrar `#states`, validação ou callbacks |
-| Timeline de tópico e primeiro não lido | Necessita provider a partir de `ForumPostUnreadManager` e paginação, ACL por conta/domínio/Group e links reais |
+| `forum-poll-builder` | SDC integrado com campos Form API no #pre_render; falta validar envio HTMX e sem JS em Browser/Kernel antes de homologar |
+| Timeline de tópico e primeiro não lido | Primeira integração baseada em History e pager 1 concluída; falta provar acesso/âncora em Browser, progresso de scroll real e consumo fora dos tópicos públicos |
 | Rascunho recuperável | Persistência/retomada com retenção, finalidade, segurança e concorrência ainda não aprovadas |
 | Tracking e menções | Antes de SDC, configurar serviço de preferências Messenger/Flag e busca autorizada, evitando divulgar contas privadas |
 | Review Queue / timeline CGU | Reusar `studio-report-item`/CGU, não duplicar storage de denúncias no Fórum; notas internas requerem trilha auditável com ACL |
@@ -72,6 +92,6 @@ Marley/Fórum apenas após contrato de audit trail e ACL.
 - O agente local deve executar gates sobre o diff com banco de teste
   isolado, em sua worktree, sem acionar o Runtime compartilhado.
 
-**Próxima fase técnica:** revisar `forum-poll-builder` com Form API sem
-desativar `#states`, conectar primeiro não lido e acompanhamento por serviços
-existentes e concluir a Review Queue no Marley com trilha CGU.
+**Próxima fase técnica:** validar Kernel/Browser para enquetes, navegação
+e ACL, e concluir Review Queue no Marley com trilha CGU. Não anunciar
+paridade Discourse integral sem esses gates.

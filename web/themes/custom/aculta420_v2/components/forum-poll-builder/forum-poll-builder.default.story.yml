@@ -1,0 +1,12 @@
+name: Construtor de enquete
+description: Prévia sintética; no formulário real o Drupal fornece #states, validação e CSRF.
+component: aculta420_v2:forum-poll-builder
+props:
+  title: Configuração da enquete
+slots:
+  toggle:
+    type: inline_template
+    template: '<label><input type="checkbox" /> Adicionar enquete</label>'
+  fields:
+    type: inline_template
+    template: '<p>Campos de demonstração, sem envio real.</p><label>Pergunta <input type="text" value="Qual pauta discutir?" readonly /></label><p>Tipo: escolha única ou múltipla</p>'

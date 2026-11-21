@@ -147,6 +147,14 @@ services:
   Drupal\aculta_forum\Hook\DiscussionProgressHooks:
     class: Drupal\aculta_forum\Hook\DiscussionProgressHooks
     arguments: ['@entity_type.manager', '@entity.form_builder', '@renderer']
+  Drupal\aculta_forum\Hook\ForumReadingTimelineHooks:
+    class: Drupal\aculta_forum\Hook\ForumReadingTimelineHooks
+    arguments:
+      - '@aculta_forum.post_unread_manager'
+      - '@aculta_forum.post_thread_builder'
+      - '@entity_type.manager'
+      - '@aculta_portal.domain_site'
+      - '@current_user'
   aculta_forum.topic_admin_popup_access:
     class: Drupal\aculta_forum\Access\TopicAdminPopupAccess
     arguments: ['@aculta_portal.domain_site']

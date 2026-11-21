@@ -18,6 +18,7 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     $directory = dirname(__DIR__, 8) . '/themes/custom/aculta420_v2/components';
     $components = [
       'forum-poll-card' => ['form'],
+      'forum-poll-builder' => ['toggle', 'fields'],
       'forum-poll-results' => [],
       'forum-revision-history' => ['revisions'],
       'forum-reading-timeline' => ['navigation'],
@@ -58,6 +59,39 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     self::assertStringContainsString("'forum-revision-history'", $revisions);
     self::assertStringContainsString("'#slots' => ['revisions' =>", $revisions);
     self::assertStringNotContainsString('->getStorage(', (string) file_get_contents(dirname($forum, 5) . '/themes/custom/aculta420_v2/components/forum-poll-results/forum-poll-results.twig'));
+  }
+
+  public function testBuilderDefersSlotMappingUntilAfterFormProcessing(): void {
+    $forum = dirname(__DIR__, 3);
+    $composer = (string) file_get_contents($forum . '/src/Hook/TopicComposerFormHooks.php');
+    self::assertStringContainsString("'#after_build' => [[self::class, 'afterBuildPollBuilder']]", $composer);
+    self::assertStringContainsString("':input[name=\"poll_enabled\"]'", $composer);
+    $builder = \Drupal\aculta_forum\Hook\TopicComposerFormHooks::preRenderPollBuilder([
+      '#type' => 'container',
+      '#pre_render' => [],
+      'poll_enabled' => ['#type' => 'checkbox', '#name' => 'poll_enabled'],
+      'poll' => ['#type' => 'container', 'poll_type' => ['#name' => 'poll_type']],
+    ]);
+    self::assertSame('portal_component', $builder['#theme']);
+    self::assertSame('forum-poll-builder', $builder['#name']);
+    self::assertSame('poll_enabled', $builder['#slots']['toggle']['#name']);
+    self::assertSame('poll_type', $builder['#slots']['fields']['poll_type']['#name']);
+    self::assertArrayNotHasKey('poll_enabled', $builder);
+    self::assertArrayNotHasKey('poll', $builder);
+  }
+
+  public function testTimelineIsHistoryBackedAndClamped(): void {
+    $timeline = \Drupal\aculta_forum\Hook\ForumReadingTimelineHooks::class;
+    self::assertSame(0, $timeline::progressPercent(0, 10));
+    self::assertSame(0, $timeline::progressPercent(10, 12));
+    self::assertSame(60, $timeline::progressPercent(10, 4));
+    self::assertSame(100, $timeline::progressPercent(10, -3));
+    $forum = dirname(__DIR__, 3);
+    $source = (string) file_get_contents($forum . '/src/Hook/ForumReadingTimelineHooks.php');
+    self::assertStringContainsString("->getUnreadByTopics([\$topicId])", $source);
+    self::assertStringContainsString("'fragment' => 'forum-post-' . (int) \$receipt['post_id']", $source);
+    self::assertStringContainsString("'max-age' => 0", $source);
+    self::assertStringContainsString("->accessCheck(TRUE)", $source);
   }
 
 }
