@@ -16,6 +16,8 @@ use Drupal\Core\StringTranslation\TranslationInterface;
 use Drupal\aculta_forum\Form\TopicPopupLayout;
 use Drupal\aculta_forum\Poll\ForumPollManager;
 use Drupal\aculta_forum\Poll\PollDefinition;
+use Drupal\Component\Datetime\TimeInterface;
+use Drupal\Core\Datetime\DrupalDateTime;
 use Drupal\Core\Messenger\MessengerInterface;
 use Drupal\node\NodeInterface;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,6 +44,8 @@ final class TopicComposerFormHooks {
     private readonly ForumPollManager $pollManager,
     #[Autowire(service: 'messenger')]
     private readonly MessengerInterface $messenger,
+    #[Autowire(service: 'datetime.time')]
+    private readonly TimeInterface $time,
   ) {}
 
   /**
@@ -215,6 +219,11 @@ final class TopicComposerFormHooks {
         ],
         '#default_value' => 'after_vote',
       ],
+      'poll_close_at' => [
+        '#type' => 'datetime',
+        '#title' => $this->translation->translate('Encerrar automaticamente em (opcional)'),
+        '#description' => $this->translation->translate('Deixe em branco para encerrar só manualmente.'),
+      ],
     ];
 
     if (!isset($form['#validate']) || !is_array($form['#validate'])) {
@@ -249,6 +258,10 @@ final class TopicComposerFormHooks {
     }
     catch (\InvalidArgumentException) {
       $formState->setErrorByName('poll_options', $this->translation->translate('Revise a pergunta, as opções (de 2 a 20) e os limites de escolha da enquete.'));
+    }
+    $closeAt = $this->closeAtTimestamp($formState);
+    if ($closeAt !== NULL && $closeAt <= $this->time->getRequestTime()) {
+      $formState->setErrorByName('poll_close_at', $this->translation->translate('A data de encerramento da enquete precisa estar no futuro.'));
     }
   }
 
@@ -297,7 +310,16 @@ final class TopicComposerFormHooks {
       minChoices: $isMultiple ? $this->intValue($formState, 'poll_min_choices') : 1,
       maxChoices: $isMultiple ? $this->intValue($formState, 'poll_max_choices') : 1,
       resultsVisibility: $this->stringValue($formState, 'poll_results_visibility'),
+      closeAt: $this->closeAtTimestamp($formState),
     );
+  }
+
+  /**
+   * Lê a data de encerramento opcional da enquete como timestamp, ou NULL se vazia.
+   */
+  private function closeAtTimestamp(FormStateInterface $formState): ?int {
+    $value = $formState->getValue('poll_close_at');
+    return $value instanceof DrupalDateTime ? $value->getTimestamp() : NULL;
   }
 
   /**

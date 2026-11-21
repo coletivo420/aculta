@@ -84,6 +84,7 @@ services:
       - '@string_translation'
       - '@aculta_forum.poll_manager'
       - '@messenger'
+      - '@datetime.time'
   Drupal\aculta_forum\Hook\DiscussionReplyFormHooks:
     class: Drupal\aculta_forum\Hook\DiscussionReplyFormHooks
     arguments:

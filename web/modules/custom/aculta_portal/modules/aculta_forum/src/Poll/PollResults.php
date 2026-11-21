@@ -36,6 +36,7 @@ final class PollResults {
     public readonly bool $hasVoted,
     public readonly array $userSelectedOptionIds,
     public readonly bool $resultsVisible,
+    public readonly ?int $closeAt = NULL,
   ) {}
 
 }

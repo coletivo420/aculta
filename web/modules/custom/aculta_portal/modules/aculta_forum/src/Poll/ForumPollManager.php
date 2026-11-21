@@ -350,7 +350,11 @@ final class ForumPollManager {
     $userVotes = $this->getUserVotes($pollId, $uid);
     $status = is_scalar($poll['status'] ?? NULL) ? (string) $poll['status'] : 'open';
     $visibility = is_scalar($poll['results_visibility'] ?? NULL) ? (string) $poll['results_visibility'] : 'after_vote';
-    $isOpen = ($status === 'open');
+    // Enquete com data de encerramento vencida conta como encerrada, mesmo antes de
+    // alguém votar e disparar o fechamento gravado (mesma regra de castVote).
+    $closeAtValue = $poll['close_at'] ?? NULL;
+    $expired = is_numeric($closeAtValue) && (int) $closeAtValue <= $this->time->getRequestTime();
+    $isOpen = ($status === 'open') && !$expired;
 
     // Determine results visibility.
     $resultsVisible = match ($visibility) {
@@ -421,6 +425,7 @@ final class ForumPollManager {
       hasVoted: $hasVoted,
       userSelectedOptionIds: $userVotes,
       resultsVisible: $resultsVisible,
+      closeAt: is_numeric($poll['close_at'] ?? NULL) ? (int) $poll['close_at'] : NULL,
     );
   }
 
