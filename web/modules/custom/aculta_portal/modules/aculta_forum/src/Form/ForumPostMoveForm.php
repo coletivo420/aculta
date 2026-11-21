@@ -8,6 +8,7 @@ use Drupal\aculta_forum\Entity\ForumPost;
 use Drupal\aculta_forum\Service\ForumPostMover;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -21,6 +22,7 @@ final class ForumPostMoveForm extends FormBase {
   public function __construct(
     protected readonly ForumPostMover $mover,
     protected readonly AccountInterface $account,
+    protected readonly RouteMatchInterface $postRoute,
   ) {}
 
   /**
@@ -33,6 +35,7 @@ final class ForumPostMoveForm extends FormBase {
     return new static(
       $container->get('aculta_forum.post_mover'),
       $container->get('current_user'),
+      $container->get('current_route_match'),
     );
   }
 
@@ -101,7 +104,7 @@ final class ForumPostMoveForm extends FormBase {
         '#type' => 'portal_button',
         '#props' => [
           'text' => (string) $this->t('Cancelar'),
-          'url' => Url::fromRoute('aculta_forum.admin')->toString(),
+          'url' => $this->returnUrl()->toString(),
           'variant' => 'secondary',
         ],
       ],
@@ -154,7 +157,18 @@ final class ForumPostMoveForm extends FormBase {
     }
 
     $this->messenger()->addStatus($this->formatPlural($count, '1 publicação foi movida.', '@count publicações foram movidas.'));
-    $form_state->setRedirect('aculta_forum.admin');
+    $form_state->setRedirectUrl($this->returnUrl());
+  }
+
+  /**
+   * Volta para a fila da Marley quando a ação veio da rota Marley; senão, ao admin do Fórum.
+   */
+  private function returnUrl(): Url {
+    $routeName = $this->postRoute->getRouteName();
+    if (is_string($routeName) && str_starts_with($routeName, 'aculta_forum.marley_post_')) {
+      return Url::fromRoute('aculta_cgu.forum_marley_queue');
+    }
+    return Url::fromRoute('aculta_forum.admin');
   }
 
 }

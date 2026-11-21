@@ -10,6 +10,9 @@ services:
       - '@datetime.time'
       - '@logger.channel.aculta_forum'
   Drupal\aculta_forum\Service\ForumPostMover: '@aculta_forum.post_mover'
+  aculta_forum.marley_post_actions:
+    class: Drupal\aculta_forum\Service\ForumMarleyPostActions
+    arguments: ['@aculta_forum.post_mover']
   aculta_forum.item_milestone_awarder:
     class: Drupal\aculta_forum\Service\ForumItemMilestoneAwarder
     arguments: ['@database', '@entity_type.manager', '@config.factory', '@?aculta_user.badge_service']

@@ -419,6 +419,22 @@ aculta_forum.marley_topic_close:
     no_cache: true
   methods: [GET, HEAD, POST]
 
+aculta_forum.marley_post_move:
+  path: '/marley/forum/publicacao/{aculta_forum_post}/mover'
+  defaults:
+    _form: '\Drupal\aculta_forum\Form\ForumPostMoveForm'
+    _title: 'Mover publicação do fórum'
+  requirements:
+    _custom_access: 'aculta_forum.marley_post_actions:access'
+    aculta_forum_post: '\d+'
+  options:
+    _aculta_site_key: account
+    parameters:
+      aculta_forum_post:
+        type: 'entity:aculta_forum_post'
+    no_cache: true
+  methods: [GET, HEAD, POST]
+
 aculta_forum.marley_topic_publish:
   path: '/marley/forum/topico/{node}/publicar'
   defaults:
