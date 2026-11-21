@@ -43,8 +43,9 @@ aditiva e não quebra ninguém. A etapa F1b só deve ser autorizada depois de F2
 ## Status
 
 - F1 auditado: **concluído** (este documento).
-- F1a: **pendente de decisão** (ver acima).
-- F1b: **bloqueado por F2**.
+- F1a: **concluído no branch** (ver "Execução autorizada" abaixo), após autorização do responsável.
+- F1b: **concluído no branch** para backend de `content_editor`, `gerente_loja` e `lms_teacher`; não sincronizado no Runtime.
+- `lms_teacher`: sem permissão comunitária global, por decisão do responsável; moderação pedagógica segue por Group.
 
 ## Execução autorizada pelo responsável (2026-11-21)
 
