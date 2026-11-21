@@ -1,14 +1,14 @@
 # TODO — aculta_wiki
 
-Estado: Dev · versão 0.1.0-dev.139 (`aculta_wiki.info.yml`) · status: `docs/operations/status/aculta_wiki.yml`.
+Estado: Dev · versão 0.1.0-dev.140 (`aculta_wiki.info.yml`) · status: `docs/operations/status/aculta_wiki.yml`.
 
 ## Estado atual
 
-PHPStan CI apontou dez supressões obsoletas após o teste migrar de `aculta_contributions` para `aculta_cgu`; as entradas correspondentes foram removidas do baseline. A revalidação aguarda o próximo CI remoto. Unit: última evidência registrada, 94 testes/455 assertions PASS.
+WE Sativa passou a possuir moderação Wiki própria: SDCs, páginas de revisão, propostas e denúncias, e controles separados de Fórum/Marley. Código e testes foram publicados em `feat/forum-paridade-discourse`; execução dos novos gates ainda pendente. As supressões PHPStan antigas já haviam sido tratadas; não inferir PASS desta rodada.
 
 ## Próximo passo
 
-Validar por contas distintas submissão, visibilidade própria, fila editorial e moderação no Runtime Wiki durante janela autorizada; não importar grants se a configuração ativa continuar igual ao Sync ([roadmap](web/modules/custom/aculta_portal/modules/aculta_wiki/docs/ROADMAP.md))
+Rodar Unit/Kernel e Browser Wiki com banco simpletest e contas sintéticas na worktree já existente da feature. Revisar SDC/UI Patterns no claro/escuro e confirmar separação de purpose/roles e Form API de denúncia antes da homologação; não usar Runtime compartilhado.
 
 ## Leitura
 
