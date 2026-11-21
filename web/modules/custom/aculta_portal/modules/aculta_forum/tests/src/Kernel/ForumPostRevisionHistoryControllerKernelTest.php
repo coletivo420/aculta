@@ -153,7 +153,12 @@ final class ForumPostRevisionHistoryControllerKernelTest extends KernelTestBase 
   private function historyRows(array $build): array {
     $history = $build['history'];
     self::assertIsArray($history);
-    $rows = $history['#rows'];
+    self::assertSame('portal_component', $history['#theme']);
+    self::assertSame('forum-revision-history', $history['#name']);
+    $table = $history['#slots']['revisions'];
+    self::assertIsArray($table);
+    self::assertSame('table', $table['#type']);
+    $rows = $table['#rows'];
     self::assertIsArray($rows);
     $validatedRows = [];
     foreach ($rows as $row) {

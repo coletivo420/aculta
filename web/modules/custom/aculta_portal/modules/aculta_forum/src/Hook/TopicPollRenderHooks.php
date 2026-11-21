@@ -41,9 +41,19 @@ final class TopicPollRenderHooks {
     if ($poll === NULL || !isset($poll['id']) || !is_numeric($poll['id'])) {
       return;
     }
-    $build['aculta_forum_poll'] = $this->formBuilder->getForm(ForumPollVoteForm::class, (int) $poll['id']);
-    $build['aculta_forum_poll']['#weight'] = 20;
-    $build['aculta_forum_poll']['#cache'] = ['max-age' => 0];
+    $form = $this->formBuilder->getForm(ForumPollVoteForm::class, (int) $poll['id']);
+    // Form API continues to own CSRF, validation and the POST actions.
+    $build['aculta_forum_poll'] = [
+      '#theme' => 'portal_component',
+      '#name' => 'forum-poll-card',
+      '#props' => ['label' => (string) t('Enquete do tópico')],
+      '#slots' => ['form' => $form],
+      '#weight' => 20,
+      '#cache' => [
+        'max-age' => 0,
+        'contexts' => ['user', 'user.permissions', 'domain'],
+      ],
+    ];
   }
 
 }

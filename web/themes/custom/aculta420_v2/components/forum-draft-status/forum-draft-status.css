@@ -1,0 +1,4 @@
+.forum-draft-status { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem .9rem; padding: .65rem .85rem; border: 1px solid var(--color-border, currentColor); border-radius: var(--radius-md, .75rem); color: var(--color-text-primary, currentColor); background: var(--color-surface-raised, transparent); }
+.forum-draft-status--error { border-inline-start: .25rem solid var(--color-danger, currentColor); }
+.forum-draft-status--saved { border-inline-start: .25rem solid var(--color-success, currentColor); }
+.forum-draft-status__actions :focus-visible { outline: 2px solid currentColor; outline-offset: 3px; }

@@ -141,22 +141,26 @@ final class ForumPollVoteForm extends FormBase {
       return $form;
     }
 
+    // Results are only rendered after PollResults has allowed disclosure for
+    // this viewer. The SDC does not fetch votes or decide visibility.
     $rows = [];
     foreach ($results->options as $option) {
       $rows[] = [
-        $option['label'],
-        (string) $option['votes'],
-        $this->t('@pct%', ['@pct' => (string) $option['percentage']]),
+        'label' => (string) $option['label'],
+        'votes' => (int) $option['votes'],
+        'percentage' => max(0.0, min(100.0, (float) $option['percentage'])),
       ];
     }
     $form['poll']['results'] = [
-      '#type' => 'table',
-      '#header' => [$this->t('Opção'), $this->t('Votos'), $this->t('Percentual')],
-      '#rows' => $rows,
-      '#caption' => $this->t('@count voto(s) de @voters pessoa(s)', [
-        '@count' => (string) $results->totalVotes,
-        '@voters' => (string) $results->totalVoters,
-      ]),
+      '#theme' => 'portal_component',
+      '#name' => 'forum-poll-results',
+      '#props' => [
+        'title' => (string) $this->t('Resultados da enquete'),
+        'voters' => $results->totalVoters,
+        'selections' => $results->totalVotes,
+        'multiple' => $results->pollType === 'multiple',
+        'options' => $rows,
+      ],
     ];
     if ($results->status !== 'open') {
       $form['poll']['status'] = [

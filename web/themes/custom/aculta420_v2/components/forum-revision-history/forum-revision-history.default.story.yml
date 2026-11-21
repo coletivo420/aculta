@@ -1,0 +1,9 @@
+name: Histórico de revisão de publicação
+description: Tabela de demonstração sintética; a página real possui ACL por entidade, paginação e Diff.
+component: aculta420_v2:forum-revision-history
+props:
+  label: Histórico de revisões da publicação
+slots:
+  revisions:
+    type: inline_template
+    template: '<table><caption>Revisões de exemplo</caption><thead><tr><th>Revisão</th><th>Data</th><th>Estado</th></tr></thead><tbody><tr><td>2</td><td>20/11/2026</td><td>Publicada</td></tr><tr><td>1</td><td>19/11/2026</td><td>Em análise</td></tr></tbody></table>'

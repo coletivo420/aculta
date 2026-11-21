@@ -1,0 +1,11 @@
+name: Linha de leitura - exemplo
+description: Sem consumidor funcional nesta fase; URLs ilustrativas não controlam o estado de leitura.
+component: aculta420_v2:forum-reading-timeline
+props:
+  label: Progresso de leitura
+  percent: 35
+  progress_text: Leitura do tópico
+slots:
+  navigation:
+    type: inline_template
+    template: '<span>Início · Primeira não lida · Fim (prévia)</span>'

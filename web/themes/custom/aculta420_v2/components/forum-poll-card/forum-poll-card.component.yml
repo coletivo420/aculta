@@ -1,0 +1,22 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Enquete do Fórum
+description: Contêiner de enquete nativa, com Form API e decisões de acesso do módulo Forum.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [label]
+  properties:
+    label:
+      title: Nome da região de enquete
+      type: string
+      minLength: 1
+slots:
+  form:
+    title: Formulário ou resultados autorizados
+    description: Form API nativo para voto, encerramento e resultados; não fornecer HTML de usuário.
+assets:
+  css:
+    component:
+      forum-poll-card.css: {}

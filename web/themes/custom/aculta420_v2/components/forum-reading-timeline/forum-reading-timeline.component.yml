@@ -1,0 +1,30 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Progresso de leitura do tópico
+description: Apresenta progresso já calculado e navegação autorizada; não determina leitura, número de mensagens ou acesso.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [label, percent]
+  properties:
+    label:
+      type: string
+      title: Nome acessível do progresso
+      minLength: 1
+    percent:
+      type: integer
+      title: Porcentagem de leitura
+      minimum: 0
+      maximum: 100
+    progress_text:
+      type: string
+      title: Informação textual do progresso
+slots:
+  navigation:
+    title: Navegação do tópico
+    description: Links autorizados para início, primeiro não lido e última mensagem, com fallback de paginação.
+assets:
+  css:
+    component:
+      forum-reading-timeline.css: {}

@@ -157,7 +157,7 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
         (int) $olderRevisionId,
       );
     }
-    $build['history'] = [
+    $historyTable = [
       '#type' => 'table',
       '#weight' => 10,
       '#header' => [
@@ -172,6 +172,17 @@ final class ForumPostRevisionHistoryController extends ControllerBase {
       ],
       '#rows' => $rows,
       '#empty' => $this->t('Esta publicação ainda não tem revisões.'),
+    ];
+    // This route is already restricted by post_moderation_access.
+    // Keep the server-built table and comparison links inside a visual SDC.
+    $build['history'] = [
+      '#theme' => 'portal_component',
+      '#name' => 'forum-revision-history',
+      '#props' => [
+        'label' => (string) $this->t('Histórico de revisões da publicação'),
+      ],
+      '#slots' => ['revisions' => $historyTable],
+      '#weight' => 10,
     ];
     $build['pager'] = [
       '#type' => 'pager',

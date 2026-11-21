@@ -1,0 +1,20 @@
+<section{{ attributes.addClass('forum-poll-results') }} aria-label="{{ title }}">
+  <h3 class="forum-poll-results__title">{{ title }}</h3>
+  <ul class="forum-poll-results__list">
+    {% for option in options %}
+      <li class="forum-poll-results__item">
+        <div class="forum-poll-results__line">
+          <span>{{ option.label }}</span>
+          <span>{{ option.votes }} {{ 'seleções'|t }} · {{ option.percentage }}%</span>
+        </div>
+        <progress class="forum-poll-results__bar" value="{{ option.percentage }}" max="100" aria-label="{{ option.label }}"></progress>
+      </li>
+    {% endfor %}
+  </ul>
+  <p class="forum-poll-results__caption">
+    {{ 'Pessoas votantes:'|t }} {{ voters }} · {{ 'Seleções:'|t }} {{ selections }}
+  </p>
+  {% if multiple %}
+    <p class="forum-poll-results__note">{{ 'Na múltipla escolha, percentuais usam pessoas votantes como base e podem somar mais de 100%.'|t }}</p>
+  {% endif %}
+</section>

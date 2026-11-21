@@ -1,0 +1,26 @@
+$schema: https://git.drupalcode.org/project/drupal/-/raw/11.x/core/assets/schemas/v1/metadata.schema.json
+name: Situação do rascunho do Fórum
+description: Só apresenta o estado informado pelo provider; não promete autosave nem armazena conteúdo sensível.
+status: experimental
+group: Comunidade
+props:
+  type: object
+  additionalProperties: false
+  required: [state, message]
+  properties:
+    state:
+      title: Estado confirmado do editor
+      type: string
+      enum: [editing, saving, saved, error]
+    message:
+      title: Aviso acessível
+      type: string
+      minLength: 1
+slots:
+  actions:
+    title: Ações de recuperação
+    description: Somente ações e links reais e autorizados criados pelo proprietário do rascunho.
+assets:
+  css:
+    component:
+      forum-draft-status.css: {}

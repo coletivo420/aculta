@@ -1,0 +1,6 @@
+name: Rascunho - falha
+description: Exemplo visual sem ação real de recuperação.
+component: aculta420_v2:forum-draft-status
+props:
+  state: error
+  message: Não foi possível salvar. Copie o texto antes de sair.

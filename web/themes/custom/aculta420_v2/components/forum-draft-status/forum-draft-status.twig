@@ -1,0 +1,4 @@
+<div{{ attributes.addClass('forum-draft-status', 'forum-draft-status--' ~ state) }} role="status" aria-live="polite">
+  <span class="forum-draft-status__message">{{ message }}</span>
+  {% if actions %}<span class="forum-draft-status__actions">{{ actions }}</span>{% endif %}
+</div>

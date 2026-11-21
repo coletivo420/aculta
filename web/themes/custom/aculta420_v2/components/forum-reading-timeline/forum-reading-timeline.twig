@@ -1,0 +1,8 @@
+<nav{{ attributes.addClass('forum-reading-timeline') }} aria-label="{{ label }}">
+  <div class="forum-reading-timeline__summary">
+    <span>{{ progress_text|default(label) }}</span>
+    <span>{{ percent }}%</span>
+  </div>
+  <progress class="forum-reading-timeline__progress" value="{{ percent }}" max="100" aria-label="{{ label }}"></progress>
+  {% if navigation %}<div class="forum-reading-timeline__links">{{ navigation }}</div>{% endif %}
+</nav>

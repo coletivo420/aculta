@@ -1,0 +1,11 @@
+name: Resultados de enquete - voto único
+description: Valores sintéticos; a verificação real de acesso ocorre no backend.
+component: aculta420_v2:forum-poll-results
+props:
+  title: Resultados da enquete
+  voters: 10
+  selections: 10
+  multiple: false
+  options:
+    - {label: Cultura, votes: 6, percentage: 60}
+    - {label: Educação, votes: 4, percentage: 40}

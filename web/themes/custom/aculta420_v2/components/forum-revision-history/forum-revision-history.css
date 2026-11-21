@@ -1,0 +1,5 @@
+.forum-revision-history { min-inline-size: 0; max-inline-size: 100%; }
+.forum-revision-history__scroll { max-inline-size: 100%; overflow-x: auto; border-radius: var(--radius-md, .75rem); }
+.forum-revision-history__scroll:focus-visible { outline: 2px solid currentColor; outline-offset: -2px; }
+.forum-revision-history__scroll table { inline-size: 100%; min-inline-size: 42rem; border-collapse: collapse; }
+.forum-revision-history__scroll th, .forum-revision-history__scroll td { padding: .6rem .75rem; vertical-align: top; border-block-end: 1px solid var(--color-border, currentColor); }
