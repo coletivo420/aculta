@@ -7,6 +7,7 @@ namespace Drupal\aculta_wiki\Service;
 use Drupal\aculta_portal\Domain\DomainSiteManager;
 use Drupal\aculta_portal\Domain\SiteKey;
 use Drupal\aculta_cgu\Entity\Contribution;
+use Drupal\aculta_cgu\ModerationScope;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Access\AccessResultInterface;
 use Drupal\Core\Cache\CacheableMetadata;
@@ -102,7 +103,17 @@ final class WikiContributorWorkspace {
         ->condition('purpose', 'wiki')
         ->range(0, 1)
         ->execute();
-      $result = $create->orIf(AccessResult::allowedIf($node !== [] || $proposal !== [] || $contribution !== []));
+      // A moderator may need WE Sativa even without own drafts or a Node
+      // creation grant; Wiki moderation is independent of Forum privileges.
+      $canModerateWiki = ($account->hasPermission('moderate wiki proposals')
+          && ($account->hasPermission('view any wiki proposals') || $account->hasPermission('administer wiki proposals')))
+        || ($account->hasPermission('edit any wiki_entry content')
+          && ($account->hasPermission('use wiki_editorial transition review_to_draft')
+            || $account->hasPermission('use wiki_editorial transition review_to_published')))
+        || ModerationScope::allows($account, 'wiki');
+      $result = $create
+        ->orIf(AccessResult::allowedIf($node !== [] || $proposal !== [] || $contribution !== []))
+        ->orIf(AccessResult::allowedIf($canModerateWiki)->cachePerPermissions());
       if ($result instanceof RefinableCacheableDependencyInterface) {
         $result->addCacheContexts(['user', 'user.permissions', 'domain'])
           ->addCacheTags(['node_list:wiki_entry', 'aculta_wiki_proposal_list', 'aculta_contribution_list']);
@@ -178,6 +189,22 @@ final class WikiContributorWorkspace {
         $createLink = Link::fromTextAndUrl($this->t('Criar verbete'), $url)->toRenderable();
         $createLink['#attributes']['data-portal-ui'] = 'we-sativa-create';
         $build['header']['#slots']['actions'] = $createLink;
+      }
+    }
+
+    // A separate WE Sativa surface owns moderation. A route access result,
+    // not the role name, decides whether the navigation link is rendered.
+    $moderationUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_wiki.moderation_home');
+    if ($moderationUrl !== NULL) {
+      $moderationRouteAccess = $this->siteManagers->runInSite(SiteKey::Wiki,
+        static fn () => $moderationUrl->access($account, TRUE));
+      if ($moderationRouteAccess instanceof AccessResultInterface) {
+        $cacheability->addCacheableDependency($moderationRouteAccess);
+        if ($moderationRouteAccess->isAllowed()) {
+          $build['moderation_navigation'] = Link::fromTextAndUrl(
+            $this->t('Abrir moderação da Wiki'), $moderationUrl,
+          )->toRenderable();
+        }
       }
     }
 
@@ -376,6 +403,20 @@ final class WikiContributorWorkspace {
               $build['header']['#slots']['actions'] = Link::fromTextAndUrl($this->t('Criar verbete'), $createUrl)->toRenderable();
             }
           }
+        }
+      }
+    }
+
+    $moderationUrl = $this->siteManagers->routeUrl(SiteKey::Wiki, 'aculta_wiki.moderation_home');
+    if ($moderationUrl !== NULL) {
+      $moderationRouteAccess = $this->siteManagers->runInSite(SiteKey::Wiki,
+        static fn () => $moderationUrl->access($account, TRUE));
+      if ($moderationRouteAccess instanceof AccessResultInterface) {
+        $cacheability->addCacheableDependency($moderationRouteAccess);
+        if ($moderationRouteAccess->isAllowed()) {
+          $build['moderation_navigation'] = Link::fromTextAndUrl(
+            $this->t('Moderação editorial e denúncias da Wiki'), $moderationUrl,
+          )->toRenderable();
         }
       }
     }

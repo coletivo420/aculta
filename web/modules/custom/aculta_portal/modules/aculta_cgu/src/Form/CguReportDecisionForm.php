@@ -246,9 +246,14 @@ final class CguReportDecisionForm extends FormBase {
    * Returns the own CGU queue matching the current administrative/frontend UI.
    */
   private function queueRoute(): string {
-    return $this->routeMatch?->getRouteName() === 'aculta_cgu.forum_marley_decide'
-      ? 'aculta_cgu.forum_marley_queue'
-      : 'aculta_cgu.admin_reports';
+    $route = $this->routeMatch?->getRouteName();
+    // Keep report decisions in the owner experience. The CGU remains the
+    // single decision engine for Wiki and Forum, with distinct frontend ACLs.
+    return match ($route) {
+      'aculta_cgu.forum_marley_decide' => 'aculta_cgu.forum_marley_queue',
+      'aculta_wiki.moderation_report_decide' => 'aculta_wiki.moderation_reports',
+      default => 'aculta_cgu.admin_reports',
+    };
   }
 
   /**

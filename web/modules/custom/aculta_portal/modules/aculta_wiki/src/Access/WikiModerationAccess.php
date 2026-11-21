@@ -67,7 +67,8 @@ final class WikiModerationAccess {
     if (!$result->isAllowed() || $aculta_cgu_report === NULL) {
       return $result->andIf(AccessResult::forbidden());
     }
-    $result->addCacheableDependency($aculta_cgu_report);
+    $evidence = AccessResult::allowed()->addCacheableDependency($aculta_cgu_report);
+    $result = $result->andIf($evidence);
     if ($aculta_cgu_report->get('purpose')->getString() !== 'wiki') {
       return $result->andIf(AccessResult::forbidden());
     }
@@ -94,17 +95,17 @@ final class WikiModerationAccess {
 
     $hostView = $host->access('view', $account, TRUE);
     $reportView = $aculta_cgu_report->access('view', $account, TRUE);
-    $result->addCacheableDependency($host)
-      ->addCacheableDependency($hostView)
-      ->addCacheableDependency($reportView);
-    if (!$hostView->isAllowed() || !$reportView->isAllowed()) {
-      return $result->andIf(AccessResult::forbidden());
+    $result = $result->andIf(AccessResult::allowed()->addCacheableDependency($host))
+      ->andIf($hostView)->andIf($reportView);
+    if (!$result->isAllowed()) {
+      return $result;
     }
     if ($target instanceof CommentInterface) {
       $targetView = $target->access('view', $account, TRUE);
-      $result->addCacheableDependency($target)->addCacheableDependency($targetView);
-      if (!$targetView->isAllowed()) {
-        return $result->andIf(AccessResult::forbidden());
+      $result = $result->andIf(AccessResult::allowed()->addCacheableDependency($target))
+        ->andIf($targetView);
+      if (!$result->isAllowed()) {
+        return $result;
       }
     }
     return $result;

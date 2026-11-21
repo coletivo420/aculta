@@ -327,13 +327,9 @@ final class WikiProposalDecisionForm extends FormBase {
     }
 
     $this->messenger()->addStatus($this->t('A decisão foi registrada no histórico da proposta.'));
-    if ($this->moduleHandler->moduleExists('aculta_studio')) {
-      $form_state->setRedirect('aculta_studio.tab', [
-        'aba' => 'wiki',
-        'secao' => 'moderacao',
-        'sub' => 'propostas',
-      ]);
-    }
+    // The Wiki has its own moderator workspace on the Wiki domain.
+    // Never redirect a Wiki proposal decision to Marley or the Forum.
+    $form_state->setRedirect('aculta_wiki.moderation_proposals');
   }
 
   /**
