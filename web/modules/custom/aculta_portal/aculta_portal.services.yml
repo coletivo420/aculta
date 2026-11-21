@@ -1,4 +1,9 @@
 services:
+  access_check.admin_route:
+    class: Drupal\aculta_portal\Access\AdminRouteAccessCheck
+    tags:
+      - { name: access_check }
+
   aculta_portal.content_index_remote_video_provider:
     class: Drupal\aculta_portal\ContentIndex\MediaContentIndexProvider
     arguments: ['remote_video', 'remote_video']

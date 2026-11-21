@@ -47,7 +47,7 @@ final class ModerationScope {
       // Purpose desconhecido só é moderado pelo escopo transversal.
       return self::isGlobal($account);
     }
-    if ($purpose === 'forum' && $account->hasPermission('moderar denuncias do forum')) {
+    if ($purpose === 'forum' && ($account->hasPermission('moderar denuncias do forum') || $account->hasPermission('review aculta forum reports'))) {
       return TRUE;
     }
     return self::isGlobal($account) || $account->hasPermission(self::permissionFor($purpose));

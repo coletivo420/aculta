@@ -82,9 +82,12 @@ final class CguForumMarleyController extends ControllerBase {
   public function reportAccess(AccountInterface $account, ?CguReport $aculta_cgu_report = NULL): AccessResultInterface {
     $permission = $this->access($account);
     if (!$permission->isAllowed() || $aculta_cgu_report === NULL
-      || (string) $aculta_cgu_report->get('purpose')->value !== 'forum') {
-      return AccessResult::forbidden()->cachePerPermissions()->cachePerUser()
-        ->addCacheableDependency($aculta_cgu_report);
+      || (string) ($aculta_cgu_report->get('purpose')->getString() ?: '') !== 'forum') {
+      $forbidden = AccessResult::forbidden()->cachePerPermissions()->cachePerUser();
+      if ($aculta_cgu_report !== NULL) {
+        $forbidden->addCacheableDependency($aculta_cgu_report);
+      }
+      return $forbidden;
     }
 
     $target = $this->target($aculta_cgu_report);
@@ -92,9 +95,13 @@ final class CguForumMarleyController extends ControllerBase {
       return AccessResult::forbidden()->cachePerPermissions()->cachePerUser()
         ->addCacheableDependency($aculta_cgu_report);
     }
-    return $permission->andIf($this->targetViewAccess($target, $account))
-      ->addCacheableDependency($target)
-      ->addCacheableDependency($aculta_cgu_report);
+    $targetView = $this->targetViewAccess($target, $account);
+    $finalAccess = $permission->andIf($targetView);
+    if ($finalAccess instanceof AccessResult) {
+      $finalAccess->addCacheableDependency($target)
+        ->addCacheableDependency($aculta_cgu_report);
+    }
+    return $finalAccess;
   }
 
   /**
@@ -111,8 +118,8 @@ final class CguForumMarleyController extends ControllerBase {
       ReportService::STATUS_REJECTED => $this->t('Improcedentes'),
     ];
     $requested = $request->query->get('status', ReportService::STATUS_PENDING);
-    $status = is_string($requested) && isset($statusOptions[$requested])
-      ? $requested : ReportService::STATUS_PENDING;
+    $status = isset($statusOptions[(string) $requested])
+      ? (string) $requested : ReportService::STATUS_PENDING;
     $page = min(1000, max(0, $request->query->getInt('page', 0)));
     $data = $this->reportQueue->getQueueItems($this->account, 'forum', $status, $page, self::PAGE_SIZE);
     $reportStorage = $this->entities->getStorage('aculta_cgu_report');
@@ -272,8 +279,9 @@ final class CguForumMarleyController extends ControllerBase {
       ? $this->forumTopicActions->buildActions($target, $this->account)
       : [];
 
+    $reportId = (string) ($aculta_cgu_report->id() ?? '');
     return $this->workspace(
-      (string) $this->t('Decidir denúncia #@id', ['@id' => $aculta_cgu_report->id()]),
+      (string) $this->t('Decidir denúncia #@id', ['@id' => $reportId]),
       (string) $this->t('A denúncia é avaliada separadamente da publicação.'),
       [
         'primary' => $this->component('surface-panel', [
@@ -314,8 +322,8 @@ final class CguForumMarleyController extends ControllerBase {
    * Enforces real origin and view access before exposing case metadata.
    */
   private function target(CguReport $report): ?EntityInterface {
-    $type = (string) $report->get('target_type')->value;
-    $id = (int) $report->get('target_id')->value;
+    $type = (string) ($report->get('target_type')->getString() ?: '');
+    $id = (int) ($report->get('target_id')->getString() ?: '0');
     return $this->loadForumTarget($type, $id);
   }
 
@@ -396,7 +404,9 @@ final class CguForumMarleyController extends ControllerBase {
       try {
         $url = $entity->toUrl();
         if ($url->isRouted()) {
-          $forumUrl = $this->sites->routeUrl('forum', $url->getRouteName(), $url->getRouteParameters());
+          /** @var array<string, mixed> $routeParams */
+          $routeParams = $url->getRouteParameters();
+          $forumUrl = $this->sites->routeUrl('forum', $url->getRouteName(), $routeParams);
           if ($forumUrl instanceof Url) {
             return ['#type' => 'link', '#title' => $label, '#url' => $forumUrl];
           }
