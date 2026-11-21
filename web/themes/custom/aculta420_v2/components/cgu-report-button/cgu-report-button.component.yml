@@ -6,6 +6,7 @@ group: Comunidade
 libraryOverrides:
   dependencies:
     - aculta420_v2/utility-drawers
+    - aculta420_v2/cgu-report-dialog
 props:
   type: object
   additionalProperties: false

@@ -25,7 +25,10 @@ ACULTA V2, o botão abre o SDC `popup`; o evento
 `aculta:drawer:open` aciona o HTMX no **corpo do diálogo**, e não no clique
 do gatilho. O HTMX carrega **somente**
 `[data-aculta-cgu-report-form]` para o corpo do modal, preservando o
-contêiner para futuras reaberturas e evitando conflito entre os listeners de clique. O formulário é o
+contêiner para futuras reaberturas e evitando conflito entre os listeners de clique.
+O comportamento `aculta420_v2/cgu-report-dialog` devolve o foco ao primeiro
+campo do formulário após `htmx:afterSwap`; o SDC `popup` permanece dono da
+abertura, fechamento, Escape e navegação pelo teclado. O formulário é o
 mesmo da página acessível sem JavaScript, com token do Drupal Form API.
 **Nenhuma denúncia é criada por GET ou pelo clique no ícone**.
 

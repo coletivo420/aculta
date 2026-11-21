@@ -104,6 +104,10 @@ final class ForumDiscourseSdcContractsTest extends UnitTestCase {
     self::assertStringContainsString('data-hx-select="[data-aculta-cgu-report-form]"', $button);
     self::assertStringContainsString('data-hx-trigger="aculta:drawer:open from:closest dialog"', $button);
     self::assertStringContainsString('data-hx-target="this"', $button);
+    self::assertStringContainsString("'data-aculta-cgu-report-dialog': ''", $button);
+    $focus = (string) file_get_contents($theme . '/js/cgu-report-dialog.js');
+    self::assertStringContainsString("'htmx:afterSwap'", $focus);
+    self::assertStringContainsString('form[data-aculta-cgu-report-form]', $focus);
     self::assertStringNotContainsString('data-hx-trigger="click"', $button);
     self::assertStringContainsString('show_dialog = with_dialog is defined ? with_dialog : true', $button);
     self::assertStringContainsString('{{ report_action }}', $bar);

@@ -12,7 +12,7 @@
     {# The dialog dispatches aculta:drawer:open after showModal(), avoiding
        competing click handlers on the trigger link. HTMX reloads the real
        Drupal form for each opening; the outer wrapper remains stable. #}
-    <div class="cgu-report-button__dialog-body" id="{{ dialog_id }}-body"
+    <div class="cgu-report-button__dialog-body" id="{{ dialog_id }}-body" data-aculta-cgu-report-body
       {% if load_form %}
         data-hx-get="{{ url }}"
         data-hx-trigger="aculta:drawer:open from:closest dialog"
@@ -33,6 +33,7 @@
     title: 'Denunciar conteúdo'|t,
     subtitle: 'A denúncia será encaminhada à moderação para análise.'|t,
     close_label: 'Fechar'|t,
+    attributes: create_attribute({ 'data-aculta-cgu-report-dialog': '' }),
     content: report_dialog_body,
   }, with_context = false) }}
 {% endif %}
