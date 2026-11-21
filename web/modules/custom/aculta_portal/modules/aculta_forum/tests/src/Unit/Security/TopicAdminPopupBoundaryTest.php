@@ -78,7 +78,7 @@ final class TopicAdminPopupBoundaryTest extends UnitTestCase {
     self::assertStringContainsString('popupAccess->access(', $source);
     self::assertStringContainsString("ModerationScope::allows(\$account, 'forum')", $source);
     self::assertStringContainsString("'purpose' => 'forum'", $source);
-    self::assertStringContainsString("!$report->access('view', \$account)", $source);
+    self::assertStringContainsString("!\$report->access('view', \$account)", $source);
     self::assertStringContainsString("'max-age' => 0", $source);
   }
 
